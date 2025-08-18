@@ -85,7 +85,7 @@ cache:
 #
 # Learn more about GitLab cache: https://docs.gitlab.com/ee/ci/caching/index.html
 before_script:
-  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+#   - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
   stage: build
@@ -99,7 +99,7 @@ build:
   # path to the directory where it is located (e.g. 'dotnet build ./src/ConsoleApp').
   # Only one project path can be passed as a parameter to 'dotnet build' command.
   script:
-    - 'dotnet build --no-restore'
+#     - 'dotnet build --no-restore'
 
 tests:
   stage: test
@@ -112,7 +112,7 @@ tests:
   # You may want to define separate testing jobs for different types of testing
   # (e.g. integration tests, unit tests etc).
   script:
-    - 'dotnet test --no-restore'
+#     - 'dotnet test --no-restore'
 
 deploy:
   stage: deploy
