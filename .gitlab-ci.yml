@@ -18,18 +18,18 @@
 # See other available tags for .NET Core: https://hub.docker.com/_/microsoft-dotnet
 # Learn more about Docker tags: https://docs.docker.com/glossary/?term=tag
 # and the Docker itself: https://opensource.com/resources/what-docker
-# image: mcr.microsoft.com/dotnet/sdk:7.0
+#image: mcr.microsoft.com/dotnet/sdk:7.0
 
 # ### Define variables
 #
-variables:
+#variables:
   # 1) Name of directory where restore and build objects are stored.
-  OBJECTS_DIRECTORY: 'obj'
+#  OBJECTS_DIRECTORY: 'obj'
   # 2) Name of directory used for keeping restored dependencies.
-  NUGET_PACKAGES_DIRECTORY: '.nuget'
+#  NUGET_PACKAGES_DIRECTORY: '.nuget'
   # 3) A relative path to the source code from project repository root.
   # NOTE: Please edit this path so it matches the structure of your project!
-  SOURCE_CODE_PATH: '*/*/'
+#  SOURCE_CODE_PATH: '*/*/'
 
 # ### Define global cache rule
 #
@@ -47,19 +47,19 @@ variables:
 #
 # With global cache rule, cached dependencies will be downloaded before every job
 # and then unpacked to the paths as specified below.
-cache:
+#cache:
   # Per-stage and per-branch caching.
-  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-  paths:
+#  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+#  paths:
     # Specify three paths that should be cached:
     #
     # 1) Main JSON file holding information about package dependency tree, packages versions,
     # frameworks etc. It also holds information where to the dependencies were restored.
-    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
+#    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
     # 2) Other NuGet and MSBuild related files. Also needed.
-    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
+#    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
     # 3) Path to the directory where restored dependencies are kept.
-    - '$NUGET_PACKAGES_DIRECTORY'
+#    - '$NUGET_PACKAGES_DIRECTORY'
   #
   # 'pull-push' policy means that latest cache will be downloaded (if it exists)
   # before executing the job, and a newer version will be uploaded afterwards.
@@ -72,7 +72,7 @@ cache:
   # will already be there — unzipped from cache.
 
   # 'pull-push' policy is the default cache policy, you do not have to specify it explicitly.
-  policy: pull-push
+#  policy: pull-push
 
 # ### Restore project dependencies
 #
@@ -84,11 +84,11 @@ cache:
 # in the root of project repository, so its content can be cached.
 #
 # Learn more about GitLab cache: https://docs.gitlab.com/ee/ci/caching/index.html
-before_script:
-  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+#before_script:
+#  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
-build:
-  stage: build
+#build:
+#  stage: build
   # ### Build all projects discovered from solution file.
   #
   # Note: this will fail if you have any projects in your solution that are not
@@ -98,11 +98,11 @@ build:
   # or build every .NET Core-based project by explicitly specifying a relative
   # path to the directory where it is located (e.g. 'dotnet build ./src/ConsoleApp').
   # Only one project path can be passed as a parameter to 'dotnet build' command.
-  script:
-    - 'dotnet build --no-restore'
+#  script:
+#    - 'dotnet build --no-restore'
 
-tests:
-  stage: test
+#tests:
+#  stage: test
   # ### Run the tests
   #
   # You can either run tests for all test projects that are defined in your solution
@@ -111,10 +111,10 @@ tests:
   #
   # You may want to define separate testing jobs for different types of testing
   # (e.g. integration tests, unit tests etc).
-  script:
-    - 'dotnet test --no-restore'
+#  script:
+#    - 'dotnet test --no-restore'
 
-deploy:
-  stage: deploy
-  script: echo "Define your deployment script!"
-  environment: production
+#deploy:
+#  stage: deploy
+#  script: echo "Define your deployment script!"
+#  environment: production
