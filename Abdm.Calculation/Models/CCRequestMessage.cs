@@ -7,6 +7,15 @@
     {
         public int Id { get; set; }
 
+        /// <summary>
+        /// идентификатор искусственного сооружения
+        /// </summary>
+        public long issoId { get; set; }
+
+
+
+
+
         public string Name { get; set; }
 
         //public ReportStatus Status { get; set; }

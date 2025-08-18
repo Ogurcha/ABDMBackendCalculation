@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.Models;
+﻿using System.Threading.Tasks;
+using Abdm.Calculation.Models;
 using Abdm.Integration.MessageBroker.Kafka.Consumer;
 
 namespace Abdm.Calculation.ColumnCalculation
