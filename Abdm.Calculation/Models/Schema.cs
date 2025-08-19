@@ -23,7 +23,7 @@
 
         public float Length { get; set; } //7.4
 
-        public float Distance { get; set; } //10.0
+        public float? Distance { get; set; } //10.0
 
         public Axle[] Axles { get; set; }
     }

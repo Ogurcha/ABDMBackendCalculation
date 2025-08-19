@@ -5,6 +5,6 @@ namespace Abdm.Calculation.ColumnCalculation
 {
     public interface ICCProcessor
     {
-        Task Process(CCRequestMessage data);
+        Task<CCResultMessage> Process(CCRequestMessage data);
     }
 }

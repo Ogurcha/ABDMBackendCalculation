@@ -15,7 +15,12 @@
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        required public long С_nagruzka { get; set; }
+        public long С_nagruzka { get; set; }
+
+        /// <summary>
+        /// Направление физичесrого воздействия
+        /// </summary>
+        public ais7DriveDirection Direction { get; set; } = ais7DriveDirection.Bidirection;
 
         /// <summary>
 		/// номер выбранного снипа, по которому пойдут расчет

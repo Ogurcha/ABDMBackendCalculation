@@ -21,7 +21,7 @@ namespace Abdm.Calculation.Models
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        required public long С_nagruzka { get; set; }
+        public long С_nagruzka { get; set; }
 
 		/// <summary>
 		/// номер выбранного снипа, по которому пойдут расчет

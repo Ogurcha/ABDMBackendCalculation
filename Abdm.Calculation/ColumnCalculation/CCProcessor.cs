@@ -14,9 +14,9 @@ namespace Abdm.Calculation.ColumnCalculation
     public class CCProcessor : ICCProcessor
     {
         
-        public async Task Process(CCRequestMessage data)
+        public async Task<CCResultMessage> Process(CCRequestMessage data)
         {
-            await Task.CompletedTask;
+            return await Task.FromResult<CCResultMessage>(new CCResultMessage());
         }
     }
 }

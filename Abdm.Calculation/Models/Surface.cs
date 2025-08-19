@@ -4,7 +4,7 @@ namespace Abdm.Calculation.Models
 {
     public class Surface
     {
-        Vector3[] Surface_data { get; set; }
+        required public Vector3[] Surface_data { get; set; }
         /*[
 			{
 				"x": 0.0,
