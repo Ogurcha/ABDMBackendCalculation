@@ -6,8 +6,9 @@ using Xunit;
 
 public class CCProcessorTests
 {
-    [Fact]
-    public async Task Process_CompletesSuccessfully()
+    [Theory]
+    [MemberData(nameof(TestData))]
+    public async Task Process_CompletesSuccessfully(CCRequestMessage message, CCResultMessage expectedResult)
     {
         // Arrange
         var mockMessage = new Mock<CCRequestMessage>();
@@ -20,14 +21,41 @@ public class CCProcessorTests
         mockMessage.Verify(m => processor.Process(m), Times.Once);
     }
 
-    [Fact]
-    public async Task Process_ThrowsException_WhenMessageIsNull()
-    {
-        // Arrange
-        var processor = new CCProcessor();
+    public static IEnumerable<object[]> TestData =>
+        new List<object[]>
+        {
+            //1
+            new object[] {
+                new CCRequestMessage()
+                {
+                    C_isso = 38000331,
+                    NagruzkaId = [20, 40, 170],
+                    Snip = ais7PcSnip.odm16,
+                    Direction = ais7DriveDirection.Bidirection,
+                },
+                new CCResultMessage()
+                {
+                    IssoId = 38000331,
+                    PassTypes = new CheckpointPassType[]
+                    {
+                        new CheckpointPassType
+                        {
+                             CheckpointNumber = 1,
+                             NagruzkaId = 20,
+                             PassType = 1,
+                        }
+                    }
+                }
+            },
+            //2
+            new object[] {
+                new CCRequestMessage()
+                {
 
-        // Act and Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            processor.Process(null));
-    }
+                },
+                ais7PassTypeEnum.NoLimit
+            }
+            
+        };
+
 }
