@@ -1,5 +1,8 @@
 ﻿namespace Abdm.Calculation.Models
 {
+    /// <summary>
+    /// ais7NagruzkaAxle в старом клиенте
+    /// </summary>
     public class Axle
     {
         public float Y { get; set; } //1.0

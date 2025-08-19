@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Подробные характеристики нагрузки на сооружение
+    /// ais7Nagruzka в старом клиенте
     /// </summary>
     public class Schema
     {
@@ -10,6 +11,9 @@
         /// </summary>
         public long Id { get; set; }
 
+        /// <summary>
+        /// ais7PcNType в старом клиенте
+        /// </summary>
         public string Type_id { get; set; } //"10"
 
         public string Type { get; set; } //"Колесная общего назначения"
@@ -25,6 +29,9 @@
 
         public float? Distance { get; set; } //10.0
 
+        /// <summary>
+        /// ais7NagruzkaAxle в старом клиенте
+        /// </summary>
         public Axle[] Axles { get; set; }
     }
 }
