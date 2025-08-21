@@ -20,29 +20,31 @@
         /// <summary>
         /// Направление физичесrого воздействия
         /// </summary>
-        public ais7DriveDirection Direction { get; set; } = ais7DriveDirection.Bidirection;
+        public DriveDirection Direction { get; set; } = DriveDirection.Bidirection;
 
         /// <summary>
 		/// номер выбранного снипа, по которому пойдут расчет
 		/// </summary>
-		public ais7PcSnip Snip { get; set; } = ais7PcSnip.odm16;
+		public SnipEnum Snip { get; set; } = SnipEnum.odm16;
 
         /// <summary>
         /// Рассчитанное условие пропуска
         /// </summary>
-        public ais7PassTypeEnum PassType { get; set; }
+        public PassTypeEnum PassType { get; set; }
 
         /// <summary>
-		/// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет
+		/// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
 		/// </summary>
-		public int Allowed { get; set; }
+		public AllowedEnum Allowed { get; set; }
 
-        //не обязательно
+        /// <summary>
+        /// Интервалы между нагрузками.
+        /// </summary>
         public float[] Intervals { get; set; }
 
         /// <summary>
         /// Нагрузка тележек. не обязательна
         /// </summary>
-        public string Data { get; set; } //"[{\"x\": 4.64, \"y\": 0.25, \"z\": 0.091, \"load\": 0.517}, {\"x\": 7.79, \"y\": -4.45, \"z\": 1.608, \"load\": 9.277}]"
+        public string Data { get; set; } 
     }
 }

@@ -2,14 +2,29 @@
 {
     public class Roadway
     {
-        public int Line_number { get; set; } // 2
+        /// <summary>
+        /// Количество путей у моста
+        /// </summary>
+        public int LineNumber { get; set; }
 
-        public float Road_height { get; set; } // 0.21
+        /// <summary>
+        /// Максимальное возвышение профиля моста
+        /// </summary>
+        public float RoadHeight { get; set; }
 
-        public float Left_safeline { get; set; } // 1.5
+        /// <summary>
+        /// Отступ слева
+        /// </summary>
+        public float LeftSafeline { get; set; }
 
-        public float Right_safeline { get; set; } // 1.5
+        /// <summary>
+        /// Отступ справа
+        /// </summary>
+        public float RightSafeline { get; set; }
 
-        public float Position_shift { get; set; } // 0.685
+        /// <summary>
+        /// Сдвиг позиции по X координате. Если точки начинаются не в нуле по иксу, то сдвиг нужен для компенсации
+        /// </summary>
+        public float Position_shift { get; set; }
     }
 }

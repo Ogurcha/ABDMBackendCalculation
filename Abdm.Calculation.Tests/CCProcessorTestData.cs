@@ -8,24 +8,23 @@ namespace Abdm.Calculation.Tests
         public static IEnumerable<object[]> TestData =>
         new List<object[]>
         {
-            //1
             new object[] {
                 new CCRequestMessage()
                 {
-                    C_isso = 38000331,
-                    Number = 7,
-                    С_nagruzka = 40,
-                    Snip = ais7PcSnip.sn62,
-                    Direction = ais7DriveDirection.Bidirection, //0 в старом ais7DriveDirection.Backward, т.к. дефолтная Backward
-                    Load_schema = new Schema
+                    IssoId = 38000331,
+                    CPNumber = 7,
+                    NagruzkaId = 40,
+                    Snip = SnipEnum.sn62,
+                    Direction = DriveDirection.Bidirection,
+                    NagruzkaSchema = new NagruzkaSchema
                     {
-                        Id = 40,
-                        Type_id = "20",
-                        Type = "Колесная одиночная",
-                        Name = "Н11 (НК-80)",
+                        Id = NagruzkaEnum.N11,
+                        Type = NagruzkaTypeEnum.Single,
+                        TypeName = "Колесная одиночная",
+                        NameShort = "Н11 (НК-80)",
                         Width = 3.5f,
                         Length = 4.4f,
-                        Distance = null,
+                        Distance = 0,
                         Axles = new Axle[]
                         {
                             new Axle {
@@ -73,7 +72,7 @@ namespace Abdm.Calculation.Tests
                     //this.SfData
                     Surface = new Surface
                     {
-                        Surface_data = new System.Numerics.Vector3[]
+                        SurfacePoints = new System.Numerics.Vector3[]
                         {
                                          new Vector3{
                 X = 0.0f,
@@ -5941,25 +5940,25 @@ namespace Abdm.Calculation.Tests
                 Z = -0.002565f
             }
                         },
-                        Line_data = new object[]{},
+                        PillarData = [],
                         MaxX = 8.89f,
                         MinX = -1.46f,
                         MaxY = 13.7f,
                         MinY = 0.0f,
                         MaxZ = 0.207596f,
-                        CpVid = 81,
-                        MyStrength = 2.08f, 
+                        CheckPointType = CheckPointEnum.PlateM,
+                        MyStrength = 2.08f,
                         СonstLoad = 0.45f,
-                        СonstPesh = 0.0f,
+                        PedestrianLoad = 0.0f,
                         KStrength = 1.0f,
                     },
                     Roadway = new Roadway
                     {
-                        Line_number = 2, 
-                        Road_height = 0.24f, //ais7CheckPoint.CoverHeight
-                        Left_safeline = 0.15f, 
-                        Right_safeline = 0.15f,
-                        Position_shift = 1.46f, //ais7CheckPoint.LeftObLocation
+                        LineNumber = 2,
+                        RoadHeight = 0.24f,
+                        LeftSafeline = 0.15f,
+                        RightSafeline = 0.15f,
+                        Position_shift = 1.46f,
                     }
                 },
                 new CCResultMessage()
@@ -5967,9 +5966,9 @@ namespace Abdm.Calculation.Tests
                     C_isso = 38000331,
                     N = 7,
                     С_nagruzka = 40,
-                    Direction = ais7DriveDirection.Bidirection,
-                    Snip = ais7PcSnip.sn62,
-                    PassType = ais7PassTypeEnum.Denied,
+                    Direction = DriveDirection.Bidirection,
+                    Snip = SnipEnum.sn62,
+                    PassType = PassTypeEnum.Denied,
                     Allowed = 0,
                     Intervals = null,
                     Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
