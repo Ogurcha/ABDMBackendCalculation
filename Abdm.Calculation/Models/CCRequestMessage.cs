@@ -37,7 +37,7 @@ namespace Abdm.Calculation.Models
 		/// Подробные характеристики нагрузки на данное сооружение
 		/// </summary>
 		public Schema Load_schema { get; set; }
-
+        
 		public Surface Surface { get; set; }
 
         public Roadway Roadway { get; set; }

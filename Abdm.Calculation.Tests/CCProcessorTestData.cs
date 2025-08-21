@@ -16,7 +16,7 @@ namespace Abdm.Calculation.Tests
                     Number = 7,
                     С_nagruzka = 40,
                     Snip = ais7PcSnip.sn62,
-                    Direction = ais7DriveDirection.Bidirection, //0
+                    Direction = ais7DriveDirection.Bidirection, //0 в старом ais7DriveDirection.Backward, т.к. дефолтная Backward
                     Load_schema = new Schema
                     {
                         Id = 40,
@@ -34,7 +34,7 @@ namespace Abdm.Calculation.Tests
                                 Wy = 0.2f,
                                 Weight = 20.0f,
                                 AbsY = 0.4f,
-                                Wheels = [
+                                Wheels = [ //wheels_Distance_list
                                     2.7f
                                 ]
                             },
@@ -70,6 +70,7 @@ namespace Abdm.Calculation.Tests
                             }
                         },
                     },
+                    //this.SfData
                     Surface = new Surface
                     {
                         Surface_data = new System.Numerics.Vector3[]
@@ -5947,18 +5948,18 @@ namespace Abdm.Calculation.Tests
                         MinY = 0.0f,
                         MaxZ = 0.207596f,
                         CpVid = 81,
-                        MyStrength = 2.08f,
+                        MyStrength = 2.08f, 
                         СonstLoad = 0.45f,
                         СonstPesh = 0.0f,
                         KStrength = 1.0f,
                     },
                     Roadway = new Roadway
                     {
-                        Line_number = 2,
-                        Road_height = 0.24f,
-                        Left_safeline = 0.15f,
+                        Line_number = 2, 
+                        Road_height = 0.24f, //ais7CheckPoint.CoverHeight
+                        Left_safeline = 0.15f, 
                         Right_safeline = 0.15f,
-                        Position_shift = 1.46f,
+                        Position_shift = 1.46f, //ais7CheckPoint.LeftObLocation
                     }
                 },
                 new CCResultMessage()

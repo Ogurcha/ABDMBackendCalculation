@@ -29,6 +29,8 @@ namespace Abdm.Calculation.Models
 
         public float MaxZ { get; set; }	//1.452982986171758
 
+        public float MinZ { get; set; }
+
         /// <summary>
         /// айдишник от ais7EnumCpTypePs в старом клиенте
         /// </summary>
