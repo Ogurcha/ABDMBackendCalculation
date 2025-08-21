@@ -9,6 +9,10 @@ namespace Abdm.Calculation.ColumnCalculation
         public async Task Handle(CCRequestMessage message, MessageContext<string, CCRequestMessage> context)
         {
             await cCProcessor.Process(message);
+
+
+
+
         }
     }
 }

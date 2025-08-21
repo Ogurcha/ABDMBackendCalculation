@@ -16,6 +16,8 @@ namespace Abdm.Calculation.ColumnCalculation
         
         public async Task<CCResultMessage> Process(CCRequestMessage data)
         {
+            var a = data.Surface.SurfacePoints.Length;
+
             return await Task.FromResult<CCResultMessage>(new CCResultMessage());
         }
     }
