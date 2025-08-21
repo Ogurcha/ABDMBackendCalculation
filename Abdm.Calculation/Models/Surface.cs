@@ -4,56 +4,69 @@ namespace Abdm.Calculation.Models
 {
     public class Surface
     {
-        required public Vector3[] Surface_data { get; set; }
-        /*[
-			{
-				"x": 0.0,
-				"y": 0.0,
-				"z": 0.0002673736965817054
-			},
-			{
-				"x": 1.61,
-				"y": 0.0,
-				"z": 0.0
-			},*/
-
-        public object[] Line_data { get; set; }
-
-        public float MaxX { get; set; } // 10.79
-
-        public float MinX { get; set; } //-0.69
-
-        public float MaxY { get; set; } // 10.84
-
-        public float MinY { get; set; } //0.0
-
-        public float MaxZ { get; set; }	//1.452982986171758
+        /// <summary>
+        /// Массив точек, из которых состоит данная поверхность
+        /// </summary>
+        required public Vector3[] SurfacePoints { get; set; }
 
         /// <summary>
-        /// айдишник от ais7EnumCpTypePs в старом клиенте
+        /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой
         /// </summary>
-        public long CpVid { get; set; }
+        public float[] PillarData { get; set; }
 
         /// <summary>
-        /// Проектная устойчивость структуры
+        /// Максимальное значение всех точек по X
         /// </summary>
-        public float MyStrength { get; set; } //53.0
+        public float MaxX { get; set; }
 
         /// <summary>
-        /// Фиксированная нагрузка
+        /// Минимальное значение всех точек по X
         /// </summary>
-        public float СonstLoad { get; set; } //15.79
+        public float MinX { get; set; }
+
+        /// <summary>
+        /// Максимальное значение всех точек по Y
+        /// </summary>
+        public float MaxY { get; set; }
+
+        /// <summary>
+        /// Минимальное значение всех точек по Y
+        /// </summary>
+        public float MinY { get; set; }
+
+        /// <summary>
+        /// Максимальное значение всех точек по Z
+        /// </summary>
+        public float MaxZ { get; set; }
+
+        /// <summary>
+        /// Перечисление, указывающее на то, как поверхность будет подвергаться нагрузке
+        /// </summary>
+        public CheckPointEnum CheckPointType { get; set; }
+
+        /// <summary>
+        /// Проектная устойчивость структуры. Без учёта собственного веса
+        /// </summary>
+        public float MyStrength { get; set; }
+
+        /// <summary>
+        /// Фиксированная нагрузка от собственного веса
+        /// </summary>
+        public float СonstLoad { get; set; }
 
         /// <summary>
         /// Нагрузка от пешеходов
         /// </summary>
-        public float СonstPesh { get; set; } //0.0
+        public float PedestrianLoad { get; set; } 
 
         /// <summary>
         /// Другая нагрузка
         /// </summary>
-        public float СonstOther { get; set; } //0.0
+        public float OtherLoad { get; set; }
 
-        public float KStrength { get; set; } //1.0
+        /// <summary>
+        /// Коэффициент устойчивости. По дефолту всегда 1.
+        /// </summary>
+        public float KStrength { get; set; }
     }
 }

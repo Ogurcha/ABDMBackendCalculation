@@ -2,9 +2,11 @@
 
 namespace Abdm.Calculation.Models
 {
-    public enum ais7PassTypeEnum
+    /// <summary>
+    /// Условия пропуска
+    /// </summary>
+    public enum PassTypeEnum
     {
-
         [Description("Нет сведений")]
         Unknown,
         [Description("Пропуск возможен без ограничений")]

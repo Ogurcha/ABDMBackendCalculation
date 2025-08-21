@@ -2,7 +2,7 @@
 
 namespace Abdm.Calculation.Models
 {
-    public enum ais7PcSnip
+    public enum SnipEnum
     {
         [Description("Гушосдор НКВД 1938")]
         sn38 = 0,

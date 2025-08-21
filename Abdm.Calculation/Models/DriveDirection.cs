@@ -4,15 +4,15 @@ using System.Runtime.Serialization;
 namespace Abdm.Calculation.Models
 {
     [DataContract]
-    public enum ais7DriveDirection
+    public enum DriveDirection
     {
-        [EnumMember(Value = "Forward"), Description("Вперед")]
-        Forward = 20,
-        [EnumMember(Value = "Backward"), Description("Назад")]
-        Backward = 30,
         [EnumMember(Value = "Bidirection"), Description("Встречное")]
-        Bidirection = 10,
+        Bidirection = 0,
+        [EnumMember(Value = "Forward"), Description("Вперед")]
+        Forward = 1,
+        [EnumMember(Value = "Backward"), Description("Назад")]
+        Backward = 2,
         [EnumMember(Value = "Closed"), Description("Закрыто")]
-        Closed = 40
+        Closed = 3
     }
 }

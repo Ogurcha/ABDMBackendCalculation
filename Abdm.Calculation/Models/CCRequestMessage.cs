@@ -11,35 +11,41 @@ namespace Abdm.Calculation.Models
         /// <summary>
         /// идентификатор искусственного сооружения
         /// </summary>
-        public long C_isso { get; set; }
+        public long IssoId { get; set; }
 
 		/// <summary>
 		/// Номер чекпоинта данного сооружения
 		/// </summary>
-		public int Number { get; set; }
+		public int CPNumber { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long С_nagruzka { get; set; }
+        public long NagruzkaId { get; set; }
 
 		/// <summary>
 		/// номер выбранного снипа, по которому пойдут расчет
 		/// </summary>
-		public ais7PcSnip Snip { get; set; } = ais7PcSnip.odm16;
+		public SnipEnum Snip { get; set; } = SnipEnum.odm16;
 
         /// <summary>
         /// Направление физичесrого воздействия
         /// </summary>
-        public ais7DriveDirection Direction { get; set; } = ais7DriveDirection.Bidirection;
+        public DriveDirection Direction { get; set; } = DriveDirection.Bidirection;
 
 		/// <summary>
 		/// Подробные характеристики нагрузки на данное сооружение
 		/// </summary>
-		public Schema Load_schema { get; set; }
+		public NagruzkaSchema NagruzkaSchema { get; set; }
 
+        /// <summary>
+        /// Характеристики поверхности сооружения
+        /// </summary>
 		public Surface Surface { get; set; }
 
+        /// <summary>
+        /// Характеристики пути
+        /// </summary>
         public Roadway Roadway { get; set; }
     }
 }
