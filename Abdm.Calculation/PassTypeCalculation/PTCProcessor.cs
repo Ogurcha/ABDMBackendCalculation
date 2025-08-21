@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Abdm.Calculation.Models;
+using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.ColumnCalculation
 {
@@ -11,14 +11,14 @@ namespace Abdm.Calculation.ColumnCalculation
     /// Расчет напряжения
     /// Отправление сообщения в брокер
     /// </summary>
-    public class CCProcessor : ICCProcessor
+    public class PTCProcessor : IPTCProcessor
     {
         
-        public async Task<CCResultMessage> Process(CCRequestMessage data)
+        public async Task<PTCResultMessage> Process(PTCRequestMessage data)
         {
             var a = data.Surface.SurfacePoints.Length;
 
-            return await Task.FromResult<CCResultMessage>(new CCResultMessage());
+            return await Task.FromResult<PTCResultMessage>(new PTCResultMessage());
         }
     }
 }

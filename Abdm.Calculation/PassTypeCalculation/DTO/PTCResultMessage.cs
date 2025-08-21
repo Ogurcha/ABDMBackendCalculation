@@ -1,6 +1,8 @@
-﻿namespace Abdm.Calculation.Models
+﻿using Abdm.Calculation.Models;
+
+namespace Abdm.Calculation.PassTypeCalculation.DTO
 {
-    public class CCResultMessage
+    public class PTCResultMessage
     {
         /// <summary>
         /// идентификатор искусственного сооружения

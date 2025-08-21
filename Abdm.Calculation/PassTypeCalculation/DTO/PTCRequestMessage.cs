@@ -1,12 +1,13 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Abdm.Calculation.Models;
 
-namespace Abdm.Calculation.Models
+namespace Abdm.Calculation.PassTypeCalculation.DTO
 {
     /// <summary>
     /// реквест сообщение для начала расчётов
     /// </summary>
-    public class CCRequestMessage
+    public class PTCRequestMessage
     {
         /// <summary>
         /// идентификатор искусственного сооружения
