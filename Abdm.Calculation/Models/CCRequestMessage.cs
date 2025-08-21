@@ -10,7 +10,7 @@
         /// <summary>
         /// идентификатор искусственного сооружения
         /// </summary>
-        public long issoId { get; set; }
+        public long IssoId { get; set; }
 
 
 
