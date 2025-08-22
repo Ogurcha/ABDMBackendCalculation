@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Abdm.Integration.MessageBroker.Kafka.Consumer.Extensions;
-using Abdm.Integration.MessageBroker.Kafka.Producer.Extensions;
-using Abdm.Integration.MessageBroker.Kafka.Serialization.Extensions;
+using Kafka.Integration.MessageBroker.Consumer.Extensions;
+using Kafka.Integration.MessageBroker.Producer.Extensions;
+using Kafka.Integration.MessageBroker.Serialization.Extensions;
 using Abdm.Calculation.Models;
 using Abdm.Calculation.ColumnCalculation;
 

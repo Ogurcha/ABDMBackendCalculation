@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Abdm.Calculation.Models;
-using Abdm.Integration.MessageBroker.Kafka.Consumer;
+using Kafka.Integration.MessageBroker.Consumer;
 
 namespace Abdm.Calculation.ColumnCalculation
 {
