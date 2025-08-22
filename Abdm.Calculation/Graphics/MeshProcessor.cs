@@ -36,11 +36,11 @@ namespace Abdm.Calculation.G4
             var planePoint = new Vector3d(X, 0, 0); 
             var plane = new Plane3d(planeNormal, planePoint);
 
-            plane
-            new DMeshAABBTree3();
-            var intersections = mesh.FindAllIntersections();
+            //plane
+            //new DMeshAABBTree3();
+            //var intersections = mesh.FindAllIntersections();
 
-            intersections.Segments
+            //intersections.Segments
 
             //var planeMesh = new DMeshAABBTree3(plane);
             //MeshQueries.TrianglesIntersection(mesh, plane)

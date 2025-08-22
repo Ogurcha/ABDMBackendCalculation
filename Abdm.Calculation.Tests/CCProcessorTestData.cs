@@ -1,4 +1,6 @@
 ﻿using Abdm.Calculation.Models;
+using Abdm.Calculation.PassTypeCalculation.DTO;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Abdm.Calculation.Tests
@@ -9,7 +11,7 @@ namespace Abdm.Calculation.Tests
         new List<object[]>
         {
             new object[] {
-                new CCRequestMessage()
+                new PTCRequestMessage()
                 {
                     IssoId = 38000331,
                     CPNumber = 7,
@@ -5961,7 +5963,7 @@ namespace Abdm.Calculation.Tests
                         Position_shift = 1.46f,
                     }
                 },
-                new CCResultMessage()
+                new PTCResultMessage()
                 {
                     C_isso = 38000331,
                     N = 7,

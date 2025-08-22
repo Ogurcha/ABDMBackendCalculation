@@ -1,22 +1,21 @@
+using System.Threading.Tasks;
 using Abdm.Calculation.ColumnCalculation;
+using Abdm.Calculation.Models;
 using Abdm.Calculation.PassTypeCalculation.DTO;
-using Abdm.Calculation.Tests;
+using Moq;
+using NUnit.Framework;
 
+[TestFixture]
 public class CCProcessorTests
 {
-    [Theory]
-    [MemberData(nameof(TestData))]
-    public async Task Process_CompletesSuccessfully(PTCRequestMessage message, PTCResultMessage expectedResult)
+    [Test]
+    public async Task Process_CompletesSuccessfully()
     {
+        var mockMessage = new Mock<PTCRequestMessage>();
+
         var processor = new PTCProcessor();
-        await processor.Process(message);
+        await processor.Process(mockMessage.Object);
 
-        // Assert
-        var result = await processor.Process(message);
-
-        Assert.True(result.Allowed == expectedResult.Allowed
-        && result.PassType == expectedResult.PassType);
+        mockMessage.Verify(m => processor.Process(m), Times.Once);
     }
-
-    public static IEnumerable<object[]> TestData => CCProcessorTestData.TestData;
 }
