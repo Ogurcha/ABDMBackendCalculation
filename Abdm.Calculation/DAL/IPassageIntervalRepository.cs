@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Abdm.Calculation.Models;
 
 namespace Abdm.Calculation.DAL
 {
     public interface IPassageIntervalRepository
     {
-        Task<double[]> GetPassageIntervals(long issoId);
+        Task<PassageInterval[]> GetPassageIntervals(long issoId);
     }
 }
