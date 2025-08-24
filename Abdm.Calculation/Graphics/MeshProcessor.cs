@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Abdm.Calculation.Graphics;
 using g4;
 
 namespace Abdm.Calculation.G4
@@ -11,7 +12,7 @@ namespace Abdm.Calculation.G4
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
-        public DMeshAABBTree3 GetMeshFromPoints(Vector3[] points)
+        public Mesh GetMeshFromPoints(Vector3[] points)
         {
             ArgumentNullException.ThrowIfNull(points);
             if (points.Length % 3 != 0)
@@ -20,21 +21,50 @@ namespace Abdm.Calculation.G4
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                 points.Select(p => new Vector3d(p.X, p.Y, p.Z)), GetTriangles123(points: points));
 
+            var data = GetMeshData(mesh);
+
             var meshAABBTree = new DMeshAABBTree3(mesh, true);
 
-            return meshAABBTree;
+            return new Mesh { Tree = meshAABBTree, Data = data };
         }
+
+        public MeshData GetMeshData(DMesh3 mesh)
+        {
+            return new MeshData();
+        }
+
 
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
         /// </summary>
         /// <param name="mesh"></param>
         /// <param name="X"></param>
-        public void MakeProfileYZ(DMeshAABBTree3 mesh, double X)
+        public void MakeProfileYZ(Mesh mesh, double X)
         {
+            var c = 0;
+            var minY = 0f;
+            var rays = new List<Ray3d>();
+            foreach (var vi in mesh.Tree.Mesh.Vertices())
+            {
+                //mesh.Mesh.VerticesBuffer.
+                //if (c == 1)
+                //{
+                //    if (minY > vi)
+                //        minY = vi;
+
+
+                //        rays.Add(new Ray3d());
+                //}
+                c++;
+                if (c == 3)
+                    c = 0;
+            }
+
             var planeNormal = new Vector3d(1, 0, 0); 
             var planePoint = new Vector3d(X, 0, 0); 
             var plane = new Plane3d(planeNormal, planePoint);
+
+            
 
             //plane
             //new DMeshAABBTree3();

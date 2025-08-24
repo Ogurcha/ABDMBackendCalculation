@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.ColumnCalculation
@@ -16,7 +17,9 @@ namespace Abdm.Calculation.ColumnCalculation
         
         public async Task<PTCResultMessage> Process(PTCRequestMessage data)
         {
-            var a = data.Surface.SurfacePoints.Length;
+            var sp = data.Surface.SurfacePoints;
+
+            var b = sp.Where(p => p.X == 1.85f).ToList();
 
             return await Task.FromResult<PTCResultMessage>(new PTCResultMessage());
         }

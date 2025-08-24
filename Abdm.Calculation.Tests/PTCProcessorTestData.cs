@@ -5,29 +5,25 @@ using System.Numerics;
 
 namespace Abdm.Calculation.Tests
 {
-    public static class CCProcessorTestData
+    public static class PTCProcessorTestData
     {
-        public static IEnumerable<object[]> TestData =>
-        new List<object[]>
+        public static PTCRequestMessage TestRequestMessage => new PTCRequestMessage()
         {
-            new object[] {
-                new PTCRequestMessage()
-                {
-                    IssoId = 38000331,
-                    CPNumber = 7,
-                    NagruzkaId = 40,
-                    Snip = SnipEnum.sn62,
-                    Direction = DriveDirection.Bidirection,
-                    NagruzkaSchema = new NagruzkaSchema
-                    {
-                        Id = NagruzkaEnum.N11,
-                        Type = NagruzkaTypeEnum.Single,
-                        TypeName = "Колесная одиночная",
-                        NameShort = "Н11 (НК-80)",
-                        Width = 3.5f,
-                        Length = 4.4f,
-                        Distance = 0,
-                        Axles = new Axle[]
+            IssoId = 38000331,
+            CPNumber = 7,
+            NagruzkaId = 40,
+            Snip = SnipEnum.sn62,
+            Direction = DriveDirection.Bidirection,
+            NagruzkaSchema = new NagruzkaSchema
+            {
+                Id = NagruzkaEnum.N11,
+                Type = NagruzkaTypeEnum.Single,
+                TypeName = "Колесная одиночная",
+                NameShort = "Н11 (НК-80)",
+                Width = 3.5f,
+                Length = 4.4f,
+                Distance = 0,
+                Axles = new Axle[]
                         {
                             new Axle {
                                 Y = 0.4f,
@@ -70,11 +66,11 @@ namespace Abdm.Calculation.Tests
                                 ]
                             }
                         },
-                    },
-                    //this.SfData
-                    Surface = new Surface
-                    {
-                        SurfacePoints = new System.Numerics.Vector3[]
+            },
+            //this.SfData
+            Surface = new Surface
+            {
+                SurfacePoints = new System.Numerics.Vector3[]
                         {
                                          new Vector3{
                 X = 0.0f,
@@ -5942,40 +5938,39 @@ namespace Abdm.Calculation.Tests
                 Z = -0.002565f
             }
                         },
-                        PillarData = [],
-                        MaxX = 8.89f,
-                        MinX = -1.46f,
-                        MaxY = 13.7f,
-                        MinY = 0.0f,
-                        MaxZ = 0.207596f,
-                        CheckPointType = CheckPointEnum.PlateM,
-                        MyStrength = 2.08f,
-                        СonstLoad = 0.45f,
-                        PedestrianLoad = 0.0f,
-                        KStrength = 1.0f,
-                    },
-                    Roadway = new Roadway
-                    {
-                        LineNumber = 2,
-                        RoadHeight = 0.24f,
-                        LeftSafeline = 0.15f,
-                        RightSafeline = 0.15f,
-                        Position_shift = 1.46f,
-                    }
-                },
-                new PTCResultMessage()
-                {
-                    C_isso = 38000331,
-                    N = 7,
-                    С_nagruzka = 40,
-                    Direction = DriveDirection.Bidirection,
-                    Snip = SnipEnum.sn62,
-                    PassType = PassTypeEnum.Denied,
-                    Allowed = 0,
-                    Intervals = null,
-                    Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
-                }
+                PillarData = [],
+                MaxX = 8.89f,
+                MinX = -1.46f,
+                MaxY = 13.7f,
+                MinY = 0.0f,
+                MaxZ = 0.207596f,
+                CheckPointType = CheckPointEnum.PlateM,
+                MyStrength = 2.08f,
+                СonstLoad = 0.45f,
+                PedestrianLoad = 0.0f,
+                KStrength = 1.0f,
+            },
+            Roadway = new Roadway
+            {
+                LineNumber = 2,
+                RoadHeight = 0.24f,
+                LeftSafeline = 0.15f,
+                RightSafeline = 0.15f,
+                Position_shift = 1.46f,
             }
+        };
+
+        public static PTCResultMessage TestResultMessage => new PTCResultMessage()
+        {
+            C_isso = 38000331,
+            N = 7,
+            С_nagruzka = 40,
+            Direction = DriveDirection.Bidirection,
+            Snip = SnipEnum.sn62,
+            PassType = PassTypeEnum.Denied,
+            Allowed = 0,
+            Intervals = null,
+            Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
         };
     }
 }
