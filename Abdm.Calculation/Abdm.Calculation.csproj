@@ -11,10 +11,13 @@
     <PackageReference Include="Kafka.Integration.MessageBroker" Version="1.0.1" />
     <PackageReference Include="geometry3Sharp" Version="1.0.324" />
     <PackageReference Include="geometry4Sharp" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="NLog" Version="6.0.3" />
     <PackageReference Include="NLog.Extensions.Logging" Version="6.0.3" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
 </Project>

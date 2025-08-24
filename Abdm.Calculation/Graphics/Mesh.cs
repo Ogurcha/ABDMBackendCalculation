@@ -7,4 +7,8 @@ namespace Abdm.Calculation.Graphics
         public DMeshAABBTree3 Tree { get; set; }
         public MeshData Data { get; set; }
     }
+
+    public class MeshData
+    {
+    }
 }

@@ -15,6 +15,7 @@ namespace Abdm.Reports.Calculation
             builder.Services.AddLogging(cfg =>
             {
                 cfg.ClearProviders();
+                cfg.SetMinimumLevel(LogLevel.Trace);
                 cfg.AddConfiguration(builder.Configuration.GetSection("Logging"));
 #if DEBUG
                 cfg.AddDebug();

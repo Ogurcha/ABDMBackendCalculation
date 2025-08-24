@@ -5,6 +5,6 @@ namespace Abdm.Calculation.ColumnCalculation
 {
     public interface IPTCProcessor
     {
-        Task<PTCResultMessage> Process(PTCRequestMessage data);
+        Task<PTCResultMessage> CalculatePassType(PTCRequestMessage data);
     }
 }

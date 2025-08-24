@@ -5962,7 +5962,7 @@ namespace Abdm.Calculation.Tests
 
         public static PTCResultMessage TestResultMessage => new PTCResultMessage()
         {
-            C_isso = 38000331,
+            IssoId = 38000331,
             N = 7,
             С_nagruzka = 40,
             Direction = DriveDirection.Bidirection,

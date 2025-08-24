@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Abdm.Calculation.DAL;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Abdm.Calculation.Infrastructure
 {
@@ -7,6 +10,8 @@ namespace Abdm.Calculation.Infrastructure
     {
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContext<MainDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("MainConnection")));
         }
     }
 }

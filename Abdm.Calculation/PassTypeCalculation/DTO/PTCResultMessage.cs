@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.Models;
+using Confluent.Kafka;
 
 namespace Abdm.Calculation.PassTypeCalculation.DTO
 {
@@ -7,17 +8,17 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
         /// <summary>
         /// идентификатор искусственного сооружения
         /// </summary>
-        public long C_isso { get; set; }
+        public long IssoId { get; set; }
 
         /// <summary>
 		/// Номер чекпоинта данного сооружения
 		/// </summary>
-		public int N { get; set; }
+		public int CPNumber { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long С_nagruzka { get; set; }
+        public long NagrzkaId { get; set; }
 
         /// <summary>
         /// Направление физичесrого воздействия
@@ -47,6 +48,8 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
         /// <summary>
         /// Нагрузка тележек. не обязательна
         /// </summary>
-        public string Data { get; set; } 
+        public string Data { get; set; }
+
+        public string GetBrokerId => IssoId.ToString() + '/' + CPNumber.ToString();
     }
 }

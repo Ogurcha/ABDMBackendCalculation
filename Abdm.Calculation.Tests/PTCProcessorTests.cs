@@ -20,7 +20,7 @@ public class PTCProcessorTests
         var expectedOutput = PTCProcessorTestData.TestResultMessage;
 
         var processor = new PTCProcessor();
-        var result = await processor.Process(testMessage);
+        var result = await processor.CalculatePassType(testMessage);
 
         Assert.That(result.PassType == expectedOutput.PassType);
     }
