@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.DAL;
+﻿using Abdm.Calculation.ColumnCalculation;
+using Abdm.Calculation.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,9 @@ namespace Abdm.Calculation.Infrastructure
         {
             services.AddDbContext<MainDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("MainConnection")));
+
+            services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
+            services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace Abdm.Calculation.Tests
 {
-    public static class PTCProcessorTestData
+    public static class PassTypeCalculatorTestData
     {
         public static PTCRequestMessage TestRequestMessage => new PTCRequestMessage()
         {
@@ -5963,8 +5963,8 @@ namespace Abdm.Calculation.Tests
         public static PTCResultMessage TestResultMessage => new PTCResultMessage()
         {
             IssoId = 38000331,
-            N = 7,
-            С_nagruzka = 40,
+            CPNumber = 7,
+            NagrzkaId = 40,
             Direction = DriveDirection.Bidirection,
             Snip = SnipEnum.sn62,
             PassType = PassTypeEnum.Denied,

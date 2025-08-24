@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Abdm.Calculation.DAL
 {
-    public class PassageIntervalRepository(DbContext dbContext) : IPassageIntervalRepository
+    public class PassageIntervalRepository(MainDbContext dbContext) : IPassageIntervalRepository
     {
 
         /// <summary>

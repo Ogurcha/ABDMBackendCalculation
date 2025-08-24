@@ -3,7 +3,7 @@ using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.ColumnCalculation
 {
-    public interface IPTCProcessor
+    public interface IPassTypeCalculator
     {
         Task<PTCResultMessage> CalculatePassType(PTCRequestMessage data);
     }

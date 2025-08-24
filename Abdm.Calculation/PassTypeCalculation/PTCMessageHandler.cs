@@ -13,7 +13,7 @@ namespace Abdm.Calculation.ColumnCalculation
     /// Рассчет условий пропуска
     /// </summary>
     public class PTCMessageHandler(
-        IPTCProcessor ptcProcessor, 
+        IPassTypeCalculator ptcProcessor, 
         ILogger<PTCMessageHandler> logger,
         IKafkaProducer<string, PTCResultMessage> messageProducer
         ) : IKafkaMessageHandler<string, PTCRequestMessage>
