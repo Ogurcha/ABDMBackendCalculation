@@ -26,19 +26,19 @@
         public string NameShort { get; set; }
 
         /// <summary>
-        /// Ширина
+        /// Нормативный отступ от края. Больше нуля, если без заезда на полосу. Ноль - если с заездом на ограничительную полосу
         /// </summary>
-        public float Width { get; set; }
+        public double Width { get; set; }
 
         /// <summary>
         /// Длина
         /// </summary>
-        public float Length { get; set; }
+        public double Length { get; set; }
 
         /// <summary>
         /// Расстояние
         /// </summary>
-        public float Distance { get; set; }
+        public double Distance { get; set; }
 
         /// <summary>
         /// Точки давления, которые представляют данную нагрузку

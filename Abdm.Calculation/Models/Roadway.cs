@@ -25,6 +25,6 @@
         /// <summary>
         /// Сдвиг позиции по X координате. Если точки начинаются не в нуле по иксу, то сдвиг нужен для компенсации
         /// </summary>
-        public float Position_shift { get; set; }
+        public float PositionShift { get; set; }
     }
 }

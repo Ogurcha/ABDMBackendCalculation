@@ -43,6 +43,7 @@ namespace Abdm.Calculation.Models
 
         /// <summary>
         /// Перечисление, указывающее на то, как поверхность будет подвергаться нагрузке
+        /// CpSubType в старом клиенте
         /// </summary>
         public CheckPointEnum CheckPointType { get; set; }
 

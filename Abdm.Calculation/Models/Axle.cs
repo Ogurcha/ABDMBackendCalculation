@@ -1,20 +1,26 @@
 ﻿namespace Abdm.Calculation.Models
 {
     /// <summary>
-    /// ais7NagruzkaAxle в старом клиенте
+    /// Информация о колёсах
     /// </summary>
     public class Axle
     {
-        public float Y { get; set; } //1.0
+        public double Y { get; set; }
 
-        public float Wx { get; set; } //0.3
+        public double Wx { get; set; }
 
-        public float Wy { get; set; } //0.2
+        public double Wy { get; set; }
 
-        public float Weight { get; set; } //11.54
+        /// <summary>
+        /// Вес колеса
+        /// </summary>
+        public double Weight { get; set; }
 
-        public float AbsY { get; set; } //6.4
+        /// <summary>
+        /// Абсолютная длина проекции, с учетом текущего колеса и колёс позади
+        /// </summary>
+        public double AbsY { get; set; }
 
-        public float[] Wheels { get; set; } //[1.9]
+        public double[] Wheels { get; set; }
     }
 }

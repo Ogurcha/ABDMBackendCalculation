@@ -5956,7 +5956,7 @@ namespace Abdm.Calculation.Tests
                 RoadHeight = 0.24f,
                 LeftSafeline = 0.15f,
                 RightSafeline = 0.15f,
-                Position_shift = 1.46f,
+                PositionShift = 1.46f,
             }
         };
 

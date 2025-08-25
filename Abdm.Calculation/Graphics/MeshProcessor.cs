@@ -21,17 +21,47 @@ namespace Abdm.Calculation.G4
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                 points.Select(p => new Vector3d(p.X, p.Y, p.Z)), GetTriangles123(points: points));
 
-            var data = GetMeshData(mesh);
+            var data = GetMeshData(mesh, []);
 
             var meshAABBTree = new DMeshAABBTree3(mesh, true);
 
             return new Mesh { Tree = meshAABBTree, Data = data };
         }
 
-        public MeshData GetMeshData(DMesh3 mesh)
+        /// <summary>
+        /// генерация 
+        /// </summary>
+        public MeshData GetMeshData(DMesh3 mesh, double[] Wheels)
         {
-            return new MeshData();
+            var result = new MeshData();
+
+            var disntctXs = new List<double>();
+            
+            var veticles = mesh.Vertices().OrderBy(v => v.x).ToList();
+            var first = veticles.First();
+            result.MinX = first.x; result.MinY = first.y; result.MinZ = first.z;
+            result.MaxX = first.x; result.MaxY = first.y; result.MaxZ = first.z;
+
+            double distinctXsChecker = result.MinX - 1;
+            foreach (var v in veticles)
+            {
+                if (result.MinY > v.y) result.MinY = v.y;
+                if (result.MinZ > v.z) result.MinZ = v.z;
+                if (result.MaxY < v.y) result.MaxY = v.y;
+                if (result.MaxZ < v.z) result.MaxZ = v.z;
+                
+                if (distinctXsChecker != v.x)
+                {
+                    distinctXsChecker = v.x;
+                    disntctXs.Add(v.x);
+                }
+            }   
+            result.DistinctXs = disntctXs.ToArray();
+
+            return result;
         }
+
+
 
 
         /// <summary>
