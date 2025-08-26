@@ -29,7 +29,7 @@ namespace Abdm.Calculation.G4
         }
 
         /// <summary>
-        /// генерация 
+        /// генерация данных для кэша
         /// </summary>
         public MeshData GetMeshData(DMesh3 mesh, double[] Wheels)
         {
@@ -57,56 +57,67 @@ namespace Abdm.Calculation.G4
                 }
             }   
             result.DistinctXs = disntctXs.ToArray();
+            result.DistinctYs = veticles.Select(v => v.y).Order().Distinct().ToArray(); 
 
             return result;
         }
 
+        /// <summary>
+        /// Обновляет и возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
+        /// </summary>
+        public IEnumerable<Vector3d> MakeProfileYZ(Mesh mesh, double X)
+        {
+            var planeYZMesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
+                    [   
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1d, mesh.Tree.Bounds.Min.z - 1d),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1d, mesh.Tree.Bounds.Min.z - 1d),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1d, mesh.Tree.Bounds.Max.z + 1d),
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1d, mesh.Tree.Bounds.Max.z + 1d)
+                    ],
+                    [
+                        new Index3i(1, 2, 4),
+                        new Index3i(3, 2, 4)
+                    ],
+                    []
+                );
+            var planeYZ = new DMeshAABBTree3(planeYZMesh, true);
 
+            var intersection = mesh.Tree.FindAllIntersections( planeYZ );
+
+            return intersection.Points.Select(x => x.point);
+        }
 
 
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
+        /// Пересечение с плоскостью YZ - это равносильно пересечению с пучком лучей
+        /// Плоскость это (Xconst, ?, ?)
+        /// Лучи это (Xconst, Y[] - пучок с различными Yами, Z: -беск < ? < +беск)
         /// </summary>
-        /// <param name="mesh"></param>
-        /// <param name="X"></param>
-        public void MakeProfileYZ(Mesh mesh, double X)
+        public IEnumerable<Vector3d> MakeProfileYZ_VIP(Mesh mesh, double X)
         {
-            var c = 0;
-            var minY = 0f;
             var rays = new List<Ray3d>();
-            foreach (var vi in mesh.Tree.Mesh.Vertices())
+            var minZ = mesh.Data.MinZ;
+            var minMinZ = minZ - 1d;
+            foreach (var y in mesh.Data.DistinctYs)
             {
-                //mesh.Mesh.VerticesBuffer.
-                //if (c == 1)
-                //{
-                //    if (minY > vi)
-                //        minY = vi;
-
-
-                //        rays.Add(new Ray3d());
-                //}
-                c++;
-                if (c == 3)
-                    c = 0;
+                var origin = new Vector3d(X, y, minMinZ);
+                var direction = new Vector3d(X, y, minZ);
+                rays.Add(new Ray3d(origin, direction));
             }
 
-            var planeNormal = new Vector3d(1, 0, 0); 
-            var planePoint = new Vector3d(X, 0, 0); 
-            var plane = new Plane3d(planeNormal, planePoint);
-
-            
-
-            //plane
-            //new DMeshAABBTree3();
-            //var intersections = mesh.FindAllIntersections();
-
-            //intersections.Segments
-
-            //var planeMesh = new DMeshAABBTree3(plane);
-            //MeshQueries.TrianglesIntersection(mesh, plane)
-            //Ray3d ray = new Ray3d(origin, direction);
-            // if (hit_tid != DMesh3.InvalidID) {
+            foreach (var ray in rays)
+            {
+                int hit_tid = mesh.Tree.FindNearestHitTriangle(ray);
+                if (hit_tid != DMesh3.InvalidID)
+                {
+                    IntrRay3Triangle3 intr = MeshQueries.TriangleIntersection(mesh.Tree.Mesh, hit_tid, ray);
+                    yield return intr.TriangleBaryCoords;
+                }
+            }
         }
+
+        
 
         /// <summary>
         /// Получить коллекциу полигонов, подразумевая, что массив точек сгруппирован по 3, то есть точки 1,2,3 - это первый полигон, 4,5,6 - второй и т.д.

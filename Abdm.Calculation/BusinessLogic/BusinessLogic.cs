@@ -12,7 +12,7 @@ namespace Abdm.Calculation.NewFolder
 
 
         /// <summary>
-        /// Обновляе
+        /// J,
         /// </summary>
         /// <param name="passageIntervals">Должно быть хотя бы одно значение</param>
         public void UpdateDistinctXsWithWheels(
@@ -49,9 +49,23 @@ namespace Abdm.Calculation.NewFolder
             meshData.DistinctXsWithWheels = result.Order().Distinct().ToArray();
         }
 
+        //ais7PcCalculateColonna
+        //LSxema посчитана - приходит с питона
+        //Sxema - её нет, но по идее её можно добавить в код, и по айдишнику получать
+        //Double[] sList = PassConditionOperation1 не нужен
+        //xList - по поинтам, которые приходят из питона
+        //По каждому иксу считаются колонны
+        //алгоритм написан выше
 
+        //Считаем колонну по иксу
+        //Профили можно
 
+        public void GetTotalSxemaLength()
+        {
+
+        }
 
         
+
     }
 }
