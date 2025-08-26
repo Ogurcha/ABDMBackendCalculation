@@ -69,16 +69,13 @@ namespace Abdm.Calculation.G4
         {
             var planeYZMesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                     [   
-                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1d, mesh.Tree.Bounds.Min.z - 1d),
-                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1d, mesh.Tree.Bounds.Min.z - 1d),
-                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1d, mesh.Tree.Bounds.Max.z + 1d),
-                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1d, mesh.Tree.Bounds.Max.z + 1d)
+                        new Vector3d(X, double.MinValue, double.MinValue),
+                        new Vector3d(X, double.MaxValue, double.MinValue),
+                        new Vector3d(X, double.MinValue, double.MaxValue)
                     ],
                     [
-                        new Index3i(1, 2, 4),
-                        new Index3i(3, 2, 4)
-                    ],
-                    []
+                        new Index3i(1, 2, 3)
+                    ], []
                 );
             var planeYZ = new DMeshAABBTree3(planeYZMesh, true);
 
