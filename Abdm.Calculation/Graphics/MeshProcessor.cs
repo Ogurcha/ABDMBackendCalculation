@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Abdm.Calculation.Graphics;
 using g4;
+using gs;
 
 namespace Abdm.Calculation.G4
 {
@@ -63,7 +64,7 @@ namespace Abdm.Calculation.G4
         }
 
         /// <summary>
-        /// Обновляет и возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
+        /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
         /// </summary>
         public IEnumerable<Vector3d> MakeProfileYZ(Mesh mesh, double X)
         {
@@ -81,9 +82,8 @@ namespace Abdm.Calculation.G4
 
             var intersection = mesh.Tree.FindAllIntersections( planeYZ );
 
-            return intersection.Points.Select(x => x.point);
+            return intersection.Points.Select(p => p.point).OrderBy(p => p.y);
         }
-
 
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
@@ -113,8 +113,6 @@ namespace Abdm.Calculation.G4
                 }
             }
         }
-
-        
 
         /// <summary>
         /// Получить коллекциу полигонов, подразумевая, что массив точек сгруппирован по 3, то есть точки 1,2,3 - это первый полигон, 4,5,6 - второй и т.д.

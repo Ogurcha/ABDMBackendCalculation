@@ -4,6 +4,7 @@ using System.Linq;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Models;
 using Abdm.Calculation.PassTypeCalculation.DTO;
+using g4;
 
 namespace Abdm.Calculation.NewFolder
 {
@@ -12,7 +13,7 @@ namespace Abdm.Calculation.NewFolder
 
 
         /// <summary>
-        /// J,
+        /// 
         /// </summary>
         /// <param name="passageIntervals">Должно быть хотя бы одно значение</param>
         public void UpdateDistinctXsWithWheels(
@@ -58,14 +59,61 @@ namespace Abdm.Calculation.NewFolder
         //алгоритм написан выше
 
         //Считаем колонну по иксу
-        //Профили можно
+        //Почистали профили по иксу
+        //Во входящих параметрах есть MainInterval 0 - 13.7
+        //ищутся углы в начале и в конце профиля AngleAtYMin/AngleAtYMax
+        //но это пока что пропустим
 
-        public void GetTotalSxemaLength()
+        /// <summary>
+        /// Нахождение экстремумов по оси Z вдоль оси Y.
+        /// Возвращает Y-координаты экстремумов
+        /// </summary>
+        public List<double> GetExtremeByZ(Vector3d[] vectors)
         {
+            var result = new List<double>();
+            if (vectors.Length < 3) return result;
 
+            var plateStart = Double.NaN;
+            double previousDZ = vectors[1].z - vectors[0].z;
+
+            for (int i = 1; i < vectors.Length - 1; i++) { 
+                double dZ = vectors[i + 1].z - vectors[i].z;
+                if (previousDZ > 0 && dZ <= 0)
+                {
+                    if (dZ == 0)
+                        plateStart = vectors[i].y;
+                    else
+                        result.Add(vectors[i].y);
+                }
+                
+                if (previousDZ == 0 && dZ < 0 && !Double.IsNaN(plateStart))
+                {
+                    result.Add(vectors[i].y + plateStart / 2);
+                    plateStart = Double.NaN;
+                }
+                previousDZ = dZ;
+            }
+            return result;
         }
 
-        
+
+        /// <summary>
+        /// возвращает результат сглаживания по гауссу
+        /// </summary>
+        /// <param name="profileVectors"></param>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public Vector3d[] GetGaussianPoints(Vector2d[] profileVectors, )
+        {
+            private double x;
+
+            public Extreme(double x)
+            {
+                this.x = x;
+            }
+        }
+
+
 
     }
 }

@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="Kafka.Integration.MessageBroker" Version="1.0.1" />
-    <PackageReference Include="geometry3Sharp" Version="1.0.324" />
     <PackageReference Include="geometry4Sharp" Version="1.0.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
