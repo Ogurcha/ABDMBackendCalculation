@@ -1,0 +1,42 @@
+﻿using System.ComponentModel;
+
+namespace Abdm.Calculation.BusinessLogic
+{
+    public static class RoadRulesStatic
+    {
+        [Description("I. \"Общего назначения\" и \"АК\" без заезда на полосу безопасности")]
+        public static RoadRules RR1 => new RoadRules()
+        {
+            IsPedestrianAllowed = true,
+            IsDynamicMovement = true,
+            HasSafetyLine = true,
+            MaxColumnCount = int.MaxValue,
+            MaxAutoInColumn = 1,
+            MinColumnDistance = 3,
+        };
+
+        [Description("II. \"Общего назначения\" и \"АК\" с заездом на полосу безопасности")]
+        public static RoadRules RR2 => new RoadRules()
+        {
+            IsPedestrianAllowed = false,
+            IsDynamicMovement = true,
+            HasSafetyLine = false,
+            MaxColumnCount = 2,
+            MaxAutoInColumn = 1,
+            MinColumnDistance = 3,
+        };
+
+        [Description("II(1). Вариант – не более 2-х грузовиков в колонне")]
+        public static RoadRules RR2_1 => new RoadRules()
+        {
+            IsPedestrianAllowed = false,
+            IsDynamicMovement = true,
+            HasSafetyLine = false,
+            MaxColumnCount = 2,
+            MaxAutoInColumn = 2,
+            MinColumnDistance = 3,
+        };
+
+
+    }
+}

@@ -28,10 +28,6 @@ namespace Abdm.Calculation.DAL
 
             foreach (var row in await query.ToListAsync())
             {
-                row.SafeInterval = [
-                    row.SafetyLineLeft > 0.25 ? row.SafetyLineLeft : 0.25 + row.SafetyLineLeft,
-                    row.SafetyLineRight > 0.25 ? row.TotalWidth - row.SafetyLineRight : row.TotalWidth - row.SafetyLineRight - 0.25
-                ];
                 result.Add(row);
             }
             return result.ToArray();
