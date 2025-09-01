@@ -9,9 +9,9 @@ namespace Abdm.Calculation.IntervalCalculation
 
         double[] GetDistinctXsWithWheels(
             double[] distinctXs, 
-            PassageInterval[] passageIntervals, 
+            PassageInterval passageInterval, 
             Axle[] axles, 
-            double ladingPassageWidth
+            double carWidth
             );
     }
 }

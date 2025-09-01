@@ -29,45 +29,36 @@ namespace Abdm.Calculation.IntervalCalculation
         /// <summary>
         /// Добирает координаты для проверок с учётом размера тележек
         /// </summary>
-        /// <param name="passageIntervals">Должно быть хотя бы одно значение</param>
+        /// <param name="distinctXs">Массив точек по оси Х для всей поверхности ИССО</param>
+        /// <param name="passageInterval">Интервал проезда по оси Х, по которому должно проехать ТС</param>
+        /// <param name="axles">Информация о Тележках транспортного средства</param>
+        /// <param name="carWidth">Общие габариты ТС</param>
+        /// <returns>Массив точек по оси Х внутри данного интервала, и с учётом заездов и с учётом размера колёс</returns>
         public double[] GetDistinctXsWithWheels(
             double[] distinctXs,
-            PassageInterval[] passageIntervals,
+            PassageInterval passageInterval,
             Axle[] axles,
-            double ladingPassageWidth)
+            double carWidth)
         {
             var result = new List<double>();
 
             var differentWheelsWidths = axles.SelectMany(axle => axle.Wheels)
                 .Distinct().Select(a => a / 2).ToArray();
 
-            double minVal = double.NaN;
-            double maxVal = double.NaN;
-            foreach (var passageInterval in passageIntervals)
-            {
-                var low = passageInterval.SafeInterval[0] + ladingPassageWidth / 2;
-                var high = passageInterval.SafeInterval[1] - ladingPassageWidth / 2;
-                result.Add(low);
-                result.Add(high);
-                if (!(minVal < low))
-                {
-                    minVal = low;
-                }
+            var low = passageInterval.SafeInterval[0] + carWidth / 2;
+            var high = passageInterval.SafeInterval[1] - carWidth / 2;
+            result.Add(low);
+            result.Add(high);
 
-                if (!(maxVal > high))
-                {
-                    maxVal = high;
-                }
-            }
             foreach (var x in distinctXs)
             {
-                if (minVal < x && x < maxVal)
+                if (low < x && x < high)
                 {
                     result.Add(x);
                 }
 
-                result.AddRange(differentWheelsWidths.Select(w => x + w).Where(x => minVal < x && x < maxVal));
-                result.AddRange(differentWheelsWidths.Select(w => x - w).Where(x => minVal < x && x < maxVal));
+                result.AddRange(differentWheelsWidths.Select(w => x + w).Where(x => low < x && x < high));
+                result.AddRange(differentWheelsWidths.Select(w => x - w).Where(x => low < x && x < high));
             }
 
             return result.Order().Distinct().ToArray();

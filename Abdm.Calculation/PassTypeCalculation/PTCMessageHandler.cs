@@ -36,7 +36,9 @@ namespace Abdm.Calculation.ColumnCalculation
                     {
                         await messageProducer.Produce(responseContent.GetBrokerId, responseContent);
                     }
-                    catch { };
+                    catch {
+                        logger.LogError(e, $"Message producer failed to send message");
+                    }
                 }
             }
         }

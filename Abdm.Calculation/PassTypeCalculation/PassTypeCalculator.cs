@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abdm.Calculation.G4;
+using Abdm.Calculation.Graphics;
 using Abdm.Calculation.IntervalCalculation;
 using Abdm.Calculation.Models;
 using Abdm.Calculation.PassTypeCalculation.DTO;
@@ -25,17 +26,31 @@ namespace Abdm.Calculation.ColumnCalculation
             }
 
             var roadRules = roadRulesManager.RefreshRoadRules(data.IssoId, data.LadingSchema.Id);
+
             var mesh = meshProcessor.GetMeshFromPoints(data.Surface.SurfacePoints);
 
             foreach (var interval in intervals)
             {
-                var colonna = new Colonna(interval);
+                var column = new Column(interval);
 
+                column.Xs = passageIntervalManager.GetDistinctXsWithWheels(
+                mesh.Data.DistinctXs,
+                interval,
+                data.LadingSchema.Axles,
+                data.LadingSchema.Width
+                );
 
+                for (var i = 0; i < column.Xs.Length; i++)
+                {
+                    var X = column.Xs[i];
+
+                    var profileYZ = meshProcessor.MakeProfileYZ(mesh, X);
+
+                    var smoothPoints = SmoothPointsFactory.BuildByZ(profileYZ.ToArray());
+
+                    column.Points[i] = smoothPoints;
+                }
             }
-
-
-
             return await Task.FromResult<PTCResultMessage>(new PTCResultMessage());
         }
 

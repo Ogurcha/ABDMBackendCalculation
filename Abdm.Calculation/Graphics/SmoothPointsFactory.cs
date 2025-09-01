@@ -21,7 +21,10 @@ namespace Abdm.Calculation.Graphics
             var gradLeft = new List<double>();
             var gradRight = new List<double>();
 
-            if (vectors.Length < 3) return result;
+            if (vectors.Length < 3)
+            {
+                return result;
+            }
 
             var plateStart = Double.NaN;
             double previousDZ = vectors[1].z - vectors[0].z;
@@ -34,7 +37,9 @@ namespace Abdm.Calculation.Graphics
                 if (previousDZ > 0 && dZ <= 0)
                 {
                     if (dZ == 0)
+                    {
                         plateStart = v1.y;
+                    }
                     else
                     {
                         var extreme = new Vector3d(
@@ -101,9 +106,14 @@ namespace Abdm.Calculation.Graphics
             {
                 var p = points.Points[i];
                 if (p.y == pointY)
+                {
                     return p.z;
+                }
+
                 if (p.y > pointY && i > 0)
+                {
                     return points.Points[i - 1].z;
+                }
             }
 
             return points.Points.Last().z;
