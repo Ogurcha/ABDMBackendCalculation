@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Threading;
 using Abdm.Calculation.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Abdm.Calculation.BusinessLogic
 {
     /// <summary>
     /// Менеджер, который хранит в себе инфу по ИССО.
     /// </summary>
-    public class RoadRulesManager : IRoadRulesManager
+    public class RoadRulesManager : IRoadRulesManager 
     {
-        public static TimeSpan DATA_LIFESPAN = TimeSpan.FromMinutes(1);
+        public static TimeSpan DATA_LIFESPAN;
 
-        public RoadRules RefreshRoadRules(long issoId, NagruzkaTypeEnum nagruzkaType)
+        public RoadRulesManager(RoadRulesSettings settings)
+        {
+            DATA_LIFESPAN = TimeSpan.FromMinutes(settings.DataLifeSpanMinutes);
+        }
+
+        public RoadRules RefreshRoadRules(long issoId, NagruzkaEnum nagruzkaType)
         {
             if (IssoId != issoId ||
                 NagruzkaType != nagruzkaType ||
@@ -26,7 +32,7 @@ namespace Abdm.Calculation.BusinessLogic
                     HasSecondaryRule = false;
                     switch (nagruzkaGroupType)
                     {
-                        case NagruzkaGroupTypeEnum.Common when nagruzkaType == NagruzkaTypeEnum.EN3:
+                        case NagruzkaGroupTypeEnum.Common when nagruzkaType == NagruzkaEnum.EN3:
                             value = RoadRulesStatic.RR1_1;
                             valueSecondary = RoadRulesStatic.RR2_1;
                             HasSecondaryRule = true;
@@ -64,7 +70,7 @@ namespace Abdm.Calculation.BusinessLogic
 
         public DateTime DateTimeUpdated { get; private set; }
 
-        public NagruzkaTypeEnum NagruzkaType { get; private set; }
+        public NagruzkaEnum NagruzkaType { get; private set; }
 
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
@@ -94,31 +100,31 @@ namespace Abdm.Calculation.BusinessLogic
             }
         }
 
-        public static NagruzkaGroupTypeEnum GetNagruzkaGroupType(NagruzkaTypeEnum nagruzkaType)
+        public static NagruzkaGroupTypeEnum GetNagruzkaGroupType(NagruzkaEnum nagruzkaType)
         {
             switch (nagruzkaType)
             {
-                case NagruzkaTypeEnum.A8:
-                case NagruzkaTypeEnum.A11:
-                case NagruzkaTypeEnum.A14:
+                case NagruzkaEnum.A8:
+                case NagruzkaEnum.A11:
+                case NagruzkaEnum.A14:
                     return NagruzkaGroupTypeEnum.AClass;
-                case NagruzkaTypeEnum.N11:
-                case NagruzkaTypeEnum.N14:
+                case NagruzkaEnum.N11:
+                case NagruzkaEnum.N14:
                     return NagruzkaGroupTypeEnum.NClass;
-                case NagruzkaTypeEnum.AB51:
-                case NagruzkaTypeEnum.AB74:
-                case NagruzkaTypeEnum.AB151:
+                case NagruzkaEnum.AB51:
+                case NagruzkaEnum.AB74:
+                case NagruzkaEnum.AB151:
                     return NagruzkaGroupTypeEnum.AB;
-                case NagruzkaTypeEnum.NG60:
-                case NagruzkaTypeEnum.NG30:
-                case NagruzkaTypeEnum.T60:
-                case NagruzkaTypeEnum.T25:
+                case NagruzkaEnum.NG60:
+                case NagruzkaEnum.NG30:
+                case NagruzkaEnum.T60:
+                case NagruzkaEnum.T25:
                     return NagruzkaGroupTypeEnum.Track;
-                case NagruzkaTypeEnum.N_10:
-                case NagruzkaTypeEnum.N_13:
-                case NagruzkaTypeEnum.N_18:
-                case NagruzkaTypeEnum.N_30:
-                case NagruzkaTypeEnum.EN3:
+                case NagruzkaEnum.N_10:
+                case NagruzkaEnum.N_13:
+                case NagruzkaEnum.N_18:
+                case NagruzkaEnum.N_30:
+                case NagruzkaEnum.EN3:
                 default:
                     return NagruzkaGroupTypeEnum.Common;
             }

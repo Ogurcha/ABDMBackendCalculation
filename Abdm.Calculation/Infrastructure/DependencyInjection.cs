@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.ColumnCalculation;
+﻿using Abdm.Calculation.BusinessLogic;
+using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,9 @@ namespace Abdm.Calculation.Infrastructure
 
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
+            services.Configure<RoadRulesSettings>(configuration.GetSection("RoadRulesManager"));
+            services.AddSingleton<IRoadRulesManager, RoadRulesManager>();
+
         }
     }
 }

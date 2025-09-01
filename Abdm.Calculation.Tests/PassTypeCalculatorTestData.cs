@@ -17,7 +17,7 @@ namespace Abdm.Calculation.Tests
             NagruzkaSchema = new NagruzkaSchema
             {
                 Id = NagruzkaEnum.N11,
-                Type = NagruzkaGroupTypeEnum.,
+                Type = NagruzkaGroupTypeEnum.NClass,
                 TypeName = "Колесная одиночная",
                 NameShort = "Н11 (НК-80)",
                 Width = 3.5f,

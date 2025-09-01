@@ -6,8 +6,8 @@ namespace Abdm.Calculation.BusinessLogic
     {
         RoadRules RoadRule { get; }
         
-        RoadRules RefreshRoadRules(long issoId, NagruzkaTypeEnum nagruzkaType);
-
+        RoadRules RefreshRoadRules(long issoId, NagruzkaEnum nagruzkaType);
+        
         bool HasSecondaryRule { get; }
 
         RoadRules SecondaryRoadRule { get; }

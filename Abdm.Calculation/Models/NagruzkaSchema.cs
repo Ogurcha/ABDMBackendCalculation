@@ -13,7 +13,7 @@
         /// <summary>
         /// Тип нагрузки
         /// </summary>
-        public NagruzkaTypeEnum Type { get; set; }
+        public NagruzkaGroupTypeEnum Type { get; set; }
 
         /// <summary>
         /// Название типа нагрузки

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Abdm.Calculation.BusinessLogic;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.G4;
 using Abdm.Calculation.Models;
@@ -10,7 +11,8 @@ namespace Abdm.Calculation.ColumnCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalRepository passageIntervalRepository,
-        IMeshProcessor meshProcessor
+        IMeshProcessor meshProcessor,
+        IRoadRulesManager roadRulesManager
         ) : IPassTypeCalculator
     {
         
@@ -20,6 +22,7 @@ namespace Abdm.Calculation.ColumnCalculation
             if (intervals?.Any() != true)
                 throw new Exception("Passage intervals for this isso have not been found");
 
+            var roadRules = roadRulesManager.RefreshRoadRules(data.IssoId, data.NagruzkaSchema.Id);
             var mesh = meshProcessor.GetMeshFromPoints(data.Surface.SurfacePoints);
 
             foreach (var interval in intervals)
