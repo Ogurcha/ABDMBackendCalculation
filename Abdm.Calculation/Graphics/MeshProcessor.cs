@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using Abdm.Calculation.Graphics;
 using g4;
-using gs;
 
 namespace Abdm.Calculation.G4
 {
@@ -17,7 +16,9 @@ namespace Abdm.Calculation.G4
         {
             ArgumentNullException.ThrowIfNull(points);
             if (points.Length % 3 != 0)
+            {
                 throw new Exception("input points are not valid");
+            }
 
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                 points.Select(p => new Vector3d(p.X, p.Y, p.Z)), GetTriangles123(points: points));
@@ -97,10 +98,25 @@ namespace Abdm.Calculation.G4
             double distinctXsChecker = result.MinX - 1;
             foreach (var v in veticles)
             {
-                if (result.MinY > v.y) result.MinY = v.y;
-                if (result.MinZ > v.z) result.MinZ = v.z;
-                if (result.MaxY < v.y) result.MaxY = v.y;
-                if (result.MaxZ < v.z) result.MaxZ = v.z;
+                if (result.MinY > v.y)
+                {
+                    result.MinY = v.y;
+                }
+
+                if (result.MinZ > v.z)
+                {
+                    result.MinZ = v.z;
+                }
+
+                if (result.MaxY < v.y)
+                {
+                    result.MaxY = v.y;
+                }
+
+                if (result.MaxZ < v.z)
+                {
+                    result.MaxZ = v.z;
+                }
 
                 if (distinctXsChecker != v.x)
                 {

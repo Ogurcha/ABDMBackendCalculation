@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Abdm.Calculation.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Abdm.Calculation.Models;
 
 namespace Abdm.Calculation.DAL
 {
@@ -20,7 +20,7 @@ namespace Abdm.Calculation.DAL
             var paramTableName = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
             var paramId = new SqlParameter("@nPs", SqlDbType.Int) { Value = 1 };
 
-            FormattableString sqlQuery = $@"selec b_gab, b_lp, b_pb
+            FormattableString sqlQuery = $@"select b_gab, b_lp, b_pb
                               from i_mp_proezd 
                               where i_mp_proezd.c_isso={paramTableName.ParameterName} and i_mp_proezd.n_ps={paramId.ParameterName} order by i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
 

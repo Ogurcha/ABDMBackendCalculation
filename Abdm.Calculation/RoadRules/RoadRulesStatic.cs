@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Abdm.Calculation.BusinessLogic
+namespace Abdm.Calculation.RoadRules
 {
     public static class RoadRulesStatic
     {

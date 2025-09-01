@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.BusinessLogic
+﻿namespace Abdm.Calculation.RoadRules
 {
     /// <summary>
     /// Параметры использования ИССО. Чем серьезнее условия, тем тяжелее ИССО будет пройти проверку.
@@ -26,7 +26,8 @@
         public int MaxAutoInColumn { get; set; }
 
         /// <summary>
-        /// Максимальное количество колонн.
+        /// Максимальное количество колонн по нормам.
+        /// Оверрайдится, если иссо физически вмещает меньше колонн
         /// </summary>
         public int MaxColumnCount { get; set; }
 

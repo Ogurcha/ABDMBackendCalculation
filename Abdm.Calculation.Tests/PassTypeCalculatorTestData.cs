@@ -11,13 +11,13 @@ namespace Abdm.Calculation.Tests
         {
             IssoId = 38000331,
             CPNumber = 7,
-            NagruzkaId = 40,
+            LadingId = 40,
             Snip = SnipEnum.sn62,
             Direction = DriveDirection.Bidirection,
-            NagruzkaSchema = new NagruzkaSchema
+            LadingSchema = new LadingSchema
             {
-                Id = NagruzkaEnum.N11,
-                Type = NagruzkaGroupTypeEnum.NClass,
+                Id = LadingEnum.N11,
+                Type = LadingGroupTypeEnum.NClass,
                 TypeName = "Колесная одиночная",
                 NameShort = "Н11 (НК-80)",
                 Width = 3.5f,
@@ -5969,7 +5969,7 @@ namespace Abdm.Calculation.Tests
             Snip = SnipEnum.sn62,
             PassType = PassTypeEnum.Denied,
             Allowed = 0,
-            Intervals = null,
+            Intervals = [],
             Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
         };
     }

@@ -10,21 +10,21 @@
         /// <summary>
         /// Максимальное возвышение профиля моста
         /// </summary>
-        public float RoadHeight { get; set; }
+        public double RoadHeight { get; set; }
 
         /// <summary>
         /// Отступ слева
         /// </summary>
-        public float LeftSafeline { get; set; }
+        public double LeftSafeline { get; set; }
 
         /// <summary>
         /// Отступ справа
         /// </summary>
-        public float RightSafeline { get; set; }
+        public double RightSafeline { get; set; }
 
         /// <summary>
         /// Сдвиг позиции по X координате. Если точки начинаются не в нуле по иксу, то сдвиг нужен для компенсации
         /// </summary>
-        public float PositionShift { get; set; }
+        public double PositionShift { get; set; }
     }
 }

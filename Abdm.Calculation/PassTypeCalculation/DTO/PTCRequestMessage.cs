@@ -22,7 +22,7 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long NagruzkaId { get; set; }
+        public long LadingId { get; set; }
 
 		/// <summary>
 		/// номер выбранного снипа, по которому пойдут расчет
@@ -37,10 +37,10 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
 		/// <summary>
 		/// Подробные характеристики нагрузки на данное сооружение
 		/// </summary>
-		public NagruzkaSchema NagruzkaSchema { get; set; }
+		public LadingSchema LadingSchema { get; set; }
 
         /// <summary>
-        /// Характеристики поверхности сооружения
+        /// Характеристики "поверхности влияния" иссо
         /// </summary>
 		public Surface Surface { get; set; }
 

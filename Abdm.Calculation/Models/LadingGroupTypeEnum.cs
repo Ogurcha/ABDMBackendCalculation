@@ -2,7 +2,10 @@
 
 namespace Abdm.Calculation.Models
 {
-    public enum NagruzkaGroupTypeEnum
+    /// <summary>
+    /// Класс типа нагрузки
+    /// </summary>
+    public enum LadingGroupTypeEnum
     {
         [Description("Колесная общего назначения")]
         Common = 10,

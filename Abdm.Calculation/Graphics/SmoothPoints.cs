@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using g4;
+﻿using g4;
 
 namespace Abdm.Calculation.Graphics
 {

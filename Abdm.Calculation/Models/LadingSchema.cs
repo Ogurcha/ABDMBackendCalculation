@@ -3,17 +3,17 @@
     /// <summary>
     /// Подробные характеристики нагрузки на сооружение
     /// </summary>
-    public class NagruzkaSchema
+    public class LadingSchema
     {
         /// <summary>
         /// идентификатор нагрузки
         /// </summary>
-        public NagruzkaEnum Id { get; set; }
+        public LadingEnum Id { get; set; }
 
         /// <summary>
         /// Тип нагрузки
         /// </summary>
-        public NagruzkaGroupTypeEnum Type { get; set; }
+        public LadingGroupTypeEnum Type { get; set; }
 
         /// <summary>
         /// Название типа нагрузки

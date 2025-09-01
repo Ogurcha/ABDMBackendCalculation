@@ -43,7 +43,7 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
         /// <summary>
         /// Интервалы между нагрузками.
         /// </summary>
-        public float[] Intervals { get; set; }
+        public double[] Intervals { get; set; }
 
         /// <summary>
         /// Нагрузка тележек. не обязательна

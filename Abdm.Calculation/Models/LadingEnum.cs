@@ -2,7 +2,10 @@
 
 namespace Abdm.Calculation.Models
 {
-    public enum NagruzkaEnum
+    /// <summary>
+    /// Тип нагрузки
+    /// </summary>
+    public enum LadingEnum
     {
         [Description("Пользовательская")]
         User = 0,

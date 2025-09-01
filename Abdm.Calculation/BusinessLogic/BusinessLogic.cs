@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Abdm.Calculation.Graphics;
-using Abdm.Calculation.Models;
+﻿using Abdm.Calculation.Graphics;
 using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.NewFolder
 {
     public class BusinessLogic
     {
-        
-
         /// <summary>
         /// Рассчет напряжения на профиле с учётом тележек
         /// </summary>
@@ -21,7 +15,7 @@ namespace Abdm.Calculation.NewFolder
             var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
             var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;
            
-            foreach (var axle in message.NagruzkaSchema.Axles)
+            foreach (var axle in message.LadingSchema.Axles)
             {
                 var wheelWeight = axle.Weight / axle.Wheels.Length;
                 var ay = Y + axle.AbsY;
