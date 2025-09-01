@@ -34,6 +34,5 @@
         /// Минимальное расстояние между колоннами.
         /// </summary>
         public double MinColumnDistance { get; set; }
-
     }
 }

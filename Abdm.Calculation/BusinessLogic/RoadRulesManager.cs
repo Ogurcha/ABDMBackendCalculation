@@ -1,53 +1,49 @@
 ﻿using System;
 using System.Threading;
 using Abdm.Calculation.Models;
-using Newtonsoft.Json.Linq;
 
 namespace Abdm.Calculation.BusinessLogic
 {
     /// <summary>
     /// Менеджер, который хранит в себе инфу по ИССО.
     /// </summary>
-    public class RoadRulesManager
+    public class RoadRulesManager : IRoadRulesManager
     {
         public static TimeSpan DATA_LIFESPAN = TimeSpan.FromMinutes(1);
 
-        
-
         public RoadRules RefreshRoadRules(long issoId, NagruzkaTypeEnum nagruzkaType)
         {
-            if (IssoId != issoId || 
+            if (IssoId != issoId ||
                 NagruzkaType != nagruzkaType ||
                 DateTime.Now - DateTimeUpdated < DATA_LIFESPAN)
             {
                 _lock.EnterWriteLock();
-                try { 
+                try
+                {
                     var nagruzkaGroupType = GetNagruzkaGroupType(nagruzkaType);
                     RoadRules value = new RoadRules();
                     switch (nagruzkaGroupType)
                     {
+                        case NagruzkaGroupTypeEnum.Common when nagruzkaType == NagruzkaTypeEnum.EN3:
+                            value = RoadRulesStatic.RR1_1;
+                            break;
                         case NagruzkaGroupTypeEnum.Common:
-
+                            value = RoadRulesStatic.RR1;
                             break;
                         case NagruzkaGroupTypeEnum.AClass:
+                            value = RoadRulesStatic.RR2;
                             break;
-
-
                         case NagruzkaGroupTypeEnum.Single:
-                            break;
                         case NagruzkaGroupTypeEnum.NClass:
-                            break;
-                        
                         case NagruzkaGroupTypeEnum.Track:
+                            value = RoadRulesStatic.RR3;
                             break;
-
                         case NagruzkaGroupTypeEnum.AB:
+                            value = RoadRulesStatic.RR4;
                             break;
                         default:
                             break;
                     }
-
-
 
                     roadRules = value;
                     IssoId = issoId;
@@ -75,7 +71,7 @@ namespace Abdm.Calculation.BusinessLogic
                 _lock.EnterReadLock();
                 try { return roadRules; }
                 finally { _lock.ExitReadLock(); }
-            }            
+            }
         }
 
         public static NagruzkaGroupTypeEnum GetNagruzkaGroupType(NagruzkaTypeEnum nagruzkaType)
