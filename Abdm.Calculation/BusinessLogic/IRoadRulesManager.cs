@@ -4,8 +4,12 @@ namespace Abdm.Calculation.BusinessLogic
 {
     public interface IRoadRulesManager
     {
-        RoadRules RoadRules { get; }
-
+        RoadRules RoadRule { get; }
+        
         RoadRules RefreshRoadRules(long issoId, NagruzkaTypeEnum nagruzkaType);
+
+        bool HasSecondaryRule { get; }
+
+        RoadRules SecondaryRoadRule { get; }
     }
 }

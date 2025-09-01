@@ -22,16 +22,20 @@ namespace Abdm.Calculation.BusinessLogic
                 {
                     var nagruzkaGroupType = GetNagruzkaGroupType(nagruzkaType);
                     RoadRules value = new RoadRules();
+                    RoadRules valueSecondary = new RoadRules();
+                    HasSecondaryRule = false;
                     switch (nagruzkaGroupType)
                     {
                         case NagruzkaGroupTypeEnum.Common when nagruzkaType == NagruzkaTypeEnum.EN3:
                             value = RoadRulesStatic.RR1_1;
-                            break;
-                        case NagruzkaGroupTypeEnum.Common:
-                            value = RoadRulesStatic.RR1;
+                            valueSecondary = RoadRulesStatic.RR2_1;
+                            HasSecondaryRule = true;
                             break;
                         case NagruzkaGroupTypeEnum.AClass:
-                            value = RoadRulesStatic.RR2;
+                        case NagruzkaGroupTypeEnum.Common:
+                            value = RoadRulesStatic.RR1;
+                            valueSecondary = RoadRulesStatic.RR2;
+                            HasSecondaryRule = true;
                             break;
                         case NagruzkaGroupTypeEnum.Single:
                         case NagruzkaGroupTypeEnum.NClass:
@@ -45,14 +49,15 @@ namespace Abdm.Calculation.BusinessLogic
                             break;
                     }
 
-                    roadRules = value;
+                    roadRule = value;
+                    secondaryRoadRule = valueSecondary;
                     IssoId = issoId;
                     NagruzkaType = nagruzkaType;
                     DateTimeUpdated = DateTime.Now;
                 }
                 finally { _lock.ExitWriteLock(); }
             }
-            return RoadRules;
+            return RoadRule;
         }
 
         public long IssoId { get; private set; }
@@ -62,14 +67,29 @@ namespace Abdm.Calculation.BusinessLogic
         public NagruzkaTypeEnum NagruzkaType { get; private set; }
 
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
-        private RoadRules roadRules;
 
-        public RoadRules RoadRules
+        private RoadRules roadRule;
+
+        public RoadRules RoadRule
         {
             get
             {
                 _lock.EnterReadLock();
-                try { return roadRules; }
+                try { return roadRule; }
+                finally { _lock.ExitReadLock(); }
+            }
+        }
+
+        public bool HasSecondaryRule { get; private set; }
+
+        private RoadRules secondaryRoadRule;
+
+        public RoadRules SecondaryRoadRule
+        {
+            get
+            {
+                _lock.EnterReadLock();
+                try { return secondaryRoadRule; }
                 finally { _lock.ExitReadLock(); }
             }
         }
