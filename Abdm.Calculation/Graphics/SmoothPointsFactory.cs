@@ -14,7 +14,7 @@ namespace Abdm.Calculation.Graphics
         /// </summary>
         /// <param name="vectors">Отсортированный список векторов по Y</param>
         /// <returns></returns>
-        public static SmoothPoints BuildByZ(Vector3d[] vectors)
+        public static SmoothPoints Create(Vector3d[] vectors)
         {
             var result = new SmoothPoints();
             var extremeList = new List<Vector3d>();

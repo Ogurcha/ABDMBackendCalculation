@@ -36,5 +36,11 @@ namespace Abdm.Calculation.Models
         /// </summary>
         public double[] Strain { get; set; }
 
+        /// <summary>
+        /// Максимальное напряжение по каждой траектории движения, если проезжает по 1 авто
+        /// Необходимо для случая проверки <see cref="PassTypeEnum.SingleOnly"/>
+        /// </summary>
+        public double[] StrainOneAuto { get; set; }
+
     }
 }

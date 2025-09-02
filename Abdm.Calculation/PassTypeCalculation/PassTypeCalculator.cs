@@ -7,13 +7,15 @@ using Abdm.Calculation.IntervalCalculation;
 using Abdm.Calculation.Models;
 using Abdm.Calculation.PassTypeCalculation.DTO;
 using Abdm.Calculation.RoadRules;
+using Abdm.Calculation.StrainCalculation;
 
 namespace Abdm.Calculation.ColumnCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalManager passageIntervalManager,
         IMeshProcessor meshProcessor,
-        IRoadRulesManager roadRulesManager
+        IRoadRulesManager roadRulesManager,
+        IStrainManager strainManager
         ) : IPassTypeCalculator
     {
         
@@ -46,13 +48,32 @@ namespace Abdm.Calculation.ColumnCalculation
 
                     var profileYZ = meshProcessor.MakeProfileYZ(mesh, X);
 
-                    var smoothPoints = SmoothPointsFactory.BuildByZ(profileYZ.ToArray());
-
+                    var smoothPoints = SmoothPointsFactory.Create(profileYZ.ToArray());
                     column.Points[i] = smoothPoints;
+
+                    var strainList = mesh.Data.DistinctYs
+                        .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
+                        .OrderDescending().ToList();
+
+                    //TODO: Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
+                    for (int j = 0; j < roadRules.MaxAutoInColumn; i++)
+                    {
+                        if (j == 0)
+                        {
+                            column.StrainOneAuto[i] += strainList.First();
+                        }
+
+                        column.Strain[i] += strainList.First();
+                        strainList.RemoveAt(0);
+                    }
                 }
             }
+
+            
+
             return await Task.FromResult<PTCResultMessage>(new PTCResultMessage());
         }
+
 
 
     }

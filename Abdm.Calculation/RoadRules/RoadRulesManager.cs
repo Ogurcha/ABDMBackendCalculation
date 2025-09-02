@@ -9,11 +9,11 @@ namespace Abdm.Calculation.RoadRules
     /// </summary>
     public class RoadRulesManager : IRoadRulesManager 
     {
-        public static TimeSpan DATA_LIFESPAN;
+        public static TimeSpan dataLifespan;
 
         public RoadRulesManager(DataLifeSpanSettings settings)
         {
-            DATA_LIFESPAN = TimeSpan.FromMinutes(settings.DataLifeSpanMinutes);
+            dataLifespan = TimeSpan.FromMinutes(settings.DataLifeSpanMinutes);
         }
 
         public RoadRules RefreshRoadRules(long issoId, LadingEnum ladingId)
@@ -80,7 +80,7 @@ namespace Abdm.Calculation.RoadRules
             {
                 return IssoId != issoId ||
                     LadingType != ladingId ||
-                    DateTime.Now - DateTimeUpdated < DATA_LIFESPAN;
+                    DateTime.Now - DateTimeUpdated < dataLifespan;
             }
         }
 

@@ -1,9 +1,9 @@
 ﻿using Abdm.Calculation.Graphics;
 using Abdm.Calculation.PassTypeCalculation.DTO;
 
-namespace Abdm.Calculation.NewFolder
+namespace Abdm.Calculation.StrainCalculation
 {
-    public class BusinessLogic
+    public class StrainManager : IStrainManager
     {
         /// <summary>
         /// Рассчет напряжения на профиле с учётом тележек
@@ -14,7 +14,7 @@ namespace Abdm.Calculation.NewFolder
             var result = 0d;
             var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
             var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;
-           
+
             foreach (var axle in message.LadingSchema.Axles)
             {
                 var wheelWeight = axle.Weight / axle.Wheels.Length;
@@ -31,7 +31,5 @@ namespace Abdm.Calculation.NewFolder
 
             return result;
         }
-
-        
     }
 }
