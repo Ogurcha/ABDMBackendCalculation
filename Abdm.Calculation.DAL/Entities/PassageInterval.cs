@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.Models
+﻿namespace Abdm.Calculation.DAL.Entities
 {
     public class PassageInterval
     {
@@ -8,6 +8,6 @@
 
         public double SafetyLineRight { get; set; }
 
-        public double[] SafeInterval { get; set; }
+        public double[]? SafeInterval { get; set; }
     }
 }

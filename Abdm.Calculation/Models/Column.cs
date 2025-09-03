@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.Graphics;
+﻿using Abdm.Calculation.DAL.Entities;
+using Abdm.Calculation.Graphics;
 
 namespace Abdm.Calculation.Models
 {

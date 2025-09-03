@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.Graphics;
+﻿using Abdm.Calculation.Extensions;
+using Abdm.Calculation.Graphics;
 using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.StrainCalculation

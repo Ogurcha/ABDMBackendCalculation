@@ -18,4 +18,8 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj" />
+  </ItemGroup>
+
 </Project>

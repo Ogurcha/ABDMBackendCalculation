@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Abdm.Calculation.Models;
+﻿using Abdm.Calculation.DAL.Entities;
 
 namespace Abdm.Calculation.DAL
 {

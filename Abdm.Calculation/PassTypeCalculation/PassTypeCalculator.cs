@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.G4;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.IntervalCalculation;

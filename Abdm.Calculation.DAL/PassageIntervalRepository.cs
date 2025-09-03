@@ -1,8 +1,6 @@
 ﻿using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Infrastructure.Settings;
-using Abdm.Calculation.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
 

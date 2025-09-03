@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abdm.Calculation\Abdm.Calculation.csproj" />
+    <ProjectReference Include="..\Abdm.Calculation\Abdm.Calculation.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abdm.Calculation.DAL;
+using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Models;
 
 namespace Abdm.Calculation.IntervalCalculation

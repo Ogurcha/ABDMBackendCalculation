@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Threading.Tasks;
 using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.G4;
@@ -40,6 +39,6 @@ public class PassTypeCalculatorTests
 
         var result = await processor.CalculatePassType(testMessage);
 
-        Assert.That(result.PassType == expectedOutput.PassType);
+        Assert.That(result.PassType, Is.EqualTo(expectedOutput.PassType));
     }
 }
