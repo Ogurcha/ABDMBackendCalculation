@@ -8,10 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Kafka.Integration.MessageBroker" Version="1.0.1" />
-    <PackageReference Include="geometry4Sharp" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="NLog" Version="6.0.3" />
     <PackageReference Include="NLog.Extensions.Logging" Version="6.0.3" />
@@ -19,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Abdm.Calculation.BLL\Abdm.Calculation.BLL.csproj" />
     <ProjectReference Include="..\Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj" />
+    <ProjectReference Include="..\Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj" />
   </ItemGroup>
 
 </Project>

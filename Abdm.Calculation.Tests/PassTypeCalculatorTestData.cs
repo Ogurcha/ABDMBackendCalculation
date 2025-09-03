@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL.Entities;
-using Abdm.Calculation.Models;
-using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.Tests
 {

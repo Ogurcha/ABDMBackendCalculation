@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.IntervalCalculation;
+using Abdm.Calculation.BLL.RoadRules;
+using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.ColumnCalculation;
-using Abdm.Calculation.G4;
-using Abdm.Calculation.Infrastructure.Settings;
-using Abdm.Calculation.IntervalCalculation;
-using Abdm.Calculation.RoadRules;
-using Abdm.Calculation.StrainCalculation;
+using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Tests;
 using Moq;
 using NUnit.Framework;
@@ -32,7 +31,7 @@ public class PassTypeCalculatorTests
 
         var processor = new PassTypeCalculator(
             _passageIntervalManagerMock.Object, 
-            new MeshProcessor(),
+            new MeshManager(),
             roadRulesManager,
             strainManager
             );

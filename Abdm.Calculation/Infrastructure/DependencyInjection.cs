@@ -1,9 +1,9 @@
-﻿using Abdm.Calculation.ColumnCalculation;
+﻿using Abdm.Calculation.BLL.IntervalCalculation;
+using Abdm.Calculation.BLL.RoadRules;
+using Abdm.Calculation.BLL.StrainCalculation;
+using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Infrastructure.Settings;
-using Abdm.Calculation.IntervalCalculation;
-using Abdm.Calculation.RoadRules;
-using Abdm.Calculation.StrainCalculation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

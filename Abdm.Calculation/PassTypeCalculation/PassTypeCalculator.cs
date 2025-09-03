@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.IntervalCalculation;
+using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.RoadRules;
+using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL.Entities;
-using Abdm.Calculation.G4;
 using Abdm.Calculation.Graphics;
-using Abdm.Calculation.IntervalCalculation;
-using Abdm.Calculation.Models;
-using Abdm.Calculation.PassTypeCalculation.DTO;
-using Abdm.Calculation.RoadRules;
-using Abdm.Calculation.StrainCalculation;
 
 namespace Abdm.Calculation.ColumnCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalManager passageIntervalManager,
-        IMeshProcessor meshProcessor,
+        IMeshManager meshManager,
         IRoadRulesManager roadRulesManager,
         IStrainManager strainManager
         ) : IPassTypeCalculator
@@ -35,7 +33,11 @@ namespace Abdm.Calculation.ColumnCalculation
 
             var roadRules = roadRulesManager.RefreshRoadRules(data.IssoId, data.LadingSchema.Id);
 
-            var mesh = meshProcessor.GetMeshFromPoints(data.Surface.SurfacePoints);
+            var mesh = meshManager.GetMeshFromPoints(data.Surface.SurfacePoints);
+            if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
+            {
+                throw new Exception("Mesh construction failed");
+            }
 
             var columnList = new List<Column>();
             foreach (var interval in intervals)
@@ -49,12 +51,15 @@ namespace Abdm.Calculation.ColumnCalculation
                 data.LadingSchema.Axles,
                 data.LadingSchema.Width
                 );
-
+                column.Points = new Graphics.Entities.SmoothPoints[column.Xs.Length];
+                column.Strain = new double[column.Xs.Length];
+                column.StrainOneAuto = new double[column.Xs.Length];
+                
                 for (var i = 0; i < column.Xs.Length; i++)
                 {
                     var X = column.Xs[i];
 
-                    var profileYZ = meshProcessor.MakeProfileYZ(mesh, X);
+                    var profileYZ = meshManager.MakeProfileYZ(mesh, X);
 
                     var smoothPoints = SmoothPointsFactory.Create(profileYZ.ToArray());
                     column.Points[i] = smoothPoints;
@@ -84,7 +89,7 @@ namespace Abdm.Calculation.ColumnCalculation
             return response;
         }
 
-        private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules.RoadRules roadRules, List<Column> columnList)
+        private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules roadRules, List<Column> columnList)
         { 
             columnList = columnList.OrderByDescending(c => c.Strain).ToList();
             if (CheckNoLimitCondition(columnList, data.Surface, roadRules))
@@ -110,42 +115,42 @@ namespace Abdm.Calculation.ColumnCalculation
         private bool CheckNoLimitCondition(
             List<Column> columnList, 
             Surface surface, 
-            RoadRules.RoadRules roadRules)
+            RoadRules roadRules)
         {
             var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
 
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain.Max());
+            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
 
             dynamicLoad *= DynamicCoefficient;
 
             return surface.MyStrength > surface.СonstLoad + surface.PedestrianLoad + surface.OtherLoad + dynamicLoad;
         }
 
-        private bool CheckWithoutPedestianCondition(List<Column> columnList, Surface surface, RoadRules.RoadRules roadRules)
+        private bool CheckWithoutPedestianCondition(List<Column> columnList, Surface surface, RoadRules roadRules)
         {
             var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
 
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain.Max());
+            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
 
             dynamicLoad *= DynamicCoefficient;
 
             return surface.MyStrength > surface.СonstLoad + surface.OtherLoad + dynamicLoad;
         }
 
-        private bool CheckMaxSpeed10Condition(List<Column> columnList, Surface surface, RoadRules.RoadRules roadRules)
+        private bool CheckMaxSpeed10Condition(List<Column> columnList, Surface surface, RoadRules roadRules)
         {
             var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
 
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain.Max());
+            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
 
             return surface.MyStrength > surface.СonstLoad + surface.OtherLoad + dynamicLoad;
         }
 
-        private bool CheckSingleAutoOnlyCondition(List<Column> columnList, Surface surface, RoadRules.RoadRules roadRules)
+        private bool CheckSingleAutoOnlyCondition(List<Column> columnList, Surface surface, RoadRules roadRules)
         {
             var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
 
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.StrainOneAuto.Max());
+            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.StrainOneAuto?.Max());
 
             return surface.MyStrength > surface.СonstLoad + surface.OtherLoad + dynamicLoad;
         }
@@ -168,7 +173,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 Allowed = allowed,
                 CPNumber = data.CPNumber,
                 Direction = data.Direction,
-                Intervals = intervals.SelectMany(i => i.SafeInterval).ToArray(),
+                Intervals = intervals.SelectMany(i => i?.SafeInterval ?? []).ToArray(),
                 IssoId = data.IssoId,
                 PassType = resultPassType,
                 LadingId = data.LadingId

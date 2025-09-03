@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Abdm.Calculation.PassTypeCalculation.DTO;
+using Abdm.Calculation.BLL.Models;
 using Kafka.Integration.MessageBroker.Consumer;
 using Kafka.Integration.MessageBroker.Producer;
 using Microsoft.Extensions.Logging;

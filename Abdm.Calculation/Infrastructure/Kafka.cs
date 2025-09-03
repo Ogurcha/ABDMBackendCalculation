@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.ColumnCalculation;
 using Kafka.Integration.MessageBroker.Consumer.Extensions;
 using Kafka.Integration.MessageBroker.Producer.Extensions;
 using Kafka.Integration.MessageBroker.Serialization.Extensions;
-using Abdm.Calculation.Models;
-using Abdm.Calculation.ColumnCalculation;
-using Abdm.Calculation.PassTypeCalculation.DTO;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abdm.Calculation.Infrastructure
 {

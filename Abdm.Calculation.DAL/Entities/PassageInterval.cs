@@ -8,6 +8,6 @@
 
         public double SafetyLineRight { get; set; }
 
-        public double[]? SafeInterval { get; set; }
+        public double[] SafeInterval { get; set; } = new double[2];
     }
 }
