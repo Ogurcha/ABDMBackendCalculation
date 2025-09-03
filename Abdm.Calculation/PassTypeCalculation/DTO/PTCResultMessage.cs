@@ -18,7 +18,7 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long NagrzkaId { get; set; }
+        public long LadingId { get; set; }
 
         /// <summary>
         /// Направление физичесrого воздействия
@@ -38,7 +38,7 @@ namespace Abdm.Calculation.PassTypeCalculation.DTO
         /// <summary>
 		/// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
 		/// </summary>
-		public AllowedEnum Allowed { get; set; }
+		public AllowedEnum? Allowed { get; set; }
 
         /// <summary>
         /// Интервалы между нагрузками.

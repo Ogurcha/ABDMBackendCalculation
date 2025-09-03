@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Abdm.Calculation.Graphics;
+﻿using Abdm.Calculation.Graphics;
 
 namespace Abdm.Calculation.Models
 {
@@ -38,7 +37,7 @@ namespace Abdm.Calculation.Models
 
         /// <summary>
         /// Максимальное напряжение по каждой траектории движения, если проезжает по 1 авто
-        /// Необходимо для случая проверки <see cref="PassTypeEnum.SingleOnly"/>
+        /// Необходимо для случая проверки <see cref="PassTypeEnum.SingleAutoOnly"/>
         /// </summary>
         public double[] StrainOneAuto { get; set; }
 

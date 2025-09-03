@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.Numerics;
-using Abdm.Calculation.Models;
+﻿using Abdm.Calculation.Models;
 
 namespace Abdm.Calculation.PassTypeCalculation.DTO
 {

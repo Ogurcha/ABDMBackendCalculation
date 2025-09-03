@@ -12,11 +12,11 @@ namespace Abdm.Calculation.Models
         [Description("Пропуск возможен без ограничений")]
         NoLimit,
         [Description("Пропуск возможен при отсутствии пешеходов на тротуарах")]
-        WoPedestian,
+        WithoutPedestian,
         [Description("Пропуск возможен с ограничением скорости до 10км/ч")]
-        Speed10,
+        MaxSpeed10,
         [Description("Пропуск возможен в одиночном порядке с ограничением скорости до 10км/ч")]
-        SingleOnly,
+        SingleAutoOnly,
         [Description("Пропуск возможен в одиночном порядке, с ограничением скорости до 10км/ч и положения")]
         SingleOnlyAndPlace,
         [Description("Пропуск невозможен")]

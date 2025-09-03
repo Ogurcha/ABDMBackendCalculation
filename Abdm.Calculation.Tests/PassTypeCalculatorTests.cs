@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Abdm.Calculation.ColumnCalculation;
-using Abdm.Calculation.DAL;
 using Abdm.Calculation.G4;
 using Abdm.Calculation.IntervalCalculation;
 using Abdm.Calculation.RoadRules;
+using Abdm.Calculation.StrainCalculation;
 using Abdm.Calculation.Tests;
 using Moq;
 using NUnit.Framework;
@@ -24,11 +24,13 @@ public class PassTypeCalculatorTests
         var expectedOutput = PassTypeCalculatorTestData.TestResultMessage;
         var repo = new Mock<IPassageIntervalManager>();
         var roadRulesManager = new Mock<IRoadRulesManager>();
+        var strainManager = new Mock<IStrainManager>();
 
         var processor = new PassTypeCalculator(
             repo.Object, 
             new MeshProcessor(),
-            roadRulesManager.Object
+            roadRulesManager.Object,
+            strainManager.Object
             );
         var result = await processor.CalculatePassType(testMessage);
 

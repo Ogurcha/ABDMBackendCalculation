@@ -5964,7 +5964,7 @@ namespace Abdm.Calculation.Tests
         {
             IssoId = 38000331,
             CPNumber = 7,
-            NagrzkaId = 40,
+            LadingId = 40,
             Direction = DriveDirection.Bidirection,
             Snip = SnipEnum.sn62,
             PassType = PassTypeEnum.Denied,
