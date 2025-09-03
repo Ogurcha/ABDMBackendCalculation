@@ -1,9 +1,9 @@
 ﻿using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
+using Abdm.Calculation.Infrastructure.Settings;
 using Abdm.Calculation.IntervalCalculation;
-using Abdm.Calculation.StrainCalculation;
 using Abdm.Calculation.RoadRules;
-using Microsoft.EntityFrameworkCore;
+using Abdm.Calculation.StrainCalculation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,20 +12,20 @@ namespace Abdm.Calculation.Infrastructure
 {
     public static class DependencyInjection
     {
+        public static void AddSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
+            services.Configure<DataLifeSpanSettings>(configuration.GetSection("DataLifeSpanSettings"));
+        }
+
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<MainDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("MainConnection")));
-
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
-            services.Configure<DataLifeSpanSettings>(configuration.GetSection("DataLifeSpanSettings"));
-
+            
             services.AddSingleton<IStrainManager, StrainManager>();
             services.AddSingleton<IRoadRulesManager, RoadRulesManager>();
             services.AddSingleton<IPassageIntervalManager, PassageIntervalManager>();
-
-
         }
     }
 }

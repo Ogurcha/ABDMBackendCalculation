@@ -1,4 +1,4 @@
-using Abdm.Calculation.Infrastructure;
+﻿using Abdm.Calculation.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,6 +23,7 @@ namespace Abdm.Reports.Calculation
                 cfg.AddNLog();
             });
 
+            builder.Services.AddSettings(builder.Configuration);
             builder.Services.AddServices(builder.Configuration);
             builder.Services.AddKafka(builder.Configuration);
 

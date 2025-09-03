@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.RoadRules
+﻿namespace Abdm.Calculation.Infrastructure.Settings
 {
     public class DataLifeSpanSettings
     {

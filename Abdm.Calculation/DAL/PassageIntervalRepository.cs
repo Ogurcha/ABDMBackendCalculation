@@ -1,36 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using Abdm.Calculation.Infrastructure.Settings;
 using Abdm.Calculation.Models;
+using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace Abdm.Calculation.DAL
 {
-    public class PassageIntervalRepository(MainDbContext dbContext) : IPassageIntervalRepository
+    public class PassageIntervalRepository(ConnectionStrings connectionStrings) : IPassageIntervalRepository
     {
-
-        /// <summary>
-        /// Возвращает данные для расщета интервалов для данного иссо
-        /// </summary>
         public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
         {
-            var result = new List<PassageInterval>();
-            var paramTableName = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
-            var paramId = new SqlParameter("@nPs", SqlDbType.Int) { Value = 1 };
-
-            FormattableString sqlQuery = $@"select b_gab, b_lp, b_pb
-                              from i_mp_proezd 
-                              where i_mp_proezd.c_isso={paramTableName.ParameterName} and i_mp_proezd.n_ps={paramId.ParameterName} order by i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
-
-            var query = dbContext.Database.SqlQuery<PassageInterval>(sqlQuery);
-
-            foreach (var row in await query.ToListAsync())
+            using (var connection = new SqlConnection(connectionStrings.MainConnection))
             {
-                result.Add(row);
+                var paramTableName = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
+                var paramId = new SqlParameter("@nPs", SqlDbType.Int) { Value = 1 };
+
+                const string sqlQuery = @"
+                SELECT b_gab, b_lp, b_pb
+                FROM i_mp_proezd 
+                WHERE i_mp_proezd.c_isso = @issoId 
+                AND i_mp_proezd.n_ps = @nPs
+                ORDER BY i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
+
+                var query = await connection.QueryAsync<PassageInterval>(
+                    sqlQuery,
+                    new DynamicParameters[]
+                    {
+                        new DynamicParameters(paramTableName),
+                        new DynamicParameters(paramId)
+                    },
+                    commandType: CommandType.Text);
+
+                return query.ToArray();
             }
-            return result.ToArray();
         }
     }
 }

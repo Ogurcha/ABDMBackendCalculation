@@ -1,7 +1,8 @@
-﻿using Abdm.Calculation.Models;
-using Abdm.Calculation.PassTypeCalculation.DTO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
+using Abdm.Calculation.Models;
+using Abdm.Calculation.PassTypeCalculation.DTO;
 
 namespace Abdm.Calculation.Tests
 {
@@ -5972,5 +5973,12 @@ namespace Abdm.Calculation.Tests
             Intervals = [],
             Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
         };
+
+        public static Task<PassageInterval[]> ResultFromPIManager => Task.FromResult<PassageInterval[]>([new PassageInterval {
+            SafeInterval = [0.4d, 7.4d],
+            SafetyLineLeft = 0.15d,
+            SafetyLineRight = 0.15d,
+            TotalWidth = 7.8d
+        }]);
     }
 }
