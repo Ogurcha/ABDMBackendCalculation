@@ -7,80 +7,7 @@ namespace Abdm.Calculation.BLL.RoadRules
     /// </summary>
     public class RoadRulesManager : IRoadRulesManager 
     {
-        public static TimeSpan dataLifespan;
-
-        public RoadRulesManager(DataLifeSpanSettings settings)
-        {
-            dataLifespan = TimeSpan.FromMinutes(settings.DataLifeSpanMinutes);
-        }
-
-        public RoadRules RefreshRoadRules(long issoId, LadingEnum ladingId)
-        {
-            if (getRefrshCondition(issoId, ladingId))
-            {
-                _lock.EnterWriteLock();
-                try
-                {
-                    if (!getRefrshCondition(issoId, ladingId))
-                    {
-                        return RoadRule;
-                    }
-
-                    var ladingGroupType = GetLadingGroupType(ladingId);
-                    RoadRules value = new RoadRules();
-                    RoadRules valueSecondary = new RoadRules();
-                    HasSecondaryRule = false;
-                    switch (ladingGroupType)
-                    {
-                        case LadingGroupTypeEnum.Common when ladingId == LadingEnum.EN3:
-                            value = RoadRulesStatic.RR1_1;
-                            valueSecondary = RoadRulesStatic.RR2_1;
-                            HasSecondaryRule = true;
-                            break;
-                        case LadingGroupTypeEnum.AClass:
-                        case LadingGroupTypeEnum.Common:
-                            value = RoadRulesStatic.RR1;
-                            valueSecondary = RoadRulesStatic.RR2;
-                            HasSecondaryRule = true;
-                            break;
-                        case LadingGroupTypeEnum.Single:
-                        case LadingGroupTypeEnum.NClass:
-                        case LadingGroupTypeEnum.Track:
-                            value = RoadRulesStatic.RR3;
-                            break;
-                        case LadingGroupTypeEnum.AB:
-                            value = RoadRulesStatic.RR4;
-                            break;
-                        default:
-                            break;
-                    }
-
-
-                    secondaryRoadRule = valueSecondary;
-                    if (HasSecondaryRule)
-                    {
-                        roadRule = Merge(value, valueSecondary);
-                    }
-                    else
-                    {
-                        roadRule = value;
-                    }
-
-                    IssoId = issoId;
-                    LadingType = ladingId;
-                    DateTimeUpdated = DateTime.Now;
-                }
-                finally { _lock.ExitWriteLock(); }
-            }
-            return RoadRule;
-
-            bool getRefrshCondition(long issoId, LadingEnum ladingId)
-            {
-                return IssoId != issoId ||
-                    LadingType != ladingId ||
-                    DateTime.Now - DateTimeUpdated < dataLifespan;
-            }
-        }
+        public readonly TimeSpan dataLifespan;
 
         public long IssoId { get; private set; }
 
@@ -102,17 +29,76 @@ namespace Abdm.Calculation.BLL.RoadRules
             }
         }
 
-        public bool HasSecondaryRule { get; private set; }
-
-        private RoadRules secondaryRoadRule;
-
-        public RoadRules SecondaryRoadRule
+        public RoadRulesManager(DataLifeSpanSettings settings)
         {
-            get
+            dataLifespan = TimeSpan.FromMinutes(settings.DataLifeSpanMinutes);
+        }
+
+        public RoadRules RefreshRoadRules(long issoId, LadingEnum ladingId)
+        {
+            if (getRefrshCondition(issoId, ladingId))
             {
-                _lock.EnterReadLock();
-                try { return secondaryRoadRule; }
-                finally { _lock.ExitReadLock(); }
+                _lock.EnterWriteLock();
+                try
+                {
+                    if (!getRefrshCondition(issoId, ladingId))
+                    {
+                        return RoadRule;
+                    }
+
+                    var ladingGroupType = GetLadingGroupType(ladingId);
+                    RoadRules value = new RoadRules();
+                    RoadRules valueSecondary = new RoadRules();
+                    var hasSecondaryRule = false;
+                    switch (ladingGroupType)
+                    {
+                        case LadingGroupTypeEnum.Common when ladingId == LadingEnum.EN3:
+                            value = RoadRulesStatic.RR1_1;
+                            valueSecondary = RoadRulesStatic.RR2_1;
+                            hasSecondaryRule = true;
+                            break;
+                        case LadingGroupTypeEnum.AClass:
+                        case LadingGroupTypeEnum.Common:
+                            value = RoadRulesStatic.RR1;
+                            valueSecondary = RoadRulesStatic.RR2;
+                            hasSecondaryRule = true;
+                            break;
+                        case LadingGroupTypeEnum.Single:
+                        case LadingGroupTypeEnum.NClass:
+                        case LadingGroupTypeEnum.Track:
+                            value = RoadRulesStatic.RR3;
+                            break;
+                        case LadingGroupTypeEnum.AB:
+                            value = RoadRulesStatic.RR4;
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    var secondaryRoadRule = valueSecondary;
+                    if (hasSecondaryRule)
+                    {
+                        roadRule = Merge(value, valueSecondary);
+                    }
+                    else
+                    {
+                        roadRule = value;
+                    }
+
+                    IssoId = issoId;
+                    LadingType = ladingId;
+                    DateTimeUpdated = DateTime.Now;
+                }
+                finally { _lock.ExitWriteLock(); }
+            }
+            return RoadRule;
+
+            bool getRefrshCondition(long issoId, LadingEnum ladingId)
+            {
+                return IssoId != issoId ||
+                    LadingType != ladingId ||
+                    DateTime.Now - DateTimeUpdated < dataLifespan;
             }
         }
 

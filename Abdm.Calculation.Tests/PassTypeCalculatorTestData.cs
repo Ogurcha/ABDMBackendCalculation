@@ -30,7 +30,7 @@ namespace Abdm.Calculation.Tests
                                 Wx = 0.8f,
                                 Wy = 0.2f,
                                 Weight = 20.0f,
-                                AbsY = 0.4f,
+                                AbsolutY = 0.4f,
                                 Wheels = [ //wheels_Distance_list
                                     2.7f
                                 ]
@@ -40,7 +40,7 @@ namespace Abdm.Calculation.Tests
                                 Wx = 0.8f,
                                 Wy = 0.2f,
                                 Weight = 20.0f,
-                                AbsY = 1.6f,
+                                AbsolutY = 1.6f,
                                 Wheels = [
                                     2.7f
                                 ]
@@ -50,7 +50,7 @@ namespace Abdm.Calculation.Tests
                                 Wx = 0.8f,
                                 Wy = 0.2f,
                                 Weight = 20.0f,
-                                AbsY = 2.8f,
+                                AbsolutY = 2.8f,
                                 Wheels = [
                                     2.7f
                                 ]
@@ -60,7 +60,7 @@ namespace Abdm.Calculation.Tests
                                 Wx = 0.8f,
                                 Wy = 0.2f,
                                 Weight = 20.0f,
-                                AbsY = 4.0f,
+                                AbsolutY = 4.0f,
                                 Wheels = [
                                     2.7f
                                 ]

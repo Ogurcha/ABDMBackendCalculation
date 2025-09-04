@@ -18,17 +18,20 @@ namespace Abdm.Calculation.ColumnCalculation
         IStrainManager strainManager
         ) : IPassTypeCalculator
     {
+        private const string meshErrorMessage = "Mesh construction failed";
+        private const string passageIntervalErrormessage = "Passage intervals for this isso have not been found";
+
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
         /// </summary>
-        private static double DynamicCoefficient = 1.3d;
+        private const double DynamicCoefficient = 1.3d;
 
         public async Task<PTCResultMessage> CalculatePassType(PTCRequestMessage data)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId);
             if (intervals?.Any() != true)
             {
-                throw new Exception("Passage intervals for this isso have not been found");
+                throw new Exception(passageIntervalErrormessage);
             }
 
             var roadRules = roadRulesManager.RefreshRoadRules(data.IssoId, data.LadingSchema.Id);
@@ -36,7 +39,7 @@ namespace Abdm.Calculation.ColumnCalculation
             var mesh = meshManager.GetMeshFromPoints(data.Surface.SurfacePoints);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
-                throw new Exception("Mesh construction failed");
+                throw new Exception(meshErrorMessage);
             }
 
             var columnList = new List<Column>();
@@ -61,7 +64,7 @@ namespace Abdm.Calculation.ColumnCalculation
 
                     var profileYZ = meshManager.MakeProfileYZ(mesh, X);
 
-                    var smoothPoints = SmoothPointsFactory.Create(profileYZ.ToArray());
+                    var smoothPoints = meshManager.CreateSmoothPoints(profileYZ.ToArray());
                     column.Points[i] = smoothPoints;
 
                     var strainList = mesh.Data.DistinctYs

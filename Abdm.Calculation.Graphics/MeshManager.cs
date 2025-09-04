@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Abdm.Calculation.Graphics.Entities;
 using g4;
+using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 
 namespace Abdm.Calculation.Graphics
 {
@@ -43,6 +44,58 @@ namespace Abdm.Calculation.Graphics
             var intersection = mesh.Tree.FindAllIntersections(planeYZ);
 
             return intersection.Points.Select(p => p.point).OrderBy(p => p.y);
+        }
+
+        /// <summary>
+        /// Возвращает результат сглаживания по гауссу
+        /// Нахождение экстремумов по оси Z вдоль оси Y.
+        /// точки в пространстве, где находится экстремум
+        /// </summary>
+        /// <param name="vectors">Отсортированный список векторов по Y</param>
+        /// <returns></returns>
+        public SmoothPoints CreateSmoothPoints(Vector3d[] vectors)
+        {
+            var extremeList = new List<Vector3d>();
+
+            var plateStart = Double.NaN;
+            double previousDeltaZ = vectors[1].z - vectors[0].z;
+
+            for (int i = 1; i < vectors.Length - 1; i++)
+            {
+                var v1 = vectors[i];
+                var v2 = vectors[i + 1];
+                double deltaZ = v2.z - v1.z;
+                if (previousDeltaZ > 0 && deltaZ <= 0)
+                {
+                    if (deltaZ == 0)
+                    {
+                        plateStart = v1.y;
+                    }
+                    else
+                    {
+                        var extreme = new Vector3d(
+                            v1.x,
+                            v1.y,
+                            GetOrdinat(v1.yz, v2.yz, v1.y));
+
+                        extremeList.Add(extreme);
+                    }
+                }
+
+                if (previousDeltaZ == 0 && deltaZ < 0 && !Double.IsNaN(plateStart))
+                {
+                    var extreme = new Vector3d(
+                            v1.x,
+                            v1.y + plateStart / 2,
+                            GetOrdinat(v1.yz, v2.yz, v1.y + plateStart / 2));
+
+                    extremeList.Add(extreme);
+
+                    plateStart = Double.NaN;
+                }
+                previousDeltaZ = deltaZ;
+            }
+            return new SmoothPoints() { Points = extremeList.ToArray() };
         }
 
 #pragma warning disable

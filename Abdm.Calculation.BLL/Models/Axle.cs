@@ -1,7 +1,7 @@
 ﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
-    /// Информация о колёсах
+    /// Информация об осях
     /// </summary>
     public class Axle
     {
@@ -19,8 +19,11 @@
         /// <summary>
         /// Абсолютная длина проекции, с учетом текущего колеса и колёс позади
         /// </summary>
-        public double AbsY { get; set; }
+        public double AbsolutY { get; set; }
 
+        /// <summary>
+        /// Габариты колеса (их может быть несколько)
+        /// </summary>
         public double[]? Wheels { get; set; }
     }
 }

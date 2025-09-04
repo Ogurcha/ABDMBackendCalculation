@@ -19,12 +19,12 @@ namespace Abdm.Calculation.BLL.StrainCalculation
             foreach (var axle in message.LadingSchema.Axles)
             {
                 var wheelWeight = axle.Weight / axle.Wheels.Length;
-                var ay = Y + axle.AbsY;
-                if (ay >= surfaceMinY && ay <= surfaceMaxY)
+                var axleY = Y + axle.AbsolutY;
+                if (axleY >= surfaceMinY && axleY <= surfaceMaxY)
                 {
                     foreach (var wheel in axle.Wheels)
                     {
-                        var coeff = smoothpoints.GetZ(ay);
+                        var coeff = smoothpoints.GetZ(axleY);
                         result += wheelWeight * coeff;
                     }
                 }
