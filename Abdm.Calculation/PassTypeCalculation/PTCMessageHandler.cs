@@ -18,18 +18,21 @@ namespace Abdm.Calculation.ColumnCalculation
         IKafkaProducer<string, PTCResultMessage> messageProducer
         ) : IKafkaMessageHandler<string, PTCRequestMessage>
     {
+        private const string infoMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
+        private const string errorMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
+
         public async Task Handle(PTCRequestMessage message, MessageContext<string, PTCRequestMessage> context)
         {
             PTCResultMessage responseContent = null;
             try
             {
-                logger.LogInformation($"PassType calculation for (IssoId = {message.IssoId}, Check point number = {message.CPNumber}) started");
+                logger.LogInformation(string.Format(infoMsg, message.IssoId, message.CPNumber));
                 responseContent = await ptcProcessor.CalculatePassType(message);
                 await messageProducer.Produce(responseContent.GetBrokerId, responseContent);
             }
             catch (Exception e)
             {
-                logger.LogError(e, $"PassType calculation failed (IssoId = {message?.IssoId}, Check point number = {message?.CPNumber})");
+                logger.LogError(string.Format(errorMsg, message?.IssoId, message?.CPNumber));
                 if (responseContent != null && responseContent.IssoId > 0 && responseContent.CPNumber > 0)
                 {
                     try
