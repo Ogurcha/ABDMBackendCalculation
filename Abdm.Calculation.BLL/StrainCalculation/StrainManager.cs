@@ -12,25 +12,19 @@ namespace Abdm.Calculation.BLL.StrainCalculation
         /// <param name="X"></param>
         public double GetStrain(PTCRequestMessage message, SmoothPoints smoothpoints, double Y)
         {
-            var result = 0d;
             var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
             var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;
 
-            foreach (var axle in message.LadingSchema.Axles)
-            {
-                var wheelWeight = axle.Weight / axle.Wheels.Length;
-                var axleY = Y + axle.AbsolutY;
-                if (axleY >= surfaceMinY && axleY <= surfaceMaxY)
+            return message.LadingSchema.Axles
+                .Where(a => a.Wheels?.Length > 0)
+                .Sum(a =>
                 {
-                    foreach (var wheel in axle.Wheels)
-                    {
-                        var coeff = smoothpoints.GetZ(axleY);
-                        result += wheelWeight * coeff;
-                    }
-                }
-            }
-
-            return result;
+                    double axleY = Y + a.AbsolutY;
+                    double weight = a.Weight / a.Wheels.Length;
+                    return (axleY >= surfaceMinY && axleY <= surfaceMaxY)
+                        ? weight * smoothpoints.GetZ(axleY)
+                        : 0d;
+                });
         }
     }
 }
