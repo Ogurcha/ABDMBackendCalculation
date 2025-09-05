@@ -1,4 +1,6 @@
-﻿namespace Abdm.Calculation.BLL.Models
+﻿using Abdm.Calculation.BLL.Enums;
+
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Подробные характеристики нагрузки на сооружение

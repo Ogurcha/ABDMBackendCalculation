@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.BLL.RoadRules
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Параметры использования ИССО. Чем серьезнее условия, тем тяжелее ИССО будет пройти проверку.

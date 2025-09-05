@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.DAL.Entities;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics.Entities;
 
 namespace Abdm.Calculation.BLL.Models

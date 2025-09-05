@@ -1,7 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Graphics.Entities;
 
-namespace Abdm.Calculation.BLL.StrainCalculation
+namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainManager
     {

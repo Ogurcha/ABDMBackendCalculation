@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Abdm.Calculation.BLL.IntervalCalculation;
+using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.BLL.RoadRules;
-using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
+using Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions;
 
 namespace Abdm.Calculation.ColumnCalculation
 {
     public class PassTypeCalculator (
-        IPassageIntervalManager passageIntervalManager,
+        IPassageIntervalService passageIntervalManager,
         IMeshManager meshManager,
         IRoadRulesManager roadRulesManager,
         IStrainManager strainManager
@@ -24,7 +24,16 @@ namespace Abdm.Calculation.ColumnCalculation
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
         /// </summary>
-        private const double DynamicCoefficient = 1.3d;
+        public static double DynamicCoefficient = 1.3d;
+
+        public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
+            new List<(IPassTypeCondition condition, PassTypeEnum passType)>
+            {
+                (new NoLimitCondition(), PassTypeEnum.NoLimit),
+                (new WithoutPedestrianCondition(), PassTypeEnum.WithoutPedestian),
+                (new Speed10Condition(), PassTypeEnum.MaxSpeed10),
+                (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
+            };
 
         public async Task<PTCResultMessage> CalculatePassType(PTCRequestMessage data)
         {
@@ -48,7 +57,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 var column = new Column(interval);
                 columnList.Add(column);
 
-                column.Xs = passageIntervalManager.GetDistinctXsWithWheels(
+                column.Xs = passageIntervalManager.CalculateDistinctXPositionsIncludingWheelOffsets(
                 mesh.Data.DistinctXs,
                 interval,
                 data.LadingSchema.Axles,
@@ -95,67 +104,16 @@ namespace Abdm.Calculation.ColumnCalculation
         private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules roadRules, List<Column> columnList)
         { 
             columnList = columnList.OrderByDescending(c => c.Strain).ToList();
-            if (CheckNoLimitCondition(columnList, data.Surface, roadRules))
+
+            foreach (var c in PassTypeConditions)
             {
-                return PassTypeEnum.NoLimit;
-            }
-            if (CheckWithoutPedestianCondition(columnList, data.Surface, roadRules))
-            {
-                return PassTypeEnum.WithoutPedestian;
-            }
-            if (CheckMaxSpeed10Condition(columnList, data.Surface, roadRules))
-            {
-                return PassTypeEnum.MaxSpeed10;
-            }
-            if (CheckSingleAutoOnlyCondition(columnList, data.Surface, roadRules))
-            {
-                return PassTypeEnum.SingleAutoOnly;
+                if (c.condition.CanPassCondition(columnList, data.Surface, roadRules))
+                {
+                    return c.passType;
+                }
             }
 
             return PassTypeEnum.Denied;
-        }
-
-        private bool CheckNoLimitCondition(
-            List<Column> columnList, 
-            Surface surface, 
-            RoadRules roadRules)
-        {
-            var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
-
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
-
-            dynamicLoad *= DynamicCoefficient;
-
-            return surface.MyStrength > surface.СonstLoad + surface.PedestrianLoad + surface.OtherLoad + dynamicLoad;
-        }
-
-        private bool CheckWithoutPedestianCondition(List<Column> columnList, Surface surface, RoadRules roadRules)
-        {
-            var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
-
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
-
-            dynamicLoad *= DynamicCoefficient;
-
-            return surface.MyStrength > surface.СonstLoad + surface.OtherLoad + dynamicLoad;
-        }
-
-        private bool CheckMaxSpeed10Condition(List<Column> columnList, Surface surface, RoadRules roadRules)
-        {
-            var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
-
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
-
-            return surface.MyStrength > surface.СonstLoad + surface.OtherLoad + dynamicLoad;
-        }
-
-        private bool CheckSingleAutoOnlyCondition(List<Column> columnList, Surface surface, RoadRules roadRules)
-        {
-            var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
-
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.StrainOneAuto?.Max());
-
-            return surface.MyStrength > surface.СonstLoad + surface.OtherLoad + dynamicLoad;
         }
 
         private PTCResultMessage ComposeMessage(PassTypeEnum resultPassType, PTCRequestMessage data, PassageInterval[] intervals)

@@ -1,5 +1,7 @@
-﻿using Abdm.Calculation.BLL.IntervalCalculation;
-using Abdm.Calculation.BLL.RoadRules;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.RoadRulesManager;
+using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.BLL.Settings;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
@@ -15,7 +17,7 @@ namespace Abdm.Calculation.Infrastructure
         public static void AddSettings(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
-            services.Configure<DataLifeSpanSettings>(configuration.GetSection("DataLifeSpanSettings"));
+            services.Configure<DataLifeSpan>(configuration.GetSection("DataLifeSpan"));
         }
 
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
@@ -25,7 +27,7 @@ namespace Abdm.Calculation.Infrastructure
             
             services.AddSingleton<IStrainManager, StrainManager>();
             services.AddSingleton<IRoadRulesManager, RoadRulesManager>();
-            services.AddSingleton<IPassageIntervalManager, PassageIntervalManager>();
+            services.AddSingleton<IPassageIntervalService, PassageIntervalService>();
         }
     }
 }

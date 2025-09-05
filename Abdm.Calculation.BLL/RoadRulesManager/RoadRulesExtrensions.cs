@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
+using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.BLL.RoadRules
+namespace Abdm.Calculation.BLL.RoadRulesManager
 {
-    public static class RoadRulesStatic
+    public static class RoadRulesExtrensions
     {
         [Description("I. \"Общего назначения\" и \"АК\" без заезда на полосу безопасности")]
         public static RoadRules RR1 => new RoadRules()

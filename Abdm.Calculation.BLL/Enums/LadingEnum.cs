@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Abdm.Calculation.BLL.Models
+namespace Abdm.Calculation.BLL.Enums
 {
     /// <summary>
     /// Тип нагрузки

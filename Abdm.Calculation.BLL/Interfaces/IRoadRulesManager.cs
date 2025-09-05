@@ -1,6 +1,7 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.BLL.RoadRules
+namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IRoadRulesManager
     {

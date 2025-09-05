@@ -1,11 +1,14 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
 
-namespace Abdm.Calculation.BLL.IntervalCalculation
+namespace Abdm.Calculation.BLL.Services
 {
-    public class PassageIntervalManager(IPassageIntervalRepository passageIntervalRepository) : IPassageIntervalManager
+    public class PassageIntervalService(IPassageIntervalRepository passageIntervalRepository) : IPassageIntervalService
     {
+        private const double slExtraDistance = 0.25;
+
         /// <summary>
         /// Возвращает данные для расщета интервалов для данного иссо
         /// </summary>
@@ -16,8 +19,8 @@ namespace Abdm.Calculation.BLL.IntervalCalculation
             foreach (var passageInterval in passageIntervals)
             {
                 passageInterval.SafeInterval = [
-                    passageInterval.SafetyLineLeft > 0.25 ? passageInterval.SafetyLineLeft : 0.25 + passageInterval.SafetyLineLeft,
-                    passageInterval.SafetyLineRight > 0.25 ? passageInterval.TotalWidth - passageInterval.SafetyLineRight : passageInterval.TotalWidth - passageInterval.SafetyLineRight - 0.25
+                    passageInterval.SafetyLineLeft > slExtraDistance ? passageInterval.SafetyLineLeft : slExtraDistance + passageInterval.SafetyLineLeft,
+                    passageInterval.SafetyLineRight > slExtraDistance ? passageInterval.TotalWidth - passageInterval.SafetyLineRight : passageInterval.TotalWidth - passageInterval.SafetyLineRight - slExtraDistance
                 ];
             }
 
@@ -32,7 +35,7 @@ namespace Abdm.Calculation.BLL.IntervalCalculation
         /// <param name="axles">Информация о Тележках транспортного средства</param>
         /// <param name="carWidth">Общие габариты ТС</param>
         /// <returns>Массив точек по оси Х внутри данного интервала, и с учётом заездов и с учётом размера колёс</returns>
-        public double[] GetDistinctXsWithWheels(
+        public double[] CalculateDistinctXPositionsIncludingWheelOffsets(
             double[] distinctXs,
             PassageInterval passageInterval,
             Axle[] axles,

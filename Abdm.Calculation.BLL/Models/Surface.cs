@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Abdm.Calculation.BLL.Enums;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -55,7 +56,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Фиксированная нагрузка от собственного веса
         /// </summary>
-        public double СonstLoad { get; set; }
+        public double ConstLoad { get; set; }
 
         /// <summary>
         /// Нагрузка от пешеходов

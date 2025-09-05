@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL.Entities;
 
@@ -5946,7 +5947,7 @@ namespace Abdm.Calculation.Tests
                 MaxZ = 0.207596f,
                 CheckPointType = CheckPointEnum.PlateM,
                 MyStrength = 2.08f,
-                СonstLoad = 0.45f,
+                ConstLoad = 0.45f,
                 PedestrianLoad = 0.0f,
                 KStrength = 1.0f,
             },
