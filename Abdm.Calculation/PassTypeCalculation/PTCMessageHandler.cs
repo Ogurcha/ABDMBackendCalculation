@@ -46,7 +46,8 @@ namespace Abdm.Calculation.ColumnCalculation
                     {
                         await messageProducer.Produce(responseContent.GetBrokerId, mapper.ToDTO(responseContent));
                     }
-                    catch {
+                    catch 
+                    {
                         logger.LogError(e, producerErrorMsg);
                     }
                 }
