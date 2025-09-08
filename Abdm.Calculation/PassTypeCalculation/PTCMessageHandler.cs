@@ -19,7 +19,7 @@ namespace Abdm.Calculation.ColumnCalculation
         ) : IKafkaMessageHandler<string, PTCRequestMessage>
     {
         private const string infoMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
-        private const string errorMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
+        private const string errorMsg = "Failed PassType calculation for (IssoId = {1}, Check point number = {2})";
 
         public async Task Handle(PTCRequestMessage message, MessageContext<string, PTCRequestMessage> context)
         {
