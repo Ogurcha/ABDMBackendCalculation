@@ -26,7 +26,7 @@
     <ProjectReference Include="..\Abdm.Calculation.BLL\Abdm.Calculation.BLL.csproj" />
     <ProjectReference Include="..\Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj" />
     <ProjectReference Include="..\Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj" />
-    <ProjectReference Include="..\Abdm.Calculation\Abdm.Calculation.WebApi.csproj" />
+    <ProjectReference Include="..\Abdm.Calculation.WebApi\Abdm.Calculation.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

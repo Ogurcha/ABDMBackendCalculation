@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.WebApi", "Abdm.Calculation\Abdm.Calculation.WebApi.csproj", "{0393320B-E784-4103-B8CE-27DB715A1D4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.WebApi", "Abdm.Calculation.WebApi\Abdm.Calculation.WebApi.csproj", "{0393320B-E784-4103-B8CE-27DB715A1D4F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Tests", "Abdm.Calculation.Tests\Abdm.Calculation.Tests.csproj", "{D6AE7C12-1DA0-497F-8269-96BDB7B5BFC6}"
 EndProject
