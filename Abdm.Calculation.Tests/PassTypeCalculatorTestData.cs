@@ -14,7 +14,7 @@ namespace Abdm.Calculation.Tests
             CPNumber = 7,
             LadingId = 40,
             Snip = SnipEnum.sn62,
-            Direction = DriveDirection.Bidirection,
+            Direction = DriveDirectionEnum.Bidirection,
             LadingSchema = new LadingSchema
             {
                 Id = LadingEnum.N11,
@@ -71,9 +71,8 @@ namespace Abdm.Calculation.Tests
             //this.SfData
             Surface = new Surface
             {
-                SurfacePoints = new System.Numerics.Vector3[]
-                        {
-                                         new Vector3{
+                SurfacePoints = new System.Numerics.Vector3[]{
+            new Vector3{
                 X = 0.0f,
                 Y = 0.0f,
                 Z = -0.030388f
@@ -5966,7 +5965,7 @@ namespace Abdm.Calculation.Tests
             IssoId = 38000331,
             CPNumber = 7,
             LadingId = 40,
-            Direction = DriveDirection.Bidirection,
+            Direction = DriveDirectionEnum.Bidirection,
             Snip = SnipEnum.sn62,
             PassType = PassTypeEnum.Denied,
             Allowed = 0,

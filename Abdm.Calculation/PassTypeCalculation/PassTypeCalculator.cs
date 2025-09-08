@@ -118,7 +118,7 @@ namespace Abdm.Calculation.ColumnCalculation
 
         private PTCResultMessage ComposeMessage(PassTypeEnum resultPassType, PTCRequestMessage data, PassageInterval[] intervals)
         {
-            AllowedEnum? allowed = resultPassType switch
+            AllowedEnum allowed = resultPassType switch
             {
                 PassTypeEnum.NoLimit => AllowedEnum.Allowed,
                 PassTypeEnum.WithoutPedestian 
@@ -126,7 +126,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 or PassTypeEnum.SingleAutoOnly 
                 or PassTypeEnum.SingleOnlyAndPlace => AllowedEnum.Restricted,
                 PassTypeEnum.Denied => AllowedEnum.Denied,
-                PassTypeEnum.Unknown or _ => null
+                PassTypeEnum.Unknown or _ => AllowedEnum.Unknown,
             };
 
             return new PTCResultMessage

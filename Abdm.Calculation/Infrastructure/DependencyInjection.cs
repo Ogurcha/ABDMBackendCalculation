@@ -6,6 +6,7 @@ using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Infrastructure.Settings;
+using Abdm.Calculation.WebApi.Mappers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,12 +23,14 @@ namespace Abdm.Calculation.Infrastructure
 
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IPassTypeModelsMapper, PassTypeModelsMapper>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
             
             services.AddSingleton<IStrainManager, StrainManager>();
             services.AddSingleton<IRoadRulesManager, RoadRulesManager>();
             services.AddSingleton<IPassageIntervalService, PassageIntervalService>();
+
         }
     }
 }

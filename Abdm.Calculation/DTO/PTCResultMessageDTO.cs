@@ -1,54 +1,52 @@
-﻿using Abdm.Calculation.BLL.Enums;
-
-namespace Abdm.Calculation.BLL.Models
+﻿namespace Abdm.Calculation.WebApi.DTO
 {
-    public class PTCResultMessage
+    public class PTCResultMessageDTO
     {
         /// <summary>
         /// идентификатор искусственного сооружения
         /// </summary>
-        public long IssoId { get; set; }
+        public long c_isso { get; set; }
 
         /// <summary>
 		/// Номер чекпоинта данного сооружения
 		/// </summary>
-		public int CPNumber { get; set; }
+		public int n { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long LadingId { get; set; }
+        public long c_nagruzka { get; set; }
 
         /// <summary>
         /// Направление физичесrого воздействия
         /// </summary>
-        public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
+        public int direction { get; set; }
 
         /// <summary>
 		/// номер выбранного снипа, по которому пойдут расчет
 		/// </summary>
-		public SnipEnum Snip { get; set; } = SnipEnum.odm16;
+		public int snip { get; set; }
 
         /// <summary>
         /// Рассчитанное условие пропуска
         /// </summary>
-        public PassTypeEnum PassType { get; set; }
+        public int pass_type { get; set; }
 
         /// <summary>
 		/// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
 		/// </summary>
-		public AllowedEnum Allowed { get; set; }
+		public int allowed { get; set; }
 
         /// <summary>
         /// Интервалы между нагрузками.
         /// </summary>
-        public required double[] Intervals { get; set; }
+        public required double[] intervals { get; set; }
 
         /// <summary>
         /// Нагрузка тележек. не обязательна
         /// </summary>
         public string? Data { get; set; }
 
-        public string GetBrokerId => IssoId.ToString() + '/' + CPNumber.ToString();
+        public string GetBrokerId => c_isso.ToString() + '/' + n.ToString();
     }
 }

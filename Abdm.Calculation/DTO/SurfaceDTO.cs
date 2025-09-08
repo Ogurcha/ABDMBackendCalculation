@@ -1,74 +1,80 @@
-﻿using System.Numerics;
-using Abdm.Calculation.BLL.Enums;
-
-namespace Abdm.Calculation.BLL.Models
+﻿namespace Abdm.Calculation.WebApi.DTO
 {
-    public class Surface
+    public class SurfaceDTO
     {
         /// <summary>
         /// Массив точек, из которых состоит поверхность влияния
         /// </summary>
-        required public Vector3[] SurfacePoints { get; set; }
+        public SurfaceDataItemDTO[]? surface_data { get; set; }
 
         /// <summary>
         /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой
         /// </summary>
-        public required double[] PillarData { get; set; }
+        public double[]? line_data { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по X
         /// </summary>
-        public double MaxX { get; set; }
+        public double maxX { get; set; }
 
         /// <summary>
         /// Минимальное значение всех точек по X
         /// </summary>
-        public double MinX { get; set; }
+        public double minX { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по Y
         /// </summary>
-        public double MaxY { get; set; }
+        public double maxY { get; set; }
 
         /// <summary>
         /// Минимальное значение всех точек по Y
         /// </summary>
-        public double MinY { get; set; }
+        public double minY { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по Z
         /// </summary>
-        public double MaxZ { get; set; }
+        public double maxZ { get; set; }
 
         /// <summary>
         /// Перечисление, указывающее на то, как поверхность будет подвергаться нагрузке
         /// CpSubType в старом клиенте
         /// </summary>
-        public CheckPointEnum CheckPointType { get; set; }
+        public int cpVid { get; set; }
 
         /// <summary>
         /// Проектная устойчивость структуры. Без учёта собственного веса
         /// </summary>
-        public double MyStrength { get; set; }
+        public double myStrength { get; set; }
 
         /// <summary>
         /// Фиксированная нагрузка от собственного веса
         /// </summary>
-        public double ConstLoad { get; set; }
+        public double constLoad { get; set; }
 
         /// <summary>
         /// Нагрузка от пешеходов
         /// </summary>
-        public double PedestrianLoad { get; set; } 
+        public double constPesh { get; set; } 
 
         /// <summary>
         /// Другая нагрузка
         /// </summary>
-        public double OtherLoad { get; set; }
+        public double constOther { get; set; }
 
         /// <summary>
         /// Коэффициент устойчивости. По дефолту всегда 1.
         /// </summary>
-        public double KStrength { get; set; }
+        public double kStrength { get; set; }
+    }
+
+    public class SurfaceDataItemDTO
+    {
+        public float x { get; set; }
+
+        public float y { get; set; }
+
+        public float z { get; set; }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace Abdm.Calculation.BLL.Models
+namespace Abdm.Calculation.BLL.Enums
 {
     [DataContract]
-    public enum DriveDirection
+    public enum DriveDirectionEnum
     {
         [EnumMember(Value = "Bidirection"), Description("Встречное")]
         Bidirection = 0,
