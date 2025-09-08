@@ -20,6 +20,7 @@ namespace Abdm.Calculation.ColumnCalculation
     {
         private const string infoMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
         private const string errorMsg = "Failed PassType calculation for (IssoId = {1}, Check point number = {2})";
+        private const string producerErrorMsg = "Message producer failed to send message";
 
         public async Task Handle(PTCRequestMessage message, MessageContext<string, PTCRequestMessage> context)
         {
@@ -40,7 +41,7 @@ namespace Abdm.Calculation.ColumnCalculation
                         await messageProducer.Produce(responseContent.GetBrokerId, responseContent);
                     }
                     catch {
-                        logger.LogError(e, $"Message producer failed to send message");
+                        logger.LogError(e, producerErrorMsg);
                     }
                 }
             }
