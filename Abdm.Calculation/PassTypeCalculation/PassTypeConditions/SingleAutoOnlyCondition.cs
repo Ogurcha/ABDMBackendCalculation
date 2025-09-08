@@ -7,7 +7,7 @@ namespace Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions
 {
     public class SingleAutoOnlyCondition : IPassTypeCondition
     {
-        public bool CanPassCondition(List<Column> columnList, Surface surface, RoadRules roadRules)
+        public bool CanPassCondition(List<ColumnModel> columnList, Surface surface, RoadRules roadRules)
         {
             var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
 

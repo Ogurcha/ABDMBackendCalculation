@@ -38,7 +38,7 @@ namespace Abdm.Calculation.BLL.Services
         public double[] CalculateDistinctXPositionsIncludingWheelOffsets(
             double[] distinctXs,
             PassageInterval passageInterval,
-            Axle[] axles,
+            AxleModel[] axles,
             double carWidth)
         {
             var result = new List<double>();

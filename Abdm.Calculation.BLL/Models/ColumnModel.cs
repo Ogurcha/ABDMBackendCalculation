@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.DAL.Entities;
-using Abdm.Calculation.Graphics.Entities;
+using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -10,9 +10,9 @@ namespace Abdm.Calculation.BLL.Models
     /// движения транспортных средств 
     /// внутри заданного интервала
     /// </summary>
-    public class Column 
+    public class ColumnModel 
     {
-        public Column(PassageInterval interval)
+        public ColumnModel(PassageInterval interval)
         {
             Interval = interval;
         }

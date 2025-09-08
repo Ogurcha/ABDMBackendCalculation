@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using Abdm.Calculation.Graphics.Entities;
+using Abdm.Calculation.Graphics.Models;
 using g4;
 using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 
@@ -7,6 +7,8 @@ namespace Abdm.Calculation.Graphics
 {
     public class MeshManager : IMeshManager
     {
+        private const int smoothingPoint = 2;
+
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
@@ -15,7 +17,7 @@ namespace Abdm.Calculation.Graphics
             ArgumentNullException.ThrowIfNull(points);
 
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
-                points.Select(p => new Vector3d(p.X, p.Y, p.Z)), GetTriangles123(points: points));
+                points.Select(p => new Vector3d(p.X, p.Y, p.Z)), GetTrianglesFromPoints(points: points));
 
             var data = UpdateMeshData(mesh);
 
@@ -57,7 +59,7 @@ namespace Abdm.Calculation.Graphics
         {
             var extremeList = new List<Vector3d>();
 
-            var plateStart = Double.NaN;
+            double? plateStart = null;
             double previousDeltaZ = vectors[1].z - vectors[0].z;
 
             for (int i = 1; i < vectors.Length - 1; i++)
@@ -82,16 +84,16 @@ namespace Abdm.Calculation.Graphics
                     }
                 }
 
-                if (previousDeltaZ == 0 && deltaZ < 0 && !Double.IsNaN(plateStart))
+                if (previousDeltaZ == 0 && deltaZ < 0 && plateStart != null)
                 {
                     var extreme = new Vector3d(
                             v1.x,
-                            v1.y + plateStart / 2,
-                            GetOrdinat(v1.yz, v2.yz, v1.y + plateStart / 2));
+                            v1.y + plateStart.Value / smoothingPoint,
+                            GetOrdinat(v1.yz, v2.yz, v1.y + plateStart.Value / smoothingPoint));
 
                     extremeList.Add(extreme);
 
-                    plateStart = Double.NaN;
+                    plateStart = null;
                 }
                 previousDeltaZ = deltaZ;
             }
@@ -118,7 +120,7 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// Получить коллекциу полигонов, подразумевая, что массив точек сгруппирован по 3, то есть точки 1,2,3 - это первый полигон, 4,5,6 - второй и т.д.
         /// </summary>
-        private IEnumerable<Index3i> GetTriangles123(Vector3[] points)
+        private IEnumerable<Index3i> GetTrianglesFromPoints(Vector3[] points)
         {
             for (int i = 0; i < points.Length / 3; i++)
             {

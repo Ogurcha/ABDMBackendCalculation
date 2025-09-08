@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.RoadRulesManager;
-using Abdm.Calculation.BLL.Settings;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.Graphics;
@@ -27,8 +27,8 @@ public class PassTypeCalculatorTests
     {
         var testMessage = PassTypeCalculatorTestData.TestRequestMessage;
         var expectedOutput = PassTypeCalculatorTestData.TestResultMessage;
-        var roadRulesManager = new RoadRulesManager(new DataLifeSpan { Minutes = 1 });
-        var strainManager = new StrainManager();
+        var roadRulesManager = new RoadRulesFactory(new List<Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy.BaseRRStrategy>());
+        var strainManager = new StrainService();
 
         var processor = new PassTypeCalculator(
             _passageIntervalManagerMock.Object, 

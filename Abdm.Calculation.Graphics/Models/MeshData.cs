@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.Graphics.Entities
+﻿namespace Abdm.Calculation.Graphics.Models
 {
     /// <summary>
     /// Вычисляемые данные по кэшу. Здесь происходит денормализация и дублирование во имя оптимизации

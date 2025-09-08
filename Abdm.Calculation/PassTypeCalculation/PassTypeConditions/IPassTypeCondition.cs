@@ -5,6 +5,6 @@ namespace Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions
 {
     public interface IPassTypeCondition
     {
-        bool CanPassCondition(List<Column> columnList, Surface surface, RoadRules roadRules);
+        bool CanPassCondition(List<ColumnModel> columnList, Surface surface, RoadRules roadRules);
     }
 }

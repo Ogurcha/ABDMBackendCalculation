@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.WebApi.DTO;
 using Abdm.Calculation.WebApi.Mappers;
+using Abdm.Calculation.WebApi.RequestModels;
+using Abdm.Calculation.WebApi.ResponseModels;
 using Kafka.Integration.MessageBroker.Consumer;
 using Kafka.Integration.MessageBroker.Producer;
 using Microsoft.Extensions.Logging;
@@ -17,15 +18,15 @@ namespace Abdm.Calculation.ColumnCalculation
     public class PTCMessageHandler(
         IPassTypeCalculator ptcProcessor, 
         ILogger<PTCMessageHandler> logger,
-        IKafkaProducer<string, PTCResultMessageDTO> messageProducer,
+        IKafkaProducer<string, PTCResultMessageResponseModel> messageProducer,
         IPassTypeModelsMapper mapper
-        ) : IKafkaMessageHandler<string, PTCRequestMessageDTO>
+        ) : IKafkaMessageHandler<string, PTCRequestMessageRequestModel>
     {
         private const string infoMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
         private const string errorMsg = "Failed PassType calculation for (IssoId = {1}, Check point number = {2})";
         private const string producerErrorMsg = "Message producer failed to send message";
 
-        public async Task Handle(PTCRequestMessageDTO dto, MessageContext<string, PTCRequestMessageDTO> context)
+        public async Task Handle(PTCRequestMessageRequestModel dto, MessageContext<string, PTCRequestMessageRequestModel> context)
         {
             PTCResultMessage responseContent = null;
             PTCRequestMessage message = null;

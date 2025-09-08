@@ -1,6 +1,6 @@
-﻿namespace Abdm.Calculation.WebApi.DTO
+﻿namespace Abdm.Calculation.WebApi.RequestModels
 {
-    public class RoadwayDTO
+    public class RoadwayRequestModel
     {
         /// <summary>
         /// Количество путей у моста

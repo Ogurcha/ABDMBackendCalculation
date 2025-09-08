@@ -1,12 +1,21 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Extensions;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy
 {
-    internal class HeavyStrategy : BaseRRStrategy
+    public class HeavyStrategy : BaseRRStrategy
     {
-        internal override RoadRules GetRoadRules()
+        public override List<LadingEnum> LadingIds => new List<LadingEnum> {
+            LadingEnum.NG60,
+            LadingEnum.NG30,
+            LadingEnum.T60,
+            LadingEnum.T25,
+        };
+
+        public override RoadRules GetRoadRules()
         {
-            return RoadRulesExtrensions.RR3;
+            return RoadRulesExtensions.RR3;
         }
     }
 }

@@ -3,7 +3,8 @@ using System.Linq;
 using System.Numerics;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.WebApi.DTO;
+using Abdm.Calculation.WebApi.RequestModels;
+using Abdm.Calculation.WebApi.ResponseModels;
 
 namespace Abdm.Calculation.WebApi.Mappers
 {
@@ -12,14 +13,14 @@ namespace Abdm.Calculation.WebApi.Mappers
     /// </summary>
     public class PassTypeModelsMapper : IPassTypeModelsMapper
     {
-        public PTCRequestMessage FromDTO(PTCRequestMessageDTO dto)
+        public PTCRequestMessage FromDTO(PTCRequestMessageRequestModel dto)
         {
-            var ladingSchema = dto.load_schema ?? new LadingSchemaDTO();
+            var ladingSchema = dto.load_schema ?? new LadingSchemaRequestModel();
             var axles = ladingSchema.axles ?? [];
-            var surface = dto.surface ?? new SurfaceDTO();
+            var surface = dto.surface ?? new SurfaceRequestModel();
             var surfacePoints = surface.surface_data ?? [];
             var pillarData = surface.line_data ?? [];
-            var roadway = dto.roadway ?? new RoadwayDTO();
+            var roadway = dto.roadway ?? new RoadwayRequestModel();
             return new PTCRequestMessage
             {
                 IssoId = dto.c_isso,
@@ -40,7 +41,7 @@ namespace Abdm.Calculation.WebApi.Mappers
                     Width = ladingSchema.width,
                     Length = ladingSchema.length,
                     Distance = ladingSchema.distance,
-                    Axles = [.. axles.Select(a => new Axle
+                    Axles = [.. axles.Select(a => new AxleModel
                     {
                         Y = a.y,
                         Wx = a.wx,
@@ -79,9 +80,9 @@ namespace Abdm.Calculation.WebApi.Mappers
             };
         }
 
-        public PTCResultMessageDTO ToDTO(PTCResultMessage model)
+        public PTCResultMessageResponseModel ToDTO(PTCResultMessage model)
         {
-            return new PTCResultMessageDTO
+            return new PTCResultMessageResponseModel
             {
                 c_isso = model.IssoId,
                 n = model.CPNumber,

@@ -46,6 +46,6 @@ namespace Abdm.Calculation.BLL.Models
         /// Точки давления, которые представляют данную нагрузку
         /// Например, массив из 4 колес
         /// </summary>
-        public required Axle[] Axles { get; set; }
+        public required AxleModel[] Axles { get; set; }
     }
 }

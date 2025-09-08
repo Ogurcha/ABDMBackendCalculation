@@ -7,6 +7,7 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
+using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions;
 
 namespace Abdm.Calculation.ColumnCalculation
@@ -14,8 +15,8 @@ namespace Abdm.Calculation.ColumnCalculation
     public class PassTypeCalculator (
         IPassageIntervalService passageIntervalManager,
         IMeshManager meshManager,
-        IRoadRulesManager roadRulesManager,
-        IStrainManager strainManager
+        IRoadRulesFactory roadRulesFactory,
+        IStrainService strainManager
         ) : IPassTypeCalculator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -43,7 +44,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 throw new Exception(passageIntervalErrormessage);
             }
 
-            var roadRules = roadRulesManager.RefreshRoadRules(data.IssoId, data.LadingSchema.Id);
+            var roadRules = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
 
             var mesh = meshManager.GetMeshFromPoints(data.Surface.SurfacePoints);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
@@ -51,10 +52,10 @@ namespace Abdm.Calculation.ColumnCalculation
                 throw new Exception(meshErrorMessage);
             }
 
-            var columnList = new List<Column>();
+            var columnList = new List<ColumnModel>();
             foreach (var interval in intervals)
             {
-                var column = new Column(interval);
+                var column = new ColumnModel(interval);
                 columnList.Add(column);
 
                 column.Xs = passageIntervalManager.CalculateDistinctXPositionsIncludingWheelOffsets(
@@ -63,7 +64,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 data.LadingSchema.Axles,
                 data.LadingSchema.Width
                 );
-                column.Points = new Graphics.Entities.SmoothPoints[column.Xs.Length];
+                column.Points = new SmoothPoints[column.Xs.Length];
                 column.Strain = new double[column.Xs.Length];
                 column.StrainOneAuto = new double[column.Xs.Length];
                 
@@ -101,7 +102,7 @@ namespace Abdm.Calculation.ColumnCalculation
             return response;
         }
 
-        private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules roadRules, List<Column> columnList)
+        private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules roadRules, List<ColumnModel> columnList)
         { 
             columnList = columnList.OrderByDescending(c => c.Strain).ToList();
 

@@ -1,6 +1,6 @@
 ﻿using g4;
 
-namespace Abdm.Calculation.Graphics.Entities
+namespace Abdm.Calculation.Graphics.Models
 {
     /// <summary>
     /// Список гладких (плавных) точек кривой аппроксимации поверхности влияни.

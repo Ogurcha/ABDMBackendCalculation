@@ -1,9 +1,9 @@
-﻿namespace Abdm.Calculation.WebApi.DTO
+﻿namespace Abdm.Calculation.WebApi.RequestModels
 {
     /// <summary>
     /// DTO Информация об осях
     /// </summary>
-    public class AxleDTO
+    public class AxleRequestModel
     {
         public double y { get; set; }
 

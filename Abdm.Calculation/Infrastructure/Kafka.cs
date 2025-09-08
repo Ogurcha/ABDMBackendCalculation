@@ -1,5 +1,6 @@
 ﻿using Abdm.Calculation.ColumnCalculation;
-using Abdm.Calculation.WebApi.DTO;
+using Abdm.Calculation.WebApi.RequestModels;
+using Abdm.Calculation.WebApi.ResponseModels;
 using Kafka.Integration.MessageBroker.Consumer.Extensions;
 using Kafka.Integration.MessageBroker.Producer.Extensions;
 using Kafka.Integration.MessageBroker.Serialization.Extensions;
@@ -12,14 +13,14 @@ namespace Abdm.Calculation.Infrastructure
     {
         public static void AddKafka(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddKafkaConsumer<string, PTCRequestMessageDTO, PTCMessageHandler>(consumer =>
+            services.AddKafkaConsumer<string, PTCRequestMessageRequestModel, PTCMessageHandler>(consumer =>
             {
                 consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
                 consumer.UseJsonMessageDeserializer();
                 consumer.ConsumersCount = 1;
             });
 
-            services.AddKafkaProducer<string, PTCResultMessageDTO>(producer =>
+            services.AddKafkaProducer<string, PTCResultMessageResponseModel>(producer =>
             {
                 producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
                 producer.UseJsonMessageSerializer();

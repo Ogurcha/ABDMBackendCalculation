@@ -1,11 +1,11 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.Graphics.Entities;
 using Abdm.Calculation.Graphics.Extensions;
+using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.StrainCalculation
 {
-    public class StrainManager : IStrainManager
+    public class StrainService : IStrainService
     {
         /// <summary>
         /// Рассчет напряжения на профиле с учётом тележек

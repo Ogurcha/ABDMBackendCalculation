@@ -1,9 +1,9 @@
 ﻿using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.Graphics.Entities;
+using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface IStrainManager
+    public interface IStrainService
     {
         double GetStrain(PTCRequestMessage message, SmoothPoints smoothpoints, double Y);
     }

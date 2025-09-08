@@ -1,10 +1,13 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy
 {
-    internal abstract class BaseRRStrategy
+    public abstract class BaseRRStrategy
     {
-        internal abstract RoadRules GetRoadRules();
+        public abstract RoadRules GetRoadRules();
+
+        public abstract List<LadingEnum> LadingIds { get; }
 
         protected RoadRules Merge(RoadRules value, RoadRules valueSecondary)
         {

@@ -24,9 +24,9 @@ namespace Abdm.Calculation.Tests
                 Width = 3.5f,
                 Length = 4.4f,
                 Distance = 0,
-                Axles = new Axle[]
+                Axles = new AxleModel[]
                         {
-                            new Axle {
+                            new AxleModel {
                                 Y = 0.4f,
                                 Wx = 0.8f,
                                 Wy = 0.2f,
@@ -36,7 +36,7 @@ namespace Abdm.Calculation.Tests
                                     2.7f
                                 ]
                             },
-                            new Axle {
+                            new AxleModel {
                                 Y = 1.2f,
                                 Wx = 0.8f,
                                 Wy = 0.2f,
@@ -46,7 +46,7 @@ namespace Abdm.Calculation.Tests
                                     2.7f
                                 ]
                             },
-                            new Axle {
+                            new AxleModel {
                                 Y = 1.2f,
                                 Wx = 0.8f,
                                 Wy = 0.2f,
@@ -56,7 +56,7 @@ namespace Abdm.Calculation.Tests
                                     2.7f
                                 ]
                             },
-                            new Axle {
+                            new AxleModel {
                                 Y = 1.2f,
                                 Wx = 0.8f,
                                 Wy = 0.2f,

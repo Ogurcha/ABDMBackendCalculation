@@ -10,7 +10,7 @@ public interface IPassageIntervalService
     double[] CalculateDistinctXPositionsIncludingWheelOffsets(
         double[] distinctXs, 
         PassageInterval passageInterval, 
-        Axle[] axles, 
+        AxleModel[] axles, 
         double carWidth
         );
 }

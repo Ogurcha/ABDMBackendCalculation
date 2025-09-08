@@ -1,9 +1,9 @@
-﻿namespace Abdm.Calculation.WebApi.DTO
+﻿namespace Abdm.Calculation.WebApi.RequestModels
 {
     /// <summary>
     /// Подробные характеристики нагрузки на сооружение
     /// </summary>
-    public class LadingSchemaDTO
+    public class LadingSchemaRequestModel
     {
         /// <summary>
         /// DTO идентификатора нагрузки
@@ -44,6 +44,6 @@
         /// Точки давления, которые представляют данную нагрузку
         /// Например, массив из 4 колес
         /// </summary>
-        public AxleDTO[]? axles { get; set; }
+        public AxleRequestModel[]? axles { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Abdm.Calculation.Graphics.Entities;
+﻿using Abdm.Calculation.Graphics.Models;
 using g4;
 
 namespace Abdm.Calculation.Graphics.Extensions

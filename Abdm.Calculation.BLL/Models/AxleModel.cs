@@ -3,7 +3,7 @@
     /// <summary>
     /// Информация об осях
     /// </summary>
-    public class Axle
+    public class AxleModel
     {
         public double Y { get; set; }
 

@@ -1,11 +1,11 @@
-﻿namespace Abdm.Calculation.WebApi.DTO
+﻿namespace Abdm.Calculation.WebApi.RequestModels
 {
-    public class SurfaceDTO
+    public class SurfaceRequestModel
     {
         /// <summary>
         /// Массив точек, из которых состоит поверхность влияния
         /// </summary>
-        public SurfaceDataItemDTO[]? surface_data { get; set; }
+        public SurfaceDataItemRequestModel[]? surface_data { get; set; }
 
         /// <summary>
         /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой
@@ -69,7 +69,7 @@
         public double kStrength { get; set; }
     }
 
-    public class SurfaceDataItemDTO
+    public class SurfaceDataItemRequestModel
     {
         public float x { get; set; }
 

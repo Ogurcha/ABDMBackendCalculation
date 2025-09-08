@@ -1,9 +1,9 @@
-﻿namespace Abdm.Calculation.WebApi.DTO
+﻿namespace Abdm.Calculation.WebApi.RequestModels
 {
     /// <summary>
     /// реквест сообщение для начала расчётов
     /// </summary>
-    public class PTCRequestMessageDTO
+    public class PTCRequestMessageRequestModel
     {
         /// <summary>
         /// идентификатор искусственного сооружения
@@ -33,16 +33,16 @@
 		/// <summary>
 		/// Подробные характеристики нагрузки на данное сооружение
 		/// </summary>
-		public LadingSchemaDTO? load_schema { get; set; }
+		public LadingSchemaRequestModel? load_schema { get; set; }
 
         /// <summary>
         /// Характеристики "поверхности влияния" иссо
         /// </summary>
-		public SurfaceDTO? surface { get; set; }
+		public SurfaceRequestModel? surface { get; set; }
 
         /// <summary>
         /// Характеристики пути
         /// </summary>
-        public RoadwayDTO? roadway { get; set; }
+        public RoadwayRequestModel? roadway { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace Abdm.Calculation.WebApi.DTO
+﻿namespace Abdm.Calculation.WebApi.ResponseModels
 {
-    public class PTCResultMessageDTO
+    public class PTCResultMessageResponseModel
     {
         /// <summary>
         /// идентификатор искусственного сооружения

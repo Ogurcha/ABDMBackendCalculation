@@ -1,6 +1,6 @@
 ﻿using g4;
 
-namespace Abdm.Calculation.Graphics.Entities
+namespace Abdm.Calculation.Graphics.Models
 {
     public class Mesh
     {
@@ -11,6 +11,4 @@ namespace Abdm.Calculation.Graphics.Entities
         /// </summary>
         public MeshData? Data { get; set; }
     }
-
-    
 }
