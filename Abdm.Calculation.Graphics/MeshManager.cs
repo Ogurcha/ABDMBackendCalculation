@@ -124,7 +124,7 @@ namespace Abdm.Calculation.Graphics
         {
             for (int i = 0; i < points.Length / 3; i++)
             {
-                var triangle = Index3i + i;
+                var triangle = Index3i + i * 3;
 
                 yield return triangle;
             }
@@ -133,7 +133,7 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// Дефолтные три точки
         /// </summary>
-        private static Index3i Index3i => new Index3i(1, 2, 3);
+        private static Index3i Index3i => new Index3i(0, 1, 2);
 
     }
 }
