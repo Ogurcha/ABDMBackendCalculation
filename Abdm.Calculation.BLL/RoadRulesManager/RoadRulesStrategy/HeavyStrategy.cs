@@ -11,6 +11,8 @@ namespace Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy
             LadingEnum.NG30,
             LadingEnum.T60,
             LadingEnum.T25,
+            LadingEnum.N11,
+            LadingEnum.N14
         };
 
         public override RoadRules GetRoadRules()

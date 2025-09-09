@@ -39,7 +39,7 @@ namespace Abdm.Calculation.Graphics
                     ],
                     [
                         Index3i
-                    ], []
+                    ]
                 );
             var planeYZ = new DMeshAABBTree3(planeYZMesh, true);
 

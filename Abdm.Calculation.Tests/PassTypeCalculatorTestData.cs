@@ -5973,8 +5973,7 @@ namespace Abdm.Calculation.Tests
             Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
         };
 
-        public static Task<PassageInterval[]> ResultFromPIManager => Task.FromResult<PassageInterval[]>([new PassageInterval {
-            SafeInterval = [0.4d, 7.4d],
+        public static Task<PassageInterval[]> ResultFromPIRepo => Task.FromResult<PassageInterval[]>([new PassageInterval {
             SafetyLineLeft = 0.15d,
             SafetyLineRight = 0.15d,
             TotalWidth = 7.8d

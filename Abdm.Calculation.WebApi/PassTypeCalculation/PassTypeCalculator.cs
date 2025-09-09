@@ -73,6 +73,10 @@ namespace Abdm.Calculation.ColumnCalculation
                     var X = column.Xs[i];
 
                     var profileYZ = meshManager.MakeProfileYZ(mesh, X);
+                    if (!(profileYZ?.Any() == true))
+                    {
+                        continue;
+                    }
 
                     var smoothPoints = meshManager.CreateSmoothPoints(profileYZ.ToArray());
                     column.Points[i] = smoothPoints;
