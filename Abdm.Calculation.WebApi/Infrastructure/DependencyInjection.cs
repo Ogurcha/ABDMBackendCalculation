@@ -1,9 +1,11 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.RoadRulesManager;
+using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
+using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
 using Abdm.Calculation.WebApi.Mappers;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +25,19 @@ namespace Abdm.Calculation.Infrastructure
         {
             services.AddSingleton<IPassTypeModelsMapper, PassTypeModelsMapper>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
-            services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
-            
-            services.AddSingleton<IStrainService, StrainService>();
-            services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>();
-            services.AddSingleton<IPassageIntervalService, PassageIntervalService>();
+            services.AddScoped<IPassageIntervalService, PassageIntervalService>();
+            services.AddSingleton<IMeshManager, MeshManager>();
 
+            services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BLL.RoadRulesManager.RoadRulesStrategy.BaseRRStrategy>
+            {
+                new AbStrategy(),
+                new AClassCommonStrategy(),
+                new EN3Strategy(),
+                new HeavyStrategy()
+            }));
+
+            services.AddSingleton<IStrainService, StrainService>();
+            services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
         }
     }
 }

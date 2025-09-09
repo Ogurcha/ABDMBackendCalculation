@@ -3,14 +3,15 @@ using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Infrastructure.Settings;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 
 namespace Abdm.Calculation.DAL
 {
-    public class PassageIntervalRepository(ConnectionStrings connectionStrings) : IPassageIntervalRepository
+    public class PassageIntervalRepository(IOptions<ConnectionStrings> connectionStrings) : IPassageIntervalRepository
     {
         public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
         {
-            using (var connection = new SqlConnection(connectionStrings.MainConnection))
+            using (var connection = new SqlConnection(connectionStrings.Value.MainConnection))
             {
                 var paramTableName = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
                 var paramId = new SqlParameter("@nPs", SqlDbType.Int) { Value = 1 };
