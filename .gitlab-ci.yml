@@ -1,0 +1,133 @@
+stages:
+  - build_and_test
+  - publish_docker
+  - deploy
+
+variables:
+  Logging__LogLevel__Microsoft: "Warning"
+  LANG: "en_US.UTF-8"
+  DOTNET_CLI_UI_LANGUAGE: "en"
+  IMAGE_NAME: $CI_REGISTRY/abdm/abdm_backend_calculation:latest
+
+default:
+  tags: &global_tags
+    - linux
+    - docker
+
+build_back:mr:
+  stage: build_and_test
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  variables:
+    PROJ_NAME: "ABDM-calculation"
+  before_script:
+    - apt update && apt install -y libxml2 openjdk-17-jdk locales
+    - dotnet tool install --global dotnet-sonarscanner --version 6.2.0
+    - dotnet tool install --global dotnet-coverage --version 17.10.4
+    - dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.2.5
+    - dotnet nuget add source "https://gitlab.norddig.ru/api/v4/projects/72/packages/nuget/index.json" --name CommonKafkaIntegrationMessageBroker --username $REGISTRY_LOGIN --password $REGISTRY_TOKEN --store-password-in-clear-text
+    - dotnet restore Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj
+  script:
+    - sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen &&
+      dpkg-reconfigure --frontend=noninteractive locales &&
+      update-locale LANG=ru_RU.UTF-8
+    - export LANG=ru_RU.UTF-8
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - dotnet sonarscanner begin
+      /d:sonar.host.url=$SONAR_URL
+      /d:sonar.token=$SONAR_TOKEN
+      /k:$PROJ_NAME
+      /version:$CI_MERGE_REQUEST_IID.$CI_PIPELINE_IID
+      /d:sonar.coverageReportPaths=CoverageReports/SonarQube.xml
+    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+  artifacts:
+    when: always
+    paths:
+      - ./**/*test-result.xml
+      - Cobertura.coverage.xml
+    reports:
+      junit:
+        - ./**/*test-result.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: Cobertura.coverage.xml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+build_back:master:
+  stage: build_and_test
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  before_script:
+    - apt update && apt install -y libxml2 locales fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
+    - dotnet tool install --global dotnet-coverage --version 17.10.4
+    - dotnet nuget add source "https://gitlab.norddig.ru/api/v4/projects/72/packages/nuget/index.json" --name CommonKafkaIntegrationMessageBroker --username $REGISTRY_LOGIN --password $REGISTRY_TOKEN --store-password-in-clear-text
+    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+  script:
+    - sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen &&
+      dpkg-reconfigure --frontend=noninteractive locales &&
+      update-locale LANG=ru_RU.UTF-8
+    - export LANG=ru_RU.UTF-8
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+    - dotnet publish Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-build -c Release --output ./WebAPI
+  artifacts:
+    paths:
+      - ./**/*test-result.xml
+      - Cobertura.coverage.xml
+      - ./WebAPI/
+      - ./forCI.Dockerfile
+    reports:
+      junit:
+        - ./**/*test-result.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: Cobertura.coverage.xml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+build_docker_image:master:
+  image: docker:latest
+  stage: publish_docker
+  services:
+    - name: docker:dind
+      alias: docker
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --pull -t $IMAGE_NAME -f forCI.Dockerfile .
+    - docker push $IMAGE_NAME
+  after_script:
+    - docker image rm $IMAGE_NAME
+  dependencies:
+    - build_back:master
+  needs:
+    - build_back:master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+deploy:dev:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+    SERVICE_NAME: "abdm-reports"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd /opt/$SERVICE_NAME
+  script:
+    - docker-compose pull back-calculation
+    - docker-compose up -d
+    - docker rmi $(docker images | grep 'none' | awk '{print $3}')
+  cache: []
+  dependencies:
+    - build_docker_image:master
+  needs:
+    - build_docker_image:master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  tags:
+    - abdm-reports
+    - deploy
