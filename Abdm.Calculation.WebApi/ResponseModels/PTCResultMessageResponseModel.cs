@@ -8,9 +8,9 @@
         public long c_isso { get; set; }
 
         /// <summary>
-		/// Номер чекпоинта данного сооружения
-		/// </summary>
-		public int n { get; set; }
+        /// Номер чекпоинта данного сооружения
+        /// </summary>
+        public int n { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
@@ -23,9 +23,9 @@
         public int direction { get; set; }
 
         /// <summary>
-		/// номер выбранного снипа, по которому пойдут расчет
-		/// </summary>
-		public int snip { get; set; }
+        /// номер выбранного снипа, по которому пойдут расчет
+        /// </summary>
+        public int snip { get; set; }
 
         /// <summary>
         /// Рассчитанное условие пропуска
@@ -33,9 +33,9 @@
         public int pass_type { get; set; }
 
         /// <summary>
-		/// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
-		/// </summary>
-		public int allowed { get; set; }
+        /// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
+        /// </summary>
+        public int allowed { get; set; }
 
         /// <summary>
         /// Интервалы между нагрузками.

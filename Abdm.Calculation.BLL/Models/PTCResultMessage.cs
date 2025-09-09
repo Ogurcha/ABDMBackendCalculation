@@ -10,9 +10,9 @@ namespace Abdm.Calculation.BLL.Models
         public long IssoId { get; set; }
 
         /// <summary>
-		/// Номер чекпоинта данного сооружения
-		/// </summary>
-		public int CPNumber { get; set; }
+        /// Номер чекпоинта данного сооружения
+        /// </summary>
+        public int CPNumber { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
@@ -25,9 +25,9 @@ namespace Abdm.Calculation.BLL.Models
         public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
 
         /// <summary>
-		/// номер выбранного снипа, по которому пойдут расчет
-		/// </summary>
-		public SnipEnum Snip { get; set; } = SnipEnum.odm16;
+        /// номер выбранного снипа, по которому пойдут расчет
+        /// </summary>
+        public SnipEnum Snip { get; set; } = SnipEnum.odm16;
 
         /// <summary>
         /// Рассчитанное условие пропуска
@@ -35,9 +35,9 @@ namespace Abdm.Calculation.BLL.Models
         public PassTypeEnum PassType { get; set; }
 
         /// <summary>
-		/// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
-		/// </summary>
-		public AllowedEnum Allowed { get; set; }
+        /// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
+        /// </summary>
+        public AllowedEnum Allowed { get; set; }
 
         /// <summary>
         /// Интервалы между нагрузками.
