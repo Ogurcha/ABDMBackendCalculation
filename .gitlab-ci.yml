@@ -60,7 +60,7 @@ build_back:master:
     - apt update && apt install -y libxml2 locales fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
     - dotnet tool install --global dotnet-coverage --version 17.10.4
     - dotnet nuget add source "https://gitlab.norddig.ru/api/v4/projects/72/packages/nuget/index.json" --name CommonKafkaIntegrationMessageBroker --username $REGISTRY_LOGIN --password $REGISTRY_TOKEN --store-password-in-clear-text
-    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+    - dotnet restore Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj
   script:
     - sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen &&
       dpkg-reconfigure --frontend=noninteractive locales &&
