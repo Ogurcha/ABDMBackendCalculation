@@ -11,4 +11,4 @@ RUN apt-get update && \
         fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
 
 COPY ./WebAPI .
-ENTRYPOINT ["dotnet", "Abdm.Calculation.WebApiCore.dll"]
+ENTRYPOINT ["dotnet", "Abdm.Calculation.WebApi.dll"]
