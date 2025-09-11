@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
@@ -14,13 +15,15 @@ namespace Abdm.Calculation.ColumnCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalService passageIntervalManager,
+        ISurfaceDataService surfaceDataService,
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
         IStrainService strainManager
         ) : IPassTypeCalculator
     {
         private const string meshErrorMessage = "Mesh construction failed";
-        private const string passageIntervalErrormessage = "Passage intervals for this isso have not been found";
+        private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
+        private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
 
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
@@ -41,12 +44,17 @@ namespace Abdm.Calculation.ColumnCalculation
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId);
             if (intervals?.Any() != true)
             {
-                throw new Exception(passageIntervalErrormessage);
+                throw new Exception(passageIntervalErrorMessage);
+            }
+            var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
+            if (surfaceData?.TriangleList == null)
+            {
+                throw new Exception(surfaceDataNotFound);
             }
 
             var roadRules = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
 
-            var mesh = meshManager.GetMeshFromPoints(data.Surface.SurfacePoints);
+            var mesh = meshManager.GetMeshFromPoints(surfaceData.PointsList, surfaceData.TriangleList);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
                 throw new Exception(meshErrorMessage);

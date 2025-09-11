@@ -8,7 +8,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Массив точек, из которых состоит поверхность влияния
         /// </summary>
-        required public Vector3[] SurfacePoints { get; set; }
+        required public (double X, double Y, double Z)[] SurfacePoints { get; set; }
 
         /// <summary>
         /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой

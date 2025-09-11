@@ -25,7 +25,9 @@ namespace Abdm.Calculation.Infrastructure
         {
             services.AddSingleton<IPassTypeModelsMapper, PassTypeModelsMapper>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
+            services.AddScoped<ISurfaceRepository, SurfaceRepository>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
+            services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddSingleton<IMeshManager, MeshManager>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BLL.RoadRulesManager.RoadRulesStrategy.BaseRRStrategy>
