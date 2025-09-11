@@ -21,7 +21,9 @@ namespace Abdm.Calculation.BLL.StrainCalculation
                 .Sum(a =>
                 {
                     double axleY = Y + a.AbsolutY;
+#pragma warning disable
                     double weight = a.Weight / a.Wheels.Length;
+#pragma warning enable
                     return (axleY >= surfaceMinY && axleY <= surfaceMaxY)
                         ? weight * smoothpoints.GetZ(axleY)
                         : 0d;

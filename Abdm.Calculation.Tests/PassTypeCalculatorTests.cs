@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
@@ -15,6 +16,7 @@ using NUnit.Framework;
 public class PassTypeCalculatorTests
 {
     Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
+    Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
     [SetUp]
     public void SetUp()
@@ -22,6 +24,11 @@ public class PassTypeCalculatorTests
         _passageIntervalManagerMock = new Mock<IPassageIntervalRepository>();
         _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>()))
             .Returns(PassTypeCalculatorTestData.ResultFromPIRepo);
+
+        _surfaceDataRepositoryMock = new Mock<ISurfaceRepository>();
+        var csvData = Task.FromResult(File.ReadAllBytes("surfaceDataExample.csv")) as Task<byte[]?>;
+        _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
+            .Returns(csvData);
     }
 
     [Test]
@@ -37,9 +44,11 @@ public class PassTypeCalculatorTests
         });
         var strainManager = new StrainService();
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
+        var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
 
         var processor = new PassTypeCalculator(
-            passageIntervalService, 
+            passageIntervalService,
+            surfaceDataService,
             new MeshManager(),
             roadRulesFactory,
             strainManager
