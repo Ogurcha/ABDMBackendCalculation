@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
+using static gs.PointSetHashtable;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -18,7 +19,7 @@ namespace Abdm.Calculation.BLL.Services
             var pointsList = GetPointsList(pointsCount, reader).ToArray();
             var trianglesCount = reader.ReadInt32();
             (int, int, int)[]? trianglesList = trianglesCount > 0
-                ? GetTrianglesList(trianglesCount, reader).ToArray()
+                ? GetTrianglesList(pointsCount, trianglesCount, reader).ToArray()
                 : null;
 
             return new SurfaceData
@@ -36,13 +37,20 @@ namespace Abdm.Calculation.BLL.Services
                 for (int i = 0; i < pointsCount; i++)
                 {
                     yield return new(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+
                 }
             }
-            static IEnumerable<(int, int, int)> GetTrianglesList(int trianglesCount, BinaryReader reader)
+            static IEnumerable<(int, int, int)> GetTrianglesList(int pointsCount, int trianglesCount, BinaryReader reader)
             {
                 for (int i = 0; i < trianglesCount; i++)
                 {
-                    yield return new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    var p1 = reader.ReadInt32();
+                    var p2 = reader.ReadInt32();
+                    var p3 = reader.ReadInt32();
+                    if (p1 >= 0 && p2 >= 0 && p3 >= 0 && p1 < pointsCount && p2 < pointsCount && p3 < pointsCount)
+                    {
+                        yield return new(p1, p2, p3);
+                    }
                 }
             }
         }
