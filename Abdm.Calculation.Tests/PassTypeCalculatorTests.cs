@@ -18,7 +18,10 @@ using NUnit.Framework;
 public class PassTypeCalculatorTests
 {
     private const string surfaceDataStr = "SurfaceDataExample";
-    private readonly string dataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, surfaceDataStr);
+    private readonly string dataPath = Path.Combine(
+        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
+        surfaceDataStr
+        );
     Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
     Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
