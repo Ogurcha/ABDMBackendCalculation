@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Resources;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
@@ -15,6 +17,8 @@ using NUnit.Framework;
 [TestFixture]
 public class PassTypeCalculatorTests
 {
+    private const string surfaceDataStr = "SurfaceDataExample";
+    private readonly string dataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, surfaceDataStr);
     Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
     Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
@@ -26,9 +30,16 @@ public class PassTypeCalculatorTests
             .Returns(PassTypeCalculatorTestData.ResultFromPIRepo);
 
         _surfaceDataRepositoryMock = new Mock<ISurfaceRepository>();
-        var csvData = Task.FromResult(File.ReadAllBytes("surfaceDataExample.csv")) as Task<byte[]?>;
-        _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
+
+        using (ResourceReader reader = new ResourceReader(dataPath))
+        {
+            reader.GetResourceData(surfaceDataStr, out string resourceType, out byte[] resourceData);
+
+            var csvData = Task.FromResult(resourceData) as Task<byte[]?>;
+
+            _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
             .Returns(csvData);
+        }
     }
 
     [Test]

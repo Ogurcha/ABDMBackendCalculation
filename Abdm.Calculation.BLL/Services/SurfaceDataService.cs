@@ -1,7 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
-using static gs.PointSetHashtable;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -37,7 +36,6 @@ namespace Abdm.Calculation.BLL.Services
                 for (int i = 0; i < pointsCount; i++)
                 {
                     yield return new(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
-
                 }
             }
             static IEnumerable<(int, int, int)> GetTrianglesList(int pointsCount, int trianglesCount, BinaryReader reader)
