@@ -10,7 +10,7 @@ namespace Abdm.Calculation.Tests
     {
         public static PTCRequestMessage TestRequestMessage => new PTCRequestMessage()
         {
-            IssoId = 38000331,
+            IssoId = 3800031,
             CPNumber = 7,
             LadingId = 40,
             Snip = SnipEnum.sn62,
@@ -25,48 +25,48 @@ namespace Abdm.Calculation.Tests
                 Length = 4.4f,
                 Distance = 0,
                 Axles = new AxleModel[]
-                        {
-                            new AxleModel {
-                                Y = 0.4f,
-                                Wx = 0.8f,
-                                Wy = 0.2f,
-                                Weight = 20.0f,
-                                AbsolutY = 0.4f,
-                                Wheels = [ //wheels_Distance_list
-                                    2.7f
-                                ]
-                            },
-                            new AxleModel {
-                                Y = 1.2f,
-                                Wx = 0.8f,
-                                Wy = 0.2f,
-                                Weight = 20.0f,
-                                AbsolutY = 1.6f,
-                                Wheels = [
-                                    2.7f
-                                ]
-                            },
-                            new AxleModel {
-                                Y = 1.2f,
-                                Wx = 0.8f,
-                                Wy = 0.2f,
-                                Weight = 20.0f,
-                                AbsolutY = 2.8f,
-                                Wheels = [
-                                    2.7f
-                                ]
-                            },
-                            new AxleModel {
-                                Y = 1.2f,
-                                Wx = 0.8f,
-                                Wy = 0.2f,
-                                Weight = 20.0f,
-                                AbsolutY = 4.0f,
-                                Wheels = [
-                                    2.7f
-                                ]
-                            }
-                        },
+                {
+                    new AxleModel {
+                        Y = 0.4f,
+                        Wx = 0.8f,
+                        Wy = 0.2f,
+                        Weight = 20.0f,
+                        AbsolutY = 0.4f,
+                        Wheels = [ //wheels_Distance_list
+                            2.7f
+                        ]
+                    },
+                    new AxleModel {
+                        Y = 1.2f,
+                        Wx = 0.8f,
+                        Wy = 0.2f,
+                        Weight = 20.0f,
+                        AbsolutY = 1.6f,
+                        Wheels = [
+                            2.7f
+                        ]
+                    },
+                    new AxleModel {
+                        Y = 1.2f,
+                        Wx = 0.8f,
+                        Wy = 0.2f,
+                        Weight = 20.0f,
+                        AbsolutY = 2.8f,
+                        Wheels = [
+                            2.7f
+                        ]
+                    },
+                    new AxleModel {
+                        Y = 1.2f,
+                        Wx = 0.8f,
+                        Wy = 0.2f,
+                        Weight = 20.0f,
+                        AbsolutY = 4.0f,
+                        Wheels = [
+                            2.7f
+                        ]
+                    }
+                },
             },
             //this.SfData
             Surface = new Surface
@@ -5937,7 +5937,7 @@ namespace Abdm.Calculation.Tests
                 Y = 7.946f,
                 Z = -0.002565f
             }
-                        },
+                },
                 PillarData = [],
                 MaxX = 8.89f,
                 MinX = -1.46f,
@@ -5962,7 +5962,7 @@ namespace Abdm.Calculation.Tests
 
         public static PTCResultMessage TestResultMessage => new PTCResultMessage()
         {
-            IssoId = 38000331,
+            IssoId = 3800031,
             CPNumber = 7,
             LadingId = 40,
             Direction = DriveDirectionEnum.Bidirection,
