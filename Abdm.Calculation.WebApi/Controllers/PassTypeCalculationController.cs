@@ -4,11 +4,14 @@ using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.WebApi.Mappers;
 using Abdm.Calculation.WebApi.RequestModels;
+using Abdm.Calculation.WebApi.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Abdm.Calculation.WebApi.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class PassTypeCalculationController(IPassTypeCalculator ptcProcessor,
         ILogger<PTCMessageHandler> logger,
         IPassTypeModelsMapper mapper) : Controller
@@ -18,7 +21,7 @@ namespace Abdm.Calculation.WebApi.Controllers
         private const string producerErrorMsg = "Message producer failed to send message";
 
         [HttpGet]
-        public async Task<IActionResult> Calculate(PTCRequestMessageRequestModel requestModel)
+        public async Task<ActionResult<PTCResultMessageResponseModel>> Calculate(PTCRequestMessageRequestModel requestModel)
         {
             PTCResultMessage responseContent = null;
             PTCRequestMessage message = null;
