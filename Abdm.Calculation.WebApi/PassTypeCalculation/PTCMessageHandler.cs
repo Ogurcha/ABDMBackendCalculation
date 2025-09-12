@@ -22,8 +22,8 @@ namespace Abdm.Calculation.ColumnCalculation
         IPassTypeModelsMapper mapper
         ) : IKafkaMessageHandler<string, PTCRequestMessageRequestModel>
     {
-        private const string infoMsg = "PassType calculation for (IssoId = {1}, Check point number = {2}) started";
-        private const string errorMsg = "Failed PassType calculation for (IssoId = {1}, Check point number = {2})";
+        private const string infoMsg = "PassType calculation for (IssoId = {0}, Check point number = {1}) started";
+        private const string errorMsg = "Failed PassType calculation for (IssoId = {0}, Check point number = {1})";
         private const string producerErrorMsg = "Message producer failed to send message";
 
         public async Task Handle(PTCRequestMessageRequestModel dto, MessageContext<string, PTCRequestMessageRequestModel> context)

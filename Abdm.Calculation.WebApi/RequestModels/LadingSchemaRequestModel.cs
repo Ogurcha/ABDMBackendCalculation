@@ -8,7 +8,7 @@
         /// <summary>
         /// DTO идентификатора нагрузки
         /// </summary>
-        public long id { get; set; }
+        public int id { get; set; }
 
         /// <summary>
         /// Тип нагрузки
