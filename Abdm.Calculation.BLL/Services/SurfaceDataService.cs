@@ -6,10 +6,17 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class SurfaceDataService(ISurfaceRepository repository) : ISurfaceDataService
     {
+        private const int UsefulDataStartingPosition = 16;
+
         public async Task<SurfaceData?> GetSurfaceData(long issoId, int checkpointNumber)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber);
-            using MemoryStream stream = new MemoryStream();
+            if (data == null || data.Length <= UsefulDataStartingPosition)
+            {
+                return null;
+            }
+            using MemoryStream stream = new MemoryStream(data);
+            stream.Position += UsefulDataStartingPosition;
             using BinaryReader reader = new BinaryReader(stream);
 
             var isSymmetric = reader.ReadBoolean();

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ using NUnit.Framework;
 public class PassTypeCalculatorTests
 {
     private const string surfaceDataStr = "SurfaceDataExample";
+    private const int SurfaceDataExampleGarbageBytesCount = 4;
     private readonly string dataPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
         surfaceDataStr
@@ -38,7 +40,7 @@ public class PassTypeCalculatorTests
         {
             reader.GetResourceData(surfaceDataStr, out string resourceType, out byte[] resourceData);
 
-            var csvData = Task.FromResult(resourceData) as Task<byte[]?>;
+            var csvData = Task.FromResult(resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray()) as Task<byte[]?>;
 
             _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
             .Returns(csvData);

@@ -30,7 +30,7 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
         /// </summary>
-        public IEnumerable<Vector3d> MakeProfileYZ(Mesh mesh, double X)
+        public IEnumerable<Vector3d>? MakeProfileYZ(Mesh mesh, double X)
         {
             var planeYZMesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                     [
@@ -46,7 +46,11 @@ namespace Abdm.Calculation.Graphics
 
             var intersection = mesh.Tree.FindAllIntersections(planeYZ);
 
-            return intersection.Points.Select(p => p.point).OrderBy(p => p.y);
+            if (intersection.Segments.Count == 0)
+            {
+                return null;
+            }
+            return intersection.Segments.Select(s => s.point0).Concat(intersection.Segments.Select(s => s.point1)).Distinct().OrderBy(p => p.y);
         }
 
         /// <summary>

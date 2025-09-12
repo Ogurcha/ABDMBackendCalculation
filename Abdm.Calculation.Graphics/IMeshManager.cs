@@ -22,6 +22,6 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
         /// </summary>
-        IEnumerable<Vector3d> MakeProfileYZ(Mesh mesh, double X);
+        IEnumerable<Vector3d>? MakeProfileYZ(Mesh mesh, double X);
     }
 }
