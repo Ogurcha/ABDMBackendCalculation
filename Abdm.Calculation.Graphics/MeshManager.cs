@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Abdm.Calculation.Graphics.Models;
+﻿using Abdm.Calculation.Graphics.Models;
 using g4;
 using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 
@@ -34,12 +33,14 @@ namespace Abdm.Calculation.Graphics
         {
             var planeYZMesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                     [
-                        new Vector3d(X, double.MinValue, double.MinValue),
-                        new Vector3d(X, double.MaxValue, double.MinValue),
-                        new Vector3d(X, double.MinValue, double.MaxValue)
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1, mesh.Tree.Bounds.Min.z - 1),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1, mesh.Tree.Bounds.Min.z - 1),
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1, mesh.Tree.Bounds.Max.z + 1),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1, mesh.Tree.Bounds.Max.z + 1),
                     ],
                     [
-                        Index3i
+                        Index3i,
+                        Index3i + 1
                     ]
                 );
             var planeYZ = new DMeshAABBTree3(planeYZMesh, true);
