@@ -69,7 +69,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 mesh.Data.DistinctXs,
                 interval,
                 data.LadingSchema.Axles,
-                data.LadingSchema.Width
+                data.LadingSchema.Width ?? roadRules.MinColumnDistance
                 );
                 column.Points = new SmoothPoints[column.Xs.Length];
                 column.Strain = new double[column.Xs.Length];

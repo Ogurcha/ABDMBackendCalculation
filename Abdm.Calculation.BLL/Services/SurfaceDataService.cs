@@ -6,18 +6,31 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class SurfaceDataService(ISurfaceRepository repository) : ISurfaceDataService
     {
+        /// <summary>
+        /// старый "толстый клиент" сохраняет в первых 16-ти байтах служебный мусор.
+        /// </summary>
         private const int UsefulDataStartingPosition = 16;
+        /// <summary>
+        /// Проверка списанная со старого клиента
+        /// </summary>
+        private const int OldClientFormatCondition = 10;
 
-        public async Task<SurfaceData?> GetSurfaceData(long issoId, int checkpointNumber)
+        private const string UnsupportedBinaryTypeStr = "Unsupported binary format";
+
+        public async Task<SurfaceData> GetSurfaceData(long issoId, int checkpointNumber)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber);
             if (data == null || data.Length <= UsefulDataStartingPosition)
             {
-                return null;
+                throw new Exception(UnsupportedBinaryTypeStr);
             }
             using MemoryStream stream = new MemoryStream(data);
-            stream.Position += UsefulDataStartingPosition;
             using BinaryReader reader = new BinaryReader(stream);
+            if (reader.ReadInt32() > OldClientFormatCondition)
+            {
+                throw new Exception(UnsupportedBinaryTypeStr);
+            }
+            stream.Position = UsefulDataStartingPosition;
 
             var isSymmetric = reader.ReadBoolean();
             var isGridRegular = reader.ReadBoolean();

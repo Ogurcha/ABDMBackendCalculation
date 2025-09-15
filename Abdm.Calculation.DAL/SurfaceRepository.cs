@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using Abdm.Calculation.Infrastructure.Settings;
 using Dapper;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Npgsql;
 
 namespace Abdm.Calculation.DAL
 {
@@ -11,10 +11,11 @@ namespace Abdm.Calculation.DAL
 
         public async Task<byte[]?> GetSurfaceData(long issoId, int checkpointNumber)
         {
-            using (var connection = new SqlConnection(connectionStrings.Value.MainConnection))
+            using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
             {
-                var paramIssoId = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
-                var paramCheckpointNumber = new SqlParameter("@cpNumber", SqlDbType.Int) { Value = checkpointNumber };
+                var parameters = new DynamicParameters();
+                parameters.Add("@issoId", issoId, DbType.Int64);
+                parameters.Add("@cpNumber", checkpointNumber, DbType.Int32);
 
                 const string sqlQuery = @"
                 SELECT data
@@ -24,11 +25,7 @@ namespace Abdm.Calculation.DAL
 
                 var query = await connection.QueryAsync<byte[]>(
                     sqlQuery,
-                    new DynamicParameters[]
-                    {
-                        new DynamicParameters(paramIssoId),
-                        new DynamicParameters(paramCheckpointNumber)
-                    },
+                    parameters,
                     commandType: CommandType.Text);
 
                 var data = query.FirstOrDefault();

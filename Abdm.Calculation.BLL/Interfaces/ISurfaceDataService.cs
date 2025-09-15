@@ -4,6 +4,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface ISurfaceDataService
     {
-        Task<SurfaceData?> GetSurfaceData(long IssoId, int checkpointNumber);
+        Task<SurfaceData> GetSurfaceData(long IssoId, int checkpointNumber);
     }
 }

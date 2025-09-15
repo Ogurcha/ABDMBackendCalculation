@@ -49,8 +49,6 @@ namespace Abdm.Calculation.BLL.Models
         /// </summary>
         public string? Data { get; set; }
 
-        public string GetBrokerId => IssoId.ToString() + '/' + CPNumber.ToString();
-
         public bool IsValidResponse => IssoId > 0 && CPNumber > 0;
     }
 }

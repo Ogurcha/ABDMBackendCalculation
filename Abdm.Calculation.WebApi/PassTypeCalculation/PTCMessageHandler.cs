@@ -35,7 +35,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 message = mapper.FromDTO(dto);
                 logger.LogInformation(string.Format(infoMsg, message.IssoId, message.CPNumber));
                 responseContent = await ptcProcessor.CalculatePassType(message);
-                await messageProducer.Produce(responseContent.GetBrokerId, mapper.ToDTO(responseContent));
+                await messageProducer.Produce("class-calculated", mapper.ToDTO(responseContent));
             }
             catch (Exception e)
             {
@@ -44,7 +44,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 {
                     try
                     {
-                        await messageProducer.Produce(responseContent.GetBrokerId, mapper.ToDTO(responseContent));
+                        await messageProducer.Produce("class-calculated", mapper.ToDTO(responseContent));
                     }
                     catch 
                     {

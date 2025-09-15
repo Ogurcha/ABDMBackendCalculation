@@ -15,6 +15,6 @@ namespace Abdm.Calculation.BLL.Enums
         Restricted,
 
         [Description("Нет сведений")]
-        Unknown = -1
+        Unknown
     }
 }

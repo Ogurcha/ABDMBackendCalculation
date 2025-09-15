@@ -2,8 +2,8 @@
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Infrastructure.Settings;
 using Dapper;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Npgsql;
 
 namespace Abdm.Calculation.DAL
 {
@@ -11,10 +11,11 @@ namespace Abdm.Calculation.DAL
     {
         public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
         {
-            using (var connection = new SqlConnection(connectionStrings.Value.MainConnection))
+            using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
             {
-                var paramTableName = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
-                var paramId = new SqlParameter("@nPs", SqlDbType.Int) { Value = 1 };
+                var parameters = new DynamicParameters();
+                parameters.Add("@issoId", issoId, DbType.Int64);
+                parameters.Add("@nPs", 1, DbType.Int32);
 
                 const string sqlQuery = @"
                 SELECT b_gab, b_lp, b_pb
@@ -23,16 +24,23 @@ namespace Abdm.Calculation.DAL
                 AND i_mp_proezd.n_ps = @nPs
                 ORDER BY i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
 
-                var query = await connection.QueryAsync<PassageInterval>(
+                try
+                {
+                    var query = await connection.QueryAsync<PassageInterval>(
                     sqlQuery,
-                    new DynamicParameters[]
-                    {
-                        new DynamicParameters(paramTableName),
-                        new DynamicParameters(paramId)
-                    },
+                    parameters,
                     commandType: CommandType.Text);
 
-                return query.ToArray();
+                    return query.ToArray();
+                }
+                catch (Exception ex) {
+                    var excasdads = ex.ToString();
+                    return null;
+                }
+                
+                
+
+                
             }
         }
     }
