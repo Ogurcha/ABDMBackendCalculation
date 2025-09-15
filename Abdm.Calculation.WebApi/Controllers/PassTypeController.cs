@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 namespace Abdm.Calculation.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class PassTypeCalculationController(IPassTypeCalculator ptcProcessor,
+    [Route("PassType")]
+    public class PassTypeController(IPassTypeCalculator ptcProcessor,
         ILogger<PTCMessageHandler> logger,
         IPassTypeModelsMapper mapper) : Controller
     {
@@ -35,7 +35,7 @@ namespace Abdm.Calculation.WebApi.Controllers
             catch (Exception e)
             {
                 logger.LogError(string.Format(errorMsg, message?.IssoId, message?.CPNumber));
-                if (responseContent != null && responseContent.IssoId > 0 && responseContent.CPNumber > 0)
+                if (responseContent != null && responseContent.IsValidResponse)
                 {
                     try
                     {

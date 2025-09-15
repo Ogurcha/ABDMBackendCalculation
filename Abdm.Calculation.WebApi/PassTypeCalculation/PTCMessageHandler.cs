@@ -40,7 +40,7 @@ namespace Abdm.Calculation.ColumnCalculation
             catch (Exception e)
             {
                 logger.LogError(string.Format(errorMsg, message?.IssoId, message?.CPNumber));
-                if (responseContent != null && responseContent.IssoId > 0 && responseContent.CPNumber > 0)
+                if (responseContent != null && responseContent.IsValidResponse)
                 {
                     try
                     {
