@@ -6,6 +6,9 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class SurfaceDataService(ISurfaceRepository repository) : ISurfaceDataService
     {
+        /// <summary>
+        /// Расшифровывает байт массив и получает информацию о поверхности влияния
+        /// </summary>
         public async Task<SurfaceData?> GetSurfaceData(long issoId, int checkpointNumber)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber);
@@ -15,30 +18,31 @@ namespace Abdm.Calculation.BLL.Services
             var isSymmetric = reader.ReadBoolean();
             var isGridRegular = reader.ReadBoolean();
             var pointsCount = reader.ReadInt32();
-            var pointsList = GetPointsList(pointsCount, reader).ToArray();
+            var points = GetPoints(pointsCount, reader).ToArray();
             var trianglesCount = reader.ReadInt32();
-            (int, int, int)[]? trianglesList = trianglesCount > 0
-                ? GetTrianglesList(pointsCount, trianglesCount, reader).ToArray()
+            (int, int, int)[]? triangles = trianglesCount > 0
+                ? GetTriangles(pointsCount, trianglesCount, reader).ToArray()
                 : null;
 
             return new SurfaceData
             {
                 IsSymmetric = isSymmetric,
                 IsGridRegular = isGridRegular,
-                PointsList = pointsList,
-                TriangleList = trianglesList,
+                Points = points,
+                Triangles = triangles,
                 TrianglesCount = trianglesCount,
                 PointsCount = pointsCount
             };
 
-            static IEnumerable<(double, double, double)> GetPointsList(int pointsCount, BinaryReader reader)
+            static IEnumerable<(double X, double Y, double Z)> GetPoints(int pointsCount, BinaryReader reader)
             {
                 for (int i = 0; i < pointsCount; i++)
                 {
-                    yield return new(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+                    yield return new (reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
                 }
             }
-            static IEnumerable<(int, int, int)> GetTrianglesList(int pointsCount, int trianglesCount, BinaryReader reader)
+
+            static IEnumerable<(int, int, int)> GetTriangles(int pointsCount, int trianglesCount, BinaryReader reader)
             {
                 for (int i = 0; i < trianglesCount; i++)
                 {

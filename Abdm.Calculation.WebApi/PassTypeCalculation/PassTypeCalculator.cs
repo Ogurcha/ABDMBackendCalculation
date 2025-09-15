@@ -46,14 +46,14 @@ namespace Abdm.Calculation.ColumnCalculation
                 throw new Exception(passageIntervalErrorMessage);
             }
             var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
-            if (surfaceData?.TriangleList == null)
+            if (surfaceData?.Triangles == null)
             {
                 throw new Exception(surfaceDataNotFound);
             }
 
             var roadRules = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
 
-            var mesh = meshManager.GetMeshFromPoints(surfaceData.PointsList, surfaceData.TriangleList);
+            var mesh = meshManager.GetMeshFromPoints(surfaceData.Points, surfaceData.Triangles);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
                 throw new Exception(meshErrorMessage);

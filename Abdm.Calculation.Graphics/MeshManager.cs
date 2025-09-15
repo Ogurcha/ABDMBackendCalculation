@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Abdm.Calculation.Graphics.Models;
+﻿using Abdm.Calculation.Graphics.Models;
 using g4;
 using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 

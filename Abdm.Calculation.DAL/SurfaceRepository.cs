@@ -6,9 +6,14 @@ using Microsoft.Extensions.Options;
 
 namespace Abdm.Calculation.DAL
 {
+    /// <summary>
+    /// Репозиторий для работы с поверхностью влияния
+    /// </summary>
     public class SurfaceRepository(IOptions<ConnectionStrings> connectionStrings) : ISurfaceRepository
     {
-
+        /// <summary>
+        /// Получает массив байтов из бд, содержащих информацию о поверхности влияния
+        /// </summary>
         public async Task<byte[]?> GetSurfaceData(long issoId, int checkpointNumber)
         {
             using (var connection = new SqlConnection(connectionStrings.Value.MainConnection))
