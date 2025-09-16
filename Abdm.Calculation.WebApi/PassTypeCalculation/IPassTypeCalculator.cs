@@ -6,5 +6,7 @@ namespace Abdm.Calculation.ColumnCalculation
     public interface IPassTypeCalculator
     {
         Task<PTCResultMessage> CalculatePassType(PTCRequestMessage data);
+
+        PTCResultMessage GetFailedResponse(PTCRequestMessage data);
     }
 }

@@ -44,7 +44,8 @@ namespace Abdm.Calculation.ColumnCalculation
                 {
                     try
                     {
-                        await messageProducer.Produce("class-calculated", mapper.ToDTO(responseContent));
+                        var data = ptcProcessor.GetFailedResponse(mapper.FromDTO(dto)); 
+                        await messageProducer.Produce("class-calculated", mapper.ToDTO(data));
                     }
                     catch 
                     {

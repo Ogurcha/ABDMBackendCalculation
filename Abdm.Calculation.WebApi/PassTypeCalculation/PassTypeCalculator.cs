@@ -138,7 +138,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 or PassTypeEnum.SingleAutoOnly 
                 or PassTypeEnum.SingleOnlyAndPlace => AllowedEnum.Restricted,
                 PassTypeEnum.Denied => AllowedEnum.Denied,
-                PassTypeEnum.Unknown or _ => AllowedEnum.Unknown,
+                PassTypeEnum.Unknown or _ => AllowedEnum.Denied,
             };
 
             return new PTCResultMessage
@@ -151,6 +151,30 @@ namespace Abdm.Calculation.ColumnCalculation
                 PassType = resultPassType,
                 LadingId = data.LadingId
             };
+        }
+
+        public PTCResultMessage GetFailedResponse(PTCRequestMessage data)
+        {
+            if (data == null)
+            {
+                return new PTCResultMessage
+                {
+                    IssoId = default,
+                    CPNumber = default,
+                    Allowed = AllowedEnum.Denied,
+                    Intervals = [] 
+                };
+            }
+            else
+            {
+                return new PTCResultMessage
+                {
+                    IssoId = data.IssoId,
+                    CPNumber = data.CPNumber,
+                    Allowed = AllowedEnum.Denied,
+                    Intervals = []
+                };
+            } 
         }
     }
 }
