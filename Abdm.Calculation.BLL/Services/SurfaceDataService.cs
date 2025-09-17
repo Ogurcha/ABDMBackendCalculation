@@ -49,7 +49,8 @@ namespace Abdm.Calculation.BLL.Services
                     var p1 = reader.ReadInt32();
                     var p2 = reader.ReadInt32();
                     var p3 = reader.ReadInt32();
-                    if (p1 >= 0 && p2 >= 0 && p3 >= 0 && p1 < pointsCount && p2 < pointsCount && p3 < pointsCount)
+                    if (p1 >= (int)default && p2 >= (int)default && p3 >= (int)default 
+                        && p1 < pointsCount && p2 < pointsCount && p3 < pointsCount)
                     {
                         yield return new(p1, p2, p3);
                     }
