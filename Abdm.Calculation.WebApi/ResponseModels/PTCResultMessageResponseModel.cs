@@ -45,6 +45,6 @@
         /// <summary>
         /// Нагрузка тележек. не обязательна
         /// </summary>
-        public string? Data { get; set; }
+        public string? data { get; set; }
     }
 }

@@ -40,17 +40,14 @@ namespace Abdm.Calculation.ColumnCalculation
             catch (Exception e)
             {
                 logger.LogError(string.Format(errorMsg, message?.IssoId, message?.CPNumber));
-                if (responseContent != null && responseContent.IsValidResponse)
+                try
                 {
-                    try
-                    {
-                        var data = ptcProcessor.GetFailedResponse(mapper.FromDTO(dto)); 
-                        await messageProducer.Produce("class-calculated", mapper.ToDTO(data));
-                    }
-                    catch 
-                    {
-                        logger.LogError(e, producerErrorMsg);
-                    }
+                    var data = ptcProcessor.GetFailedResponse(mapper.FromDTO(dto));
+                    await messageProducer.Produce("class-calculated", mapper.ToDTO(data));
+                }
+                catch
+                {
+                    logger.LogError(e, producerErrorMsg);
                 }
             }
         }

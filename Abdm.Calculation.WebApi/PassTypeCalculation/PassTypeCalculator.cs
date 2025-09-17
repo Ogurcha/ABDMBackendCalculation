@@ -162,7 +162,11 @@ namespace Abdm.Calculation.ColumnCalculation
                     IssoId = default,
                     CPNumber = default,
                     Allowed = AllowedEnum.Denied,
-                    Intervals = [] 
+                    Intervals = [],
+                    LadingId = default,
+                    Direction = default,
+                    Snip = default,
+                    PassType = PassTypeEnum.Unknown
                 };
             }
             else
@@ -172,7 +176,11 @@ namespace Abdm.Calculation.ColumnCalculation
                     IssoId = data.IssoId,
                     CPNumber = data.CPNumber,
                     Allowed = AllowedEnum.Denied,
-                    Intervals = []
+                    Intervals = [],
+                    LadingId = data.LadingId,
+                    Direction = data.Direction,
+                    Snip = data.Snip,
+                    PassType = PassTypeEnum.Unknown
                 };
             } 
         }
