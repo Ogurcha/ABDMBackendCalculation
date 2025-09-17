@@ -24,23 +24,12 @@ namespace Abdm.Calculation.DAL
                 AND i_mp_proezd.n_ps = @nPs
                 ORDER BY i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
 
-                try
-                {
-                    var query = await connection.QueryAsync<PassageInterval>(
+                var query = await connection.QueryAsync<PassageInterval>(
                     sqlQuery,
                     parameters,
                     commandType: CommandType.Text);
 
-                    return query.ToArray();
-                }
-                catch (Exception ex) {
-                    var excasdads = ex.ToString();
-                    return null;
-                }
-                
-                
-
-                
+                return query.ToArray();
             }
         }
     }
