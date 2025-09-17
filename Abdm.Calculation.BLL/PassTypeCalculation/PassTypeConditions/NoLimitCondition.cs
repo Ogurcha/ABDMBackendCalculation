@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.ColumnCalculation;
+﻿using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions
+namespace Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions
 {
     public class NoLimitCondition : IPassTypeCondition
     {

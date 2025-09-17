@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions
+namespace Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions
 {
-    public class Speed10Condition : IPassTypeCondition
+    public class SingleAutoOnlyCondition : IPassTypeCondition
     {
         public bool CanPassCondition(List<ColumnModel> columnList, Surface surface, RoadRules roadRules)
         {
             var totalColumns = Math.Min(roadRules.MaxColumnCount, columnList.Count);
 
-            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
+            var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.StrainOneAuto?.Max());
 
             return surface.MyStrength > surface.ConstLoad + surface.OtherLoad + dynamicLoad;
         }

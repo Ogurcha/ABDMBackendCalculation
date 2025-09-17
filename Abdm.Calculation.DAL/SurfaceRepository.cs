@@ -36,16 +36,7 @@ namespace Abdm.Calculation.DAL
                     },
                     commandType: CommandType.Text);
 
-                var data = query.FirstOrDefault();
-
-                if (data != null)
-                {
-                    return data;
-                }
-                else
-                {
-                    return null;
-                }
+                return query.FirstOrDefault();
             }
         }
     }

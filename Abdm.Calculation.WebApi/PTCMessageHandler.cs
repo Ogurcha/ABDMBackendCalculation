@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.WebApi.Mappers;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
@@ -8,7 +9,7 @@ using Kafka.Integration.MessageBroker.Consumer;
 using Kafka.Integration.MessageBroker.Producer;
 using Microsoft.Extensions.Logging;
 
-namespace Abdm.Calculation.ColumnCalculation
+namespace Abdm.Calculation.WebApi
 {
 
     /// <summary>

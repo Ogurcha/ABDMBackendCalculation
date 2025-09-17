@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
-using Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions;
 
-namespace Abdm.Calculation.ColumnCalculation
+namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalService passageIntervalManager,
