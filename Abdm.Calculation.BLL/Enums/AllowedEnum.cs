@@ -12,6 +12,9 @@ namespace Abdm.Calculation.BLL.Enums
         [Description("Пропуск возможен")]
         Allowed,
         [Description("Пропуск возможен с ограничением")]
-        Restricted
+        Restricted,
+
+        [Description("Нет информации")]
+        Undefined = -1
     }
 }

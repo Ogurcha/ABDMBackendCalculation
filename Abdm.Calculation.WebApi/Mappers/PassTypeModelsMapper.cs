@@ -89,7 +89,7 @@ namespace Abdm.Calculation.WebApi.Mappers
                 direction = (int)model.Direction,
                 snip = (int)model.Snip,
                 pass_type = (int)model.PassType,
-                allowed = (int)model.Allowed,
+                allowed = model.Allowed == AllowedEnum.Undefined ? null : (int)model.Allowed,
                 intervals = model.Intervals
             };
         }

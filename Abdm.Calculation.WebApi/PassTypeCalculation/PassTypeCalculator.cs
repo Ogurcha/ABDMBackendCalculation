@@ -161,7 +161,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 {
                     IssoId = default,
                     CPNumber = default,
-                    Allowed = AllowedEnum.Denied,
+                    Allowed = AllowedEnum.Undefined,
                     Intervals = [],
                     LadingId = default,
                     Direction = default,
@@ -175,7 +175,7 @@ namespace Abdm.Calculation.ColumnCalculation
                 {
                     IssoId = data.IssoId,
                     CPNumber = data.CPNumber,
-                    Allowed = AllowedEnum.Denied,
+                    Allowed = AllowedEnum.Undefined,
                     Intervals = [],
                     LadingId = data.LadingId,
                     Direction = data.Direction,
