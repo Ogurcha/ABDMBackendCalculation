@@ -20,7 +20,7 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Расшифровывает байт массив и получает информацию о поверхности влияния
         /// </summary>
-        public async Task<SurfaceData?> GetSurfaceData(long issoId, int checkpointNumber)
+        public async Task<SurfaceData> GetSurfaceData(long issoId, int checkpointNumber)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber);
             if (data == null || data.Length <= UsefulDataStartingPosition)
