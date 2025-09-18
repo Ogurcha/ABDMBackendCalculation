@@ -2,12 +2,19 @@
 {
     public class PassageInterval
     {
-        public double TotalWidth { get; set; }
+        /// <summary>
+        /// Общая ширина интервала
+        /// </summary>
+        public double b_gab { get; set; }
 
-        public double SafetyLineLeft { get; set; }
+        /// <summary>
+        /// Отступ слева
+        /// </summary>
+        public double b_lp { get; set; }
 
-        public double SafetyLineRight { get; set; }
-
-        public double[] SafeInterval { get; set; } = new double[2];
+        /// <summary>
+        /// Отступ справа
+        /// </summary>
+        public double b_pb { get; set; }
     }
 }

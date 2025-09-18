@@ -1,5 +1,5 @@
-﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.DAL.Entities;
+﻿using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Models
@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.Models
     /// </summary>
     public class ColumnModel 
     {
-        public ColumnModel(PassageInterval interval)
+        public ColumnModel(PassageIntervalModel interval)
         {
             Interval = interval;
         }
@@ -20,7 +20,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Интервал по которому движется колонна
         /// </summary>
-        public PassageInterval Interval { get; set; }
+        public PassageIntervalModel Interval { get; set; }
 
         /// <summary>
         /// Координаты по оси X траектрий движения

@@ -1,7 +1,8 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL;
-using Abdm.Calculation.DAL.Entities;
+using Mapster;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -12,9 +13,10 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Возвращает данные для расщета интервалов для данного иссо
         /// </summary>
-        public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
+        public async Task<PassageIntervalModel[]> GetPassageIntervals(long issoId)
         {
-            var passageIntervals = await passageIntervalRepository.GetPassageIntervals(issoId);
+            var queryResult = await passageIntervalRepository.GetPassageIntervals(issoId);
+            var passageIntervals = queryResult.Adapt<PassageIntervalModel[]>();
 
             foreach (var passageInterval in passageIntervals)
             {
@@ -37,7 +39,7 @@ namespace Abdm.Calculation.BLL.Services
         /// <returns>Массив точек по оси Х внутри данного интервала, и с учётом заездов и с учётом размера колёс</returns>
         public double[] CalculateDistinctXPositionsIncludingWheelOffsets(
             double[] distinctXs,
-            PassageInterval passageInterval,
+            PassageIntervalModel passageInterval,
             AxleModel[] axles,
             double carWidth)
         {

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj" />
     <ProjectReference Include="..\Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj" />
   </ItemGroup>

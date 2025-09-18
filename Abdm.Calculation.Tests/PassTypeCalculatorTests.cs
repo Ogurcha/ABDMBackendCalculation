@@ -23,6 +23,7 @@ public class PassTypeCalculatorTests
     private const string resourcesStr = "Resources";
     private readonly string dataPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
+        resourcesStr,
         surfaceDataStr
         ); Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
     Mock<ISurfaceRepository> _surfaceDataRepositoryMock;

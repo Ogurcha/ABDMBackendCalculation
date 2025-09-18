@@ -1,8 +1,8 @@
-﻿using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
-using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 
@@ -124,7 +124,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             return PassTypeEnum.Denied;
         }
 
-        private PTCResultMessage ComposeMessage(PassTypeEnum resultPassType, PTCRequestMessage data, PassageInterval[] intervals)
+        private PTCResultMessage ComposeMessage(PassTypeEnum resultPassType, PTCRequestMessage data, PassageIntervalModel[] intervals)
         {
             AllowedEnum allowed = resultPassType switch
             {

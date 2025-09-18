@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Abdm.Calculation.BLL.Entities;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL.Entities;
@@ -4799,9 +4800,9 @@ namespace Abdm.Calculation.Tests
         };
 
         public static Task<PassageInterval[]> ResultFromPIRepo => Task.FromResult<PassageInterval[]>([new PassageInterval {
-            SafetyLineLeft = 0.15d,
-            SafetyLineRight = 0.15d,
-            TotalWidth = 7.8d
+            b_pb = 0.15d,
+            b_lp = 0.15d,
+            b_gab = 7.8d
         }]);
     }
 }
