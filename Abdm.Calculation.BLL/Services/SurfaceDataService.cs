@@ -18,10 +18,10 @@ namespace Abdm.Calculation.BLL.Services
             var isSymmetric = reader.ReadBoolean();
             var isGridRegular = reader.ReadBoolean();
             var pointsCount = reader.ReadInt32();
-            var points = GetPoints(pointsCount, reader).ToArray();
+            var points = ReadPoints(reader, pointsCount).ToArray();
             var trianglesCount = reader.ReadInt32();
             (int, int, int)[]? triangles = trianglesCount > 0
-                ? GetTriangles(pointsCount, trianglesCount, reader).ToArray()
+                ? ReadTriangles(reader, trianglesCount, pointsCount).ToArray()
                 : null;
 
             return new SurfaceData
@@ -33,29 +33,33 @@ namespace Abdm.Calculation.BLL.Services
                 TrianglesCount = trianglesCount,
                 PointsCount = pointsCount
             };
+        }
 
-            static IEnumerable<(double X, double Y, double Z)> GetPoints(int pointsCount, BinaryReader reader)
+        private IEnumerable<(double X, double Y, double Z)> ReadPoints(BinaryReader reader, int pointsToRead)
+        {
+            for (int i = 0; i < pointsToRead; i++)
             {
-                for (int i = 0; i < pointsCount; i++)
+                yield return new(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+            }
+        }
+
+        private IEnumerable<(int, int, int)> ReadTriangles(BinaryReader reader, int trianglesToRead, int pointsCount)
+        {
+            for (int i = 0; i < trianglesToRead; i++)
+            {
+                var p1 = reader.ReadInt32();
+                var p2 = reader.ReadInt32();
+                var p3 = reader.ReadInt32();
+                if (IsValidTriangle(pointsCount, p1, p2, p3))
                 {
-                    yield return new (reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+                    yield return (p1, p2, p3);
                 }
             }
+        }
 
-            static IEnumerable<(int, int, int)> GetTriangles(int pointsCount, int trianglesCount, BinaryReader reader)
-            {
-                for (int i = 0; i < trianglesCount; i++)
-                {
-                    var p1 = reader.ReadInt32();
-                    var p2 = reader.ReadInt32();
-                    var p3 = reader.ReadInt32();
-                    if (p1 >= (int)default && p2 >= (int)default && p3 >= (int)default 
-                        && p1 < pointsCount && p2 < pointsCount && p3 < pointsCount)
-                    {
-                        yield return new(p1, p2, p3);
-                    }
-                }
-            }
+        private bool IsValidTriangle(int pointsCount, int p1, int p2, int p3)
+        {
+            return p1 != p2 && p2 != p3 && p3 != p1 && p1 < pointsCount && p2 < pointsCount && p3 < pointsCount;
         }
     }
 }
