@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.StrainCalculation;
-using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Tests;
@@ -20,11 +20,11 @@ public class PassTypeCalculatorTests
 {
     private const string surfaceDataStr = "SurfaceDataExample";
     private const int SurfaceDataExampleGarbageBytesCount = 4;
+    private const string resourcesStr = "Resources";
     private readonly string dataPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
         surfaceDataStr
-        );
-    Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
+        ); Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
     Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
     [SetUp]

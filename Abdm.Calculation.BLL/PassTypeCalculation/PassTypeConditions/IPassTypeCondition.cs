@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions
+namespace Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions
 {
     public interface IPassTypeCondition
     {

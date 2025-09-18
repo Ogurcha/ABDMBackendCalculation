@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
-using Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions;
 
-namespace Abdm.Calculation.ColumnCalculation
+namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalService passageIntervalManager,
@@ -46,14 +42,14 @@ namespace Abdm.Calculation.ColumnCalculation
                 throw new Exception(passageIntervalErrorMessage);
             }
             var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
-            if (surfaceData?.TriangleList == null)
+            if (surfaceData?.Triangles == null)
             {
                 throw new Exception(surfaceDataNotFound);
             }
 
             var roadRules = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
 
-            var mesh = meshManager.GetMeshFromPoints(surfaceData.PointsList, surfaceData.TriangleList);
+            var mesh = meshManager.GetMeshFromPoints(surfaceData.Points, surfaceData.Triangles);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
                 throw new Exception(meshErrorMessage);

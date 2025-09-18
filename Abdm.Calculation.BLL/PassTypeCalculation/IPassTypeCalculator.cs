@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.ColumnCalculation
+namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
     public interface IPassTypeCalculator
     {
