@@ -6,9 +6,14 @@ using Npgsql;
 
 namespace Abdm.Calculation.DAL
 {
+    /// <summary>
+    /// Репозиторий для работы с поверхностью влияния
+    /// </summary>
     public class SurfaceRepository(IOptions<ConnectionStrings> connectionStrings) : ISurfaceRepository
     {
-
+        /// <summary>
+        /// Получает массив байтов из бд, содержащих информацию о поверхности влияния
+        /// </summary>
         public async Task<byte[]?> GetSurfaceData(long issoId, int checkpointNumber)
         {
             using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
@@ -28,16 +33,7 @@ namespace Abdm.Calculation.DAL
                     parameters,
                     commandType: CommandType.Text);
 
-                var data = query.FirstOrDefault();
-
-                if (data != null)
-                {
-                    return data;
-                }
-                else
-                {
-                    return null;
-                }
+                return query.FirstOrDefault();
             }
         }
     }

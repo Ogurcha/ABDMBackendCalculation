@@ -1,9 +1,9 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.StrainCalculation;
-using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
