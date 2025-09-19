@@ -42,6 +42,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 throw new Exception(passageIntervalErrorMessage);
             }
             var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
+            //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло.
             if (surfaceData?.Triangles == null)
             {
                 throw new Exception(surfaceDataNotFound);
@@ -88,7 +89,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                         .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
                         .OrderDescending().ToList();
 
-                    //TODO: Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
+                    //TODO: ABDMP-357 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
                     for (int j = 0; j < roadRules.MaxAutoInColumn; i++)
                     {
                         if (j == 0)
