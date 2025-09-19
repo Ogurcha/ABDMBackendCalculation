@@ -90,18 +90,19 @@ namespace Abdm.Calculation.ColumnCalculation
 
                     var strainList = mesh.Data.DistinctYs
                         .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
-                        .OrderDescending().ToList();
+                        .Order().ToList();
 
                     //TODO: Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
                     for (int j = 0; j < roadRules.MaxAutoInColumn; j++)
                     {
+                        var highestStrain = strainList.Last();
                         if (j == 0)
                         {
-                            column.StrainOneAuto[i] += strainList.First();
+                            column.StrainOneAuto[i] += highestStrain;
                         }
 
-                        column.Strain[i] += strainList.First();
-                        strainList.RemoveAt(0);
+                        column.Strain[i] += highestStrain;
+                        strainList.Remove(highestStrain);
                     }
                 }
             }
