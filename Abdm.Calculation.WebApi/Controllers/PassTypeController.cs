@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.ColumnCalculation;
+using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.WebApi.Mappers;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
