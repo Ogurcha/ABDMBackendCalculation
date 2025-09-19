@@ -8,20 +8,23 @@ using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
-    public class PassTypeCalculator (
+    public class PassTypeCalculationCoordinator (
         IPassageIntervalService passageIntervalManager,
         ISurfaceDataService surfaceDataService,
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
         IStrainService strainManager
-        ) : IPassTypeCalculator
+        ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
         private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
         private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
+        private const string roadRulesNotFound = "Road rules for given lading were not found";
 
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
+        /// TODO: ABDMP-359 - реализация сервиса расчётов динамического/статического коеффициента
+        /// На самом деле он не статический
         /// </summary>
         public static double DynamicCoefficient = 1.3d;
 
@@ -34,26 +37,31 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
             };
 
-        public async Task<PTCResultMessage> CalculatePassType(PTCRequestMessage data)
+        public async Task<ResultExceptionContainer<PTCResultMessage>> GetPassType(PTCRequestMessage data)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId);
             if (intervals?.Any() != true)
             {
-                throw new Exception(passageIntervalErrorMessage);
+                return new ResultExceptionContainer<PTCResultMessage>(new Exception(passageIntervalErrorMessage));
             }
             var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
-            //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло.
+            //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceData?.Triangles == null)
             {
-                throw new Exception(surfaceDataNotFound);
+                return new ResultExceptionContainer<PTCResultMessage>(new Exception(surfaceDataNotFound));
             }
 
-            var roadRules = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
+            //TODO: ABDMP-360 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
+            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
+            if (!(roadRulesNullable is RoadRules roadRules))
+            {
+                return new ResultExceptionContainer<PTCResultMessage>(new Exception(roadRulesNotFound));
+            }
 
             var mesh = meshManager.GetMeshFromPoints(surfaceData.Points, surfaceData.Triangles);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
-                throw new Exception(meshErrorMessage);
+                return new ResultExceptionContainer<PTCResultMessage>(new Exception(meshErrorMessage));
             }
 
             var columnList = new List<ColumnModel>();
@@ -89,7 +97,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                         .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
                         .Order().ToList();
 
-                    //TODO: ABDMP-357 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
+                    //TODO: ABDMP-358 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
                     for (int j = 0; j < roadRules.MaxAutoInColumn; j++)
                     {
                         var highestStrain = strainList.Last();
@@ -108,7 +116,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
 
             PTCResultMessage response = ComposeMessage(resultPassType, data, intervals);
 
-            return response;
+            return new ResultExceptionContainer<PTCResultMessage>(response);
         }
 
         private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules roadRules, List<ColumnModel> columnList)
@@ -151,7 +159,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             };
         }
 
-        public PTCResultMessage GetFailedResponse(PTCRequestMessage data)
+        public PTCResultMessage GetFailedResponse(PTCRequestMessage? data)
         {
             if (data == null)
             {

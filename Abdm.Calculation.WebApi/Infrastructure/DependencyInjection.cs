@@ -39,7 +39,7 @@ namespace Abdm.Calculation.Infrastructure
             }));
 
             services.AddSingleton<IStrainService, StrainService>();
-            services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
+            services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
         }
     }
 }
