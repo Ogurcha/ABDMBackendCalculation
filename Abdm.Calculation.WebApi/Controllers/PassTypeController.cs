@@ -12,7 +12,7 @@ namespace Abdm.Calculation.WebApi.Controllers
         IPassTypeModelsMapper mapper) : Controller
     {
         [HttpGet]
-        public async Task<ActionResult<PTCResultMessageResponseModel>> Calculate(PTCRequestMessageRequestModel requestModel)
+        public async Task<ActionResult<PTCResultMessageResponseModel>> GetPassType(PTCRequestMessageRequestModel requestModel)
         {
             var data = mapper.FromDTO(requestModel);
             var responseContent = await passTypeService.GetPassType(data);
