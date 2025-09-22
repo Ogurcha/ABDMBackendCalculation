@@ -31,7 +31,7 @@ namespace Abdm.Calculation.WebApi.Handlers
             var data = mapper.FromDTO(dto);
             try
             {
-                var responseContent = await passTypeService.GetPassType(data);
+                var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
                 await messageProducer.Produce(brokerClassNameStr, mapper.ToDTO(responseContent));
             }
             catch (Exception ex)

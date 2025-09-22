@@ -9,7 +9,7 @@ namespace Abdm.Calculation.DAL
 {
     public class PassageIntervalRepository(IOptions<ConnectionStrings> connectionStrings) : IPassageIntervalRepository
     {
-        public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
+        public async Task<PassageInterval[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken)
         {
             using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
             {
@@ -24,10 +24,15 @@ namespace Abdm.Calculation.DAL
                 AND i_mp_proezd.n_ps = @nPs
                 ORDER BY i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
 
-                var query = await connection.QueryAsync<PassageInterval>(
+                var command = new CommandDefinition(
                     sqlQuery,
                     parameters,
-                    commandType: CommandType.Text);
+                    commandType: CommandType.Text,
+                    cancellationToken: cancellationToken
+                    );
+
+                var query = await connection.QueryAsync<PassageInterval>(
+                    command);
 
                 return query.ToArray();
             }

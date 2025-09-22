@@ -14,7 +14,7 @@ namespace Abdm.Calculation.DAL
         /// <summary>
         /// Получает массив байтов из бд, содержащих информацию о поверхности влияния
         /// </summary>
-        public async Task<byte[]?> GetSurfaceData(long issoId, int checkpointNumber)
+        public async Task<byte[]?> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
             using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
             {
@@ -28,10 +28,14 @@ namespace Abdm.Calculation.DAL
                 WHERE c_isso = @issoId 
                 AND n = @cpNumber";
 
-                var query = await connection.QueryAsync<byte[]>(
+                var command = new CommandDefinition(
                     sqlQuery,
-                    parameters,
-                    commandType: CommandType.Text);
+                    parameters: parameters,
+                    commandType: CommandType.Text,
+                    cancellationToken: cancellationToken
+                    );
+
+                var query = await connection.QueryAsync<byte[]>(command);
 
                 return query.FirstOrDefault();
             }

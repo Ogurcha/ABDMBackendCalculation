@@ -15,7 +15,7 @@ namespace Abdm.Calculation.WebApi.Controllers
         public async Task<ActionResult<PTCResultMessageResponseModel>> GetPassType(PTCRequestMessageRequestModel requestModel)
         {
             var data = mapper.FromDTO(requestModel);
-            var responseContent = await passTypeService.GetPassType(data);
+            var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
             return Ok(mapper.ToDTO(responseContent));
         }
     }
