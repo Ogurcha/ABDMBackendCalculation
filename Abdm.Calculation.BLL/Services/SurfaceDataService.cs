@@ -1,5 +1,4 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.DAL;
+﻿using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
 
 namespace Abdm.Calculation.BLL.Services
@@ -20,9 +19,9 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Расшифровывает байт массив и получает информацию о поверхности влияния
         /// </summary>
-        public async Task<SurfaceData> GetSurfaceData(long issoId, int checkpointNumber)
+        public async Task<SurfaceData> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
-            var data = await repository.GetSurfaceData(issoId, checkpointNumber);
+            var data = await repository.GetSurfaceData(issoId, checkpointNumber, cancellationToken);
             if (data == null || data.Length <= UsefulDataStartingPosition)
             {
                 throw new Exception(UnsupportedBinaryTypeStr);

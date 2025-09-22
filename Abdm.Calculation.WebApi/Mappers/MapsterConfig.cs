@@ -5,7 +5,6 @@ using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
-using Npgsql;
 
 namespace Abdm.Calculation.WebApi.Mappers
 {

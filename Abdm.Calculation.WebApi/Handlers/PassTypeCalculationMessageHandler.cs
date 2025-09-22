@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.Mappers;
 using Abdm.Calculation.WebApi.RequestModels;
@@ -32,7 +33,7 @@ namespace Abdm.Calculation.WebApi.Handlers
             var data = dto.Adapt<PassTypeCalculationParameters>();
             try
             {
-                var responseContent = await passTypeService.GetPassType(data);
+                var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
                 await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<PassTypeCalculationResponse>());
             }
             catch (Exception ex)

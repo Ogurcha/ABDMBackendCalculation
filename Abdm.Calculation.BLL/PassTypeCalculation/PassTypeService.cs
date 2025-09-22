@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation;
 using Microsoft.Extensions.Logging;
 
-namespace Abdm.Calculation.WebApi
+namespace Abdm.Calculation.BLL
 {
     public class PassTypeService(
         IPassTypeCalculationCoordinator ptcCoordinator,
@@ -16,12 +14,12 @@ namespace Abdm.Calculation.WebApi
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string errorMsg = "Error while calculating PassType";
 
-        public async Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel)
+        public async Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken)
         {
             try
             {
                 logger.LogInformation(string.Format(infoMsg, requestModel.IssoId, requestModel.CPNumber));
-                var result = await ptcCoordinator.GetPassType(requestModel);
+                var result = await ptcCoordinator.GetPassType(requestModel, cancellationToken);
                 if (result.IsSuccess && result.Data != null)
                 {
                     return result.Data;    

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL;
 using Abdm.Calculation.WebApi.Mappers;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
@@ -16,7 +17,7 @@ namespace Abdm.Calculation.WebApi.Controllers
         public async Task<ActionResult<PassTypeCalculationResponse>> GetPassType(PassTypeCalculationRequest requestModel)
         {
             var data = requestModel.Adapt<PassTypeCalculationParameters>();
-            var responseContent = await passTypeService.GetPassType(data);
+            var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
             return Ok(responseContent.Adapt<PassTypeCalculationResponse>());
         }
     }

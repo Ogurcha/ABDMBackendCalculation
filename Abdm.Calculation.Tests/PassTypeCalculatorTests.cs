@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Threading;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation;
@@ -39,7 +40,7 @@ public class PassTypeCalculatorTests
     {
         MapsterConfig.MapsterSetup();
         _passageIntervalManagerMock = new Mock<IPassageIntervalRepository>();
-        _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>()))
+        _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .Returns(PassTypeCalculatorTestData.ResultFromPIRepo);
 
         _surfaceDataRepositoryMock = new Mock<ISurfaceRepository>();
@@ -50,7 +51,7 @@ public class PassTypeCalculatorTests
 
             var csvData = Task.FromResult(resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray()) as Task<byte[]?>;
 
-            _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
+            _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .Returns(csvData);
         }
     }
@@ -80,7 +81,7 @@ public class PassTypeCalculatorTests
 
         try
         {
-            var result = await processor.GetPassType(testMessage);
+            var result = await processor.GetPassType(testMessage, new System.Threading.CancellationToken());
 
             Assert.That(result.Data?.PassType, Is.EqualTo(expectedOutput.PassType));
         }

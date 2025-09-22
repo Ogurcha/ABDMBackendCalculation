@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Interfaces;
 
 public interface IPassageIntervalService
 {
-    public Task<PassageIntervalModel[]> GetPassageIntervals(long issoId);
+    public Task<PassageIntervalModel[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken);
 
     public double[] CalculateDistinctXPositionsIncludingWheelOffsets(
         double[] distinctXs,

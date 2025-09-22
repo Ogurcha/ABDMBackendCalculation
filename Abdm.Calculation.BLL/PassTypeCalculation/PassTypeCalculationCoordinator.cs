@@ -3,6 +3,7 @@ using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
+using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 
@@ -37,14 +38,14 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
             };
 
-        public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(PassTypeCalculationParameters data)
+        public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(PassTypeCalculationParameters data, CancellationToken cancellationToken)
         {
-            var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId);
+            var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId, cancellationToken);
             if (intervals?.Any() != true)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
-            var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
+            var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber, cancellationToken);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceData?.Triangles == null)
             {
