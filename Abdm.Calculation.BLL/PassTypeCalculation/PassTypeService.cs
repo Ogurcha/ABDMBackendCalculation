@@ -1,16 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation;
-using Abdm.Calculation.WebApi.Handlers;
 using Microsoft.Extensions.Logging;
 
-namespace Abdm.Calculation.WebApi
+namespace Abdm.Calculation.BLL
 {
     public class PassTypeService(
         IPassTypeCalculationCoordinator ptcCoordinator,
-        ILogger<PTCMessageHandler> logger
+        ILogger<PassTypeService> logger
         ) : IPassTypeService
     {
         private const string infoMsg = "PassType calculation for (IssoId = {0}, Check point number = {1}) started";

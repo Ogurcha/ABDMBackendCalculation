@@ -1,5 +1,4 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.DAL;
+﻿using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
 
 namespace Abdm.Calculation.BLL.Services

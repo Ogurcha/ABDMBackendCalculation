@@ -1,8 +1,6 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 
-namespace Abdm.Calculation.WebApi
+namespace Abdm.Calculation.BLL
 {
     public interface IPassTypeService
     {

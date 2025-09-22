@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.DAL.Entities;
 
-namespace Abdm.Calculation.BLL.Interfaces
+namespace Abdm.Calculation.BLL.Services
 {
     public interface ISurfaceDataService
     {
