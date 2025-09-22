@@ -45,11 +45,16 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
-            var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber, cancellationToken);
+            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber, cancellationToken);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
-            if (surfaceData?.Triangles == null)
+            if (surfaceDataContainer?.Data?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(surfaceDataNotFound));
+                var surfaceDataException = new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(surfaceDataNotFound));
+                if (surfaceDataContainer?.Exception != null)
+                {
+                    surfaceDataException.AddException(surfaceDataContainer.Exception);
+                }
+                return surfaceDataException;
             }
 
             //TODO: ABDMP-360 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
@@ -59,7 +64,9 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(roadRulesNotFound));
             }
 
-            var mesh = meshManager.GetMeshFromPoints(surfaceData.Points, surfaceData.Triangles);
+            var mesh = meshManager.GetMeshFromPoints(
+                surfaceDataContainer.Data.Points, 
+                surfaceDataContainer.Data.Triangles);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(meshErrorMessage));
