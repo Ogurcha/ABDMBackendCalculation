@@ -7,6 +7,7 @@ namespace Abdm.Calculation.Graphics
     public class MeshManager : IMeshManager
     {
         private const int smoothingPoint = 2;
+        private const int ExtraOne = 1;
 
         /// <summary>
         /// возврает меш по массиву точек
@@ -33,10 +34,10 @@ namespace Abdm.Calculation.Graphics
         {
             var planeYZMesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                     [
-                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1, mesh.Tree.Bounds.Min.z - 1),
-                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1, mesh.Tree.Bounds.Min.z - 1),
-                        new Vector3d(X, mesh.Tree.Bounds.Min.y - 1, mesh.Tree.Bounds.Max.z + 1),
-                        new Vector3d(X, mesh.Tree.Bounds.Max.y + 1, mesh.Tree.Bounds.Max.z + 1),
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - ExtraOne, mesh.Tree.Bounds.Min.z - ExtraOne),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + ExtraOne, mesh.Tree.Bounds.Min.z - ExtraOne),
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - ExtraOne, mesh.Tree.Bounds.Max.z + ExtraOne),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + ExtraOne, mesh.Tree.Bounds.Max.z + ExtraOne),
                     ],
                     [
                         Index3i,

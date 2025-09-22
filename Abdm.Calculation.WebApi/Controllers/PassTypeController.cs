@@ -11,7 +11,7 @@ namespace Abdm.Calculation.WebApi.Controllers
     public class PassTypeController(IPassTypeService passTypeService,
         IPassTypeModelsMapper mapper) : Controller
     {
-        [HttpGet]
+        [HttpGet("GetPassType")]
         public async Task<ActionResult<PTCResultMessageResponseModel>> GetPassType(PTCRequestMessageRequestModel requestModel)
         {
             var data = mapper.FromDTO(requestModel);
