@@ -24,7 +24,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
 
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
-        /// TODO: ABDMP-359 - реализация сервиса расчётов динамического/статического коеффициента
+        /// TODO: ABDMP-370 - реализация сервиса расчётов динамического/статического коеффициента
         /// На самом деле он не статический
         /// </summary>
         public static double DynamicCoefficient = 1.3d;
@@ -57,7 +57,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 return surfaceDataException;
             }
 
-            //TODO: ABDMP-360 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
+            //TODO: ABDMP-371 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
             var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
             if (!(roadRulesNullable is RoadRules roadRules))
             {
@@ -105,7 +105,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                         .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
                         .Order().ToList();
 
-                    //TODO: ABDMP-358 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
+                    //TODO: ABDMP-369 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
                     for (int j = 0; j < roadRules.MaxAutoInColumn; j++)
                     {
                         var highestStrain = strainList.Last();
