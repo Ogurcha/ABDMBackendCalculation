@@ -45,12 +45,18 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             {
                 return new ResultExceptionContainer<PTCResultMessage>(new Exception(passageIntervalErrorMessage));
             }
-            var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber, cancellationToken);
+            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber, cancellationToken);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
-            if (surfaceData?.Triangles == null)
+            if (surfaceDataContainer != null && !surfaceDataContainer.IsSuccess)
             {
-                return new ResultExceptionContainer<PTCResultMessage>(new Exception(surfaceDataNotFound));
+                var surfaceDataException = new ResultExceptionContainer<PTCResultMessage>(new Exception(surfaceDataNotFound));
+                if (surfaceDataContainer.Exception != null)
+                {
+                    surfaceDataException.AddException(surfaceDataContainer.Exception);
+                }
+                return surfaceDataException;
             }
+            var surfaceData = surfaceDataContainer?.Data as SurfaceData;
 
             //TODO: ABDMP-360 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
             var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
