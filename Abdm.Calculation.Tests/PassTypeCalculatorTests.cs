@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
@@ -12,6 +13,9 @@ using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Tests;
+using Abdm.Calculation.WebApi.Mappers;
+using Abdm.Calculation.WebApi.RequestModels;
+using Mapster;
 using Moq;
 using NUnit.Framework;
 
@@ -33,6 +37,7 @@ public class PassTypeCalculatorTests
     [SetUp]
     public void SetUp()
     {
+        MapsterConfig.MapsterSetup();
         _passageIntervalManagerMock = new Mock<IPassageIntervalRepository>();
         _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>()))
             .Returns(PassTypeCalculatorTestData.ResultFromPIRepo);

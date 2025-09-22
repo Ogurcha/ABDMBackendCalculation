@@ -2,14 +2,13 @@
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation;
-using Abdm.Calculation.WebApi.Handlers;
 using Microsoft.Extensions.Logging;
 
 namespace Abdm.Calculation.WebApi
 {
     public class PassTypeService(
         IPassTypeCalculationCoordinator ptcCoordinator,
-        ILogger<PTCMessageHandler> logger
+        ILogger<PassTypeService> logger
         ) : IPassTypeService
     {
         private const string infoMsg = "PassType calculation for (IssoId = {0}, Check point number = {1}) started";
@@ -17,7 +16,7 @@ namespace Abdm.Calculation.WebApi
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string errorMsg = "Error while calculating PassType";
 
-        public async Task<PTCResultMessage> GetPassType(PTCRequestMessage requestModel)
+        public async Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel)
         {
             try
             {

@@ -4,9 +4,9 @@ using Mapster;
 
 namespace Abdm.Calculation.BLL.Mappers
 {
-    public static class MapsterConfig
+    public static class BLLMapsterConfig
     {
-        public static void MapsterSetup()
+        public static void BLLMapsterSetup()
         {
             TypeAdapterConfig<PassageInterval, PassageIntervalModel>
             .NewConfig()

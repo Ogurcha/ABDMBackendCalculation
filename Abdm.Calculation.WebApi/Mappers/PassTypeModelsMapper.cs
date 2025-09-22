@@ -12,7 +12,7 @@ namespace Abdm.Calculation.WebApi.Mappers
     /// </summary>
     public class PassTypeModelsMapper : IPassTypeModelsMapper
     {
-        public PTCRequestMessage FromDTO(PTCRequestMessageRequestModel dto)
+        public PassTypeCalculationParameters FromDTO(PassTypeCalculationRequest dto)
         {
             var ladingSchema = dto.load_schema ?? new LadingSchemaRequestModel();
             var axles = ladingSchema.axles ?? [];
@@ -20,7 +20,7 @@ namespace Abdm.Calculation.WebApi.Mappers
             var surfacePoints = surface.surface_data ?? [];
             var pillarData = surface.line_data ?? [];
             var roadway = dto.roadway ?? new RoadwayRequestModel();
-            return new PTCRequestMessage
+            return new PassTypeCalculationParameters
             {
                 IssoId = dto.c_isso,
                 CPNumber = dto.number,
@@ -79,9 +79,9 @@ namespace Abdm.Calculation.WebApi.Mappers
             };
         }
 
-        public PTCResultMessageResponseModel ToDTO(PTCResultMessage model)
+        public PassTypeCalculationResponse ToDTO(PassTypeCalculationResult model)
         {
-            return new PTCResultMessageResponseModel
+            return new PassTypeCalculationResponse
             {
                 c_isso = model.IssoId,
                 n = model.CPNumber,

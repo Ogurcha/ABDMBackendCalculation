@@ -5,6 +5,6 @@ namespace Abdm.Calculation.WebApi
 {
     public interface IPassTypeService
     {
-        Task<PTCResultMessage> GetPassType(PTCRequestMessage requestModel);
+        Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel);
     }
 }

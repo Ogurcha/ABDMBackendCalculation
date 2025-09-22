@@ -6,8 +6,8 @@ namespace Abdm.Calculation.WebApi.Mappers
 {
     public interface IPassTypeModelsMapper
     {
-        PTCRequestMessage FromDTO(PTCRequestMessageRequestModel dto);
+        PassTypeCalculationParameters FromDTO(PassTypeCalculationRequest dto);
 
-        PTCResultMessageResponseModel ToDTO(PTCResultMessage model);
+        PassTypeCalculationResponse ToDTO(PassTypeCalculationResult model);
     }
 }

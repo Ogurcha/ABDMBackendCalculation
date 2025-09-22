@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainService
     {
-        double GetStrain(PTCRequestMessage message, SmoothPoints smoothpoints, double Y);
+        double GetStrain(PassTypeCalculationParameters message, SmoothPoints smoothpoints, double Y);
     }
 }

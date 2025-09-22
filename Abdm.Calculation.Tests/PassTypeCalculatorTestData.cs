@@ -8,7 +8,7 @@ namespace Abdm.Calculation.Tests
 {
     public static class PassTypeCalculatorTestData
     {
-        public static PTCRequestMessage TestRequestMessage => new PTCRequestMessage()
+        public static PassTypeCalculationParameters TestRequestMessage => new PassTypeCalculationParameters()
         {
             IssoId = 3800031,
             CPNumber = 7,
@@ -4786,7 +4786,7 @@ namespace Abdm.Calculation.Tests
             }
         };
 
-        public static PTCResultMessage TestResultMessage => new PTCResultMessage()
+        public static PassTypeCalculationResult TestResultMessage => new PassTypeCalculationResult()
         {
             IssoId = 3800031,
             CPNumber = 7,

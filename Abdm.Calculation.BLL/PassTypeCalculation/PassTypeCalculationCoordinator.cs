@@ -37,31 +37,31 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
             };
 
-        public async Task<ResultExceptionContainer<PTCResultMessage>> GetPassType(PTCRequestMessage data)
+        public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(PassTypeCalculationParameters data)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId);
             if (intervals?.Any() != true)
             {
-                return new ResultExceptionContainer<PTCResultMessage>(new Exception(passageIntervalErrorMessage));
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
             var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceData?.Triangles == null)
             {
-                return new ResultExceptionContainer<PTCResultMessage>(new Exception(surfaceDataNotFound));
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(surfaceDataNotFound));
             }
 
             //TODO: ABDMP-360 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
             var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
             if (!(roadRulesNullable is RoadRules roadRules))
             {
-                return new ResultExceptionContainer<PTCResultMessage>(new Exception(roadRulesNotFound));
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(roadRulesNotFound));
             }
 
             var mesh = meshManager.GetMeshFromPoints(surfaceData.Points, surfaceData.Triangles);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
-                return new ResultExceptionContainer<PTCResultMessage>(new Exception(meshErrorMessage));
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(meshErrorMessage));
             }
 
             var columnList = new List<ColumnModel>();
@@ -114,12 +114,12 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
 
             var resultPassType = GetPassType(data, roadRules, columnList);
 
-            PTCResultMessage response = ComposeMessage(resultPassType, data, intervals);
+            PassTypeCalculationResult response = ComposeMessage(resultPassType, data, intervals);
 
-            return new ResultExceptionContainer<PTCResultMessage>(response);
+            return new ResultExceptionContainer<PassTypeCalculationResult>(response);
         }
 
-        private PassTypeEnum GetPassType(PTCRequestMessage data, RoadRules roadRules, List<ColumnModel> columnList)
+        private PassTypeEnum GetPassType(PassTypeCalculationParameters data, RoadRules roadRules, List<ColumnModel> columnList)
         { 
             columnList = columnList.OrderByDescending(c => c.Strain).ToList();
 
@@ -134,7 +134,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             return PassTypeEnum.Denied;
         }
 
-        private PTCResultMessage ComposeMessage(PassTypeEnum resultPassType, PTCRequestMessage data, PassageIntervalModel[] intervals)
+        private PassTypeCalculationResult ComposeMessage(PassTypeEnum resultPassType, PassTypeCalculationParameters data, PassageIntervalModel[] intervals)
         {
             AllowedEnum allowed = resultPassType switch
             {
@@ -147,7 +147,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 PassTypeEnum.Unknown or _ => AllowedEnum.Denied,
             };
 
-            return new PTCResultMessage
+            return new PassTypeCalculationResult
             {
                 Allowed = allowed,
                 CPNumber = data.CPNumber,
@@ -159,11 +159,11 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             };
         }
 
-        public PTCResultMessage GetFailedResponse(PTCRequestMessage? data)
+        public PassTypeCalculationResult GetFailedResponse(PassTypeCalculationParameters? data)
         {
             if (data == null)
             {
-                return new PTCResultMessage
+                return new PassTypeCalculationResult
                 {
                     IssoId = default,
                     CPNumber = default,
@@ -177,7 +177,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             }
             else
             {
-                return new PTCResultMessage
+                return new PassTypeCalculationResult
                 {
                     IssoId = data.IssoId,
                     CPNumber = data.CPNumber,

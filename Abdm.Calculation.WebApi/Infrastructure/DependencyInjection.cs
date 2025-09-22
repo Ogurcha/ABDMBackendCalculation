@@ -1,5 +1,4 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
@@ -26,7 +25,6 @@ namespace Abdm.Calculation.Infrastructure
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             MapsterConfig.MapsterSetup();
-            services.AddSingleton<IPassTypeModelsMapper, PassTypeModelsMapper>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
