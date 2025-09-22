@@ -25,7 +25,9 @@ public class PassTypeCalculatorTests
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
         resourcesStr,
         surfaceDataStr
-        ); Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
+        );
+
+    Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
     Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
     [SetUp]
@@ -63,7 +65,7 @@ public class PassTypeCalculatorTests
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
 
-        var processor = new PassTypeCalculator(
+        var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,
             surfaceDataService,
             new MeshManager(),
@@ -73,9 +75,9 @@ public class PassTypeCalculatorTests
 
         try
         {
-            var result = await processor.CalculatePassType(testMessage);
+            var result = await processor.GetPassType(testMessage);
 
-            Assert.That(result.PassType, Is.EqualTo(expectedOutput.PassType));
+            Assert.That(result.Data?.PassType, Is.EqualTo(expectedOutput.PassType));
         }
         catch (System.Exception e)
         {

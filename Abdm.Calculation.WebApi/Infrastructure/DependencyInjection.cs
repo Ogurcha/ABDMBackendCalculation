@@ -8,6 +8,7 @@ using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
+using Abdm.Calculation.WebApi;
 using Abdm.Calculation.WebApi.Mappers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,8 @@ namespace Abdm.Calculation.Infrastructure
             }));
 
             services.AddSingleton<IStrainService, StrainService>();
-            services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
+            services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
+            services.AddScoped<IPassTypeService, PassTypeService>();
         }
     }
 }
