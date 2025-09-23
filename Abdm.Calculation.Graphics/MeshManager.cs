@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Abdm.Calculation.Graphics.Models;
+﻿using Abdm.Calculation.Graphics.Models;
 using g4;
 using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 
@@ -12,12 +11,13 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
-        public Mesh GetMeshFromPoints(Vector3[] points)
+        public Mesh GetMeshFromPoints((double X, double Y, double Z)[] points, (int p1, int p2, int p3)[] triangleList)
         {
             ArgumentNullException.ThrowIfNull(points);
 
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
-                points.Select(p => new Vector3d(p.X, p.Y, p.Z)), GetTrianglesFromPoints(points: points));
+                points.Select(p => new Vector3d(p.X, p.Y, p.Z)), 
+                triangleList.Select(t => new Index3i(t.p1, t.p2, t.p3)));
 
             var data = UpdateMeshData(mesh);
 
@@ -118,22 +118,8 @@ namespace Abdm.Calculation.Graphics
         }
 
         /// <summary>
-        /// Получить коллекциу полигонов, подразумевая, что массив точек сгруппирован по 3, то есть точки 1,2,3 - это первый полигон, 4,5,6 - второй и т.д.
-        /// </summary>
-        private IEnumerable<Index3i> GetTrianglesFromPoints(Vector3[] points)
-        {
-            for (int i = 0; i < points.Length / 3; i++)
-            {
-                var triangle = Index3i + i * 3;
-
-                yield return triangle;
-            }
-        }
-
-        /// <summary>
         /// Дефолтные три точки
         /// </summary>
         private static Index3i Index3i => new Index3i(0, 1, 2);
-
     }
 }

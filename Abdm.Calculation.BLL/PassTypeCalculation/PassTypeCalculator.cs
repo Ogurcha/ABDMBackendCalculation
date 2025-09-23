@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
-using Abdm.Calculation.WebApi.PassTypeCalculation.PassTypeConditions;
 
-namespace Abdm.Calculation.ColumnCalculation
+namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
     public class PassTypeCalculator (
         IPassageIntervalService passageIntervalManager,
+        ISurfaceDataService surfaceDataService,
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
         IStrainService strainManager
         ) : IPassTypeCalculator
     {
         private const string meshErrorMessage = "Mesh construction failed";
-        private const string passageIntervalErrormessage = "Passage intervals for this isso have not been found";
+        private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
+        private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
 
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
@@ -41,12 +39,18 @@ namespace Abdm.Calculation.ColumnCalculation
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId);
             if (intervals?.Any() != true)
             {
-                throw new Exception(passageIntervalErrormessage);
+                throw new Exception(passageIntervalErrorMessage);
+            }
+            var surfaceData = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber);
+            //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло.
+            if (surfaceData?.Triangles == null)
+            {
+                throw new Exception(surfaceDataNotFound);
             }
 
             var roadRules = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
 
-            var mesh = meshManager.GetMeshFromPoints(data.Surface.SurfacePoints);
+            var mesh = meshManager.GetMeshFromPoints(surfaceData.Points, surfaceData.Triangles);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
                 throw new Exception(meshErrorMessage);
@@ -85,7 +89,7 @@ namespace Abdm.Calculation.ColumnCalculation
                         .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
                         .OrderDescending().ToList();
 
-                    //TODO: Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
+                    //TODO: ABDMP-357 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
                     for (int j = 0; j < roadRules.MaxAutoInColumn; i++)
                     {
                         if (j == 0)

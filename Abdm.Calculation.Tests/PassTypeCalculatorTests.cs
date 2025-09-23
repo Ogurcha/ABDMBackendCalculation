@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Resources;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.StrainCalculation;
-using Abdm.Calculation.ColumnCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Tests;
@@ -14,7 +17,11 @@ using NUnit.Framework;
 [TestFixture]
 public class PassTypeCalculatorTests
 {
+    private const string surfaceDataStr = "SurfaceDataExample";
+    private const string resourcesStr = "Resources";
+    private readonly string dataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, resourcesStr, surfaceDataStr);
     Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
+    Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
     [SetUp]
     public void SetUp()
@@ -22,6 +29,18 @@ public class PassTypeCalculatorTests
         _passageIntervalManagerMock = new Mock<IPassageIntervalRepository>();
         _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>()))
             .Returns(PassTypeCalculatorTestData.ResultFromPIRepo);
+
+        _surfaceDataRepositoryMock = new Mock<ISurfaceRepository>();
+
+        using (ResourceReader reader = new ResourceReader(dataPath))
+        {
+            reader.GetResourceData(surfaceDataStr, out string resourceType, out byte[] resourceData);
+
+            var csvData = Task.FromResult(resourceData) as Task<byte[]?>;
+
+            _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
+            .Returns(csvData);
+        }
     }
 
     [Test]
@@ -37,9 +56,11 @@ public class PassTypeCalculatorTests
         });
         var strainManager = new StrainService();
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
+        var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
 
         var processor = new PassTypeCalculator(
-            passageIntervalService, 
+            passageIntervalService,
+            surfaceDataService,
             new MeshManager(),
             roadRulesFactory,
             strainManager

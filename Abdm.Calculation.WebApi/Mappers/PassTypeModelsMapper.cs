@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Numerics;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.RequestModels;
@@ -53,7 +52,7 @@ namespace Abdm.Calculation.WebApi.Mappers
                 },
                 Surface = new Surface
                 {
-                    SurfacePoints = [.. surfacePoints.Select(v => new Vector3(v.x, v.y, v.z))],
+                    SurfacePoints = [.. surfacePoints.Select(v => (v.x, v.y, v.z))],
                     PillarData = pillarData,
                     MaxX = surface.maxX,
                     MaxY = surface.maxY,

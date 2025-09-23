@@ -1,0 +1,10 @@
+﻿
+using Abdm.Calculation.DAL.Entities;
+
+namespace Abdm.Calculation.DAL
+{
+    public interface ISurfaceRepository
+    {
+        Task<byte[]?> GetSurfaceData(long issoId, int checkpointId);
+    }
+}
