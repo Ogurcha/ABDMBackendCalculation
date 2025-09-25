@@ -2,19 +2,20 @@
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Infrastructure.Settings;
 using Dapper;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Npgsql;
 
 namespace Abdm.Calculation.DAL
 {
     public class PassageIntervalRepository(IOptions<ConnectionStrings> connectionStrings) : IPassageIntervalRepository
     {
-        public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
+        public async Task<PassageInterval[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken)
         {
-            using (var connection = new SqlConnection(connectionStrings.Value.MainConnection))
+            using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
             {
-                var paramTableName = new SqlParameter("@issoId", SqlDbType.BigInt) { Value = issoId };
-                var paramId = new SqlParameter("@nPs", SqlDbType.Int) { Value = 1 };
+                var parameters = new DynamicParameters();
+                parameters.Add("@issoId", issoId, DbType.Int64);
+                parameters.Add("@nPs", 1, DbType.Int32);
 
                 const string sqlQuery = @"
                 SELECT b_gab, b_lp, b_pb
@@ -23,14 +24,15 @@ namespace Abdm.Calculation.DAL
                 AND i_mp_proezd.n_ps = @nPs
                 ORDER BY i_mp_proezd.n_ps, i_mp_proezd.w_proezd";
 
-                var query = await connection.QueryAsync<PassageInterval>(
+                var command = new CommandDefinition(
                     sqlQuery,
-                    new DynamicParameters[]
-                    {
-                        new DynamicParameters(paramTableName),
-                        new DynamicParameters(paramId)
-                    },
-                    commandType: CommandType.Text);
+                    parameters,
+                    commandType: CommandType.Text,
+                    cancellationToken: cancellationToken
+                    );
+
+                var query = await connection.QueryAsync<PassageInterval>(
+                    command);
 
                 return query.ToArray();
             }

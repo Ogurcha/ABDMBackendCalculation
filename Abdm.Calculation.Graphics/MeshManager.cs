@@ -7,6 +7,7 @@ namespace Abdm.Calculation.Graphics
     public class MeshManager : IMeshManager
     {
         private const int smoothingPoint = 2;
+        private const int ExtraOne = 1;
 
         /// <summary>
         /// возврает меш по массиву точек
@@ -29,23 +30,29 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
         /// </summary>
-        public IEnumerable<Vector3d> MakeProfileYZ(Mesh mesh, double X)
+        public IEnumerable<Vector3d>? MakeProfileYZ(Mesh mesh, double X)
         {
             var planeYZMesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                     [
-                        new Vector3d(X, double.MinValue, double.MinValue),
-                        new Vector3d(X, double.MaxValue, double.MinValue),
-                        new Vector3d(X, double.MinValue, double.MaxValue)
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - ExtraOne, mesh.Tree.Bounds.Min.z - ExtraOne),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + ExtraOne, mesh.Tree.Bounds.Min.z - ExtraOne),
+                        new Vector3d(X, mesh.Tree.Bounds.Min.y - ExtraOne, mesh.Tree.Bounds.Max.z + ExtraOne),
+                        new Vector3d(X, mesh.Tree.Bounds.Max.y + ExtraOne, mesh.Tree.Bounds.Max.z + ExtraOne),
                     ],
                     [
-                        Index3i
+                        Index3i,
+                        Index3i + 1
                     ]
                 );
             var planeYZ = new DMeshAABBTree3(planeYZMesh, true);
 
             var intersection = mesh.Tree.FindAllIntersections(planeYZ);
 
-            return intersection.Points.Select(p => p.point).OrderBy(p => p.y);
+            if (intersection.Segments.Count == 0)
+            {
+                return null;
+            }
+            return intersection.Segments.Select(s => s.point0).Concat(intersection.Segments.Select(s => s.point1)).Distinct().OrderBy(p => p.y);
         }
 
         /// <summary>

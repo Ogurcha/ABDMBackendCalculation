@@ -8,7 +8,7 @@
         /// <summary>
         /// DTO идентификатора нагрузки
         /// </summary>
-        public long id { get; set; }
+        public int id { get; set; }
 
         /// <summary>
         /// Тип нагрузки
@@ -28,17 +28,17 @@
         /// <summary>
         /// Нормативный отступ от края. Больше нуля, если без заезда на полосу. Ноль - если с заездом на ограничительную полосу
         /// </summary>
-        public double width { get; set; }
+        public double? width { get; set; }
 
         /// <summary>
         /// Длина
         /// </summary>
-        public double length { get; set; }
+        public double? length { get; set; }
 
         /// <summary>
         /// Расстояние
         /// </summary>
-        public double distance { get; set; }
+        public double? distance { get; set; }
 
         /// <summary>
         /// Точки давления, которые представляют данную нагрузку

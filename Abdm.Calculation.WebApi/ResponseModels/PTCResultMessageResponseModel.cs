@@ -35,7 +35,7 @@
         /// <summary>
         /// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
         /// </summary>
-        public int allowed { get; set; }
+        public int? allowed { get; set; }
 
         /// <summary>
         /// Интервалы между нагрузками.
@@ -45,8 +45,6 @@
         /// <summary>
         /// Нагрузка тележек. не обязательна
         /// </summary>
-        public string? Data { get; set; }
-
-        public string GetBrokerId => c_isso.ToString() + '/' + n.ToString();
+        public string? data { get; set; }
     }
 }

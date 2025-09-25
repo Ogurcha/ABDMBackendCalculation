@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Threading;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
@@ -19,7 +21,13 @@ public class PassTypeCalculatorTests
 {
     private const string surfaceDataStr = "SurfaceDataExample";
     private const string resourcesStr = "Resources";
-    private readonly string dataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, resourcesStr, surfaceDataStr);
+    private const int SurfaceDataExampleGarbageBytesCount = 4;
+    private readonly string dataPath = Path.Combine(
+        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
+        resourcesStr,
+        surfaceDataStr
+        );
+
     Mock<IPassageIntervalRepository> _passageIntervalManagerMock;
     Mock<ISurfaceRepository> _surfaceDataRepositoryMock;
 
@@ -27,7 +35,7 @@ public class PassTypeCalculatorTests
     public void SetUp()
     {
         _passageIntervalManagerMock = new Mock<IPassageIntervalRepository>();
-        _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>()))
+        _passageIntervalManagerMock.Setup(f => f.GetPassageIntervals(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .Returns(PassTypeCalculatorTestData.ResultFromPIRepo);
 
         _surfaceDataRepositoryMock = new Mock<ISurfaceRepository>();
@@ -36,9 +44,9 @@ public class PassTypeCalculatorTests
         {
             reader.GetResourceData(surfaceDataStr, out string resourceType, out byte[] resourceData);
 
-            var csvData = Task.FromResult(resourceData) as Task<byte[]?>;
+            var csvData = Task.FromResult(resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray()) as Task<byte[]?>;
 
-            _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>()))
+            _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .Returns(csvData);
         }
     }
@@ -58,7 +66,7 @@ public class PassTypeCalculatorTests
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
 
-        var processor = new PassTypeCalculator(
+        var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,
             surfaceDataService,
             new MeshManager(),
@@ -68,9 +76,9 @@ public class PassTypeCalculatorTests
 
         try
         {
-            var result = await processor.CalculatePassType(testMessage);
+            var result = await processor.GetPassType(testMessage, new System.Threading.CancellationToken());
 
-            Assert.That(result.PassType, Is.EqualTo(expectedOutput.PassType));
+            Assert.That(result.Data?.PassType, Is.EqualTo(expectedOutput.PassType));
         }
         catch (System.Exception e)
         {

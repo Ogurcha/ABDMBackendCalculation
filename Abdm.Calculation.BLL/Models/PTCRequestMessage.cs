@@ -20,7 +20,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long LadingId { get; set; }
+        public int LadingId { get; set; }
 
         /// <summary>
         /// номер выбранного снипа, по которому пойдут расчет

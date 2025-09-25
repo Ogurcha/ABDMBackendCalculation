@@ -10,7 +10,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions
 
             var dynamicLoad = columnList.Take(totalColumns).Sum(c => c.Strain?.Max());
 
-            dynamicLoad *= PassTypeCalculator.DynamicCoefficient;
+            dynamicLoad *= PassTypeCalculationCoordinator.DynamicCoefficient;
 
             return surface.MyStrength > surface.ConstLoad + surface.PedestrianLoad + surface.OtherLoad + dynamicLoad;
         }

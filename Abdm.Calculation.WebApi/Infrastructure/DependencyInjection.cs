@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
@@ -39,7 +40,8 @@ namespace Abdm.Calculation.Infrastructure
             }));
 
             services.AddSingleton<IStrainService, StrainService>();
-            services.AddScoped<IPassTypeCalculator, PassTypeCalculator>();
+            services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
+            services.AddScoped<IPassTypeService, PassTypeService>();
         }
     }
 }

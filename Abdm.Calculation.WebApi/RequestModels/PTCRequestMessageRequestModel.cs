@@ -18,7 +18,7 @@
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long c_nagruzka { get; set; }
+        public int c_nagruzka { get; set; }
 
         /// <summary>
         /// номер выбранного снипа, по которому пойдут расчет

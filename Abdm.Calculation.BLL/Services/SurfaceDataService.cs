@@ -1,4 +1,4 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
 
@@ -7,13 +7,33 @@ namespace Abdm.Calculation.BLL.Services
     public class SurfaceDataService(ISurfaceRepository repository) : ISurfaceDataService
     {
         /// <summary>
+        /// старый "толстый клиент" сохраняет в первых 16-ти байтах служебный мусор.
+        /// </summary>
+        private const int UsefulDataStartingPosition = 16;
+        /// <summary>
+        /// Проверка списанная со старого клиента
+        /// </summary>
+        private const int OldClientFormatCondition = 10;
+
+        private const string UnsupportedBinaryTypeStr = "Unsupported binary format";
+
+        /// <summary>
         /// Расшифровывает байт массив и получает информацию о поверхности влияния
         /// </summary>
-        public async Task<SurfaceData?> GetSurfaceData(long issoId, int checkpointNumber)
+        public async Task<ResultExceptionContainer<SurfaceData>> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
-            var data = await repository.GetSurfaceData(issoId, checkpointNumber);
-            using MemoryStream stream = new MemoryStream();
+            var data = await repository.GetSurfaceData(issoId, checkpointNumber, cancellationToken);
+            if (data == null || data.Length <= UsefulDataStartingPosition)
+            {
+                return new ResultExceptionContainer<SurfaceData>(new Exception(UnsupportedBinaryTypeStr));
+            }
+            using MemoryStream stream = new MemoryStream(data);
             using BinaryReader reader = new BinaryReader(stream);
+            if (reader.ReadInt32() > OldClientFormatCondition)
+            {
+                return new ResultExceptionContainer<SurfaceData>(new Exception(UnsupportedBinaryTypeStr));
+            }
+            stream.Position = UsefulDataStartingPosition;
 
             var isSymmetric = reader.ReadBoolean();
             var isGridRegular = reader.ReadBoolean();
@@ -24,15 +44,18 @@ namespace Abdm.Calculation.BLL.Services
                 ? ReadTriangles(reader, trianglesCount, pointsCount).ToArray()
                 : null;
 
-            return new SurfaceData
-            {
-                IsSymmetric = isSymmetric,
-                IsGridRegular = isGridRegular,
-                Points = points,
-                Triangles = triangles,
-                TrianglesCount = trianglesCount,
-                PointsCount = pointsCount
-            };
+            return new ResultExceptionContainer<SurfaceData>
+            (
+                new SurfaceData
+                {
+                    IsSymmetric = isSymmetric,
+                    IsGridRegular = isGridRegular,
+                    Points = points,
+                    Triangles = triangles,
+                    TrianglesCount = trianglesCount,
+                    PointsCount = pointsCount
+                }
+            );
         }
 
         private IEnumerable<(double X, double Y, double Z)> ReadPoints(BinaryReader reader, int pointsToRead)

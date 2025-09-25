@@ -12,9 +12,9 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Возвращает данные для расщета интервалов для данного иссо
         /// </summary>
-        public async Task<PassageInterval[]> GetPassageIntervals(long issoId)
+        public async Task<PassageInterval[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken)
         {
-            var passageIntervals = await passageIntervalRepository.GetPassageIntervals(issoId);
+            var passageIntervals = await passageIntervalRepository.GetPassageIntervals(issoId, cancellationToken);
 
             foreach (var passageInterval in passageIntervals)
             {

@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.RoadRulesManager
         (List<BaseRRStrategy> strategies)
         : IRoadRulesFactory 
     {
-        public RoadRules CreateRoadRuleStrategy(LadingEnum ladingId) 
-            => strategies.First(s => s.LadingIds.Contains(ladingId)).GetRoadRules();
+        public RoadRules? CreateRoadRuleStrategy(LadingEnum ladingId) 
+            => strategies.FirstOrDefault(s => s.LadingIds.Contains(ladingId))?.GetRoadRules();
     }
 }
