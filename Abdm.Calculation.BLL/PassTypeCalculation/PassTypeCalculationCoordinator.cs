@@ -4,6 +4,7 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
 using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 
@@ -78,7 +79,11 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 var column = new ColumnModel(interval);
                 columnList.Add(column);
 
-                column.Xs = mesh.Data.DistinctXs.ToArray();
+                column.Xs = passageIntervalManager.CalculateDistinctXPositionsIncludingWheelOffsets(
+                    mesh.Data.DistinctXs,
+                    interval,
+                    data.LadingSchema.Axles,
+                    data.LadingSchema.Width ?? roadRules.MinColumnDistance);
                 column.Points = new SmoothPoints[column.Xs.Length];
                 column.Strain = new double[column.Xs.Length];
                 column.StrainOneAuto = new double[column.Xs.Length];
