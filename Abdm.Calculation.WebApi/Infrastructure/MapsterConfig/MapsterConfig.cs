@@ -1,23 +1,15 @@
 ﻿using System;
 using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
 
-namespace Abdm.Calculation.WebApi.Mappers
+namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 {
     public static class MapsterConfig
     {
         public static void MapsterSetup()
-        {
-            BLLMapsterConfig.BLLMapsterSetup();
-            PTCModelFromDtoConfig();
-            PTCModelToDtoConfig();
-        }
-
-        public static void PTCModelFromDtoConfig()
         {
             TypeAdapterConfig<SurfaceDataItemRequestModel, SurfacePoint>
             .NewConfig()
@@ -45,16 +37,16 @@ namespace Abdm.Calculation.WebApi.Mappers
             .Map(dst => dst.Distance, src => src.distance)
             .Map(dst => dst.Axles, src => src.axles)
             .AfterMapping(dst =>
+            {
+                if (!Enum.IsDefined(dst.Id))
                 {
-                    if (!Enum.IsDefined(dst.Id))
-                    {
-                        dst.Id = LadingEnum.User;
-                    }
-                    if (!Enum.IsDefined(dst.Type))
-                    {
-                        dst.Type = LadingGroupTypeEnum.Common;
-                    }
+                    dst.Id = LadingEnum.User;
                 }
+                if (!Enum.IsDefined(dst.Type))
+                {
+                    dst.Type = LadingGroupTypeEnum.Common;
+                }
+            }
             );
 
             TypeAdapterConfig<SurfaceRequestModel, Surface>
@@ -99,11 +91,7 @@ namespace Abdm.Calculation.WebApi.Mappers
             .Map(dst => dst.LadingSchema, src => src.load_schema)
             .Map(dst => dst.Surface, src => src.surface)
             .Map(dst => dst.Roadway, src => src.roadway);
-        }
 
-
-        public static void PTCModelToDtoConfig()
-        {
             TypeAdapterConfig<PassTypeCalculationResult, PassTypeCalculationResponse>
             .NewConfig()
             .Map(dst => dst.c_isso, src => src.IssoId)
@@ -112,10 +100,8 @@ namespace Abdm.Calculation.WebApi.Mappers
             .Map(dst => dst.direction, src => src.Direction)
             .Map(dst => dst.snip, src => src.Snip)
             .Map(dst => dst.pass_type, src => src.PassType)
-            .Map(dst => dst.allowed, src => default(int?), srcCond => srcCond.Allowed == AllowedEnum.Undefined)
             .Map(dst => dst.allowed, src => src.Allowed)
             .Map(dst => dst.intervals, src => src.Intervals);
         }
-
     }
 }

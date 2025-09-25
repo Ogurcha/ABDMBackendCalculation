@@ -1,5 +1,6 @@
 ﻿using Abdm.Calculation.BLL;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
@@ -8,7 +9,7 @@ using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
-using Abdm.Calculation.WebApi.Mappers;
+using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +26,7 @@ namespace Abdm.Calculation.Infrastructure
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             MapsterConfig.MapsterSetup();
+            BLLMapsterConfig.BLLMapsterSetup();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
