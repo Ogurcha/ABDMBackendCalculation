@@ -11,12 +11,6 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
     {
         public static void MapsterSetup()
         {
-            PTCModelFromDtoConfig();
-            PTCModelToDtoConfig();
-        }
-
-        public static void PTCModelFromDtoConfig()
-        {
             TypeAdapterConfig<SurfaceDataItemRequestModel, SurfacePoint>
             .NewConfig()
             .Map(dst => dst.X, src => src.X)
@@ -43,16 +37,16 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Distance, src => src.Distance)
             .Map(dst => dst.Axles, src => src.Axles)
             .AfterMapping(dst =>
+            {
+                if (!Enum.IsDefined(dst.Id))
                 {
-                    if (!Enum.IsDefined(dst.Id))
-                    {
-                        dst.Id = LoadEnum.User;
-                    }
-                    if (!Enum.IsDefined(dst.Type))
-                    {
-                        dst.Type = LoadGroupTypeEnum.Common;
-                    }
+                    dst.Id = LoadEnum.User;
                 }
+                if (!Enum.IsDefined(dst.Type))
+                {
+                    dst.Type = LoadGroupTypeEnum.Common;
+                }
+            }
             );
 
             TypeAdapterConfig<SurfaceRequestModel, Surface>
@@ -96,11 +90,8 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.LoadSchema, src => src.LoadSchema)
             .Map(dst => dst.Surface, src => src.Surface)
             .Map(dst => dst.Roadway, src => src.Roadway);
-        }
 
 
-        public static void PTCModelToDtoConfig()
-        {
             TypeAdapterConfig<PassTypeCalculationResult, PassTypeCalculationResponse>
             .NewConfig()
             .Map(dst => dst.IssoId, src => src.IssoId)
@@ -112,6 +103,5 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Allowed, src => src.Allowed)
             .Map(dst => dst.Intervals, src => src.Intervals);
         }
-
     }
 }
