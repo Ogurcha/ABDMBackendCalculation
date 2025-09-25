@@ -35,9 +35,9 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             TypeAdapterConfig<LoadSchemaRequestModel, LoadSchema>
             .NewConfig()
             .Map(dst => dst.Id, src => src.Id)
-            .Map(dst => dst.Type, src => src.Type)
-            .Map(dst => dst.TypeName, src => src.TypeName)
-            .Map(dst => dst.NameShort, src => src.NameShort)
+            .Map(dst => dst.Type, src => src.TypeId)
+            .Map(dst => dst.TypeName, src => src.Type)
+            .Map(dst => dst.NameShort, src => src.Name)
             .Map(dst => dst.Width, src => src.Width)
             .Map(dst => dst.Length, src => src.Length)
             .Map(dst => dst.Distance, src => src.Distance)
@@ -57,18 +57,18 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 
             TypeAdapterConfig<SurfaceRequestModel, Surface>
             .NewConfig()
-            .Map(dst => dst.SurfacePoints, src => src.SurfacePoints)
-            .Map(dst => dst.PillarData, src => src.PillarData)
+            .Map(dst => dst.SurfacePoints, src => src.SurfaceData)
+            .Map(dst => dst.PillarData, src => src.LineData)
             .Map(dst => dst.MaxX, src => src.MaxX)
             .Map(dst => dst.MaxY, src => src.MaxY)
             .Map(dst => dst.MaxZ, src => src.MaxZ)
             .Map(dst => dst.MinX, src => src.MinX)
             .Map(dst => dst.MinY, src => src.MinY)
-            .Map(dst => dst.CheckPointType, src => src.CheckPointType)
+            .Map(dst => dst.CheckPointType, src => src.CpVid)
             .Map(dst => dst.MyStrength, src => src.MyStrength)
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
-            .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
-            .Map(dst => dst.OtherLoad, src => src.OtherLoad)
+            .Map(dst => dst.PedestrianLoad, src => src.ConstPesh)
+            .Map(dst => dst.OtherLoad, src => src.ConstOther)
             .Map(dst => dst.KStrength, src => src.KStrength)
             .AfterMapping(dst =>
             {
@@ -88,9 +88,9 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 
             TypeAdapterConfig<PassTypeCalculationRequest, PassTypeCalculationParameters>
             .NewConfig()
-            .Map(dst => dst.IssoId, src => src.IssoId)
-            .Map(dst => dst.CheckPointNumber, src => src.CheckPointNumber)
-            .Map(dst => dst.LoadId, src => src.LoadId)
+            .Map(dst => dst.IssoId, src => src.CIsso)
+            .Map(dst => dst.CheckPointNumber, src => src.Number)
+            .Map(dst => dst.LoadId, src => src.CNagruzka)
             .Map(dst => dst.Snip, src => src.Snip)
             .Map(dst => dst.Direction, src => src.Direction)
             .Map(dst => dst.LoadSchema, src => src.LoadSchema)

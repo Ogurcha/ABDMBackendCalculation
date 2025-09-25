@@ -8,13 +8,13 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// Массив точек, из которых состоит поверхность влияния
         /// </summary>
         [JsonPropertyName("surface_data")]
-        public SurfaceDataItemRequestModel[]? SurfacePoints { get; set; }
+        public SurfaceDataItemRequestModel[]? SurfaceData { get; set; }
 
         /// <summary>
         /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой
         /// </summary>
         [JsonPropertyName("line_data")]
-        public double[]? PillarData { get; set; }
+        public double[]? LineData { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по X
@@ -51,7 +51,7 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// CpSubType в старом клиенте
         /// </summary>
         [JsonPropertyName("cpVid")]
-        public int CheckPointType { get; set; }
+        public int CpVid { get; set; }
 
         /// <summary>
         /// Проектная устойчивость структуры. Без учёта собственного веса
@@ -69,13 +69,13 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// Нагрузка от пешеходов
         /// </summary>
         [JsonPropertyName("constPesh")]
-        public double PedestrianLoad { get; set; }
+        public double ConstPesh { get; set; }
 
         /// <summary>
         /// Другая нагрузка
         /// </summary>
         [JsonPropertyName("constOther")]
-        public double OtherLoad { get; set; }
+        public double ConstOther { get; set; }
 
         /// <summary>
         /// Коэффициент устойчивости. По дефолту всегда 1.

@@ -11,19 +11,19 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// идентификатор искусственного сооружения
         /// </summary>
         [JsonPropertyName("c_isso")]
-        public long IssoId { get; set; }
+        public long CIsso { get; set; }
 
         /// <summary>
         /// Номер чекпоинта данного сооружения
         /// </summary>
         [JsonPropertyName("number")]
-        public int CheckPointNumber { get; set; }
+        public int Number { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
         [JsonPropertyName("c_nagruzka")]
-        public int LoadId { get; set; }
+        public int CNagruzka { get; set; }
 
         /// <summary>
         /// номер выбранного снипа, по которому пойдут расчет

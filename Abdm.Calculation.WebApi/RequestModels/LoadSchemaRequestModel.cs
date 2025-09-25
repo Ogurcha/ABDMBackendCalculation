@@ -17,19 +17,19 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// Тип нагрузки
         /// </summary>
         [JsonPropertyName("type_id")]
-        public string? Type { get; set; }
+        public string? TypeId { get; set; }
 
         /// <summary>
         /// Название типа нагрузки
         /// </summary>
         [JsonPropertyName("type")]
-        public string? TypeName { get; set; }
+        public string? Type { get; set; }
 
         /// <summary>
         /// Название-аббревиатура данной нагрузки
         /// </summary>
         [JsonPropertyName("name")]
-        public string? NameShort { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Нормативный отступ от края. Больше нуля, если без заезда на полосу. Ноль - если с заездом на ограничительную полосу

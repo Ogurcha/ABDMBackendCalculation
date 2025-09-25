@@ -55,6 +55,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels
         /// <summary>
         /// Нагрузка тележек. не обязательна
         /// </summary>
-        public string? data { get; set; }
+        [JsonPropertyName("data")]
+        public string? Data { get; set; }
     }
 }

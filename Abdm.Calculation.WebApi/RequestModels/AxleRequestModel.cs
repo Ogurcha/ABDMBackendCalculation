@@ -26,7 +26,7 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// Абсолютная длина проекции, с учетом текущего колеса и колёс позади
         /// </summary>
         [JsonPropertyName("absY")]
-        public double AbsolutY { get; set; }
+        public double AbsY { get; set; }
 
         /// <summary>
         /// Габариты колеса (их может быть несколько)
