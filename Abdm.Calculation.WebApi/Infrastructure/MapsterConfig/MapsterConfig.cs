@@ -29,7 +29,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Wx, src => src.Wx)
             .Map(dst => dst.Wy, src => src.Wy)
             .Map(dst => dst.Weight, src => src.Weight)
-            .Map(dst => dst.AbsolutY, src => src.AbsolutY)
+            .Map(dst => dst.AbsolutY, src => src.AbsY)
             .Map(dst => dst.Wheels, src => src.Wheels);
 
             TypeAdapterConfig<LoadSchemaRequestModel, LoadSchema>
