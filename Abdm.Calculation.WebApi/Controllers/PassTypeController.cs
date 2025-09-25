@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL;
-using Abdm.Calculation.WebApi.Mappers;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;

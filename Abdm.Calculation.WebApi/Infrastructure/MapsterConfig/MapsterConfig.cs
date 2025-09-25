@@ -1,18 +1,16 @@
 ﻿using System;
 using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
 
-namespace Abdm.Calculation.WebApi.Mappers
+namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 {
     public static class MapsterConfig
     {
         public static void MapsterSetup()
         {
-            BLLMapsterConfig.BLLMapsterSetup();
             PTCModelFromDtoConfig();
             PTCModelToDtoConfig();
         }
@@ -112,7 +110,6 @@ namespace Abdm.Calculation.WebApi.Mappers
             .Map(dst => dst.direction, src => src.Direction)
             .Map(dst => dst.snip, src => src.Snip)
             .Map(dst => dst.pass_type, src => src.PassType)
-            .Map(dst => dst.allowed, src => default(int?), srcCond => srcCond.Allowed == AllowedEnum.Undefined)
             .Map(dst => dst.allowed, src => src.Allowed)
             .Map(dst => dst.intervals, src => src.Intervals);
         }
