@@ -17,7 +17,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long LadingId { get; set; }
+        public long LoadId { get; set; }
 
         /// <summary>
         /// Направление физичесrого воздействия

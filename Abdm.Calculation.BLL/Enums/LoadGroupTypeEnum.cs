@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Enums
     /// <summary>
     /// Класс типа нагрузки
     /// </summary>
-    public enum LadingGroupTypeEnum
+    public enum LoadGroupTypeEnum
     {
         [Description("Колесная общего назначения")]
         Common = 10,

@@ -1,80 +1,98 @@
-﻿namespace Abdm.Calculation.WebApi.RequestModels
+﻿using System.Text.Json.Serialization;
+
+namespace Abdm.Calculation.WebApi.RequestModels
 {
     public class SurfaceRequestModel
     {
         /// <summary>
         /// Массив точек, из которых состоит поверхность влияния
         /// </summary>
-        public SurfaceDataItemRequestModel[]? surface_data { get; set; }
+        [JsonPropertyName("surface_data")]
+        public SurfaceDataItemRequestModel[]? SurfacePoints { get; set; }
 
         /// <summary>
         /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой
         /// </summary>
-        public double[]? line_data { get; set; }
+        [JsonPropertyName("line_data")]
+        public double[]? PillarData { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по X
         /// </summary>
-        public double maxX { get; set; }
+        [JsonPropertyName("maxX")]
+        public double MaxX { get; set; }
 
         /// <summary>
         /// Минимальное значение всех точек по X
         /// </summary>
-        public double minX { get; set; }
+        [JsonPropertyName("minX")]
+        public double MinX { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по Y
         /// </summary>
-        public double maxY { get; set; }
+        [JsonPropertyName("maxY")]
+        public double MaxY { get; set; }
 
         /// <summary>
         /// Минимальное значение всех точек по Y
         /// </summary>
-        public double minY { get; set; }
+        [JsonPropertyName("minY")]
+        public double MinY { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по Z
         /// </summary>
-        public double maxZ { get; set; }
+        [JsonPropertyName("maxZ")]
+        public double MaxZ { get; set; }
 
         /// <summary>
         /// Перечисление, указывающее на то, как поверхность будет подвергаться нагрузке
         /// CpSubType в старом клиенте
         /// </summary>
-        public int cpVid { get; set; }
+        [JsonPropertyName("cpVid")]
+        public int CheckPointType { get; set; }
 
         /// <summary>
         /// Проектная устойчивость структуры. Без учёта собственного веса
         /// </summary>
-        public double myStrength { get; set; }
+        [JsonPropertyName("myStrength")]
+        public double MyStrength { get; set; }
 
         /// <summary>
         /// Фиксированная нагрузка от собственного веса
         /// </summary>
-        public double constLoad { get; set; }
+        [JsonPropertyName("constLoad")]
+        public double ConstLoad { get; set; }
 
         /// <summary>
         /// Нагрузка от пешеходов
         /// </summary>
-        public double constPesh { get; set; } 
+        [JsonPropertyName("constPesh")]
+        public double PedestrianLoad { get; set; }
 
         /// <summary>
         /// Другая нагрузка
         /// </summary>
-        public double constOther { get; set; }
+        [JsonPropertyName("constOther")]
+        public double OtherLoad { get; set; }
 
         /// <summary>
         /// Коэффициент устойчивости. По дефолту всегда 1.
         /// </summary>
-        public double kStrength { get; set; }
+        [JsonPropertyName("kStrength")]
+        public double KStrength { get; set; }
     }
 
     public class SurfaceDataItemRequestModel
     {
-        public double x { get; set; }
+        [JsonPropertyName("x")]
+        public double X { get; set; }
 
-        public double y { get; set; }
+        [JsonPropertyName("y")]
+        public double Y { get; set; }
 
-        public double z { get; set; }
+        [JsonPropertyName("z")]
+        public double Z { get; set; }
     }
 }

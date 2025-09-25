@@ -19,84 +19,83 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
         {
             TypeAdapterConfig<SurfaceDataItemRequestModel, SurfacePoint>
             .NewConfig()
-            .Map(dst => dst.X, src => src.x)
-            .Map(dst => dst.Y, src => src.y)
-            .Map(dst => dst.Z, src => src.z);
+            .Map(dst => dst.X, src => src.X)
+            .Map(dst => dst.Y, src => src.Y)
+            .Map(dst => dst.Z, src => src.Z);
 
             TypeAdapterConfig<AxleRequestModel, AxleModel>
             .NewConfig()
-            .Map(dst => dst.Y, src => src.y)
-            .Map(dst => dst.Wx, src => src.wx)
-            .Map(dst => dst.Wy, src => src.wy)
-            .Map(dst => dst.Weight, src => src.weight)
-            .Map(dst => dst.AbsolutY, src => src.absY)
-            .Map(dst => dst.Wheels, src => src.wheels);
+            .Map(dst => dst.Y, src => src.Y)
+            .Map(dst => dst.Wx, src => src.Wx)
+            .Map(dst => dst.Wy, src => src.Wy)
+            .Map(dst => dst.Weight, src => src.Weight)
+            .Map(dst => dst.AbsolutY, src => src.AbsolutY)
+            .Map(dst => dst.Wheels, src => src.Wheels);
 
-            TypeAdapterConfig<LadingSchemaRequestModel, LadingSchema>
+            TypeAdapterConfig<LoadSchemaRequestModel, LoadSchema>
             .NewConfig()
-            .Map(dst => dst.Id, src => src.id)
-            .Map(dst => dst.Type, src => src.type_id)
-            .Map(dst => dst.TypeName, src => src.type)
-            .Map(dst => dst.NameShort, src => src.name)
-            .Map(dst => dst.Width, src => src.width)
-            .Map(dst => dst.Length, src => src.length)
-            .Map(dst => dst.Distance, src => src.distance)
-            .Map(dst => dst.Axles, src => src.axles)
+            .Map(dst => dst.Id, src => src.Id)
+            .Map(dst => dst.Type, src => src.Type)
+            .Map(dst => dst.TypeName, src => src.TypeName)
+            .Map(dst => dst.NameShort, src => src.NameShort)
+            .Map(dst => dst.Width, src => src.Width)
+            .Map(dst => dst.Length, src => src.Length)
+            .Map(dst => dst.Distance, src => src.Distance)
+            .Map(dst => dst.Axles, src => src.Axles)
             .AfterMapping(dst =>
                 {
                     if (!Enum.IsDefined(dst.Id))
                     {
-                        dst.Id = LadingEnum.User;
+                        dst.Id = LoadEnum.User;
                     }
                     if (!Enum.IsDefined(dst.Type))
                     {
-                        dst.Type = LadingGroupTypeEnum.Common;
+                        dst.Type = LoadGroupTypeEnum.Common;
                     }
                 }
             );
 
             TypeAdapterConfig<SurfaceRequestModel, Surface>
             .NewConfig()
-            .Map(dst => dst.SurfacePoints, src => src.surface_data)
-            .Map(dst => dst.PillarData, src => src.line_data)
-            .Map(dst => dst.MaxX, src => src.maxX)
-            .Map(dst => dst.MaxY, src => src.maxY)
-            .Map(dst => dst.MaxZ, src => src.maxZ)
-            .Map(dst => dst.MinX, src => src.minX)
-            .Map(dst => dst.MinY, src => src.minY)
-            .Map(dst => dst.CheckPointType, src => src.cpVid)
-            .Map(dst => dst.MyStrength, src => src.myStrength)
-            .Map(dst => dst.ConstLoad, src => src.constLoad)
-            .Map(dst => dst.PedestrianLoad, src => src.constPesh)
-            .Map(dst => dst.OtherLoad, src => src.constOther)
-            .Map(dst => dst.KStrength, src => src.kStrength)
+            .Map(dst => dst.SurfacePoints, src => src.SurfacePoints)
+            .Map(dst => dst.PillarData, src => src.PillarData)
+            .Map(dst => dst.MaxX, src => src.MaxX)
+            .Map(dst => dst.MaxY, src => src.MaxY)
+            .Map(dst => dst.MaxZ, src => src.MaxZ)
+            .Map(dst => dst.MinX, src => src.MinX)
+            .Map(dst => dst.MinY, src => src.MinY)
+            .Map(dst => dst.CheckPointType, src => src.CheckPointType)
+            .Map(dst => dst.MyStrength, src => src.MyStrength)
+            .Map(dst => dst.ConstLoad, src => src.ConstLoad)
+            .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
+            .Map(dst => dst.OtherLoad, src => src.OtherLoad)
+            .Map(dst => dst.KStrength, src => src.KStrength)
             .AfterMapping(dst =>
             {
                 if (!Enum.IsDefined(dst.CheckPointType))
                 {
                     dst.CheckPointType = CheckPointEnum.None;
                 }
-
             });
 
             TypeAdapterConfig<RoadwayRequestModel, Roadway>
             .NewConfig()
-            .Map(dst => dst.LineNumber, src => src.line_number)
-            .Map(dst => dst.RoadHeight, src => src.road_height)
-            .Map(dst => dst.LeftSafeline, src => src.left_safeline)
-            .Map(dst => dst.RightSafeline, src => src.right_safeline)
-            .Map(dst => dst.PositionShift, src => src.position_shift);
+            .Map(dst => dst.LineNumber, src => src.LineNumber)
+            .Map(dst => dst.RoadHeight, src => src.RoadHeight)
+            .Map(dst => dst.LeftSafeline, src => src.LeftSafeline)
+            .Map(dst => dst.RightSafeline, src => src.RightSafeline)
+            .Map(dst => dst.PositionShift, src => src.PositionShift);
 
             TypeAdapterConfig<PassTypeCalculationRequest, PassTypeCalculationParameters>
             .NewConfig()
-            .Map(dst => dst.IssoId, src => src.c_isso)
-            .Map(dst => dst.CPNumber, src => src.number)
-            .Map(dst => dst.LadingId, src => src.c_nagruzka)
-            .Map(dst => dst.Snip, src => src.snip)
-            .Map(dst => dst.Direction, src => src.direction)
-            .Map(dst => dst.LadingSchema, src => src.load_schema)
-            .Map(dst => dst.Surface, src => src.surface)
-            .Map(dst => dst.Roadway, src => src.roadway);
+            .Map(dst => dst.IssoId, src => src.IssoId)
+            .Map(dst => dst.CheckPointNumber, src => src.CheckPointNumber)
+            .Map(dst => dst.LoadId, src => src.LoadId)
+            .Map(dst => dst.Snip, src => src.Snip)
+            .Map(dst => dst.Direction, src => src.Direction)
+            .Map(dst => dst.LoadSchema, src => src.LoadSchema)
+            .Map(dst => dst.Surface, src => src.Surface)
+            .Map(dst => dst.Roadway, src => src.Roadway);
         }
 
 
@@ -104,14 +103,14 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
         {
             TypeAdapterConfig<PassTypeCalculationResult, PassTypeCalculationResponse>
             .NewConfig()
-            .Map(dst => dst.c_isso, src => src.IssoId)
-            .Map(dst => dst.n, src => src.CPNumber)
-            .Map(dst => dst.c_nagruzka, src => src.LadingId)
-            .Map(dst => dst.direction, src => src.Direction)
-            .Map(dst => dst.snip, src => src.Snip)
-            .Map(dst => dst.pass_type, src => src.PassType)
-            .Map(dst => dst.allowed, src => src.Allowed)
-            .Map(dst => dst.intervals, src => src.Intervals);
+            .Map(dst => dst.IssoId, src => src.IssoId)
+            .Map(dst => dst.CPNumber, src => src.CPNumber)
+            .Map(dst => dst.LoadId, src => src.LoadId)
+            .Map(dst => dst.Direction, src => src.Direction)
+            .Map(dst => dst.Snip, src => src.Snip)
+            .Map(dst => dst.PassType, src => src.PassType)
+            .Map(dst => dst.Allowed, src => src.Allowed)
+            .Map(dst => dst.Intervals, src => src.Intervals);
         }
 
     }

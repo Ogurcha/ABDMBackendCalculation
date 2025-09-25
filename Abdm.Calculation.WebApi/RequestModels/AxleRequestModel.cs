@@ -1,29 +1,37 @@
-﻿namespace Abdm.Calculation.WebApi.RequestModels
+﻿using System.Text.Json.Serialization;
+
+namespace Abdm.Calculation.WebApi.RequestModels
 {
     /// <summary>
     /// DTO Информация об осях
     /// </summary>
     public class AxleRequestModel
     {
-        public double y { get; set; }
+        [JsonPropertyName("y")]
+        public double Y { get; set; }
 
-        public double wx { get; set; }
+        [JsonPropertyName("wx")]
+        public double Wx { get; set; }
 
-        public double wy { get; set; }
+        [JsonPropertyName("wy")]
+        public double Wy { get; set; }
 
         /// <summary>
         /// Вес колеса
         /// </summary>
-        public double weight { get; set; }
+        [JsonPropertyName("weight")]
+        public double Weight { get; set; }
 
         /// <summary>
         /// Абсолютная длина проекции, с учетом текущего колеса и колёс позади
         /// </summary>
-        public double absY { get; set; }
+        [JsonPropertyName("absY")]
+        public double AbsolutY { get; set; }
 
         /// <summary>
         /// Габариты колеса (их может быть несколько)
         /// </summary>
-        public double[]? wheels { get; set; }
+        [JsonPropertyName("wheels")]
+        public double[]? Wheels { get; set; }
     }
 }

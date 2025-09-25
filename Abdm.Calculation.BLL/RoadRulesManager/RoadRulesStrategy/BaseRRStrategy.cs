@@ -7,7 +7,7 @@ namespace Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy
     {
         public abstract RoadRules GetRoadRules();
 
-        public abstract List<LadingEnum> LadingIds { get; }
+        public abstract List<LoadEnum> LoadIds { get; }
 
         protected RoadRules Merge(RoadRules value, RoadRules valueSecondary)
         {
