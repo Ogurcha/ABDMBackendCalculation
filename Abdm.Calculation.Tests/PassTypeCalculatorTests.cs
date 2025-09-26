@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation;
@@ -76,7 +77,7 @@ public class PassTypeCalculatorTests
         var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,
             surfaceDataService,
-            new MeshManager(),
+            new MeshManager(new DoubleEqualityComparer()),
             roadRulesFactory,
             strainManager
             );

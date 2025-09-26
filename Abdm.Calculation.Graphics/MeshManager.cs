@@ -4,7 +4,7 @@ using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 
 namespace Abdm.Calculation.Graphics
 {
-    public class MeshManager : IMeshManager
+    public class MeshManager (IEqualityComparer<double> doubleEqualityComparer) : IMeshManager
     {
         private const int smoothingPoint = 2;
         private const int ExtraOne = 1;
@@ -52,7 +52,12 @@ namespace Abdm.Calculation.Graphics
             {
                 return null;
             }
-            return intersection.Segments.Select(s => s.point0).Concat(intersection.Segments.Select(s => s.point1)).Distinct().OrderBy(p => p.y);
+            var pointToPointintersections = intersection.Points.Select(p => p.point);
+            var segmentIntersections = intersection.Segments.Select(s => s.point0).Concat(intersection.Segments.Select(s => s.point1));
+            var allPoints = segmentIntersections.Concat(pointToPointintersections);
+            var result = allPoints.DistinctBy(p => p.y, doubleEqualityComparer).OrderBy(p => p.y);
+
+            return result;
         }
 
         /// <summary>
