@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Enums
     /// <summary>
     /// Тип нагрузки
     /// </summary>
-    public enum LadingEnum
+    public enum LoadEnum
     {
         [Description("Пользовательская")]
         User = 0,

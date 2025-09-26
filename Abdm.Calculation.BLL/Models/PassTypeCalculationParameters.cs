@@ -15,12 +15,12 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Номер чекпоинта данного сооружения
         /// </summary>
-        public int CPNumber { get; set; }
+        public int CheckPointNumber { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public int LadingId { get; set; }
+        public int LoadId { get; set; }
 
         /// <summary>
         /// номер выбранного снипа, по которому пойдут расчет
@@ -35,7 +35,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Подробные характеристики нагрузки на данное сооружение
         /// </summary>
-        public required LadingSchema LadingSchema { get; set; }
+        public required LoadSchema LoadSchema { get; set; }
 
         /// <summary>
         /// Характеристики "поверхности влияния" иссо

@@ -6,8 +6,8 @@ namespace Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy
 {
     public class EN3Strategy : BaseRRStrategy
     {
-        public override List<LadingEnum> LadingIds => new List<LadingEnum> { 
-            LadingEnum.EN3 
+        public override List<LoadEnum> LoadIds => new List<LoadEnum> { 
+            LoadEnum.EN3 
         };
 
         public override RoadRules GetRoadRules()

@@ -5,17 +5,17 @@ namespace Abdm.Calculation.BLL.Models
     /// <summary>
     /// Подробные характеристики нагрузки на сооружение
     /// </summary>
-    public class LadingSchema
+    public class LoadSchema
     {
         /// <summary>
         /// идентификатор нагрузки
         /// </summary>
-        public LadingEnum Id { get; set; }
+        public LoadEnum Id { get; set; }
 
         /// <summary>
         /// Тип нагрузки
         /// </summary>
-        public LadingGroupTypeEnum Type { get; set; }
+        public LoadGroupTypeEnum Type { get; set; }
 
         /// <summary>
         /// Название типа нагрузки

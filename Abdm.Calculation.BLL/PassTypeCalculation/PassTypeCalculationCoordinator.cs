@@ -20,7 +20,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
         private const string meshErrorMessage = "Mesh construction failed";
         private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
         private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
-        private const string roadRulesNotFound = "Road rules for given lading were not found";
+        private const string roadRulesNotFound = "Road rules for given load were not found";
 
         /// <summary>
         /// Коэффициент при динамическом движении на иссо
@@ -45,7 +45,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
-            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CPNumber, cancellationToken);
+            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, cancellationToken);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceDataContainer?.Data?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {
@@ -57,8 +57,8 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 return surfaceDataException;
             }
 
-            //TODO: ABDMP-371 - реализация кастомных нагрузок LadingSchema.Id, подгрузка их из бд
-            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LadingSchema.Id);
+            //TODO: ABDMP-371 - реализация кастомных нагрузок LoadSchema.Id, подгрузка их из бд
+            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Id);
             if (!(roadRulesNullable is RoadRules roadRules))
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(roadRulesNotFound));
@@ -81,8 +81,8 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 column.Xs = passageIntervalManager.CalculateDistinctXPositionsIncludingWheelOffsets(
                 mesh.Data.DistinctXs,
                 interval,
-                data.LadingSchema.Axles,
-                data.LadingSchema.Width ?? roadRules.MinColumnDistance
+                data.LoadSchema.Axles,
+                data.LoadSchema.Width ?? roadRules.MinColumnDistance
                 );
                 column.Points = new SmoothPoints[column.Xs.Length];
                 column.Strain = new double[column.Xs.Length];
@@ -158,12 +158,12 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             return new PassTypeCalculationResult
             {
                 Allowed = allowed,
-                CPNumber = data.CPNumber,
+                CPNumber = data.CheckPointNumber,
                 Direction = data.Direction,
                 Intervals = intervals.SelectMany(i => i?.SafeInterval ?? []).ToArray(),
                 IssoId = data.IssoId,
                 PassType = resultPassType,
-                LadingId = data.LadingId
+                LoadId = data.LoadId
             };
         }
 
@@ -177,7 +177,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                     CPNumber = default,
                     Allowed = AllowedEnum.Undefined,
                     Intervals = [],
-                    LadingId = default,
+                    LoadId = default,
                     Direction = default,
                     Snip = default,
                     PassType = PassTypeEnum.Unknown
@@ -188,10 +188,10 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 return new PassTypeCalculationResult
                 {
                     IssoId = data.IssoId,
-                    CPNumber = data.CPNumber,
+                    CPNumber = data.CheckPointNumber,
                     Allowed = AllowedEnum.Undefined,
                     Intervals = [],
-                    LadingId = data.LadingId,
+                    LoadId = data.LoadId,
                     Direction = data.Direction,
                     Snip = data.Snip,
                     PassType = PassTypeEnum.Unknown
