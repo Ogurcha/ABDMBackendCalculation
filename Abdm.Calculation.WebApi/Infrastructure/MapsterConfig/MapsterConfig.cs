@@ -94,9 +94,9 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 
             TypeAdapterConfig<PassTypeCalculationResult, PassTypeCalculationResponse>
             .NewConfig()
-            .Map(dst => dst.IssoId, src => src.IssoId)
-            .Map(dst => dst.CPNumber, src => src.CPNumber)
-            .Map(dst => dst.LoadId, src => src.LoadId)
+            .Map(dst => dst.CIsso, src => src.IssoId)
+            .Map(dst => dst.N, src => src.CPNumber)
+            .Map(dst => dst.CNagruzka, src => src.LoadId)
             .Map(dst => dst.Direction, src => src.Direction)
             .Map(dst => dst.Snip, src => src.Snip)
             .Map(dst => dst.PassType, src => src.PassType)

@@ -8,19 +8,19 @@ namespace Abdm.Calculation.WebApi.ResponseModels
         /// идентификатор искусственного сооружения
         /// </summary>
         [JsonPropertyName("c_isso")]
-        public long IssoId { get; set; }
+        public long CIsso { get; set; }
 
         /// <summary>
         /// Номер чекпоинта данного сооружения
         /// </summary>
         [JsonPropertyName("n")]
-        public int CPNumber { get; set; }
+        public int N { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
         [JsonPropertyName("c_nagruzka")]
-        public long LoadId { get; set; }
+        public long CNagruzka { get; set; }
 
         /// <summary>
         /// Направление физичесrого воздействия
