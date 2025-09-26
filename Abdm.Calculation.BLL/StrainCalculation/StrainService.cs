@@ -11,7 +11,7 @@ namespace Abdm.Calculation.BLL.StrainCalculation
         /// Рассчет напряжения на профиле с учётом тележек
         /// </summary>
         /// <param name="X"></param>
-        public double GetStrain(PTCRequestMessage message, SmoothPoints smoothpoints, double Y)
+        public double GetStrain(PassTypeCalculationParameters message, SmoothPoints smoothpoints, double Y)
         {
             var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
             var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;

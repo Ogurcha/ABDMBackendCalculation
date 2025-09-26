@@ -2,7 +2,10 @@
 
 namespace Abdm.Calculation.BLL.Models
 {
-    public class PTCResultMessage
+    /// <summary>
+    /// реквест сообщение для начала расчётов
+    /// </summary>
+    public class PassTypeCalculationParameters
     {
         /// <summary>
         /// идентификатор искусственного сооружения
@@ -17,12 +20,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        public long LadingId { get; set; }
-
-        /// <summary>
-        /// Направление физичесrого воздействия
-        /// </summary>
-        public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
+        public int LadingId { get; set; }
 
         /// <summary>
         /// номер выбранного снипа, по которому пойдут расчет
@@ -30,25 +28,23 @@ namespace Abdm.Calculation.BLL.Models
         public SnipEnum Snip { get; set; } = SnipEnum.odm16;
 
         /// <summary>
-        /// Рассчитанное условие пропуска
+        /// Направление физичесrого воздействия
         /// </summary>
-        public PassTypeEnum PassType { get; set; }
+        public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
 
         /// <summary>
-        /// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
+        /// Подробные характеристики нагрузки на данное сооружение
         /// </summary>
-        public AllowedEnum Allowed { get; set; }
+        public required LadingSchema LadingSchema { get; set; }
 
         /// <summary>
-        /// Интервалы между нагрузками.
+        /// Характеристики "поверхности влияния" иссо
         /// </summary>
-        public required double[] Intervals { get; set; }
+        public required Surface Surface { get; set; }
 
         /// <summary>
-        /// Нагрузка тележек. не обязательна
+        /// Характеристики пути
         /// </summary>
-        public string? Data { get; set; }
-
-        public bool IsValidResponse => IssoId > 0 && CPNumber > 0;
+        public required Roadway Roadway { get; set; }
     }
 }

@@ -1,15 +1,15 @@
-﻿using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.DAL.Entities;
+﻿using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Interfaces;
 
 public interface IPassageIntervalService
 {
-    public Task<PassageInterval[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken);
+    public Task<PassageIntervalModel[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken);
 
     public double[] CalculateDistinctXPositionsIncludingWheelOffsets(
-        double[] distinctXs, 
-        PassageInterval passageInterval, 
+        double[] distinctXs,
+        PassageIntervalModel passageInterval, 
         AxleModel[] axles, 
         double carWidth
         );

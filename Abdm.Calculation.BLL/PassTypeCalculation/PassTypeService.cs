@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string errorMsg = "Error while calculating PassType";
 
-        public async Task<PTCResultMessage> GetPassType(PTCRequestMessage requestModel, CancellationToken cancellationToken)
+        public async Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken)
         {
             try
             {

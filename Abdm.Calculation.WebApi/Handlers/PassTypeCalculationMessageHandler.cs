@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL;
-using Abdm.Calculation.WebApi.Mappers;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Kafka.Integration.MessageBroker.Consumer;
 using Kafka.Integration.MessageBroker.Producer;
+using Mapster;
 using Microsoft.Extensions.Logging;
 
 namespace Abdm.Calculation.WebApi.Handlers
@@ -15,25 +16,24 @@ namespace Abdm.Calculation.WebApi.Handlers
     /// Хендлер для сообщений из брокера.
     /// Рассчет условий пропуска
     /// </summary>
-    public class PTCMessageHandler(
+    public class PassTypeCalculationMessageHandler(
         IPassTypeService passTypeService, 
-        ILogger<PTCMessageHandler> logger,
-        IKafkaProducer<string, PTCResultMessageResponseModel> messageProducer,
-        IPassTypeModelsMapper mapper
-        ) : IKafkaMessageHandler<string, PTCRequestMessageRequestModel>
+        ILogger<PassTypeCalculationMessageHandler> logger,
+        IKafkaProducer<string, PassTypeCalculationResponse> messageProducer
+        ) : IKafkaMessageHandler<string, PassTypeCalculationRequest>
     {
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string brokerClassNameStr = "class-calculated";
 
         public async Task Handle(
-            PTCRequestMessageRequestModel dto, 
-            MessageContext<string, PTCRequestMessageRequestModel> context)
+            PassTypeCalculationRequest dto, 
+            MessageContext<string, PassTypeCalculationRequest> context)
         {
-            var data = mapper.FromDTO(dto);
+            var data = dto.Adapt<PassTypeCalculationParameters>();
             try
             {
                 var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(brokerClassNameStr, mapper.ToDTO(responseContent));
+                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<PassTypeCalculationResponse>());
             }
             catch (Exception ex)
             {

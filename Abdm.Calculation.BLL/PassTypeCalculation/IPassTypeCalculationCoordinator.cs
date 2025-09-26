@@ -4,8 +4,8 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
     public interface IPassTypeCalculationCoordinator
     {
-        Task<ResultExceptionContainer<PTCResultMessage>> GetPassType(PTCRequestMessage data, CancellationToken cancellationToken);
+        Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(PassTypeCalculationParameters data, CancellationToken cancellationToken);
 
-        PTCResultMessage GetFailedResponse(PTCRequestMessage? data);
+        PassTypeCalculationResult GetFailedResponse(PassTypeCalculationParameters? data);
     }
 }

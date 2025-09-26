@@ -4,6 +4,6 @@ namespace Abdm.Calculation.BLL
 {
     public interface IPassTypeService
     {
-        Task<PTCResultMessage> GetPassType(PTCRequestMessage requestModel, CancellationToken cancellationToken);
+        Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken);
     }
 }

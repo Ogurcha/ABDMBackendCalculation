@@ -1,6 +1,6 @@
 ﻿namespace Abdm.Calculation.WebApi.ResponseModels
 {
-    public class PTCResultMessageResponseModel
+    public class PassTypeCalculationResponse
     {
         /// <summary>
         /// идентификатор искусственного сооружения
