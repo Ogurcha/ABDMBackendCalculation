@@ -11,14 +11,14 @@ namespace Abdm.Calculation.Tests
         public static PassTypeCalculationParameters TestRequestMessage => new PassTypeCalculationParameters()
         {
             IssoId = 3800031,
-            CPNumber = 7,
-            LadingId = 40,
+            CheckPointNumber = 7,
+            LoadId = 40,
             Snip = SnipEnum.sn62,
             Direction = DriveDirectionEnum.Bidirection,
-            LadingSchema = new LadingSchema
+            LoadSchema = new LoadSchema
             {
-                Id = LadingEnum.N11,
-                Type = LadingGroupTypeEnum.NClass,
+                Id = LoadEnum.N11,
+                Type = LoadGroupTypeEnum.NClass,
                 TypeName = "Колесная одиночная",
                 NameShort = "Н11 (НК-80)",
                 Width = 3.5f,
@@ -4790,7 +4790,7 @@ namespace Abdm.Calculation.Tests
         {
             IssoId = 3800031,
             CPNumber = 7,
-            LadingId = 40,
+            LoadId = 40,
             Direction = DriveDirectionEnum.Bidirection,
             Snip = SnipEnum.sn62,
             PassType = PassTypeEnum.Denied,

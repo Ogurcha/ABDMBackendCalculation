@@ -17,7 +17,7 @@ namespace Abdm.Calculation.BLL
         {
             try
             {
-                logger.LogInformation(string.Format(infoMsg, requestModel.IssoId, requestModel.CPNumber));
+                logger.LogInformation(string.Format(infoMsg, requestModel.IssoId, requestModel.CheckPointNumber));
                 var workerThreadTask = () => ptcCoordinator.GetPassType(requestModel, cancellationToken);
                 var result = await Task.Run(workerThreadTask, cancellationToken);
                 if (result.IsSuccess && result.Data != null)
@@ -35,7 +35,7 @@ namespace Abdm.Calculation.BLL
             }
             catch (Exception e)
             {
-                logger.LogError(string.Format(exceptionMsg, requestModel?.IssoId, requestModel?.CPNumber));
+                logger.LogError(string.Format(exceptionMsg, requestModel?.IssoId, requestModel?.CheckPointNumber));
                 logger.LogError(e.StackTrace);
                 return ptcCoordinator.GetFailedResponse(requestModel);
             }

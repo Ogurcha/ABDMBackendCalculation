@@ -16,7 +16,7 @@ namespace Abdm.Calculation.BLL.StrainCalculation
             var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
             var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;
 
-            return message.LadingSchema.Axles
+            return message.LoadSchema.Axles
                 .Where(a => a.Wheels?.Length > 0)
                 .Sum(a =>
                 {

@@ -6,10 +6,10 @@ namespace Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy
 {
     public class AbStrategy : BaseRRStrategy
     {
-        public override List<LadingEnum> LadingIds => new List<LadingEnum> {
-            LadingEnum.AB51,
-            LadingEnum.AB74,
-            LadingEnum.AB151,
+        public override List<LoadEnum> LoadIds => new List<LoadEnum> {
+            LoadEnum.AB51,
+            LoadEnum.AB74,
+            LoadEnum.AB151,
         };
 
         public override RoadRules GetRoadRules()
