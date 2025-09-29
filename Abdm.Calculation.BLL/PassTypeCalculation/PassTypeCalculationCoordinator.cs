@@ -29,6 +29,11 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
         /// </summary>
         public static double DynamicCoefficient = 1.3d;
 
+        /// <summary>
+        /// Коффициент кинетической силы
+        /// </summary>
+        public static double KStrengthCoefficient = 3.5d;
+
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
             new List<(IPassTypeCondition condition, PassTypeEnum passType)>
             {
@@ -107,7 +112,12 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                     //TODO: ABDMP-369 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
                     for (int j = 0; j < roadRules.MaxAutoInColumn; j++)
                     {
-                        var highestStrain = strainList.Last();
+                        double kStrengthCoefficient = 1;
+                        if (data.Surface.KStrength >= 1)
+                        {
+                            kStrengthCoefficient = data.Surface.KStrength * KStrengthCoefficient;
+                        }
+                        var highestStrain = strainList.Last() / kStrengthCoefficient;
                         if (j == 0)
                         {
                             column.StrainOneAuto[i] += highestStrain;

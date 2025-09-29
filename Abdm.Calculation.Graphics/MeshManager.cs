@@ -1,12 +1,10 @@
 ﻿using Abdm.Calculation.Graphics.Models;
 using g4;
-using static Abdm.Calculation.Graphics.Extensions.GeometryExtensions;
 
 namespace Abdm.Calculation.Graphics
 {
     public class MeshManager (IEqualityComparer<double> doubleEqualityComparer) : IMeshManager
     {
-        private const int smoothingPoint = 2;
         private const int ExtraOne = 1;
 
         /// <summary>
