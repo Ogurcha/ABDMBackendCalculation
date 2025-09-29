@@ -29,6 +29,9 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
         /// </summary>
         public static double DynamicCoefficient = 1.3d;
 
+        /// <summary>
+        /// Коффициент кинетической силы
+        /// </summary>
         public static double KStrengthCoefficient = 3.5d;
 
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
