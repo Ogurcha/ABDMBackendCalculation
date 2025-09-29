@@ -11,7 +11,6 @@ namespace Abdm.Calculation.BLL
     {
         private const string infoMsg = "PassType calculation for (IssoId = {0}, Check point number = {1}) started";
         private const string exceptionMsg = "Failed PassType calculation for (IssoId = {0}, Check point number = {1})";
-        private const string producerErrorMsg = "Message producer failed to send message";
         private const string errorMsg = "Error while calculating PassType";
 
         public async Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken)
@@ -19,7 +18,8 @@ namespace Abdm.Calculation.BLL
             try
             {
                 logger.LogInformation(string.Format(infoMsg, requestModel.IssoId, requestModel.CheckPointNumber));
-                var result = await ptcCoordinator.GetPassType(requestModel, cancellationToken);
+                var workerThreadTask = () => ptcCoordinator.GetPassType(requestModel, cancellationToken);
+                var result = await Task.Run(workerThreadTask, cancellationToken);
                 if (result.IsSuccess && result.Data != null)
                 {
                     return result.Data;    

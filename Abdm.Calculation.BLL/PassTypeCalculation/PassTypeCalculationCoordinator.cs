@@ -79,11 +79,10 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 columnList.Add(column);
 
                 column.Xs = passageIntervalManager.CalculateDistinctXPositionsIncludingWheelOffsets(
-                mesh.Data.DistinctXs,
-                interval,
-                data.LoadSchema.Axles,
-                data.LoadSchema.Width ?? roadRules.MinColumnDistance
-                );
+                    mesh.Data.DistinctXs,
+                    interval,
+                    data.LoadSchema.Axles,
+                    data.LoadSchema.Width ?? roadRules.MinColumnDistance);
                 column.Points = new SmoothPoints[column.Xs.Length];
                 column.Strain = new double[column.Xs.Length];
                 column.StrainOneAuto = new double[column.Xs.Length];
