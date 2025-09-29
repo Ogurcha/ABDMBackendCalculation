@@ -4,7 +4,6 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
 using Abdm.Calculation.BLL.Services;
-using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 
