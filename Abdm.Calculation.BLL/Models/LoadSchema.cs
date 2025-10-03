@@ -28,23 +28,22 @@ namespace Abdm.Calculation.BLL.Models
         public required string NameShort { get; set; }
 
         /// <summary>
-        /// Нормативный отступ от края. Больше нуля, если без заезда на полосу. Ноль - если с заездом на ограничительную полосу
+        /// Ширина ТС
         /// </summary>
         public double? Width { get; set; }
 
         /// <summary>
-        /// Длина
+        /// Длина ТС
         /// </summary>
         public double? Length { get; set; }
 
         /// <summary>
-        /// Расстояние
+        /// Расстояние между ТС
         /// </summary>
         public double? Distance { get; set; }
 
         /// <summary>
-        /// Точки давления, которые представляют данную нагрузку
-        /// Например, массив из 4 колес
+        /// Оси ТС
         /// </summary>
         public required AxleModel[] Axles { get; set; }
     }

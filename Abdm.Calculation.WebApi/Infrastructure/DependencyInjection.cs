@@ -45,7 +45,7 @@ namespace Abdm.Calculation.Infrastructure
                 new HeavyStrategy()
             }));
 
-            services.AddSingleton<IStrainService, StrainService>();
+            services.AddSingleton<IProfileYZService, ProfileYZService>();
             services.AddSingleton<IColumnManager, ColumnManager>();
             services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
             services.AddScoped<IPassTypeService, PassTypeService>();

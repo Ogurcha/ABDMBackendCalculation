@@ -1,30 +1,84 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class ColumnManager() : IColumnManager
+    public class ColumnManager(IProfileYZService profileYZService) : IColumnManager
     {
+        /// <summary>
+        /// ограничим максимальное количество ТС на уровне менеджера, 
+        /// чтобы не повесить калькуляцию надолго, если что-то пойдёт не так
+        /// </summary>
+        private const int VehicleInColumnLimiter = 7;
 
         public ColumnModel CalculateColumnModel(
             [DisallowNull] VehicleTrajectory[] vehicleTrajectories, 
             LoadSchema loadSchema, 
             RoadRules roadRules)
         {
+            var column = new ColumnModel(vehicleTrajectories);
+            
             foreach (var trajectory in vehicleTrajectories) 
             {
-                double[] Ys = 
-            
+                var maxVehicles = Math.Min(roadRules.MaxAutoInColumn, VehicleInColumnLimiter);
+
+                if (maxVehicles <= 1)
+                {
+                    var maxStrainPositions = new List<double> { profileYZService.GetMaxZPosition(trajectory.Center) };
+
+                    var strain = CalculateStrainInPositions(trajectory, maxStrainPositions);
+                    column.Strain.Add(strain);
+                    column.StrainOneAuto.Add(strain);
+                }
+                else
+                {
+                    var heightTree = new SortedDictionary<float, float>(
+                    profileYZService.GetFloatYZFromProfile(trajectory.Center)
+                    .Select(v => new KeyValuePair<float, float>(v.Y, v.X))
+                    .ToDictionary());
+
+                    var maxStrainPositions = GetMaxStrainPositions(heightTree, trajectory.Center, maxVehicles, []);
+
+                    var strain = CalculateStrainInPositions(trajectory, [.. maxStrainPositions.Select(x => (double)x)]);
+                    var strainOneVehicle = CalculateStrainInPositions(trajectory, [maxStrainPositions.First()]);
+                    column.Strain.Add(strain);
+                    column.StrainOneAuto.Add(strainOneVehicle);
+                }
             }
+            return column;
+        }
 
+        private List<float> GetMaxStrainPositions(
+            SortedDictionary<float, float> heightTree, 
+            ProfileYZ profileYZ, 
+            int vehiclesToPlace, 
+            List<float> placedVehicles)
+        {
+            if (vehiclesToPlace == 0)
+            {
+                return placedVehicles;
+            }
+            vehiclesToPlace--;
 
+        }
+
+        private double CalculateStrainInPositions(
+            VehicleTrajectory trajectory, 
+            List<double> maxStrainPositions)
+        {
+            foreach (var strainPosition in maxStrainPositions)
+            {
+                trajectory.Left.
+            }
 
             for (var i = 0; i < vehicleXPositions.Length; i++)
             {
                 var X = vehicleXPositions[i];
 
-                
+
                 if (profileVectors == null)
                 {
                     continue;
@@ -53,8 +107,6 @@ namespace Abdm.Calculation.BLL.Services
 
             return column;
         }
-
-        public double[] 
 
     }
 }

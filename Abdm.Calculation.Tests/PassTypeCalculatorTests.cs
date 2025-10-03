@@ -67,7 +67,7 @@ public class PassTypeCalculatorTests
             new EN3Strategy(),
             new HeavyStrategy()
         });
-        var strainManager = new StrainService();
+        var strainManager = new ProfileYZService();
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
 

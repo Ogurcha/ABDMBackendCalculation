@@ -25,14 +25,20 @@
         /// Теоретически, расстояний может быть несколько, 
         /// и, соответветсвенно, колёс в оси больше двух
         /// </summary>
-        public double[]? WheelsDistance { get; set; }
+        public required double[] WheelsDistance { get; set; }
 
+        /// <summary>
+        /// ширина проекции одного колеса
+        /// </summary>
         public double Wx { get; set; }
 
+        /// <summary>
+        /// длина проекции одного колеса
+        /// </summary>
         public double Wy { get; set; }
 
         public double WheelWeight => Weight / WheelCount;
 
-        public int WheelCount => (WheelsDistance?.Length ?? 0) + 1;
+        public int WheelCount => WheelsDistance.Length * 2;
     }
 }
