@@ -35,6 +35,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddSingleton<IMeshManager, MeshManager>();
+            services.AddSingleton<IVehicleTrajectoryService, VehicleTrajectoryService>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BLL.RoadRulesManager.RoadRulesStrategy.BaseRRStrategy>
             {
@@ -45,6 +46,7 @@ namespace Abdm.Calculation.Infrastructure
             }));
 
             services.AddSingleton<IStrainService, StrainService>();
+            services.AddSingleton<IColumnManager, ColumnManager>();
             services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
             services.AddScoped<IPassTypeService, PassTypeService>();
         }

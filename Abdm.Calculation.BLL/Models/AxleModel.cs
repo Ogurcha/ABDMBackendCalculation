@@ -1,29 +1,38 @@
 ﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
-    /// Информация об осях
+    /// Информация об автомобильной оси
     /// </summary>
     public class AxleModel
     {
-        public double Y { get; set; }
+        /// <summary>
+        /// Расстояние от оси и предыдущим объекта
+        /// </summary>
+        public double RelativePosition { get; set; }
+
+        /// <summary>
+        /// Абсолютная позиция оси, с учётом ВСЕХ объектов позади
+        /// </summary>
+        public double AbsolutePosition { get; set; }
+
+        /// <summary>
+        /// Вес оси
+        /// </summary>
+        public double Weight { get; set; }
+
+        /// <summary>
+        /// Расстояние между колёсами. 
+        /// Теоретически, расстояний может быть несколько, 
+        /// и, соответветсвенно, колёс в оси больше двух
+        /// </summary>
+        public double[]? WheelsDistance { get; set; }
 
         public double Wx { get; set; }
 
         public double Wy { get; set; }
 
-        /// <summary>
-        /// Вес колеса
-        /// </summary>
-        public double Weight { get; set; }
+        public double WheelWeight => Weight / WheelCount;
 
-        /// <summary>
-        /// Абсолютная длина проекции, с учетом текущего колеса и колёс позади
-        /// </summary>
-        public double AbsolutY { get; set; }
-
-        /// <summary>
-        /// Габариты колеса (их может быть несколько)
-        /// </summary>
-        public double[]? Wheels { get; set; }
+        public int WheelCount => (WheelsDistance?.Length ?? 0) + 1;
     }
 }

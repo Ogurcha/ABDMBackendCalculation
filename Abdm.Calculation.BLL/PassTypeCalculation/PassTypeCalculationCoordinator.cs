@@ -1,11 +1,11 @@
-﻿using Abdm.Calculation.BLL.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using Abdm.Calculation.BLL.Entities;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.PassTypeCalculation.PassTypeConditions;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.Graphics;
-using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.PassTypeCalculation
 {
@@ -14,10 +14,12 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
         ISurfaceDataService surfaceDataService,
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
-        IStrainService strainManager
+        IColumnManager columnService,
+        IVehicleTrajectoryService vehicleTrajectoryService
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
+        private const string noIntersectionsErrorMessage = "Mesh has no intersections in given passage intervals";
         private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
         private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
         private const string roadRulesNotFound = "Road rules for given load were not found";
@@ -29,11 +31,6 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
         /// </summary>
         public static double DynamicCoefficient = 1.3d;
 
-        /// <summary>
-        /// Коффициент кинетической силы
-        /// </summary>
-        public static double KStrengthCoefficient = 3.5d;
-
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
             new List<(IPassTypeCondition condition, PassTypeEnum passType)>
             {
@@ -43,7 +40,9 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
             };
 
-        public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(PassTypeCalculationParameters data, CancellationToken cancellationToken)
+        public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(
+            [DisallowNull] PassTypeCalculationParameters data, 
+            CancellationToken cancellationToken)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId, cancellationToken);
             if (intervals?.Any() != true)
@@ -80,53 +79,23 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
             var columnList = new List<ColumnModel>();
             foreach (var interval in intervals)
             {
-                var column = new ColumnModel(interval);
-                columnList.Add(column);
-
-                column.Xs = passageIntervalManager.CalculateDistinctXPositionsIncludingWheelOffsets(
+                var vehicleXPositions = passageIntervalManager.CalculateVehiclePositionsIncludingWheelOffsets(
                     mesh.Data.DistinctXs,
                     interval,
-                    data.LoadSchema.Axles,
-                    data.LoadSchema.Width ?? roadRules.MinColumnDistance);
-                column.Points = new SmoothPoints[column.Xs.Length];
-                column.Strain = new double[column.Xs.Length];
-                column.StrainOneAuto = new double[column.Xs.Length];
-                
-                for (var i = 0; i < column.Xs.Length; i++)
+                    data.LoadSchema,
+                    roadRules);
+
+                var vehicleTrajectories = vehicleTrajectoryService.GetVehicleTrajectories(vehicleXPositions, mesh);
+
+                if (vehicleTrajectories.Length == 0)
                 {
-                    var X = column.Xs[i];
-
-                    var profileYZ = meshManager.MakeProfileYZ(mesh, X);
-                    if (!(profileYZ?.Any() == true))
-                    {
-                        continue;
-                    }
-
-                    var smoothPoints = meshManager.CreateSmoothPoints(profileYZ.ToArray());
-                    column.Points[i] = smoothPoints;
-
-                    var strainList = mesh.Data.DistinctYs
-                        .Select(Y => strainManager.GetStrain(data, smoothPoints, Y))
-                        .Order().ToList();
-
-                    //TODO: ABDMP-369 - Учитывать расстояние между авто. Пока будем считать, что они могут стоять друг на друге. Пока забьем на расстояние между ними, и то, что они все не поместятся на иссо, так как это в любом случае не приведёт к ложно положительному прогнозу
-                    for (int j = 0; j < roadRules.MaxAutoInColumn; j++)
-                    {
-                        double kStrengthCoefficient = 1;
-                        if (data.Surface.KStrength >= 1)
-                        {
-                            kStrengthCoefficient = data.Surface.KStrength * KStrengthCoefficient;
-                        }
-                        var highestStrain = strainList.Last() / kStrengthCoefficient;
-                        if (j == 0)
-                        {
-                            column.StrainOneAuto[i] += highestStrain;
-                        }
-
-                        column.Strain[i] += highestStrain;
-                        strainList.Remove(highestStrain);
-                    }
+                    return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(noIntersectionsErrorMessage));
                 }
+
+                columnList.Add(columnService.CalculateColumnModel(
+                    vehicleTrajectories,
+                    data.LoadSchema,
+                    roadRules));                
             }
 
             var resultPassType = GetPassType(data, roadRules, columnList);
@@ -169,7 +138,7 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                 Allowed = allowed,
                 CPNumber = data.CheckPointNumber,
                 Direction = data.Direction,
-                Intervals = intervals.SelectMany(i => i?.SafeInterval ?? []).ToArray(),
+                Intervals = [],
                 IssoId = data.IssoId,
                 PassType = resultPassType,
                 LoadId = data.LoadId

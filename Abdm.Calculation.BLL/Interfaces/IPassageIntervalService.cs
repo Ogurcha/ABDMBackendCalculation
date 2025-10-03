@@ -7,10 +7,10 @@ public interface IPassageIntervalService
 {
     public Task<PassageIntervalModel[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken);
 
-    public double[] CalculateDistinctXPositionsIncludingWheelOffsets(
+    public VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
         double[] distinctXs,
-        PassageIntervalModel passageInterval, 
-        AxleModel[] axles, 
-        double carWidth
+        PassageIntervalModel passageInterval,
+        LoadSchema loadSchema,
+        RoadRules roadRules
         );
 }

@@ -26,42 +26,42 @@ namespace Abdm.Calculation.Tests
                 Axles = new AxleModel[]
                 {
                     new AxleModel {
-                        Y = 0.4f,
+                        RelativePosition = 0.4f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 0.4f,
-                        Wheels = [ //wheels_Distance_list
+                        AbsolutePosition = 0.4f,
+                        WheelsDistance = [ //wheels_Distance_list
                             2.7f
                         ]
                     },
                     new AxleModel {
-                        Y = 1.2f,
+                        RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 1.6f,
-                        Wheels = [
+                        AbsolutePosition = 1.6f,
+                        WheelsDistance = [
                             2.7f
                         ]
                     },
                     new AxleModel {
-                        Y = 1.2f,
+                        RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 2.8f,
-                        Wheels = [
+                        AbsolutePosition = 2.8f,
+                        WheelsDistance = [
                             2.7f
                         ]
                     },
                     new AxleModel {
-                        Y = 1.2f,
+                        RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 4.0f,
-                        Wheels = [
+                        AbsolutePosition = 4.0f,
+                        WheelsDistance = [
                             2.7f
                         ]
                     }

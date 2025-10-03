@@ -1,7 +1,4 @@
-﻿
-using Abdm.Calculation.DAL.Entities;
-
-namespace Abdm.Calculation.DAL
+﻿namespace Abdm.Calculation.DAL
 {
     public interface ISurfaceRepository
     {

@@ -1,6 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Entities;
 using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -8,29 +7,14 @@ namespace Abdm.Calculation.BLL.Models
     /// Колонна - это колонна транспортных средств.
     /// Представляет собой набор потенциальных траекторий 
     /// движения транспортных средств 
-    /// внутри заданного интервала
+    /// внутри некоего интервала
     /// </summary>
     public class ColumnModel 
     {
-        public ColumnModel(PassageIntervalModel interval)
-        {
-            Interval = interval;
-        }
-
-        /// <summary>
-        /// Интервал по которому движется колонна
-        /// </summary>
-        public PassageIntervalModel Interval { get; set; }
-
-        /// <summary>
-        /// Координаты по оси X траектрий движения
-        /// </summary>
-        public double[]? Xs { get; set; }
-
         /// <summary>
         /// Траектории движения транспортных средств
         /// </summary>
-        public SmoothPoints[]? Points { get; set; }
+        public VehicleTrajectory[]? VehicleTrajectories { get; set; }
 
         /// <summary>
         /// Максимальное напряжение по каждой траектории движения

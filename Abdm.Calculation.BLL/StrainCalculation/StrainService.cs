@@ -11,19 +11,19 @@ namespace Abdm.Calculation.BLL.StrainCalculation
         /// Рассчет напряжения на профиле с учётом тележек
         /// </summary>
         /// <param name="X"></param>
-        public double GetStrain(PassTypeCalculationParameters message, SmoothPoints smoothpoints, double Y)
+        public double GetStrain(PassTypeCalculationParameters message, ProfileYZ profileVectors, double Y)
         {
             var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
             var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;
 
             return message.LoadSchema.Axles
-                .Where(a => a.Wheels?.Length > 0)
+                .Where(a => a.WheelsDistance?.Length > 0)
                 .Sum(a =>
                 {
-                    double axleY = Y + a.AbsolutY;
-                    double weight = a.Weight / (a.Wheels?.Length ?? 1);
+                    double axleY = Y + a.AbsolutePosition;
+                    double weight = a.WheelWeight;
                     return (axleY >= surfaceMinY && axleY <= surfaceMaxY)
-                        ? weight * smoothpoints.GetZ(axleY)
+                        ? weight * profileVectors.GetZValueByY(axleY)
                         : 0d;
                 });
         }
