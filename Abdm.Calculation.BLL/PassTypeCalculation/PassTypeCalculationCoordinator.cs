@@ -85,7 +85,8 @@ namespace Abdm.Calculation.BLL.PassTypeCalculation
                     data.LoadSchema,
                     roadRules);
 
-                var vehicleTrajectories = vehicleTrajectoryService.GetVehicleTrajectories(vehicleXPositions, mesh);
+                var vehicleTrajectories = vehicleTrajectoryService.GetVehicleTrajectories(vehicleXPositions,
+                    mesh, data.LoadSchema.Axles.Average(a => a.Wx));
 
                 if (vehicleTrajectories.Length == 0)
                 {

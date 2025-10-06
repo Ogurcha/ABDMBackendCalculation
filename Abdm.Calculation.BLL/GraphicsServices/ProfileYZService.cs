@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.Graphics.Extensions;
 using Abdm.Calculation.Graphics.Models;
@@ -12,35 +11,33 @@ namespace Abdm.Calculation.BLL.StrainCalculation
         /// Рассчет напряжения на профиле с учётом тележек
         /// </summary>
         /// <param name="X"></param>
-        public double GetStrain(ProfileYZ profileVectors, double Y, PassTypeCalculationParameters message)
+        public double GetStrain(ProfileYZ profileVectors, double Y, LoadSchema loadSchema)
         {
-            var surfaceMinY = message.Surface.MinY - message.Roadway.RoadHeight;
-            var surfaceMaxY = message.Surface.MaxY + message.Roadway.RoadHeight;
-
-            return message.LoadSchema.Axles
+            return loadSchema.Axles
                 .Where(a => a.WheelsDistance?.Length > 0)
                 .Sum(a =>
                 {
                     double axleY = Y + a.AbsolutePosition;
                     double weight = a.WheelWeight;
-                    return (axleY >= surfaceMinY && axleY <= surfaceMaxY)
-                        ? weight * profileVectors.GetZValueByY(axleY)
-                        : 0d;
+                    return weight * profileVectors.GetZValueByY(axleY);
                 });
         }
 
-        public IEnumerable<Vector2> GetFloatYZFromProfile(ProfileYZ profileVectors)
+        public IEnumerable<Vector2D> GetYZFromProfile(ProfileYZ profile)
         {
-            foreach (var v in profileVectors.Vectors)
+            foreach (var v in profile.Vectors)
             {
-                yield return new Vector2((float)v.Value.y, (float)v.Value.z);
+                yield return new Vector2D(v.Value.y, v.Value.z);
             }
         }
 
-        public double GetMaxZPosition(ProfileYZ profileVectors)
+        /// <summary>
+        /// Возвращает точку с максимальным напряжением. 
+        /// Учитывет размер ТС и различие положений его колёс
+        /// </summary>
+        public double GetMaxZPosition(ProfileYZ profile)
         {
-            return profileVectors.Vectors.Values.OrderBy(v => v.z).Last().y;
-
+            return profile.Vectors.Values.OrderBy(v => v.z).Last().y;
         }
     }
 }

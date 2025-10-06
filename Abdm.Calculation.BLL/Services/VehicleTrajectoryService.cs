@@ -11,8 +11,12 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Возвращает пересечение с поверхностью
         /// Вернёт null - если пересечения нет
+        /// По краям сразу зануляем профиль, чтобы ТС вышедшее краем за пределы не влияло на результат
         /// </summary>
-        public ProfileYZ? GetProfileYZ(Mesh mesh, double X)
+        /// <param name="wheelLength"></param>
+        public ProfileYZ? GetProfileYZ(Mesh mesh, 
+            double X,
+            double wheelLength)
         {
             var profile = meshManager.GetIntersectionVectors(mesh, X);
 
@@ -21,8 +25,12 @@ namespace Abdm.Calculation.BLL.Services
                 return null;
             }
 
+            var firstVector = new Vector3d(profile.First().x, profile.First().y - wheelLength, 0); 
+            var lastVector = new Vector3d(profile.Last().x, profile.Last().y + wheelLength, 0); 
             var vectors = new SortedList<double, Vector3d>(
-                profile.OrderBy(v => v.y)
+                profile.Prepend(firstVector)
+                .Append(lastVector)
+                .OrderBy(v => v.y)
                 .Select((item) => new KeyValuePair<double, Vector3d>(item.y, item))
                 .ToDictionary());
 
@@ -33,24 +41,34 @@ namespace Abdm.Calculation.BLL.Services
             };
         }
 
-        public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, Mesh mesh)
+        /// <summary>
+        /// Получение траекторий движения ТС
+        /// По краям сразу зануляем профили, чтобы ТС вышедшее частично за пределы проекций не влияло на результат
+        /// </summary>
+        /// <param name="wheelLength">Параметр для зануления краёв</param>
+        /// <returns></returns>
+        public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, 
+            Mesh mesh, 
+            double wheelLength)
         {
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectory(x, mesh))
+                .Select(x => GetVehicleTrajectory(x, mesh, wheelLength))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }
 
-        public VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, Mesh mesh)
+        public VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, 
+            Mesh mesh,
+            double wheelLength)
         {
-            var center = GetProfileYZ(mesh, xPosition.CenterXPosition);
+            var center = GetProfileYZ(mesh, xPosition.CenterXPosition, wheelLength);
 
             var left = xPosition.LeftXPosition
-                .Select(x => GetProfileYZ(mesh, x))
+                .Select(x => GetProfileYZ(mesh, x, wheelLength))
                 .OfType<ProfileYZ>()
                 .ToArray();
             var right = xPosition.RightXPosition
-                .Select(x => GetProfileYZ(mesh, x))
+                .Select(x => GetProfileYZ(mesh, x, wheelLength))
                 .OfType<ProfileYZ>()
                 .ToArray();
 
