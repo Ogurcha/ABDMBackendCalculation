@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Models.Parameters;
 using Abdm.Calculation.DAL.Entities;
 
 namespace Abdm.Calculation.Tests
@@ -23,9 +25,9 @@ namespace Abdm.Calculation.Tests
                 Width = 3.5f,
                 Length = 4.4f,
                 Distance = 0,
-                Axles = new AxleModel[]
+                Axles = new Axle[]
                 {
-                    new AxleModel {
+                    new Axle {
                         RelativePosition = 0.4f,
                         Wx = 0.8f,
                         Wy = 0.2f,
@@ -35,7 +37,7 @@ namespace Abdm.Calculation.Tests
                             2.7f
                         ]
                     },
-                    new AxleModel {
+                    new Axle {
                         RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
@@ -45,7 +47,7 @@ namespace Abdm.Calculation.Tests
                             2.7f
                         ]
                     },
-                    new AxleModel {
+                    new Axle {
                         RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
@@ -55,7 +57,7 @@ namespace Abdm.Calculation.Tests
                             2.7f
                         ]
                     },
-                    new AxleModel {
+                    new Axle {
                         RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
@@ -4798,7 +4800,7 @@ namespace Abdm.Calculation.Tests
             Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
         };
 
-        public static Task<PassageInterval[]> ResultFromPIRepo => Task.FromResult<PassageInterval[]>([new PassageInterval {
+        public static Task<PassageIntervalDto[]> ResultFromPIRepo => Task.FromResult<PassageIntervalDto[]>([new PassageIntervalDto {
             b_pb = 0.15d,
             b_lp = 0.15d,
             b_gab = 7.8d

@@ -1,4 +1,4 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models.Primitives;
 
 namespace Abdm.Calculation.BLL.Extensions
 {

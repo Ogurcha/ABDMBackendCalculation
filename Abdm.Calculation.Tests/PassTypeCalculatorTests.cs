@@ -11,6 +11,7 @@ using Abdm.Calculation.BLL.PassTypeCalculation;
 using Abdm.Calculation.BLL.RoadRulesManager;
 using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
@@ -67,7 +68,6 @@ public class PassTypeCalculatorTests
             new EN3Strategy(),
             new HeavyStrategy()
         });
-        var strainManager = new ProfileYZService();
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
 
@@ -76,12 +76,13 @@ public class PassTypeCalculatorTests
             surfaceDataService,
             new MeshManager(new DoubleEqualityComparer()),
             roadRulesFactory,
-            strainManager
+            new StrainCalculator(new ProfileYZService()),
+            new VehicleTrajectoryService(null)
             );
 
         try
         {
-            var result = await processor.GetPassType(testMessage, new System.Threading.CancellationToken());
+            var result = await processor.GetPassType(testMessage, new CancellationToken());
 
             Assert.That(result.Data?.PassType, Is.EqualTo(expectedOutput.PassType));
         }

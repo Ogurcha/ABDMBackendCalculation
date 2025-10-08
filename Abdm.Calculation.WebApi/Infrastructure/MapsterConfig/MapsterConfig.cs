@@ -1,6 +1,7 @@
 ﻿using System;
 using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Models.Parameters;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
@@ -17,7 +18,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Y, src => src.Y)
             .Map(dst => dst.Z, src => src.Z);
 
-            TypeAdapterConfig<AxleRequestModel, AxleModel>
+            TypeAdapterConfig<AxleRequestModel, Axle>
             .NewConfig()
             .Map(dst => dst.RelativePosition, src => src.Y)
             .Map(dst => dst.Wx, src => src.Wx)

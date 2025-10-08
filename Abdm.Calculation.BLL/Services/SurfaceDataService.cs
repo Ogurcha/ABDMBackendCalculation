@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
 
@@ -20,18 +21,18 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Расшифровывает байт массив и получает информацию о поверхности влияния
         /// </summary>
-        public async Task<ResultExceptionContainer<SurfaceData>> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
+        public async Task<ResultExceptionContainer<SurfaceDataDto>> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber, cancellationToken);
             if (data == null || data.Length <= UsefulDataStartingPosition)
             {
-                return new ResultExceptionContainer<SurfaceData>(new Exception(UnsupportedBinaryTypeStr));
+                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
             using MemoryStream stream = new MemoryStream(data);
             using BinaryReader reader = new BinaryReader(stream);
             if (reader.ReadInt32() > OldClientFormatCondition)
             {
-                return new ResultExceptionContainer<SurfaceData>(new Exception(UnsupportedBinaryTypeStr));
+                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
             stream.Position = UsefulDataStartingPosition;
 
@@ -44,9 +45,9 @@ namespace Abdm.Calculation.BLL.Services
                 ? ReadTriangles(reader, trianglesCount, pointsCount).ToArray()
                 : null;
 
-            return new ResultExceptionContainer<SurfaceData>
+            return new ResultExceptionContainer<SurfaceDataDto>
             (
-                new SurfaceData
+                new SurfaceDataDto
                 {
                     IsSymmetric = isSymmetric,
                     IsGridRegular = isGridRegular,

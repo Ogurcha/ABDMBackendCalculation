@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models.Algorithmic;
+using Abdm.Calculation.BLL.Models.Parameters;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 using g4;
@@ -49,10 +51,12 @@ namespace Abdm.Calculation.BLL.Services
         /// <returns></returns>
         public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, 
             Mesh mesh, 
-            double wheelLength)
+            Axle[] axles)
         {
+            var wheelLesngthAvg = axles.Select(x => x.Wx).Average();
+
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectory(x, mesh, wheelLength))
+                .Select(x => GetVehicleTrajectory(x, mesh, wheelLesngthAvg))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }

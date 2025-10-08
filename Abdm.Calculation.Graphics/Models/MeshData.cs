@@ -15,5 +15,10 @@
         /// Уникальные значения точек по оси Y.
         /// </summary>
         public double[]? DistinctYs { get; set; }
+
+        /// <summary>
+        /// Закешированные профили срезов плоскостями YZ
+        /// </summary>
+        public List<ProfileYZ> Profiles { get; set; } = [];
     }
 }
