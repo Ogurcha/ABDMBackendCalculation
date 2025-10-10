@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.BLL.Models.Parameters;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 
 namespace Abdm.Calculation.BLL.Services.RoadRules
@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules
         (List<BaseRRStrategy> strategies)
         : IRoadRulesFactory 
     {
-        public RoadRules[]? CreateRoadRuleStrategy(LoadEnum loadId) 
+        public RoadRule[]? CreateRoadRuleStrategy(LoadEnum loadId) 
             => strategies.FirstOrDefault(s => s.LoadIds.Contains(loadId))?.GetRoadRules();
     }
 }

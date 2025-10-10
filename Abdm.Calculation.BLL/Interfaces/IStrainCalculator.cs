@@ -1,11 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Models.Algorithmic;
-using Abdm.Calculation.BLL.Models.Parameters;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainCalculator
     {
-        IEnumerable<StrainResult> GetStrainResult(PassTypeDataModel calculationData, RoadRule[] roadRules);
+        PassTypeEnum GetPassType(PassTypeSmallModel data, List<IntervalModel> intervalModels, RoadRule[] roadRules);
     }
 }

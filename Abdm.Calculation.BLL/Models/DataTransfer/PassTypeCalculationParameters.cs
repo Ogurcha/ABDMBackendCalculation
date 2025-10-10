@@ -1,5 +1,4 @@
 ﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Models.Parameters;
 
 namespace Abdm.Calculation.BLL.Models.DataTransfer
 {

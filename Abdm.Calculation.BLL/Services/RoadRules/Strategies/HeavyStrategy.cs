@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Helpers;
-using Abdm.Calculation.BLL.Models.Parameters;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 {
@@ -15,9 +15,9 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             LoadEnum.N14
         };
 
-        public override RoadRules GetRoadRules()
+        public override RoadRule[] GetRoadRules()
         {
-            return RoadRulesConstants.RR3;
+            return [RoadRulesConstants.RR3];
         }
     }
 }

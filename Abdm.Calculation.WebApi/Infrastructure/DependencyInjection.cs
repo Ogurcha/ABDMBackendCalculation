@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
-using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
@@ -31,7 +31,6 @@ namespace Abdm.Calculation.Infrastructure
             MapsterConfig.MapsterSetup();
             BLLMapsterConfig.BLLMapsterSetup();
             services.AddSingleton<IEqualityComparer<double>, DoubleEqualityComparer>();
-            services.AddSingleton<IPassTypeDataModelService, PassTypeDataModelService>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();

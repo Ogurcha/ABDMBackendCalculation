@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.BLL.Models.Algorithmic
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Модель поверхности, по которой едет ТС
@@ -34,6 +34,5 @@
         /// Другая нагрузка
         /// </summary>
         public double OtherLoad { get; set; }
-
     }
 }

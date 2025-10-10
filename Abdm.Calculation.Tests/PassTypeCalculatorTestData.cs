@@ -2,7 +2,6 @@
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.BLL.Models.Parameters;
 using Abdm.Calculation.DAL.Entities;
 
 namespace Abdm.Calculation.Tests
@@ -33,7 +32,7 @@ namespace Abdm.Calculation.Tests
                         Wy = 0.2f,
                         Weight = 20.0f,
                         AbsolutePosition = 0.4f,
-                        WheelsDistance = [ //wheels_Distance_list
+                        WheelsDistance = [ 
                             2.7f
                         ]
                     },

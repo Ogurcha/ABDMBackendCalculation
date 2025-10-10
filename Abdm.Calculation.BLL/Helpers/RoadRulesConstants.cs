@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using Abdm.Calculation.BLL.Models.Parameters;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Helpers
 {
@@ -14,9 +14,9 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
             HasSafetyLine = false,
-            MaxColumnCount = int.MaxValue,
-            MaxAutoInColumn = 1,
-            MinColumnDistance = 3,
+            MaxVehicleCount = int.MaxValue,
+            MaxVehicleInTrajectory = 1,
+            MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = true,
         };
 
@@ -26,9 +26,9 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
             HasSafetyLine = false,
-            MaxColumnCount = int.MaxValue,
-            MaxAutoInColumn = 2,
-            MinColumnDistance = 3,
+            MaxVehicleCount = int.MaxValue,
+            MaxVehicleInTrajectory = 2,
+            MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
         };
 
@@ -38,9 +38,9 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
             HasSafetyLine = true,
-            MaxColumnCount = 2,
-            MaxAutoInColumn = 1,
-            MinColumnDistance = 3,
+            MaxVehicleCount = 2,
+            MaxVehicleInTrajectory = 1,
+            MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = true,
         };
 
@@ -50,9 +50,9 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
             HasSafetyLine = true,
-            MaxColumnCount = 2,
-            MaxAutoInColumn = 2,
-            MinColumnDistance = 3,
+            MaxVehicleCount = 2,
+            MaxVehicleInTrajectory = 2,
+            MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
         };
 
@@ -62,9 +62,9 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
             HasSafetyLine = false,
-            MaxColumnCount = 1,
-            MaxAutoInColumn = 1,
-            MinColumnDistance = 3,
+            MaxVehicleCount = 1,
+            MaxVehicleInTrajectory = 1,
+            MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
         };
 
@@ -74,9 +74,9 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
             HasSafetyLine = true,
-            MaxColumnCount = 1,
-            MaxAutoInColumn = 1,
-            MinColumnDistance = 3,
+            MaxVehicleCount = 1,
+            MaxVehicleInTrajectory = 1,
+            MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
         };
     }

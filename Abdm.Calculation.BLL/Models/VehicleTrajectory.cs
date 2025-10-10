@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.Graphics.Models;
 
-namespace Abdm.Calculation.BLL.Models.Algorithmic
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Траектория движения транспортного средства
@@ -8,9 +8,10 @@ namespace Abdm.Calculation.BLL.Models.Algorithmic
     public class VehicleTrajectory
     {
         /// <summary>
-        /// траектория колёс слева
+        /// Траектория колёс слева. 
+        /// Ключ - <see cref="Axle.WheelsDistance"/>
         /// </summary>
-        public required ProfileYZ[] Left { get; set; }
+        public required Dictionary<double, ProfileYZ> Left { get; set; }
 
         /// <summary>
         /// траектория условного центра
@@ -18,9 +19,10 @@ namespace Abdm.Calculation.BLL.Models.Algorithmic
         public required ProfileYZ Center { get; set; }
 
         /// <summary>
-        /// траектория колёс справа
+        /// Траектория колёс слева. 
+        /// Ключ - <see cref="Axle.WheelsDistance"/>
         /// </summary>
-        public required ProfileYZ[] Right { get; set; }
+        public required Dictionary<double, ProfileYZ> Right { get; set; }
 
         public double X => Center.X;
     }

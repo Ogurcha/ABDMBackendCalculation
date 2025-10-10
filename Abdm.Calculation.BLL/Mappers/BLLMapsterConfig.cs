@@ -1,5 +1,6 @@
-﻿using Abdm.Calculation.BLL.Models.Algorithmic;
-using Abdm.Calculation.BLL.Models.Parameters;
+﻿using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL.Entities;
 using Mapster;
 
@@ -27,6 +28,20 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
             .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
             .Map(dst => dst.OtherLoad, src => src.OtherLoad);
+
+            TypeAdapterConfig<PassTypeCalculationParameters, LoadModel>
+            .NewConfig()
+            .Map(dst => dst.Direction, src => src.Direction)
+            .Map(dst => dst.Width, src => src.LoadSchema.Width ?? NormConstants.DefaultVehicleWidth)
+            .Map(dst => dst.Length, src => src.LoadSchema.Length ?? NormConstants.DefaultVehicleLength)
+            .Map(dst => dst.Distance, src => src.LoadSchema.Distance ?? NormConstants.DefaultVehicleDistance)
+            .Map(dst => dst.Axles, src => src.LoadSchema.Axles);
+
+            TypeAdapterConfig<PassTypeCalculationParameters, PassTypeSmallModel>
+            .NewConfig()
+            .Map(dst => dst.Surface, src => src.Surface)
+            .Map(dst => dst.Load, src => src);
+
         }
     }
 }

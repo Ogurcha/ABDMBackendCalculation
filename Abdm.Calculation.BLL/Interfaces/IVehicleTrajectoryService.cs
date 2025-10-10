@@ -1,12 +1,16 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Models.Algorithmic;
-using Abdm.Calculation.BLL.Models.Parameters;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IVehicleTrajectoryService
     {
+        IntervalModel GetIntervalModel(PassTypeSmallModel data,
+            Mesh mesh,
+            PassageInterval interval, 
+            RoadRule[] roadRules);
+
         ProfileYZ? GetProfileYZ(Mesh mesh, 
             double X,
             double wheelLength);
@@ -18,5 +22,11 @@ namespace Abdm.Calculation.BLL.Interfaces
         VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, 
             Mesh mesh,
             double wheelLength);
+
+        VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
+            double[] distinctXs,
+            PassageInterval passageInterval,
+            LoadModel loadModel,
+            RoadRule[] roadRules);
     }
 }

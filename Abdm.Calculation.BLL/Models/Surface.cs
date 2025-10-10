@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 
-namespace Abdm.Calculation.BLL.Models.Parameters
+namespace Abdm.Calculation.BLL.Models
 {
     public class Surface
     {

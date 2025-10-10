@@ -53,12 +53,14 @@ namespace Abdm.Calculation.Graphics
         /// </summary>
         private MeshData UpdateMeshData(DMesh3 mesh)
         {
-            var result = new MeshData();
             var veticles = mesh.Vertices();
 
-            result.DistinctXs = veticles.Select(v => v.x).Order().Distinct(doubleEqualityComparer).ToArray();
-            result.DistinctYs = veticles.Select(v => v.y).Order().Distinct(doubleEqualityComparer).ToArray();
-
+            var result = new MeshData
+            {
+                DistinctXs = veticles.Select(v => v.x).Order().Distinct(doubleEqualityComparer).ToArray(),
+                DistinctYs = veticles.Select(v => v.y).Order().Distinct(doubleEqualityComparer).ToArray()
+            };
+            
             return result;
         }
 

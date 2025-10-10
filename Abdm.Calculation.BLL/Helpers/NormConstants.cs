@@ -5,7 +5,6 @@
     /// </summary>
     public static class NormConstants
     {
-
         /// <summary>
         /// Шаг, с которым надо чекать позиционирование ТС в экстремуме профиля на предмет макс напряжения
         /// </summary>
@@ -16,7 +15,24 @@
         /// </summary>
         public const double VehicleEdgeDistance = 1.5d;
 
+        /// <summary>
+        /// Дефолтная Ширина ТС, в большинстве норм именно такая ширина
+        /// </summary>
+        public const double DefaultVehicleWidth = 3d;
 
-        public const double slExtraDistance = 0.25d;
+        /// <summary>
+        /// Дефолтная Длина ТС, в большинстве норм именно такая длина
+        /// </summary>
+        public const double DefaultVehicleLength = 4.5d;
+
+        /// <summary>
+        /// Дефолтная Расстояние между ТС, в большинстве норм именно такое расстояние
+        /// </summary>
+        public const double DefaultVehicleDistance = 3d;
+
+        /// <summary>
+        /// Дефолтное расстояние между осями. Для дефолтной выбрал Н11 (НК-80)
+        /// </summary>
+        public static double[] DefaultAxleDistance { get; internal set; } = [ 2.7d ];
     }
 }

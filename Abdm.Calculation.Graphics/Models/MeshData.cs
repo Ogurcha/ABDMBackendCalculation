@@ -9,12 +9,12 @@
         /// <summary>
         /// Уникальные значения точек по оси Х.
         /// </summary>
-        public double[]? DistinctXs { get; set; }
+        public required double[] DistinctXs { get; set; }
 
         /// <summary>
         /// Уникальные значения точек по оси Y.
         /// </summary>
-        public double[]? DistinctYs { get; set; }
+        public required double[] DistinctYs { get; set; }
 
         /// <summary>
         /// Закешированные профили срезов плоскостями YZ

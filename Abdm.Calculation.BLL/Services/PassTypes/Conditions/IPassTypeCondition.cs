@@ -1,4 +1,4 @@
-﻿using Abdm.Calculation.BLL.Models.Parameters;
+﻿using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
 {

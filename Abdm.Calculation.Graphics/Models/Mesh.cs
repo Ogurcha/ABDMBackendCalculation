@@ -9,6 +9,6 @@ namespace Abdm.Calculation.Graphics.Models
         /// <summary>
         /// Вычисляемые данные по кэшу. Здесь происходит денормализация и дублирование во имя оптимизации
         /// </summary>
-        public MeshData? Data { get; set; }
+        public required MeshData Data { get; set; }
     }
 }

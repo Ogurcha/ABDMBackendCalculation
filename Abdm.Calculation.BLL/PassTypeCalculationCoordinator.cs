@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.BLL.Models.Parameters;
 using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
 using Abdm.Calculation.Graphics;
+using Mapster;
 
 namespace Abdm.Calculation.BLL
 {
@@ -14,8 +15,7 @@ namespace Abdm.Calculation.BLL
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
         IStrainCalculator strainCalculator,
-        IVehicleTrajectoryService vehicleTrajectoryService,
-        IPassTypeDataModelService passTypeDataModelService
+        IVehicleTrajectoryService vehicleTrajectoryService
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -31,21 +31,12 @@ namespace Abdm.Calculation.BLL
         /// </summary>
         public static double DynamicCoefficient = 1.3d;
 
-        public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
-            new List<(IPassTypeCondition condition, PassTypeEnum passType)>
-            {
-                (new NoLimitCondition(), PassTypeEnum.NoLimit),
-                (new WithoutPedestrianCondition(), PassTypeEnum.WithoutPedestian),
-                (new Speed10Condition(), PassTypeEnum.MaxSpeed10),
-                (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
-            };
-
         public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(
             [DisallowNull] PassTypeCalculationParameters data, 
             CancellationToken cancellationToken)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId, 
-                data.Roadway.PositionShift - data.Surface.MinY, cancellationToken);
+                data.Roadway.PositionShift - data.Surface.MinX, cancellationToken);
             if (intervals?.Any() != true)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
@@ -76,54 +67,24 @@ namespace Abdm.Calculation.BLL
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(meshErrorMessage));
             }
+            var dataModel = data.Adapt<PassTypeSmallModel>();
 
-            var calculationData = passTypeDataModelService.ComposePassTypeDataModel(data, intervals, roadRules);
+            var intervalModels = new List<IntervalModel>();
             foreach (var interval in intervals)
             {
-                var vehicleXPositions = passageIntervalManager.CalculateVehiclePositionsIncludingWheelOffsets(
-                    mesh.Data.DistinctXs,
-                    interval,
-                    data.LoadSchema,
-                    roadRules);
-
-                var vehicleTrajectories = vehicleTrajectoryService.GetVehicleTrajectories(vehicleXPositions,
-                    mesh, data.LoadSchema.Axles);
-
-                if (vehicleTrajectories.Length == 0)
+                var intervalModel = vehicleTrajectoryService.GetIntervalModel(dataModel, mesh, interval, roadRules);
+                if (intervalModel.Trajectories?.Any() != true)
                 {
                     return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(noIntersectionsErrorMessage));
                 }
-
-                calculationData.Intervals.Where(x => x.PassageIntervalRef == interval).First().Trajectories = vehicleTrajectories;
+                intervalModels.Add(intervalModel);
             }
 
-            var strainResultData = strainCalculator.GetStrainResult(calculationData, roadRules);
-
-            var resultPassType = GetPassType(strainResultData, data.Surface, roadRules);
+            PassTypeEnum resultPassType = strainCalculator.GetPassType(dataModel, intervalModels, roadRules);
 
             var response = ComposeMessage(resultPassType, data);
 
             return new ResultExceptionContainer<PassTypeCalculationResult>(response);
-        }
-
-        private PassTypeEnum GetPassType(IEnumerable<StrainResult> strainResultData, Surface surfaceData, RoadRule[] roadRules)
-        { 
-            foreach (var roadRule in roadRules)
-            {
-                var strainResults = strainResultData
-                    .Where(x => x.RoadRuleRef == roadRule)
-                    .OrderByDescending(c => c.Strain)
-                    .ToList();
-                foreach (var c in PassTypeConditions)
-                {
-                    if (c.condition.CanPassCondition(strainResults, surfaceData))
-                    {
-                        return c.passType;
-                    }
-                }
-            }
-
-            return PassTypeEnum.Denied;
         }
 
         private PassTypeCalculationResult ComposeMessage(PassTypeEnum resultPassType, PassTypeCalculationParameters data)

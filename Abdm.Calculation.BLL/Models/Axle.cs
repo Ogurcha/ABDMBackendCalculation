@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.BLL.Models.Parameters
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Информация об автомобильной оси

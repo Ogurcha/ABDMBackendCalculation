@@ -1,7 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Models.Parameters;
 
-namespace Abdm.Calculation.BLL.Models.Algorithmic
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Модель нагрузки
@@ -19,6 +18,11 @@ namespace Abdm.Calculation.BLL.Models.Algorithmic
         /// Длина ТС
         /// </summary>
         public required double Length { get; set; }
+
+        /// <summary>
+        /// Расстояние между ТС
+        /// </summary>
+        public required double Distance { get; set; }
 
         /// <summary>
         /// Оси ТС

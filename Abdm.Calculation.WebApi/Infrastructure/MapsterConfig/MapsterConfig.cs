@@ -1,7 +1,7 @@
 ﻿using System;
 using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.BLL.Models.Parameters;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;

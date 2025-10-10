@@ -1,6 +1,4 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
-
-namespace Abdm.Calculation.BLL.Models.Parameters
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Параметры использования ИССО. Чем серьезнее условия, тем тяжелее ИССО будет пройти проверку.
@@ -24,19 +22,19 @@ namespace Abdm.Calculation.BLL.Models.Parameters
 
         /// <summary>
         /// Максимальное количество ТС в колонне.
+        /// TODO: пока неизвестен алгоритм реализации расчётов по нормам при значении больше 1
         /// </summary>
-        public int MaxAutoInColumn { get; set; }
+        public int MaxVehicleInTrajectory { get; set; }
 
         /// <summary>
-        /// Максимальное количество колонн по нормам.
-        /// Оверрайдится, если иссо физически вмещает меньше колонн
+        /// Максимальное количество ТС
         /// </summary>
-        public int MaxColumnCount { get; set; }
+        public int MaxVehicleCount { get; set; }
 
         /// <summary>
-        /// Минимальное расстояние между колоннами.
+        /// Минимальное расстояние между центров траекторий движения. 
         /// </summary>
-        public double MinColumnDistance { get; set; }
+        public double MinTrajectoryDistance { get; set; }
 
         /// <summary>
         /// Рассчитывать ли доп нагрузку от пробки.
