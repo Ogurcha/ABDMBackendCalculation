@@ -153,7 +153,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="Y">Точка, в которой считаем напряжение</param>
         /// <param name="load">параметры нагрузки</param>
         /// <returns></returns>
-        public double GetStrainFromVehicle(VehicleTrajectory trajectory, double Y, LoadModel load)
+        public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load)
         {
             var strain = 0d;
             foreach (var axle in load.Axles)

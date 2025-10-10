@@ -8,7 +8,7 @@ namespace Abdm.Calculation.BLL.Extensions
         /// Возвращает позитивные интервалы у двумерной функции. 
         /// Кейсы с касательным с нулём не учитываются.
         /// </summary>
-        public static IEnumerable<Vector2D> GetPositveIntervals(IList<Vector2D> function)
+        public static IEnumerable<Vector2D> GetPositvePieces(IList<Vector2D> function)
         {
             if (function.FirstOrDefault() is Vector2D first)
             {

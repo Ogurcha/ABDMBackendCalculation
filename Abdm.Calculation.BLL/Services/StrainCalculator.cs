@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Extensions;
+using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.BLL.Models.Primitives;
 using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
 
 namespace Abdm.Calculation.BLL.Services
@@ -13,7 +12,8 @@ namespace Abdm.Calculation.BLL.Services
     /// Сервис для рассчетов напряжения в колонне
     /// </summary>
     /// <param name="profileYZService"></param>
-    public class StrainCalculator(IProfileYZService profileYZService) : IStrainCalculator
+    public class StrainCalculator(IProfileYZService profileYZService,
+        IVehiclePositioner vehiclePositioner) : IStrainCalculator
     {
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
             new()
@@ -40,162 +40,46 @@ namespace Abdm.Calculation.BLL.Services
                         .ToArray();
                 }
 
+                var strains = new List<(double strain, VehicleTrajectory trajectory)>();
                 foreach (var trajectory in intervalModel.Trajectories)
                 {
                     var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
-                    var positiveIntervals = MathExtensions.GetPositveIntervals(centerVectors);
+                    var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
 
-                    foreach (var positiveInterval in positiveIntervals)
+                    foreach (var positivePiece in positivePieces)
                     {
-                        var start = positiveInterval.X;
-                        var end = positiveInterval.Y;
+                        var start = positivePiece.X;
+                        var end = positivePiece.Y;
 
-                        var highestZVector = centerVectors.Where(v => v.X <= start && v.X >= end).OrderBy(v => v.Y).First();
+                        var highestZVector = centerVectors.Where(v => v.X <= start && v.X >= end).OrderBy(v => v.Y).First() ;
 
-                        var strain = 
+                        var strainInPositivePiece = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
+                            highestZVector.X,
+                            data.Load);
                     }
+
+                    strains.Add((strain, trajectory));
                 }
-            }
-        }
 
+                strains = strains.OrderBy(s => s.strain).ToList();
+                var maxStrainResults = new List<(double strain, RoadRule roadRule)>();
 
-
-
-        public StrainResult CalculateColumnModel(
-            [DisallowNull] VehicleTrajectory[] vehicleTrajectories,
-            LoadSchema loadSchema, 
-            RoadRules roadRules)
-        {
-            var column = new StrainDataContainer(vehicleTrajectories);
-
-            if (vehicleTrajectories.Length == 0)
-            {
-                return column;
-            }
-
-            //foreach (var trajectory in vehicleTrajectories) 
-            //{
-            //    CalculateStrain(column, trajectory);
-            //}
-
-            return column;
-        }
-        /*VehicleDistance = Math.Max(inputData.LoadSchema.Distance ?? DefaultVehicleDistance, roadRule.MinColumnDistance),
-                    DistanceForSafetyLineLeft = roadRule.HasSafetyLine ? i.SafetyLineLeft : 0,
-                    DistanceForSafetyLineRight = roadRule.HasSafetyLine ? i.SafetyLineRight : 0,
-                    AbsolutePositionLeft = roadRule.HasSafetyLine ? i.AbsolutePositionLeft + i.SafetyLineLeft : i.AbsolutePositionLeft,
-                    AbsolutePositionRight = roadRule.HasSafetyLine ? i.AbsolutePositionRight - i.SafetyLineLeft : i.AbsolutePositionLeft,
-                    LaneCount = Math.Min(i.LaneCount, roadRule.MaxColumnCount)
-        */
-
-
-        private void CalculateStrain(StrainResult column, VehicleTrajectory trajectory, LoadSchema loadSchema)
-        {
-            var maxStrainPosition = profileYZService.GetMaxZPosition(trajectory.Center);
-
-
-
-            //var strain = CalculateStrainInPositions(trajectory, maxStainPosition);
-            //column.Strain.Add(strain);
-            //column.StrainOneAuto.Add(strain);
-        }
-
-        //private double CalculateStrainInPositions(
-        //    VehicleTrajectory trajectory, 
-        //    double maxStainPosition)
-        //{
-        //    foreach (var strainPosition in maxStrainPositions)
-        //    {
-        //        trajectory.Left.
-        //    }
-        //}
-
-        //private 
-
-        /// <summary>
-        /// ограничим максимальное количество ТС на уровне менеджера, 
-        /// чтобы не повесить калькуляцию надолго, если что-то пойдёт не так
-        /// </summary>
-        private const int VehicleInColumnLimiter = 7;
-
-
-        private Action<ColumnModel, VehicleTrajectory> GetCalculateStrainAction(
-            [DisallowNull] VehicleTrajectory[] vehicleTrajectories,
-            LoadSchema loadSchema,
-            RoadRules roadRules)
-        {
-            var needToPlaceVehicles = Math.Min(roadRules.MaxAutoInColumn, VehicleInColumnLimiter);
-
-            if (needToPlaceVehicles <= 1)
-            {
-                return CalculateOneVehicleCase;
-            }
-
-            if (IsIssoCrowded(loadSchema, needToPlaceVehicles))
-            {
-                return (ColumnModel column, VehicleTrajectory trajectory) => CalculateCrowdedCase(data, column, trajectory, positiveIntervals);
-            }
-
-            return (ColumnModel column, VehicleTrajectory trajectory) => CalculateSparseCase(column, trajectory, needToPlaceVehicles);
-        }
-
-        private bool IsIssoCrowded(LoadSchema loadSchema,
-            int needToPlaceVehicles)
-        {
-            if (!(loadSchema?.Distance > 0 && loadSchema?.Length > 0))
-            {
-                return false;
-            }
-
-            var canPlaceVehicles = default(int);
-
-
-            foreach (var interval in positiveIntervals)
-            {
-                var start = interval.X;
-                var end = interval.Y;
-
-                var hasPlaceOnTheEdges = doubleEqualityComparer.Equals(start, data.Surface.MinY) ||
-                    doubleEqualityComparer.Equals(end, data.Surface.MaxY);
-
-                var remainingDistance = end - start - data.LoadSchema.Length;
-
-                while (remainingDistance > data.LoadSchema.Distance)
+                
+                foreach (var roadRule in roadRules)
                 {
-                    remainingDistance -= data.LoadSchema.Distance;
-                    if (remainingDistance >= data.LoadSchema.Length)
-                    {
-                        remainingDistance -= data.LoadSchema.Length;
-                        canPlaceVehicles++;
-                    }
-                }
+                    var strain = 0d;
+                    var actualVehicleCount = Math.Min(roadRule.MaxVehicleCount, intervalModel.PassageIntervalRef.LaneCount);
+                    
+                    if
 
-                if (hasPlaceOnTheEdges || remainingDistance >= 0)
-                {
-                    canPlaceVehicles++;
                 }
             }
-
-            return canPlaceVehicles <= needToPlaceVehicles;
         }
 
-        private void CalculateSparseCase(ColumnModel column, VehicleTrajectory trajectory, int maxAutoInColumn)
-        {
-            var maxVehicles = Math.Min(maxAutoInColumn, VehicleInColumnLimiter);
 
-            var heightTree = new SortedDictionary<float, float>(
-                profileYZService.GetYZFromProfile(trajectory.Center)
-                .Select(v => new KeyValuePair<float, float>(v.Y, v.X))
-                .ToDictionary());
 
-            var maxStrainPositions = GetMaxStrainPositions(heightTree, trajectory.Center, maxVehicles, []);
 
-            var strain = CalculateStrainInPositions(trajectory, [.. maxStrainPositions.Select(x => (double)x)]);
-            var strainOneVehicle = CalculateStrainInPositions(trajectory, [maxStrainPositions.First()]);
-            column.Strain.Add(strain);
-            column.StrainOneAuto.Add(strainOneVehicle);
-        }
-
+        
 
         private PassTypeEnum GetPassType(IEnumerable<StrainResult> strainResultData, Surface surfaceData, RoadRule[] roadRules)
         {

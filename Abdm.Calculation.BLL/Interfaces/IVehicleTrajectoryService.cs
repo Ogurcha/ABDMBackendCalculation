@@ -28,5 +28,6 @@ namespace Abdm.Calculation.BLL.Interfaces
             PassageInterval passageInterval,
             LoadModel loadModel,
             RoadRule[] roadRules);
+        double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load);
     }
 }
