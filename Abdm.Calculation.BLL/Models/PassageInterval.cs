@@ -32,7 +32,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Количество полос движения на данном интервале
         /// </summary>
-        public double LaneCount { get; set; }
+        public int LaneCount { get; set; }
 
         /// <summary>
         /// Тип движения на интервале

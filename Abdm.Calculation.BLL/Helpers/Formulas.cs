@@ -7,7 +7,7 @@ namespace Abdm.Calculation.BLL.Helpers
         /// <summary>
         /// Расстояние от центра ТС до допустимого края интервала
         /// </summary>
-        public static double DistanceBetweenIntervalEdgeAndTrajectoryCenter(LoadModel loadModel, RoadRule[] roadRules)
+        public static double DistanceBetweenIntervalEdgeAndTrajectoryCenter(LoadModel loadModel, IEnumerable<RoadRule> roadRules)
         {
             return Math.Max(loadModel.Width, roadRules.Min(x => x.MinTrajectoryDistance)) / 2;
         }

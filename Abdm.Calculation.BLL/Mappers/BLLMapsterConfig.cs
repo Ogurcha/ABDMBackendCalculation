@@ -17,7 +17,7 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.AbsolutePositionRight, src => src.b_ogr_r)
             .Map(dst => dst.SafetyLineLeft, src => src.b_lp)
             .Map(dst => dst.SafetyLineRight, src => src.b_pb)
-            .Map(dst => dst.LaneCount, src => src.k_polos)
+            .Map(dst => dst.LaneCount, src => src.k_polos >= 1 ? src.k_polos : 1)
             .Map(dst => dst.Type, src => src.w_proezd);
 
             TypeAdapterConfig<Surface, SurfaceModel>

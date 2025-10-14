@@ -1,6 +1,6 @@
-﻿using Abdm.Calculation.BLL.Enums;
+﻿using System.Data;
+using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Extensions;
-using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
@@ -9,12 +9,13 @@ using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
 namespace Abdm.Calculation.BLL.Services
 {
     /// <summary>
-    /// Сервис для рассчетов напряжения в колонне
+    /// Сервис для рассчетов напряжения в колонне транспорта
     /// </summary>
-    /// <param name="profileYZService"></param>
     public class StrainCalculator(IProfileYZService profileYZService,
         IVehiclePositioner vehiclePositioner) : IStrainCalculator
     {
+        public static double TrafficJamCoefficient = 1.35d;
+
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
             new()
             {
@@ -29,72 +30,96 @@ namespace Abdm.Calculation.BLL.Services
 
         public PassTypeEnum GetPassType(PassTypeSmallModel data, List<IntervalModel> intervalModels, RoadRule[] roadRules)
         {
+            var resultStrains = new List<StrainResult>();
+
             foreach (var intervalModel in intervalModels)
             {
-                var actualTrajectories = intervalModel.Trajectories;
-                if (roadRules.All(x => x.HasSafetyLine))
-                {
-                    actualTrajectories = actualTrajectories.Where(t =>
-                    t.X >= intervalModel.PassageIntervalRef.AbsolutePositionLeft + intervalModel.PassageIntervalRef.SafetyLineLeft + Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, roadRules)
-                    && t.X <= intervalModel.PassageIntervalRef.AbsolutePositionRight - intervalModel.PassageIntervalRef.SafetyLineRight - Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, roadRules))
-                        .ToArray();
-                }
+                var strainMap = new Dictionary<double, double>();
+                var trajectoriesMap = new Dictionary<RoadRule, (double X, double strain)[]>();
 
-                var strains = new List<(double strain, VehicleTrajectory trajectory)>();
-                foreach (var trajectory in intervalModel.Trajectories)
+                var groupedBySafetyLine = roadRules.GroupBy(r => (
+                actualSafetyLineLeft: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineLeft : 0d,
+                actualSafetyLineRight: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineRight : 0d));
+                foreach (var ruleGroup in groupedBySafetyLine)
                 {
-                    var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
-                    var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
+                    var actualTrajectories = intervalModel.Trajectories.Where(t =>
+                    t.X >= intervalModel.PassageIntervalRef.AbsolutePositionLeft 
+                    + ruleGroup.Key.actualSafetyLineLeft 
+                    + Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup)
+                    && t.X <= intervalModel.PassageIntervalRef.AbsolutePositionRight 
+                    - ruleGroup.Key.actualSafetyLineRight 
+                    - Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup));
 
-                    foreach (var positivePiece in positivePieces)
+                    foreach (var trajectory in actualTrajectories)
                     {
-                        var start = positivePiece.X;
-                        var end = positivePiece.Y;
-
-                        var highestZVector = centerVectors.Where(v => v.X <= start && v.X >= end).OrderBy(v => v.Y).First() ;
-
-                        var strainInPositivePiece = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
-                            highestZVector.X,
-                            data.Load);
+                        if (!strainMap.ContainsKey(trajectory.X))
+                        {
+                            strainMap[trajectory.X] = GetStrainForEachPositivePiece(trajectory, data.Load).Max();
+                        }
                     }
 
-                    strains.Add((strain, trajectory));
+                    foreach (var rule in ruleGroup)
+                    {
+                        trajectoriesMap.Add(rule, actualTrajectories.OrderByDescending(t => strainMap[t.X])
+                            .Select(t => (t.X, strainMap[t.X])).ToArray());
+                    }   
                 }
-
-                strains = strains.OrderBy(s => s.strain).ToList();
-                var maxStrainResults = new List<(double strain, RoadRule roadRule)>();
 
                 
                 foreach (var roadRule in roadRules)
                 {
-                    var strain = 0d;
                     var actualVehicleCount = Math.Min(roadRule.MaxVehicleCount, intervalModel.PassageIntervalRef.LaneCount);
-                    
-                    if
-
+                    resultStrains.Add(
+                        new StrainResult
+                        {
+                            RoadRuleRef = roadRule,
+                            Strain = trajectoriesMap[roadRule].Take(actualVehicleCount)
+                                .Sum(x => x.strain * (roadRule.DoTrafficJamLoadCalulation ? TrafficJamCoefficient : 1)),
+                            StrainOneAuto = trajectoriesMap[roadRule].First().strain * (roadRule.DoTrafficJamLoadCalulation ? TrafficJamCoefficient : 1)
+                        });
                 }
             }
+
+            return GetPassType(resultStrains, data.Surface);
         }
 
-
-
-
-        
-
-        private PassTypeEnum GetPassType(IEnumerable<StrainResult> strainResultData, Surface surfaceData, RoadRule[] roadRules)
+        /// <summary>
+        /// ИССО может быть устроена таким образом, 
+        /// что более высокий пик в поверхности влияния выдаст меньшее напряжение из-за того, 
+        /// что края высокого пика могут опускаться в ноль слишком резко, 
+        /// в то время, как более низкий, 
+        /// но более пологий пик выдаст напряжение больше. 
+        /// Пользуясь фактом того, что пики поверхности влияния чередуются с отрицательными зонами, 
+        /// мы можем найти все потенциальные пики вырезая положильные куски графика. 
+        /// Данный метод делит траекторию на положительные отрезки, 
+        /// чтобы проверить все пики и выдать напряжение по каждому из них
+        /// </summary>
+        private IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, LoadModel load)
         {
-            foreach (var roadRule in roadRules)
+            var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
+            var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
+
+            foreach (var positivePiece in positivePieces)
             {
-                var strainResults = strainResultData
-                    .Where(x => x.RoadRuleRef == roadRule)
-                    .OrderByDescending(c => c.Strain)
-                    .ToList();
-                foreach (var c in PassTypeConditions)
+                var start = positivePiece.X;
+                var end = positivePiece.Y;
+
+                var highestZVector = centerVectors.Where(v => v.X <= start && v.X >= end).OrderBy(v => v.Y).First();
+
+                yield return vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
+                    highestZVector.X,
+                    load);
+            }
+        }
+       
+
+        private PassTypeEnum GetPassType(List<StrainResult> strainResults, SurfaceModel surfaceModel)
+        {
+            foreach (var c in PassTypeConditions)
+            {
+                if (c.condition.CanPassCondition(strainResults, surfaceModel))
                 {
-                    if (c.condition.CanPassCondition(strainResults, surfaceData))
-                    {
-                        return c.passType;
-                    }
+                    return c.passType;
                 }
             }
 

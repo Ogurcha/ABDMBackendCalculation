@@ -30,7 +30,7 @@
         /// <summary>
         /// Количество полос движения на данном интервале
         /// </summary>
-        public double k_polos { get; set; }
+        public int k_polos { get; set; }
 
         /// <summary>
         /// Тип движения на интервале

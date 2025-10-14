@@ -18,7 +18,7 @@ namespace Abdm.Calculation.DAL
                 parameters.Add("@nPs", 1, DbType.Int32);
 
                 const string sqlQuery = @"
-                SELECT b_gab, b_ogr_l, b_ogr_r, b_lp, b_pb, k_polos, w_proezd
+                SELECT b_gab, b_ogr_l, b_ogr_r, b_lp, b_pb, k_polos, i_mp_proezd.w_proezd
                 FROM i_mp_proezd 
                 JOIN i_proezd
                 ON i_proezd.w_proezd = i_mp_proezd.w_proezd

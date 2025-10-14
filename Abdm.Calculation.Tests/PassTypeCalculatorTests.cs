@@ -5,12 +5,12 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Mappers;
-using Abdm.Calculation.BLL.PassTypeCalculation;
-using Abdm.Calculation.BLL.RoadRulesManager;
-using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
@@ -70,15 +70,18 @@ public class PassTypeCalculatorTests
         });
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
+        var meshManager = new MeshManager(new DoubleEqualityComparer());
+        var vehicleTrajService = new VehicleTrajectoryService(meshManager, new ProfileYZService());
 
         var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,
             surfaceDataService,
-            new MeshManager(new DoubleEqualityComparer()),
+            meshManager,
             roadRulesFactory,
-            new StrainCalculator(new ProfileYZService()),
-            new VehicleTrajectoryService(null)
+            new StrainCalculator(new ProfileYZService(), new VehiclePositioner(vehicleTrajService)),
+            vehicleTrajService
             );
+
 
         try
         {
