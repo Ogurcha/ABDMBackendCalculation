@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.DAL.DataTransferObjects;
 using Abdm.Calculation.DAL.Entities;
 using Mapster;
 
@@ -42,6 +43,21 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.Surface, src => src.Surface)
             .Map(dst => dst.Load, src => src);
 
+            TypeAdapterConfig<SurfaceRawDataDto, SurfaceDataDto>
+            .NewConfig()
+            .Map(dst => dst.StrainCalculationType, src => src.CCptype)
+            .Map(dst => dst.CheckPointType, src => src.CTypnk)
+            .AfterMapping(dst =>
+             {
+                 if (!Enum.IsDefined(dst.StrainCalculationType))
+                 {
+                     dst.StrainCalculationType = DAL.Enums.StrainCalculationTypeEnum.Other;
+                 }
+                 if (!Enum.IsDefined(dst.CheckPointType))
+                 {
+                     dst.CheckPointType = DAL.Enums.CheckPointTypeEnum.TypNk_PS;
+                 }
+             });
         }
     }
 }

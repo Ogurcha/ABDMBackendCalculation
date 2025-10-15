@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
@@ -59,19 +60,11 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.MaxZ, src => src.MaxZ)
             .Map(dst => dst.MinX, src => src.MinX)
             .Map(dst => dst.MinY, src => src.MinY)
-            .Map(dst => dst.CheckPointType, src => src.CpVid)
             .Map(dst => dst.MyStrength, src => src.MyStrength)
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
             .Map(dst => dst.PedestrianLoad, src => src.ConstPesh)
             .Map(dst => dst.OtherLoad, src => src.ConstOther)
-            .Map(dst => dst.KStrength, src => src.KStrength)
-            .AfterMapping(dst =>
-            {
-                if (!Enum.IsDefined(dst.CheckPointType))
-                {
-                    dst.CheckPointType = CheckPointEnum.None;
-                }
-            });
+            .Map(dst => dst.KStrength, src => src.KStrength);
 
             TypeAdapterConfig<RoadwayRequestModel, Roadway>
             .NewConfig()

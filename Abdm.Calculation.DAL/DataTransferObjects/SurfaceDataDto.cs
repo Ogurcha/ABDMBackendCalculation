@@ -1,13 +1,15 @@
-﻿namespace Abdm.Calculation.DAL.Entities
+﻿using Abdm.Calculation.DAL.Enums;
+
+namespace Abdm.Calculation.DAL.Entities
 {
     /// <summary>
     /// Информация о поверхности влияния
     /// </summary>
     public class SurfaceDataDto
     {
-        public bool IsSymmetric { get; set; }
+        public bool? IsSymmetric { get; set; }
 
-        public bool IsGridRegular { get; set; }
+        public bool? IsGridRegular { get; set; }
 
         /// <summary>
         /// Число точек. Дублирует <see cref="Points"/>.Length, но нужно для чтения BinaryReader'ом
@@ -28,5 +30,15 @@
         /// Полигоны. Индексы точек (base 0), по которым нужно соединять точки, чтобы получить пов-ть
         /// </summary>
         public (int, int, int)[]? Triangles { get; set; }
+
+        /// <summary>
+        /// тип проверки на чекпоинте - зависит от типа дефформации
+        /// </summary>
+        public StrainCalculationTypeEnum StrainCalculationType { get; set; }
+
+        /// <summary>
+        /// тип чекпоинта - балка или опора
+        /// </summary>
+        public CheckPointTypeEnum CheckPointType { get; set; }
     }
 }

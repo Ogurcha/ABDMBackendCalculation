@@ -6,11 +6,16 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
     {
         public bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surface)
         {
-            var dynamicLoad = columnList.Sum(c => c.Strain);
-
-            dynamicLoad *= PassTypeCalculationCoordinator.DynamicCoefficient;
-
-            return surface.MyStrength > surface.ConstLoad + surface.OtherLoad + dynamicLoad;
+            return columnList.GroupBy(x =>
+            x.RoadRuleRef.IsDynamicMovement).Select(x =>
+            {
+                var load = x.Max(c => c.Strain);
+                if (x.Key)
+                {
+                    load *= PassTypeCalculationCoordinator.DynamicCoefficient;
+                }
+                return surface.MyStrength > surface.ConstLoad + surface.OtherLoad + load;
+            }).All(succeded => succeded);
         }
     }
 }

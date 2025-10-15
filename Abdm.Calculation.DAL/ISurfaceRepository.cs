@@ -1,7 +1,9 @@
-﻿namespace Abdm.Calculation.DAL
+﻿using Abdm.Calculation.DAL.DataTransferObjects;
+
+namespace Abdm.Calculation.DAL
 {
     public interface ISurfaceRepository
     {
-        Task<byte[]?> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken);
+        Task<SurfaceRawDataDto?> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken);
     }
 }

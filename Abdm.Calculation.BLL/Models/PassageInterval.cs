@@ -20,12 +20,12 @@ namespace Abdm.Calculation.BLL.Models
         public double AbsolutePositionRight { get; set; }
 
         /// <summary>
-        /// Длина полосы безопасности слева
+        /// Ширина полосы безопасности слева
         /// </summary>
         public double SafetyLineLeft { get; set; }
 
         /// <summary>
-        /// Длина полосы безопасности справа
+        /// Ширина полосы безопасности справа
         /// </summary>
         public double SafetyLineRight { get; set; }
 

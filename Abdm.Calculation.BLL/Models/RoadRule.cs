@@ -16,7 +16,7 @@
         public bool IsDynamicMovement { get; set; }
 
         /// <summary>
-        /// Наличие линии безопасности. Уменьшает количество ТС, помещающихся на ИССО.
+        /// Наличие полосы безопасности. Проверять ли без наезда на полосу безопасности
         /// </summary>
         public bool HasSafetyLine { get; set; }
 

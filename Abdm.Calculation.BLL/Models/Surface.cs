@@ -43,7 +43,7 @@ namespace Abdm.Calculation.BLL.Models
         /// Перечисление, указывающее на то, как поверхность будет подвергаться нагрузке
         /// CpSubType в старом клиенте
         /// </summary>
-        public CheckPointEnum CheckPointType { get; set; }
+        public CheckPointTypeEnum CheckPointType { get; set; }
 
         /// <summary>
         /// Проектная устойчивость структуры. Без учёта собственного веса

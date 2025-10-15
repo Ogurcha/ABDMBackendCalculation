@@ -3,6 +3,7 @@ using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL.Entities;
+using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.Tests
 {
@@ -4770,7 +4771,7 @@ namespace Abdm.Calculation.Tests
                 MaxY = 13.7f,
                 MinY = 0.0f,
                 MaxZ = 0.207596f,
-                CheckPointType = CheckPointEnum.PlateM,
+                CheckPointType = CheckPointTypeEnum.PlateM,
                 MyStrength = 2.08f,
                 ConstLoad = 0.45f,
                 PedestrianLoad = 0.0f,
