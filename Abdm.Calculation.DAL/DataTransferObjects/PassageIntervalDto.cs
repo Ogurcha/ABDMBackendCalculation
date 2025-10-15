@@ -1,40 +1,49 @@
-﻿namespace Abdm.Calculation.DAL.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Abdm.Calculation.DAL.Entities
 {
     public class PassageIntervalDto
     {
         /// <summary>
         /// Общая ширина интервала
         /// </summary>
-        public double b_gab { get; set; }
-        
+        [JsonPropertyName("b_gab")]
+        public double BGabarit { get; set; }
+
         /// <summary>
         /// Ограждение слева
         /// </summary>
-        public double? b_ogr_l { get; set; }
+        [JsonPropertyName("b_ogr_l")]
+        public double? BOgrazhdenieLeft { get; set; }
 
         /// <summary>
         /// Ограждение справа
         /// </summary>
-        public double? b_ogr_r { get; set; }
+        [JsonPropertyName("b_ogr_r")]
+        public double? BOgrazhdenieRight { get; set; }
 
         /// <summary>
         /// Полоса безопасности слева
         /// </summary>
-        public double? b_lp { get; set; }
+        [JsonPropertyName("b_lp")]
+        public double? BLp { get; set; }
 
         /// <summary>
         /// Полоса безопасности справа
         /// </summary>
-        public double? b_pb { get; set; }
-        
+        [JsonPropertyName("b_pb")]
+        public double? BPb { get; set; }
+
         /// <summary>
         /// Количество полос движения на данном интервале
         /// </summary>
-        public int k_polos { get; set; }
+        [JsonPropertyName("k_polos")]
+        public int KolichestvoPolos { get; set; }
 
         /// <summary>
         /// Тип движения на интервале
         /// </summary>
-        public int w_proezd { get; set; }
+        [JsonPropertyName("w_proezd")]
+        public int ProezdType { get; set; }
     }
 }

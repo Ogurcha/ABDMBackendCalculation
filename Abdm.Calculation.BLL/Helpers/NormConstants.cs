@@ -34,5 +34,10 @@
         /// Дефолтное расстояние между осями. Для дефолтной выбрал Н11 (НК-80)
         /// </summary>
         public static double[] DefaultAxleDistance { get; internal set; } = [ 2.7d ];
+
+        /// <summary>
+        /// Равномерно расположенные ТС по всей длине ИССО считаются, как равномерная 5% нагрузка по всей длине ИССО
+        /// </summary>
+        public const double TrafficJamApproximationParam = 0.05d;
     }
 }

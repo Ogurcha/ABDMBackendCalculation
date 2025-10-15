@@ -8,8 +8,7 @@ using g4;
 
 namespace Abdm.Calculation.BLL.GraphicsServices
 {
-    public class VehicleTrajectoryService(IMeshManager meshManager,
-        IProfileYZService profileYZService) : IVehicleTrajectoryService
+    public class VehicleTrajectoryService(IMeshManager meshManager, IProfileYZService profileYZService) : IVehicleTrajectoryService
     {
         public IntervalModel GetIntervalModel(PassTypeSmallModel data, Mesh mesh, PassageInterval interval, RoadRule[] roadRules)
         {
@@ -76,35 +75,17 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             Mesh mesh,
             double wheelLength)
         {
-            var center = GetProfileYZ(mesh, xPosition.CenterXPosition, wheelLength);
-            if (center == null)
-            {
+            var center = Get(xPosition.CenterXPosition);
+            if (center == null) 
                 return null;
-            }
 
-            var left = new Dictionary<double, ProfileYZ>();
-            foreach (var keyValuePair in xPosition.LeftXPosition)
-            {
-                var key = keyValuePair.Key;
-                var value = GetProfileYZ(mesh, keyValuePair.Value, wheelLength);
-                if (value == null)
-                {
-                    return null;
-                }
-                left.Add(key, value);
-            }
+            var left = Map(xPosition.LeftXPosition);
+            if (left == null)
+                return null;
 
-            var right = new Dictionary<double, ProfileYZ>();
-            foreach (var keyValuePair in xPosition.RightXPosition)
-            {
-                var key = keyValuePair.Key;
-                var value = GetProfileYZ(mesh, keyValuePair.Value, wheelLength);
-                if (value == null)
-                {
-                    return null;
-                }
-                right.Add(key, value);
-            }
+            var right = Map(xPosition.RightXPosition);
+            if (right == null)
+                return null;
 
             return new VehicleTrajectory
             {
@@ -112,6 +93,15 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 Left = left,
                 Right = right
             };
+
+            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x, wheelLength);
+
+            Dictionary<double, ProfileYZ>? Map(Dictionary<double, double> positions) =>
+                positions
+                    .Select(kv => (kv.Key, Value: Get(kv.Value)))
+                    .All(p => p.Value != null)
+                        ? positions.ToDictionary(kv => kv.Key, kv => Get(kv.Value)!)
+                        : null;
         }
 
         /// <summary>
@@ -132,18 +122,35 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             var low = passageInterval.AbsolutePositionLeft + safeDistance;
             var high = passageInterval.AbsolutePositionRight - safeDistance;
-            result.Add(new VehicleXPosition(low, wheelOffsetsMap.Keys));
-            result.Add(new VehicleXPosition(high, wheelOffsetsMap.Keys));
+            result.Add(GetXPostition(low));
+            result.Add(GetXPostition(high));
 
             foreach (var x in distinctXs)
             {
                 if (low < x && x < high)
                 {
-                    result.Add(new VehicleXPosition(x, wheelOffsetsMap.Keys));
+                    result.Add(GetXPostition(x));
                 }
             }
 
             return result.OrderBy(x => x.CenterXPosition).ToArray();
+
+            VehicleXPosition GetXPostition(double centerXPosition)
+            {
+                var left = new Dictionary<double, double>();
+                var right = new Dictionary<double, double>();
+                foreach (var halfWheelOffset in wheelOffsetsMap.Keys)
+                {
+                    left.Add(halfWheelOffset * 2, centerXPosition - halfWheelOffset);
+                    right.Add(halfWheelOffset * 2, centerXPosition + halfWheelOffset);
+                }
+                return new VehicleXPosition()
+                {
+                    CenterXPosition = centerXPosition,
+                    LeftXPosition = left,
+                    RightXPosition = right,
+                };
+            }
         }
 
         /// <summary>
@@ -155,17 +162,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <returns></returns>
         public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load)
         {
-            var strain = 0d;
-            foreach (var axle in load.Axles)
-            {
-                var wheelWeight = axle.WheelWeight;
-                foreach(var distance in axle.WheelsDistance)
-                {
-                    strain += profileYZService.GetStrain(trajectory.Left[distance], Y + axle.AbsolutePosition, wheelWeight)
-                        + profileYZService.GetStrain(trajectory.Right[distance], Y + axle.AbsolutePosition, wheelWeight);
-                }
-            }
-            return strain;
+            return load.Axles.Sum(axle => 
+                axle.WheelsDistance.Sum(distance => 
+                    profileYZService.GetStrain(trajectory.Left[distance], Y + axle.AbsolutePosition, axle.WheelWeight) 
+                    + profileYZService.GetStrain(trajectory.Right[distance], Y + axle.AbsolutePosition, axle.WheelWeight)
+                )
+            );
         }
     }
 }

@@ -22,7 +22,43 @@ namespace Abdm.Calculation.Graphics.Extensions
         /// <summary>
         /// Поиск двух значений отсортированного списка, между которыми лежит <paramref name="targetKey"/> за log(n)
         /// </summary>
-        public static (T?, T?) FindBetweenValues<TKey, T>(
+        public static (T? Left, T? Right) FindBetweenValues<TKey, T>(this SortedList<TKey, T> sorted, TKey targetKey) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+        {
+            if (sorted.Count == 0) return (default, default);
+
+            var keys = sorted.Keys;
+            var values = sorted.Values;
+
+            const int MinIndex = 0;
+            int MaxIndex = sorted.Count - 1;
+
+            if (targetKey <= keys[MinIndex])
+                return (values[MinIndex], values[MinIndex]);
+
+            if (targetKey >= keys[MaxIndex])
+                return (values[MaxIndex], values[MaxIndex]);
+
+            int leftIndex = MinIndex;
+            int rightIndex = MaxIndex;
+
+            while (rightIndex - leftIndex > 1)
+            {
+                int midIndex = (leftIndex + rightIndex) / 2;
+                var midKey = keys[midIndex];
+
+                if (midKey == targetKey)
+                    return (values[midIndex], values[midIndex]);
+
+                if (midKey > targetKey)
+                    rightIndex = midIndex;
+                else
+                    leftIndex = midIndex;
+            }
+
+            return (values[leftIndex], values[rightIndex]);
+        }
+
+        public static (T?, T?) FindBetweenValuesOld<TKey, T>(
             this SortedList<TKey, T> sorted, 
             TKey targetKey, 
             TKey? leftStartingPoint = null,
@@ -80,11 +116,11 @@ namespace Abdm.Calculation.Graphics.Extensions
             }
             if (mid > targetKey)
             {
-                return FindBetweenValues(sorted, targetKey, left, leftIndex, mid, midIndex);
+                return FindBetweenValuesOld(sorted, targetKey, left, leftIndex, mid, midIndex);
             }
             else 
             {
-                return FindBetweenValues(sorted, targetKey, mid, midIndex, right, rightIndex);
+                return FindBetweenValuesOld(sorted, targetKey, mid, midIndex, right, rightIndex);
             }
         }
     }
