@@ -4771,7 +4771,7 @@ namespace Abdm.Calculation.Tests
                 MaxY = 13.7f,
                 MinY = 0.0f,
                 MaxZ = 0.207596f,
-                CheckPointType = CheckPointTypeEnum.PlateM,
+                CheckPointType = CheckPointTypeEnum.TypNk_PS,
                 MyStrength = 2.08f,
                 ConstLoad = 0.45f,
                 PedestrianLoad = 0.0f,

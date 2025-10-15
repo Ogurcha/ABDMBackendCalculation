@@ -3,7 +3,7 @@ using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
+using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.Graphics;
 using Mapster;
 
@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL
         ISurfaceDataService surfaceDataService,
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
-        IStrainCalculator strainCalculator,
+        ICalculationCoordinator calculationCoordinator,
         IVehicleTrajectoryService vehicleTrajectoryService
         ) : IPassTypeCalculationCoordinator
     {
@@ -80,7 +80,7 @@ namespace Abdm.Calculation.BLL
                 intervalModels.Add(intervalModel);
             }
 
-            PassTypeEnum resultPassType = strainCalculator.GetPassType(dataModel, intervalModels, roadRules);
+            PassTypeEnum resultPassType = calculationCoordinator.GetPassType(dataModel, intervalModels, roadRules);
 
             var response = ComposeMessage(resultPassType, data);
 

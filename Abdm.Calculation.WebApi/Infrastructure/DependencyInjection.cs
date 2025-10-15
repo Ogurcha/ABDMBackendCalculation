@@ -48,7 +48,10 @@ namespace Abdm.Calculation.Infrastructure
 
             services.AddScoped<IProfileYZService, ProfileYZService>();
             services.AddScoped<IVehiclePositioner, VehiclePositioner>();
+            services.AddScoped<IPassTypeResolver, PassTypeResolver>();
+            services.AddScoped<ITrajectorySelector, TrajectorySelector>();
             services.AddScoped<IStrainCalculator, StrainCalculator>();
+            services.AddScoped<ICalculationCoordinator, CalculationCoordinator>();
             services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
             services.AddScoped<IPassTypeService, PassTypeService>();
         }

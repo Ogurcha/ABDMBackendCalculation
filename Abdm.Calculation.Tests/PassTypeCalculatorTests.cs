@@ -19,6 +19,7 @@ using Abdm.Calculation.Tests;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Moq;
 using NUnit.Framework;
+using Abdm.Calculation.DAL.DataTransferObjects;
 
 [TestFixture]
 public class PassTypeCalculatorTests
@@ -50,10 +51,10 @@ public class PassTypeCalculatorTests
         {
             reader.GetResourceData(surfaceDataStr, out string resourceType, out byte[] resourceData);
 
-            var csvData = Task.FromResult(resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray()) as Task<byte[]?>;
+            var csvData = resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray();
 
             _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .Returns(csvData);
+            .Returns(Task.FromResult((SurfaceRawDataDto?)new SurfaceRawDataDto { Data = csvData }));
         }
     }
 
@@ -72,13 +73,14 @@ public class PassTypeCalculatorTests
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
         var meshManager = new MeshManager(new DoubleEqualityComparer());
         var vehicleTrajService = new VehicleTrajectoryService(meshManager, new ProfileYZService());
+        var calculationCoordinator = new CalculationCoordinator(new TrajectorySelector(new ProfileYZService(), new VehiclePositioner(vehicleTrajService)), new StrainCalculator(), new PassTypeResolver());
 
         var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,
             surfaceDataService,
             meshManager,
             roadRulesFactory,
-            new StrainCalculator(new ProfileYZService(), new VehiclePositioner(vehicleTrajService)),
+            calculationCoordinator,
             vehicleTrajService
             );
 
