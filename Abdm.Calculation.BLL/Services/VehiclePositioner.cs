@@ -47,9 +47,8 @@ namespace Abdm.Calculation.BLL.Services
                     else
                     {
                         CachedDelta = position;
-                        return strain;
+                        return oldStrain.Value;
                     }
-                    
                 }
 
                 if (goForward)

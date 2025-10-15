@@ -14,7 +14,8 @@ namespace Abdm.Calculation.BLL
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
         ICalculationCoordinator calculationCoordinator,
-        IVehicleTrajectoryService vehicleTrajectoryService
+        IVehicleTrajectoryService vehicleTrajectoryService,
+        IPillarDataService pillarDataService
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -35,12 +36,13 @@ namespace Abdm.Calculation.BLL
             CancellationToken cancellationToken)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId, 
-                data.Roadway.PositionShift - data.Surface.MinX, cancellationToken);
+                data.Roadway.PositionShift + data.Surface.MinX, cancellationToken);
             if (intervals?.Any() != true)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
             var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, cancellationToken);
+            pillarDataService.UpdateSurfaceDataFromPillarData(surfaceDataContainer.Data!, intervals);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceDataContainer?.Data?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {

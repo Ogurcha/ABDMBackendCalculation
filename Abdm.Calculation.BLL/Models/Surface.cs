@@ -1,4 +1,4 @@
-﻿using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Models.Primitives;
 using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.BLL.Models
@@ -8,12 +8,12 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Массив точек, из которых состоит поверхность влияния
         /// </summary>
-        required public SurfacePoint[] SurfacePoints { get; set; }
+        required public Vector3D[] SurfacePoints { get; set; }
 
         /// <summary>
         /// Данные по опоре. Если чекпоинт не являтся опорой - массив пустой
         /// </summary>
-        public required double[] PillarData { get; set; }
+        public required Vector2D[] PillarData { get; set; }
 
         /// <summary>
         /// Максимальное значение всех точек по X

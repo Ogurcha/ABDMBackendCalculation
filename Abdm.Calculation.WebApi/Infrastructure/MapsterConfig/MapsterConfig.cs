@@ -2,7 +2,7 @@
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.DAL.Enums;
+using Abdm.Calculation.BLL.Models.Primitives;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
@@ -13,7 +13,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
     {
         public static void MapsterSetup()
         {
-            TypeAdapterConfig<SurfaceDataItemRequestModel, SurfacePoint>
+            TypeAdapterConfig<SurfaceDataItemRequestModel, Vector3D>
             .NewConfig()
             .Map(dst => dst.X, src => src.X)
             .Map(dst => dst.Y, src => src.Y)
@@ -68,7 +68,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 
             TypeAdapterConfig<RoadwayRequestModel, Roadway>
             .NewConfig()
-            .Map(dst => dst.LineNumber, src => src.LineNumber)
+            .Map(dst => dst.LineNumber, src => src.LineNumber ?? 1)
             .Map(dst => dst.RoadHeight, src => src.RoadHeight)
             .Map(dst => dst.LeftSafeline, src => src.LeftSafeline)
             .Map(dst => dst.RightSafeline, src => src.RightSafeline)

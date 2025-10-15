@@ -13,13 +13,13 @@ namespace Abdm.Calculation.BLL.Mappers
         {
             TypeAdapterConfig<PassageIntervalDto, PassageInterval>
             .NewConfig()
-            .Map(dst => dst.TotalWidth, src => src.BGabarit)
-            .Map(dst => dst.AbsolutePositionLeft, src => src.BOgrazhdenieLeft)
-            .Map(dst => dst.AbsolutePositionRight, src => src.BOgrazhdenieRight)
-            .Map(dst => dst.SafetyLineLeft, src => src.BLp)
-            .Map(dst => dst.SafetyLineRight, src => src.BPb)
-            .Map(dst => dst.LaneCount, src => src.KolichestvoPolos >= 1 ? src.KolichestvoPolos : 1)
-            .Map(dst => dst.Type, src => src.ProezdType);
+            .Map(dst => dst.TotalWidth, src => src.b_gab)
+            .Map(dst => dst.AbsolutePositionLeft, src => src.b_ogr_l)
+            .Map(dst => dst.AbsolutePositionRight, src => src.b_ogr_r)
+            .Map(dst => dst.SafetyLineLeft, src => src.b_lp)
+            .Map(dst => dst.SafetyLineRight, src => src.b_pb)
+            .Map(dst => dst.LaneCount, src => src.k_polos >= 1 ? src.k_polos : 1)
+            .Map(dst => dst.Type, src => src.w_proezd);
 
             TypeAdapterConfig<Surface, SurfaceModel>
             .NewConfig()
@@ -45,8 +45,8 @@ namespace Abdm.Calculation.BLL.Mappers
 
             TypeAdapterConfig<SurfaceRawDataDto, SurfaceDataDto>
             .NewConfig()
-            .Map(dst => dst.StrainCalculationType, src => src.CCptype)
-            .Map(dst => dst.CheckPointType, src => src.CTypnk)
+            .Map(dst => dst.StrainCalculationType, src => src.c_cptype)
+            .Map(dst => dst.CheckPointType, src => src.c_typnk)
             .AfterMapping(dst =>
              {
                  if (!Enum.IsDefined(dst.StrainCalculationType))

@@ -8,24 +8,24 @@ namespace Abdm.Calculation.DAL.DataTransferObjects
         /// тип чекпоинта - балка или опора
         /// </summary>
         [JsonPropertyName("c_typnk")]
-        public int CTypnk { get; set; }
+        public int c_typnk { get; set; }
 
         /// <summary>
         /// тип проверки на чекпоинте - зависит от типа дефформации
         /// </summary>
         [JsonPropertyName("c_cptype")]
-        public int CCptype { get; set; }
+        public int c_cptype { get; set; }
 
         /// <summary>
         /// лямбда - используется для расчета коеффициентов напряжения
         /// </summary>
         [JsonPropertyName("lambda")]
-        public double Lambda { get; set; }
+        public double lambda { get; set; }
 
         /// <summary>
         /// Бинарник с точками поверхности
         /// </summary>
         [JsonPropertyName("data")]
-        public byte[]? Data { get; set; }
+        public byte[]? data { get; set; }
     }
 }

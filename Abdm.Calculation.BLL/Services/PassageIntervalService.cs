@@ -39,7 +39,7 @@ namespace Abdm.Calculation.BLL.Services
                 else
                 {
                     intervalModel.AbsolutePositionLeft = globalPositionShift + rightSideExtraShift;
-                    intervalModel.AbsolutePositionLeft = globalPositionShift + rightSideExtraShift + intervalModel.TotalWidth;
+                    intervalModel.AbsolutePositionRight = globalPositionShift + rightSideExtraShift + intervalModel.TotalWidth;
                 }
             }
 

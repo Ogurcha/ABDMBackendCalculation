@@ -30,6 +30,7 @@ namespace Abdm.Calculation.Infrastructure
         {
             MapsterConfig.MapsterSetup();
             BLLMapsterConfig.BLLMapsterSetup();
+            services.AddScoped<IPillarDataService, PillarDataService>();
             services.AddScoped<IEqualityComparer<double>, DoubleEqualityComparer>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();

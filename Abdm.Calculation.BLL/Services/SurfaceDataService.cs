@@ -25,11 +25,11 @@ namespace Abdm.Calculation.BLL.Services
         public async Task<ResultExceptionContainer<SurfaceDataDto>> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber, cancellationToken);
-            if (data?.Data == null || data?.Data.Length <= UsefulDataStartingPosition)
+            if (data?.data == null || data?.data.Length <= UsefulDataStartingPosition)
             {
                 return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
-            using MemoryStream stream = new MemoryStream(data!.Data);
+            using MemoryStream stream = new MemoryStream(data!.data);
             using BinaryReader reader = new BinaryReader(stream);
             if (reader.ReadInt32() > OldClientFormatCondition)
             {

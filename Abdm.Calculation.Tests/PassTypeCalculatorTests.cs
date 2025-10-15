@@ -54,7 +54,7 @@ public class PassTypeCalculatorTests
             var csvData = resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray();
 
             _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult((SurfaceRawDataDto?)new SurfaceRawDataDto { Data = csvData }));
+            .Returns(Task.FromResult((SurfaceRawDataDto?)new SurfaceRawDataDto { data = csvData }));
         }
     }
 
@@ -81,7 +81,8 @@ public class PassTypeCalculatorTests
             meshManager,
             roadRulesFactory,
             calculationCoordinator,
-            vehicleTrajService
+            vehicleTrajService,
+            new PillarDataService()
             );
 
 
