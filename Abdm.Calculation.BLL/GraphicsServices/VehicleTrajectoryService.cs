@@ -76,16 +76,22 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             double wheelLength)
         {
             var center = Get(xPosition.CenterXPosition);
-            if (center == null) 
+            if (center == null)
+            {
                 return null;
+            }
 
             var left = Map(xPosition.LeftXPosition);
             if (left == null)
+            {
                 return null;
+            }
 
             var right = Map(xPosition.RightXPosition);
             if (right == null)
+            {
                 return null;
+            }
 
             return new VehicleTrajectory
             {
