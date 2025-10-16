@@ -5,10 +5,6 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainCalculator : IStrainCalculator
     {
-        /// <summary>
-        /// TODO: В случае, если actualVehicleCount > 1 Добавить проверку доп траектории, которая появляется рядом с максимумом на расстоянии <see cref="RoadRule.MinTrajectoryDistance"/> от максимума
-        /// </summary>
-
         public IEnumerable<StrainResult> Calculate(
         Dictionary<RoadRule, (double X, double Strain)[]> trajectoriesMap,
         IntervalModel intervalModel,

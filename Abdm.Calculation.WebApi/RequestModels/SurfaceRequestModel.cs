@@ -60,6 +60,12 @@ namespace Abdm.Calculation.WebApi.RequestModels
         public double? MyStrength { get; set; }
 
         /// <summary>
+        /// Отдельная устойчивость при расчете опор
+        /// </summary>
+        [JsonPropertyName("SuperStrength")]
+        public double? SuperStrength { get; set; }
+
+        /// <summary>
         /// Фиксированная нагрузка от собственного веса
         /// </summary>
         [JsonPropertyName("constLoad")]

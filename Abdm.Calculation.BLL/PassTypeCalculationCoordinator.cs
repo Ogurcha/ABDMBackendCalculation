@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
@@ -43,6 +44,13 @@ namespace Abdm.Calculation.BLL
             }
             var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, cancellationToken);
             pillarDataService.UpdateSurfaceDataFromPillarData(surfaceDataContainer.Data!, intervals);
+            if (data.Surface.MyStrength < 0)
+            {
+                data.Surface.MyStrength = -data.Surface.MyStrength;
+                data.Surface.ConstLoad = -data.Surface.ConstLoad;
+                data.Surface.PedestrianLoad = -data.Surface.PedestrianLoad;
+                data.Surface.SurfacePoints = data.Surface.SurfacePoints.Select(x => new Models.Primitives.Vector3D(-x.X, -x.Y, -x.Z)).ToArray();
+            }
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceDataContainer?.Data?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {

@@ -37,12 +37,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 return null;
             }
 
-            var firstVector = new Vector3d(profile.First().x, profile.First().y - wheelLength, 0); 
-            var lastVector = new Vector3d(profile.Last().x, profile.Last().y + wheelLength, 0); 
+            var sorted = profile.OrderBy(v => v.y);
+            var firstVector = new Vector3d(sorted.First().x, sorted.First().y - wheelLength, 0); 
+            var lastVector = new Vector3d(sorted.Last().x, sorted.Last().y + wheelLength, 0); 
             var vectors = new SortedList<double, Vector3d>(
-                profile.Prepend(firstVector)
+                sorted.Prepend(firstVector)
                 .Append(lastVector)
-                .OrderBy(v => v.y)
                 .Select((item) => new KeyValuePair<double, Vector3d>(item.y, item))
                 .ToDictionary());
 
@@ -123,13 +123,19 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             RoadRule[] roadRules)
         {
             var result = new List<VehicleXPosition>();
-            var safeDistance = Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(loadModel, roadRules);
             var wheelOffsetsMap = Formulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
-
+            var safeDistance = Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(loadModel, roadRules);
             var low = passageInterval.AbsolutePositionLeft + safeDistance;
             var high = passageInterval.AbsolutePositionRight - safeDistance;
-            result.Add(GetXPostition(low));
-            result.Add(GetXPostition(high));
+
+            var groupedBySafetyLine = roadRules.GroupBy(r => (
+            actualSafetyLineLeft: r.HasSafetyLine ? passageInterval.SafetyLineLeft : (double)default,
+            actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight : (double)default));
+            foreach (var roadRule in groupedBySafetyLine)
+            {
+                result.Add(GetXPostition(low + roadRule.Key.actualSafetyLineLeft));
+                result.Add(GetXPostition(high - roadRule.Key.actualSafetyLineLeft));
+            }
 
             foreach (var x in distinctXs)
             {

@@ -12,31 +12,44 @@ namespace Abdm.Calculation.BLL.Extensions
         {
             if (function.FirstOrDefault() is Vector2D first)
             {
-                var sign = Math.Sign(first.Y);
-                var intervalStart = first.X;
+                bool insidePositiveRegion = false;
+                int intervalStartIndex = -1;
 
-                for (int i = 1; i < function.Count; i++)
+                for (int i = 0; i < function.Count; i++)
                 {
-                    var newSign = Math.Sign(function[i].Y);
-                    if (newSign == sign)
+                    if (!insidePositiveRegion && function[i].Y > 0)
                     {
-                        continue;
+                        insidePositiveRegion = true;
+                        intervalStartIndex = i;
                     }
-                    if (newSign < 0)
+                    else if (insidePositiveRegion &&
+                            (i == function.Count - 1 || function[i + 1].Y <= 0))
                     {
-                        yield return new Vector2D(intervalStart, function[i].X);
+                        insidePositiveRegion = false;
+                        yield return new Vector2D(
+                            intervalStartIndex > 0 
+                            ? GetIntersectionWithY(function[intervalStartIndex], function[intervalStartIndex - 1])!.Value
+                            : function[intervalStartIndex].X
+                            , i < function.Count - 1 
+                            ? GetIntersectionWithY(function[i], function[i+1])!.Value
+                            : function[i].X);
                     }
-                    sign = newSign;
-                    intervalStart = function[i].X;
-                }
-
-                if (sign > 0 && intervalStart != function.Last().X)
-                {
-                    yield return new Vector2D(intervalStart, function.Last().X);
                 }
             }
         }
 
+        public static double? GetIntersectionWithY(Vector2D start, Vector2D finish)
+        {
+            double deltaX = finish.X - start.X;
 
+            if (deltaX == 0)
+                return null;
+
+            double xIntersect = start.X +
+                             (0 - start.Y) * deltaX /
+                             (finish.Y - start.Y);
+
+            return xIntersect;
+        }
     }
 }

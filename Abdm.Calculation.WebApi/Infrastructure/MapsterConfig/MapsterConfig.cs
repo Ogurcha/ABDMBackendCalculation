@@ -60,7 +60,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.MaxZ, src => src.MaxZ)
             .Map(dst => dst.MinX, src => src.MinX)
             .Map(dst => dst.MinY, src => src.MinY)
-            .Map(dst => dst.MyStrength, src => src.MyStrength)
+            .Map(dst => dst.MyStrength, src => src.MyStrength ?? 0d + src.SuperStrength ?? 0d)
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
             .Map(dst => dst.PedestrianLoad, src => src.ConstPesh)
             .Map(dst => dst.OtherLoad, src => src.ConstOther)

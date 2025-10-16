@@ -81,7 +81,7 @@ namespace Abdm.Calculation.BLL.Services
                 var start = positivePiece.X;
                 var end = positivePiece.Y;
 
-                var highestZVector = centerVectors.Where(v => v.X <= start && v.X >= end).OrderBy(v => v.Y).First();
+                var highestZVector = centerVectors.Where(v => v.X >= start && v.X <= end).OrderByDescending(v => v.Y).First();
 
                 yield return vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,

@@ -14,9 +14,10 @@ namespace Abdm.Calculation.BLL.Services
                 return;
             }
             var start = passageIntervals.Select(x => x.AbsolutePositionLeft).Min();
+
             var finish = passageIntervals.Select(x => x.AbsolutePositionRight).Max();
 
-            surface.Points = surface.Points.Select(p => (start, p.X, p.Y)).Concat(surface.Points.Select(p => (finish, p.X, p.Y))).ToArray();
+            surface.Points = surface.Points.SelectMany(p => new List<(double X, double Y, double Z)>() {(start, p.Y, p.Z * 2), (finish, p.Y, p.Z * 2)}).ToArray();
             var triangles = new List<(int, int, int)>();
             for (var i = 0; i < surface.Points.Length - 2; i++)
             {
