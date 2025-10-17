@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
-using Abdm.Calculation.BLL.PassTypeCalculation;
-using Abdm.Calculation.BLL.RoadRulesManager;
-using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.BLL.Services.PassTypes;
+using Abdm.Calculation.BLL.Services.RoadRules;
+using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
@@ -29,14 +30,16 @@ namespace Abdm.Calculation.Infrastructure
         {
             MapsterConfig.MapsterSetup();
             BLLMapsterConfig.BLLMapsterSetup();
-            services.AddSingleton<IEqualityComparer<double>, DoubleEqualityComparer>();
+            services.AddScoped<IPillarDataService, PillarDataService>();
+            services.AddScoped<IEqualityComparer<double>, DoubleEqualityComparer>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
-            services.AddSingleton<IMeshManager, MeshManager>();
+            services.AddScoped<IMeshManager, MeshManager>();
+            services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
 
-            services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BLL.RoadRulesManager.RoadRulesStrategy.BaseRRStrategy>
+            services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
                 new AbStrategy(),
                 new AClassCommonStrategy(),
@@ -44,7 +47,12 @@ namespace Abdm.Calculation.Infrastructure
                 new HeavyStrategy()
             }));
 
-            services.AddSingleton<IStrainService, StrainService>();
+            services.AddScoped<IProfileYZService, ProfileYZService>();
+            services.AddScoped<IVehiclePositioner, VehiclePositioner>();
+            services.AddScoped<IPassTypeResolver, PassTypeResolver>();
+            services.AddScoped<ITrajectorySelector, TrajectorySelector>();
+            services.AddScoped<IStrainCalculator, StrainCalculator>();
+            services.AddScoped<ICalculationCoordinator, CalculationCoordinator>();
             services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
             services.AddScoped<IPassTypeService, PassTypeService>();
         }

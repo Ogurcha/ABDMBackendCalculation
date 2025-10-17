@@ -4,6 +4,6 @@ namespace Abdm.Calculation.DAL
 {
     public interface IPassageIntervalRepository
     {
-        Task<PassageInterval[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken);
+        Task<PassageIntervalDto[]> GetPassageIntervals(long issoId, CancellationToken cancellationToken);
     }
 }

@@ -1,6 +1,8 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
+using Mapster;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -20,45 +22,51 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Расшифровывает байт массив и получает информацию о поверхности влияния
         /// </summary>
-        public async Task<ResultExceptionContainer<SurfaceData>> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
+        public async Task<ResultExceptionContainer<SurfaceDataDto>> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
             var data = await repository.GetSurfaceData(issoId, checkpointNumber, cancellationToken);
-            if (data == null || data.Length <= UsefulDataStartingPosition)
+            if (data?.data == null || data?.data.Length <= UsefulDataStartingPosition)
             {
-                return new ResultExceptionContainer<SurfaceData>(new Exception(UnsupportedBinaryTypeStr));
+                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
-            using MemoryStream stream = new MemoryStream(data);
+            using MemoryStream stream = new MemoryStream(data!.data);
             using BinaryReader reader = new BinaryReader(stream);
             if (reader.ReadInt32() > OldClientFormatCondition)
             {
-                return new ResultExceptionContainer<SurfaceData>(new Exception(UnsupportedBinaryTypeStr));
+                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
             stream.Position = UsefulDataStartingPosition;
+            var surface = data.Adapt<SurfaceDataDto>();
 
-            var isSymmetric = reader.ReadBoolean();
-            var isGridRegular = reader.ReadBoolean();
-            var pointsCount = reader.ReadInt32();
-            var points = ReadPoints(reader, pointsCount).ToArray();
-            var trianglesCount = reader.ReadInt32();
-            (int, int, int)[]? triangles = trianglesCount > 0
-                ? ReadTriangles(reader, trianglesCount, pointsCount).ToArray()
-                : null;
+            if (surface.StrainCalculationType != DAL.Enums.StrainCalculationTypeEnum.st70)
+            {
+                surface.IsSymmetric = reader.ReadBoolean();
+                surface.IsGridRegular = reader.ReadBoolean();
+                surface.PointsCount = reader.ReadInt32();
+                surface.Points = ReadPoints3D(reader, surface.PointsCount).ToArray();
+                surface.TrianglesCount = reader.ReadInt32();
+                surface.Triangles = surface.TrianglesCount > 0
+                    ? ReadTriangles(reader, surface.TrianglesCount, surface.PointsCount).ToArray()
+                    : null;
+            }
+            else
+            {
+                surface.PointsCount = reader.ReadInt32();
+                surface.Points = ReadPointsYZ(reader, surface.PointsCount).ToArray();
+            }
 
-            return new ResultExceptionContainer<SurfaceData>
-            (
-                new SurfaceData
-                {
-                    IsSymmetric = isSymmetric,
-                    IsGridRegular = isGridRegular,
-                    Points = points,
-                    Triangles = triangles,
-                    TrianglesCount = trianglesCount,
-                    PointsCount = pointsCount
-                }
-            );
+            return new ResultExceptionContainer<SurfaceDataDto>(surface);
         }
 
-        private IEnumerable<(double X, double Y, double Z)> ReadPoints(BinaryReader reader, int pointsToRead)
+        private IEnumerable<(double X, double Y, double Z)> ReadPointsYZ(BinaryReader reader, int pointsToRead)
+        {
+            for (int i = 0; i < pointsToRead; i++)
+            {
+                yield return new((double)default, reader.ReadDouble(), reader.ReadDouble());
+            }
+        }
+
+        private IEnumerable<(double X, double Y, double Z)> ReadPoints3D(BinaryReader reader, int pointsToRead)
         {
             for (int i = 0; i < pointsToRead; i++)
             {

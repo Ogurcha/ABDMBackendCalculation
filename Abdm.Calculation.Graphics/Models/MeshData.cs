@@ -1,23 +1,24 @@
 ﻿namespace Abdm.Calculation.Graphics.Models
 {
     /// <summary>
-    /// Вычисляемые данные по кэшу. Здесь происходит денормализация и дублирование во имя оптимизации
+    /// Сетка поверхности влияния имеет "квадратную" структуру, при которой определенные значения X и Y повторяются очень часто.
+    /// Поэтому имеет смысл в оптимизационых целях использовать <see cref="DistinctXs"/> и <see cref="DistinctYs"/> вместо прямого перебора всех точек
     /// </summary>
     public class MeshData
     {
         /// <summary>
         /// Уникальные значения точек по оси Х.
         /// </summary>
-        public double[]? DistinctXs { get; set; }
+        public required double[] DistinctXs { get; set; }
 
         /// <summary>
         /// Уникальные значения точек по оси Y.
         /// </summary>
-        public double[]? DistinctYs { get; set; }
+        public required double[] DistinctYs { get; set; }
 
         /// <summary>
-        /// Уникальные значения точек по оси Х + с учётом размера колёс
+        /// Закешированные профили срезов плоскостями YZ
         /// </summary>
-        public double[]? DistinctXsWithWheels { get; set; }
+        public List<ProfileYZ> Profiles { get; set; } = [];
     }
 }

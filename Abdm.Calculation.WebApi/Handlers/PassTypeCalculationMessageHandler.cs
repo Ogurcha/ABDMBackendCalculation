@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Abdm.Calculation.BLL;
-using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Kafka.Integration.MessageBroker.Consumer;

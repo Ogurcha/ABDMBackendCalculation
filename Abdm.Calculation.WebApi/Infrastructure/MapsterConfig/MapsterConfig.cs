@@ -1,6 +1,8 @@
 ﻿using System;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Models.Primitives;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Mapster;
@@ -11,20 +13,20 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
     {
         public static void MapsterSetup()
         {
-            TypeAdapterConfig<SurfaceDataItemRequestModel, SurfacePoint>
+            TypeAdapterConfig<SurfaceDataItemRequestModel, Vector3D>
             .NewConfig()
             .Map(dst => dst.X, src => src.X)
             .Map(dst => dst.Y, src => src.Y)
             .Map(dst => dst.Z, src => src.Z);
 
-            TypeAdapterConfig<AxleRequestModel, AxleModel>
+            TypeAdapterConfig<AxleRequestModel, Axle>
             .NewConfig()
-            .Map(dst => dst.Y, src => src.Y)
+            .Map(dst => dst.RelativePosition, src => src.Y)
             .Map(dst => dst.Wx, src => src.Wx)
             .Map(dst => dst.Wy, src => src.Wy)
             .Map(dst => dst.Weight, src => src.Weight)
-            .Map(dst => dst.AbsolutY, src => src.AbsY)
-            .Map(dst => dst.Wheels, src => src.Wheels);
+            .Map(dst => dst.AbsolutePosition, src => src.AbsY)
+            .Map(dst => dst.WheelsDistance, src => src.Wheels);
 
             TypeAdapterConfig<LoadSchemaRequestModel, LoadSchema>
             .NewConfig()
@@ -58,23 +60,15 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.MaxZ, src => src.MaxZ)
             .Map(dst => dst.MinX, src => src.MinX)
             .Map(dst => dst.MinY, src => src.MinY)
-            .Map(dst => dst.CheckPointType, src => src.CpVid)
-            .Map(dst => dst.MyStrength, src => src.MyStrength)
+            .Map(dst => dst.MyStrength, src => src.MyStrength ?? 0d + src.SuperStrength ?? 0d)
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
             .Map(dst => dst.PedestrianLoad, src => src.ConstPesh)
             .Map(dst => dst.OtherLoad, src => src.ConstOther)
-            .Map(dst => dst.KStrength, src => src.KStrength)
-            .AfterMapping(dst =>
-            {
-                if (!Enum.IsDefined(dst.CheckPointType))
-                {
-                    dst.CheckPointType = CheckPointEnum.None;
-                }
-            });
+            .Map(dst => dst.KStrength, src => src.KStrength);
 
             TypeAdapterConfig<RoadwayRequestModel, Roadway>
             .NewConfig()
-            .Map(dst => dst.LineNumber, src => src.LineNumber)
+            .Map(dst => dst.LineNumber, src => src.LineNumber ?? 1)
             .Map(dst => dst.RoadHeight, src => src.RoadHeight)
             .Map(dst => dst.LeftSafeline, src => src.LeftSafeline)
             .Map(dst => dst.RightSafeline, src => src.RightSafeline)

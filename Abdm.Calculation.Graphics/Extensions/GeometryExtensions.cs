@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.Graphics.Models;
+﻿using System.Numerics;
+using Abdm.Calculation.Graphics.Models;
 using g4;
 
 namespace Abdm.Calculation.Graphics.Extensions
@@ -12,23 +13,49 @@ namespace Abdm.Calculation.Graphics.Extensions
             => (X - v1.x) * (v2.y - v1.y) / (v2.x - v1.x) + v1.y;
 
 
-        public static double GetZ(this SmoothPoints points, double pointY)
+        public static double GetZValueByY(this ProfileYZ profile, double pointY)
         {
-            for (int i = 0; i < points.Points.Length; i++)
-            {
-                var p = points.Points[i];
-                if (p.y == pointY)
-                {
-                    return p.z;
-                }
+            (Vector3d v1, Vector3d v2) = FindBetweenValues(profile.Vectors, pointY);
+            return GetOrdinat(v1.yz, v2.yz, pointY);
+        }
 
-                if (p.y > pointY && i > 0)
-                {
-                    return points.Points[i - 1].z;
-                }
+        /// <summary>
+        /// Поиск двух значений отсортированного списка, между которыми лежит <paramref name="targetKey"/> за log(n)
+        /// </summary>
+        public static (T? Left, T? Right) FindBetweenValues<TKey, T>(this SortedList<TKey, T> sorted, TKey targetKey) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+        {
+            if (sorted.Count == 0) return (default, default);
+
+            var keys = sorted.Keys;
+            var values = sorted.Values;
+
+            const int MinIndex = 0;
+            int MaxIndex = sorted.Count - 1;
+
+            if (targetKey <= keys[MinIndex])
+                return (values[MinIndex], values[MinIndex]);
+
+            if (targetKey >= keys[MaxIndex])
+                return (values[MaxIndex], values[MaxIndex]);
+
+            int leftIndex = MinIndex;
+            int rightIndex = MaxIndex;
+
+            while (rightIndex - leftIndex > 1)
+            {
+                int midIndex = (leftIndex + rightIndex) / 2;
+                var midKey = keys[midIndex];
+
+                if (midKey == targetKey)
+                    return (values[midIndex], values[midIndex]);
+
+                if (midKey > targetKey)
+                    rightIndex = midIndex;
+                else
+                    leftIndex = midIndex;
             }
 
-            return points.Points[points.Points.Length - 1].z;
+            return (values[leftIndex], values[rightIndex]);
         }
     }
 }

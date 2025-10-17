@@ -5,12 +5,13 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
+using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Mappers;
-using Abdm.Calculation.BLL.PassTypeCalculation;
-using Abdm.Calculation.BLL.RoadRulesManager;
-using Abdm.Calculation.BLL.RoadRulesManager.RoadRulesStrategy;
 using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.BLL.Services.RoadRules;
+using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
@@ -18,6 +19,7 @@ using Abdm.Calculation.Tests;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Moq;
 using NUnit.Framework;
+using Abdm.Calculation.DAL.DataTransferObjects;
 
 [TestFixture]
 public class PassTypeCalculatorTests
@@ -49,10 +51,10 @@ public class PassTypeCalculatorTests
         {
             reader.GetResourceData(surfaceDataStr, out string resourceType, out byte[] resourceData);
 
-            var csvData = Task.FromResult(resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray()) as Task<byte[]?>;
+            var csvData = resourceData.Skip(SurfaceDataExampleGarbageBytesCount).ToArray();
 
             _surfaceDataRepositoryMock.Setup(f => f.GetSurfaceData(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .Returns(csvData);
+            .Returns(Task.FromResult((SurfaceRawDataDto?)new SurfaceRawDataDto { data = csvData }));
         }
     }
 
@@ -67,21 +69,27 @@ public class PassTypeCalculatorTests
             new EN3Strategy(),
             new HeavyStrategy()
         });
-        var strainManager = new StrainService();
         var passageIntervalService = new PassageIntervalService(_passageIntervalManagerMock.Object);
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
+        var meshManager = new MeshManager(new DoubleEqualityComparer());
+        var vehicleTrajService = new VehicleTrajectoryService(meshManager, new ProfileYZService());
+        var trajectorySelector = new TrajectorySelector(new ProfileYZService(), new VehiclePositioner(vehicleTrajService));
+        var calculationCoordinator = new CalculationCoordinator(trajectorySelector, new StrainCalculator(vehicleTrajService, trajectorySelector), new PassTypeResolver());
 
         var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,
             surfaceDataService,
-            new MeshManager(new DoubleEqualityComparer()),
+            meshManager,
             roadRulesFactory,
-            strainManager
+            calculationCoordinator,
+            vehicleTrajService,
+            new PillarDataService()
             );
+
 
         try
         {
-            var result = await processor.GetPassType(testMessage, new System.Threading.CancellationToken());
+            var result = await processor.GetPassType(testMessage, new CancellationToken());
 
             Assert.That(result.Data?.PassType, Is.EqualTo(expectedOutput.PassType));
         }

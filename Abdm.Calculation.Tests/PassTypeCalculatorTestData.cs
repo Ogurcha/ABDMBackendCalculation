@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL.Entities;
+using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.Tests
 {
@@ -23,45 +25,45 @@ namespace Abdm.Calculation.Tests
                 Width = 3.5f,
                 Length = 4.4f,
                 Distance = 0,
-                Axles = new AxleModel[]
+                Axles = new Axle[]
                 {
-                    new AxleModel {
-                        Y = 0.4f,
+                    new Axle {
+                        RelativePosition = 0.4f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 0.4f,
-                        Wheels = [ //wheels_Distance_list
+                        AbsolutePosition = 0.4f,
+                        WheelsDistance = [ 
                             2.7f
                         ]
                     },
-                    new AxleModel {
-                        Y = 1.2f,
+                    new Axle {
+                        RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 1.6f,
-                        Wheels = [
+                        AbsolutePosition = 1.6f,
+                        WheelsDistance = [
                             2.7f
                         ]
                     },
-                    new AxleModel {
-                        Y = 1.2f,
+                    new Axle {
+                        RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 2.8f,
-                        Wheels = [
+                        AbsolutePosition = 2.8f,
+                        WheelsDistance = [
                             2.7f
                         ]
                     },
-                    new AxleModel {
-                        Y = 1.2f,
+                    new Axle {
+                        RelativePosition = 1.2f,
                         Wx = 0.8f,
                         Wy = 0.2f,
                         Weight = 20.0f,
-                        AbsolutY = 4.0f,
-                        Wheels = [
+                        AbsolutePosition = 4.0f,
+                        WheelsDistance = [
                             2.7f
                         ]
                     }
@@ -4769,7 +4771,7 @@ namespace Abdm.Calculation.Tests
                 MaxY = 13.7f,
                 MinY = 0.0f,
                 MaxZ = 0.207596f,
-                CheckPointType = CheckPointEnum.PlateM,
+                CheckPointType = CheckPointTypeEnum.TypNk_PS,
                 MyStrength = 2.08f,
                 ConstLoad = 0.45f,
                 PedestrianLoad = 0.0f,
@@ -4798,7 +4800,7 @@ namespace Abdm.Calculation.Tests
             Data = "[{\"x\": 2.36, \"y\": 4.7, \"z\": 0.163, \"load\": 1.63}]"
         };
 
-        public static Task<PassageInterval[]> ResultFromPIRepo => Task.FromResult<PassageInterval[]>([new PassageInterval {
+        public static Task<PassageIntervalDto[]> ResultFromPIRepo => Task.FromResult<PassageIntervalDto[]>([new PassageIntervalDto {
             b_pb = 0.15d,
             b_lp = 0.15d,
             b_gab = 7.8d
