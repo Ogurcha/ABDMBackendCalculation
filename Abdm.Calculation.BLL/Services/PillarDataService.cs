@@ -7,9 +7,9 @@ namespace Abdm.Calculation.BLL.Services
     public class PillarDataService : IPillarDataService
     {
 
-        public void UpdateSurfaceDataFromPillarData(SurfaceDataDto surface, PassageInterval[] passageIntervals)
+        public void UpdateSurfaceDataFromPillarData(SurfaceDataDto? surface, PassageInterval[] passageIntervals)
         {
-            if (surface.StrainCalculationType != DAL.Enums.StrainCalculationTypeEnum.st70)
+            if (surface?.StrainCalculationType != DAL.Enums.StrainCalculationTypeEnum.st70)
             {
                 return;
             }

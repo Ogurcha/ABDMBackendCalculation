@@ -37,13 +37,13 @@ namespace Abdm.Calculation.BLL
             CancellationToken cancellationToken)
         {
             var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId, 
-                data.Roadway.PositionShift + data.Surface.MinX, cancellationToken);
+                data.Roadway.PositionShift, cancellationToken);
             if (intervals?.Any() != true)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
             var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, cancellationToken);
-            pillarDataService.UpdateSurfaceDataFromPillarData(surfaceDataContainer.Data!, intervals);
+            pillarDataService.UpdateSurfaceDataFromPillarData(surfaceDataContainer.Data, intervals);
             if (data.Surface.MyStrength < 0)
             {
                 data.Surface.MyStrength = -data.Surface.MyStrength;
