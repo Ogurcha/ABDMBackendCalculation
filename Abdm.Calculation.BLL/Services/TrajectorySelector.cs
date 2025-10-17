@@ -37,7 +37,10 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     if (!strainMap.ContainsKey(trajectory.X))
                     {
-                        strainMap[trajectory.X] = GetStrainForEachPositivePiece(trajectory, data.Load, ruleGroup.Key.DoTrafficJamLoadCalulation).Max();
+                        strainMap[trajectory.X] = GetStrainForEachPositivePiece(
+                            trajectory, 
+                            data.Load, 
+                            ruleGroup.Key.DoTrafficJamLoadCalulation).Max();
                     }
                 }
 
@@ -62,10 +65,15 @@ namespace Abdm.Calculation.BLL.Services
         /// Данный метод делит траекторию на положительные отрезки, 
         /// чтобы проверить все пики и выдать напряжение по каждому из них
         /// </summary>
-        private IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, LoadModel load, bool doTrafficJamCalulation)
+        public IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, LoadModel load, bool doTrafficJamCalulation)
         {
             var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
             var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
+
+            if (positivePieces.Count() == 0)
+            {
+                yield return 0;
+            }
 
             var trafficJamStrain = 0d;
             if (doTrafficJamCalulation)

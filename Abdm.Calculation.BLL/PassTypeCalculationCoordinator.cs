@@ -89,7 +89,7 @@ namespace Abdm.Calculation.BLL
                 intervalModels.Add(intervalModel);
             }
 
-            PassTypeEnum resultPassType = calculationCoordinator.GetPassType(dataModel, intervalModels, roadRules);
+            PassTypeEnum resultPassType = calculationCoordinator.GetPassType(dataModel, intervalModels, roadRules, mesh);
 
             var response = ComposeMessage(resultPassType, data);
 

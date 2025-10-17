@@ -133,36 +133,19 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight : (double)default));
             foreach (var roadRule in groupedBySafetyLine)
             {
-                result.Add(GetXPostition(low + roadRule.Key.actualSafetyLineLeft));
-                result.Add(GetXPostition(high - roadRule.Key.actualSafetyLineLeft));
+                result.Add(GetXPostition(low + roadRule.Key.actualSafetyLineLeft, wheelOffsetsMap.Keys));
+                result.Add(GetXPostition(high - roadRule.Key.actualSafetyLineLeft, wheelOffsetsMap.Keys));
             }
 
             foreach (var x in distinctXs)
             {
                 if (low < x && x < high)
                 {
-                    result.Add(GetXPostition(x));
+                    result.Add(GetXPostition(x, wheelOffsetsMap.Keys));
                 }
             }
 
             return result.OrderBy(x => x.CenterXPosition).ToArray();
-
-            VehicleXPosition GetXPostition(double centerXPosition)
-            {
-                var left = new Dictionary<double, double>();
-                var right = new Dictionary<double, double>();
-                foreach (var halfWheelOffset in wheelOffsetsMap.Keys)
-                {
-                    left.Add(halfWheelOffset * 2, centerXPosition - halfWheelOffset);
-                    right.Add(halfWheelOffset * 2, centerXPosition + halfWheelOffset);
-                }
-                return new VehicleXPosition()
-                {
-                    CenterXPosition = centerXPosition,
-                    LeftXPosition = left,
-                    RightXPosition = right,
-                };
-            }
         }
 
         /// <summary>
@@ -180,6 +163,30 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                     + profileYZService.GetStrain(trajectory.Right[distance], Y + axle.AbsolutePosition, axle.WheelWeight)
                 )
             );
+        }
+
+        public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
+        {
+            var wheelOffsetsMap = Formulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var xPosition = GetXPostition(centerXPosition, wheelOffsetsMap.Keys);
+            return GetVehicleTrajectory(xPosition, mesh, centerXPosition);
+        }
+
+        private VehicleXPosition GetXPostition(double centerXPosition, IEnumerable<double> halfWheelOffsets)
+        {
+            var left = new Dictionary<double, double>();
+            var right = new Dictionary<double, double>();
+            foreach (var halfWheelOffset in halfWheelOffsets)
+            {
+                left.Add(halfWheelOffset * 2, centerXPosition - halfWheelOffset);
+                right.Add(halfWheelOffset * 2, centerXPosition + halfWheelOffset);
+            }
+            return new VehicleXPosition()
+            {
+                CenterXPosition = centerXPosition,
+                LeftXPosition = left,
+                RightXPosition = right,
+            };
         }
     }
 }

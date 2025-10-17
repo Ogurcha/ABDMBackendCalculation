@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -12,12 +13,13 @@ namespace Abdm.Calculation.BLL.Services
         public PassTypeEnum GetPassType(
             PassTypeSmallModel data,
             IEnumerable<IntervalModel> intervals,
-            IEnumerable<RoadRule> rules)
+            IEnumerable<RoadRule> rules, 
+            Mesh mesh)
         {
             var strainResults = new List<StrainResult>();
             foreach (var interval in intervals) {
                 var trajectories = trajectorySelector.GetTrajectoriesStrainsMap(interval, rules, data);
-                strainResults.AddRange(strainCalculator.Calculate(trajectories, interval, rules, data));
+                strainResults.AddRange(strainCalculator.Calculate(trajectories, interval, rules, data, mesh));
             }
             strainResults = strainResults.GroupBy(x => x.RoadRuleRef).Select(x => new StrainResult() { 
                 RoadRuleRef = x.Key, 

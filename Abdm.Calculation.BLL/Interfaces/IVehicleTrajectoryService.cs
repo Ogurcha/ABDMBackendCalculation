@@ -23,6 +23,10 @@ namespace Abdm.Calculation.BLL.Interfaces
             Mesh mesh,
             double wheelLength);
 
+        VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, 
+            LoadModel loadModel, 
+            double centerXPosition);
+
         VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
             double[] distinctXs,
             PassageInterval passageInterval,
@@ -30,5 +34,6 @@ namespace Abdm.Calculation.BLL.Interfaces
             RoadRule[] roadRules);
 
         double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load);
+        
     }
 }

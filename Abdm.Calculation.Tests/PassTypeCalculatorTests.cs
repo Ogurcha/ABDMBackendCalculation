@@ -73,7 +73,8 @@ public class PassTypeCalculatorTests
         var surfaceDataService = new SurfaceDataService(_surfaceDataRepositoryMock.Object);
         var meshManager = new MeshManager(new DoubleEqualityComparer());
         var vehicleTrajService = new VehicleTrajectoryService(meshManager, new ProfileYZService());
-        var calculationCoordinator = new CalculationCoordinator(new TrajectorySelector(new ProfileYZService(), new VehiclePositioner(vehicleTrajService)), new StrainCalculator(), new PassTypeResolver());
+        var trajectorySelector = new TrajectorySelector(new ProfileYZService(), new VehiclePositioner(vehicleTrajService));
+        var calculationCoordinator = new CalculationCoordinator(trajectorySelector, new StrainCalculator(vehicleTrajService, trajectorySelector), new PassTypeResolver());
 
         var processor = new PassTypeCalculationCoordinator(
             passageIntervalService,

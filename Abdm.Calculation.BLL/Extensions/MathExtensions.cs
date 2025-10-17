@@ -22,16 +22,15 @@ namespace Abdm.Calculation.BLL.Extensions
                         insidePositiveRegion = true;
                         intervalStartIndex = i;
                     }
-                    else if (insidePositiveRegion &&
-                            (i == function.Count - 1 || function[i + 1].Y <= 0))
+                    else if (insidePositiveRegion && (i == function.Count - 1 || function[i].Y <= 0))
                     {
                         insidePositiveRegion = false;
                         yield return new Vector2D(
                             intervalStartIndex > 0 
-                            ? GetIntersectionWithY(function[intervalStartIndex], function[intervalStartIndex - 1])!.Value
+                            ? GetIntersectionWithY(function[intervalStartIndex - 1], function[intervalStartIndex])!.Value
                             : function[intervalStartIndex].X
                             , i < function.Count - 1 
-                            ? GetIntersectionWithY(function[i], function[i+1])!.Value
+                            ? GetIntersectionWithY(function[i - 1], function[i])!.Value
                             : function[i].X);
                     }
                 }
