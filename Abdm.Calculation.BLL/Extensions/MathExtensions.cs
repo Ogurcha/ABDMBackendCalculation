@@ -1,4 +1,6 @@
-﻿using Abdm.Calculation.BLL.Models.Primitives;
+﻿using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Models.Primitives;
+using g4;
 
 namespace Abdm.Calculation.BLL.Extensions
 {
@@ -49,6 +51,27 @@ namespace Abdm.Calculation.BLL.Extensions
                              (finish.Y - start.Y);
 
             return xIntersect;
+        }
+
+        /// <summary>
+        /// Рассчёт площади под графиком
+        /// </summary>
+        public static double CalculateAreaUnderCurve(IList<Vector2D> points)
+        {
+            double totalArea = default;
+
+            if (points.Count < 2)
+                return totalArea;
+
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                var currentPoint = points[i];
+                var nextPoint = points[i + 1];
+
+                totalArea += Math.Max((double)default, Formulas.TrapezoidArea(currentPoint, nextPoint));
+            }
+
+            return totalArea;
         }
     }
 }

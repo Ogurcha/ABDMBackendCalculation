@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Extensions;
+﻿using System.ComponentModel.DataAnnotations;
+using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
@@ -39,7 +40,7 @@ namespace Abdm.Calculation.BLL.Services
                     {
                         strainMap[trajectory.X] = GetStrainForEachPositivePiece(
                             trajectory, 
-                            data.Load, 
+                            data, 
                             ruleGroup.Key.DoTrafficJamLoadCalulation).Max();
                     }
                 }
@@ -65,7 +66,7 @@ namespace Abdm.Calculation.BLL.Services
         /// Данный метод делит траекторию на положительные отрезки, 
         /// чтобы проверить все пики и выдать напряжение по каждому из них
         /// </summary>
-        public IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, LoadModel load, bool doTrafficJamCalulation)
+        public IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, PassTypeSmallModel data, bool doTrafficJamCalulation)
         {
             var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
             var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
@@ -78,9 +79,12 @@ namespace Abdm.Calculation.BLL.Services
             var trafficJamStrain = 0d;
             if (doTrafficJamCalulation)
             {
-                trafficJamStrain += positivePieces.Sum(x => x.Y - x.X)
-                    * profileYZService.GetYZFromProfile(trajectory.Center).OrderByDescending(x => x.Y).First().Y
-                    * load.Axles.Sum(a => a.Weight)
+                var areaLeft = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray());
+                var areaRight = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray());
+                var areaAverage = (areaLeft + areaRight) / 2;
+
+                trafficJamStrain += areaAverage
+                    * data.Load.Axles.Sum(a => a.Weight)
                     * NormConstants.TrafficJamApproximationParam;
             }
 
@@ -91,9 +95,12 @@ namespace Abdm.Calculation.BLL.Services
 
                 var highestZVector = centerVectors.Where(v => v.X >= start && v.X <= end).OrderByDescending(v => v.Y).First();
 
-                yield return vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
+                var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,
-                    load) + trafficJamStrain;
+                    data.Load);
+                yield return
+                    strain * StrainCoefficientFormulas.GetBasicStrainCoefficient(data.Surface.Lambda)
+                    + trafficJamStrain * StrainCoefficientFormulas.GetTrafficJamStrainCoefficient(data.Surface.Lambda);
             }
         }
     }

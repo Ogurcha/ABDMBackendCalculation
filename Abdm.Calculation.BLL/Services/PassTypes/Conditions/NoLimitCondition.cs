@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
 {
@@ -13,7 +14,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
                 var load = x.Max(c => c.Strain);
                 if (x.Key.IsDynamicMovement)
                 {
-                    load *= PassTypeCalculationCoordinator.DynamicCoefficient;
+                    load *= StrainCoefficientFormulas.GetDynamicMovementCoefficient(surface.Lambda);
                 }
                 return surface.MyStrength > surface.ConstLoad + x.Key.PedestrianLoad + surface.OtherLoad + load;
             }).All(succeded => succeded);

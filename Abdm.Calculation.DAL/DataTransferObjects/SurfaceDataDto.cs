@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.DAL.Enums;
+﻿using System.Text.Json.Serialization;
+using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.DAL.Entities
 {
@@ -40,5 +41,10 @@ namespace Abdm.Calculation.DAL.Entities
         /// тип чекпоинта - балка или опора
         /// </summary>
         public CheckPointTypeEnum CheckPointType { get; set; }
+
+        /// <summary>
+        /// лямбда - используется для расчета коеффициентов напряжения
+        /// </summary>
+        public double Lambda { get; set; }
     }
 }

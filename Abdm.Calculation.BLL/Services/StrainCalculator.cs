@@ -57,7 +57,7 @@ namespace Abdm.Calculation.BLL.Services
                         {
                             if (vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, removeTrajsFrom) is VehicleTrajectory additionalTrajectory)
                             {
-                                additionalTrajectories.Add((removeTrajsFrom, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data.Load, roadRule.DoTrafficJamLoadCalulation).Max()));
+                                additionalTrajectories.Add((removeTrajsFrom, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max()));
                                 trajectoriesLeft.Add(removeTrajsFrom);
                             }
                         }
@@ -67,7 +67,7 @@ namespace Abdm.Calculation.BLL.Services
                         {
                             if (vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, removeTrajsTo) is VehicleTrajectory additionalTrajectory)
                             {
-                                additionalTrajectories.Add((removeTrajsTo, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data.Load, roadRule.DoTrafficJamLoadCalulation).Max()));
+                                additionalTrajectories.Add((removeTrajsTo, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max()));
                                 trajectoriesLeft.Add(removeTrajsTo);
                             }
                         }
@@ -93,7 +93,7 @@ namespace Abdm.Calculation.BLL.Services
                         {
                             if (vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, removeTrajsFrom) is VehicleTrajectory additionalTrajectory)
                             {
-                                additionalTrajectories.Add((removeTrajsFrom, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data.Load, roadRule.DoTrafficJamLoadCalulation).Max()));
+                                additionalTrajectories.Add((removeTrajsFrom, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max()));
                                 trajectoriesLeft.Add(removeTrajsFrom);
                             }
                         }
@@ -103,7 +103,7 @@ namespace Abdm.Calculation.BLL.Services
                         {
                             if (vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, removeTrajsTo) is VehicleTrajectory additionalTrajectory)
                             {
-                                additionalTrajectories.Add((removeTrajsTo, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data.Load, roadRule.DoTrafficJamLoadCalulation).Max()));
+                                additionalTrajectories.Add((removeTrajsTo, trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max()));
                                 trajectoriesLeft.Add(removeTrajsTo);
                             }
                         }

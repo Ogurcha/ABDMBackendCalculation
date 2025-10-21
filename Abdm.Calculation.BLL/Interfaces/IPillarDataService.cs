@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IPillarDataService
     {
-        void UpdateSurfaceDataFromPillarData(SurfaceDataDto surface, PassageInterval[] passageIntervals);
+        void UpdateSurfaceDataFromPillarData(SurfaceDataDto? surface, PassageInterval[] passageIntervals);
     }
 }
