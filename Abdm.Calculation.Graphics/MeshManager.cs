@@ -16,8 +16,8 @@ namespace Abdm.Calculation.Graphics
             ArgumentNullException.ThrowIfNull(points);
 
             Func<Vector3D, Vector3d> vectorConvertFunc = mirrorZ 
-                ? (Vector3D v) => new Vector3d(v.X, v.Y, v.Z) 
-                : (Vector3D v) => new Vector3d(v.X, v.Y, -v.Z);
+                ? (Vector3D v) => new Vector3d(v.X, v.Y, -v.Z) 
+                : (Vector3D v) => new Vector3d(v.X, v.Y, v.Z);
 
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
                 points.Select(vectorConvertFunc), 
