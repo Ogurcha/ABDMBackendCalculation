@@ -43,6 +43,7 @@ namespace Abdm.Calculation.BLL.Services
                     if (goForward) {
                         goForward = false;
                         position -= NormConstants.StrainMeasuringStepSize;
+                        strain = oldStrain ?? strain;
                     }
                     else
                     {
