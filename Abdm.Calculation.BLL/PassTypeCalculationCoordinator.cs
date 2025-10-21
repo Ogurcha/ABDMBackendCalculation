@@ -25,13 +25,6 @@ namespace Abdm.Calculation.BLL
         private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
         private const string roadRulesNotFound = "Road rules for given load were not found";
 
-        /// <summary>
-        /// Коэффициент при динамическом движении на иссо
-        /// TODO: ABDMP-370 - реализация сервиса расчётов динамического/статического коеффициента
-        /// На самом деле он не статический
-        /// </summary>
-        public static double DynamicCoefficient = 1.3d;
-
         public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(
             [DisallowNull] PassTypeCalculationParameters data, 
             CancellationToken cancellationToken)
@@ -76,7 +69,7 @@ namespace Abdm.Calculation.BLL
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(meshErrorMessage));
             }
-            var dataModel = data.Adapt<PassTypeSmallModel>();
+            var dataModel = data.Adapt<PassTypeSmallModel>(); dataModel.Surface.Lambda = surfaceDataContainer.Data.Lambda;
 
             var intervalModels = new List<IntervalModel>();
             foreach (var interval in intervals)

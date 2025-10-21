@@ -65,5 +65,10 @@ namespace Abdm.Calculation.BLL.Services
 
             return oldStrain ?? 0;
         }
+
+        public double GetStrainFromVehicleInPositionNoCaching(VehicleTrajectory trajectory, double startingPosition, LoadModel load)
+        {
+            return vehicleTrajectoryService.GetStrainOnTrajectory(trajectory, startingPosition, load);
+        }
     }
 }

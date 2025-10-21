@@ -47,6 +47,7 @@ namespace Abdm.Calculation.BLL.Mappers
             .NewConfig()
             .Map(dst => dst.StrainCalculationType, src => src.c_cptype)
             .Map(dst => dst.CheckPointType, src => src.c_typnk)
+            .Map(dst => dst.Lambda, src => src.lambda)
             .AfterMapping(dst =>
              {
                  if (!Enum.IsDefined(dst.StrainCalculationType))

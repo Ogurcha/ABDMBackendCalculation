@@ -4,7 +4,7 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface ITrajectorySelector
     {
-        IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, LoadModel load, bool doTrafficJamCalulation);
+        IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, PassTypeSmallModel data, bool doTrafficJamCalulation);
         Dictionary<RoadRule, (double X, double Strain)[]> GetTrajectoriesStrainsMap(IntervalModel intervalModel, IEnumerable<RoadRule> roadRules, PassTypeSmallModel data);
     }
 }
