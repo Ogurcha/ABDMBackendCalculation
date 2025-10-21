@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -27,10 +28,10 @@ namespace Abdm.Calculation.BLL.Services
             {
                 var start = intervalModel.PassageIntervalRef.AbsolutePositionLeft
                 + ruleGroup.Key.actualSafetyLineLeft
-                + Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
+                + PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
                 var finish = intervalModel.PassageIntervalRef.AbsolutePositionRight
                 - ruleGroup.Key.actualSafetyLineRight
-                - Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
+                - PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
 
                 var actualTrajectories = intervalModel.Trajectories.Where(t => t.X >= start && t.X <= finish);
 

@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Models;
 using g4;
 
 namespace Abdm.Calculation.Graphics
@@ -8,7 +9,7 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
-        Mesh GetMeshFromPoints((double X, double Y, double Z)[] points, (int p1, int p2, int p3)[] trianglesList);
+        Mesh GetMeshFromPoints(Vector3D[] points, Vector3I[] triangleList, bool mirrorZ = false);
 
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ

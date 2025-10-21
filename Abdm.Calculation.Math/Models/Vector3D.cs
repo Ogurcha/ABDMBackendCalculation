@@ -1,4 +1,4 @@
-﻿namespace Abdm.Calculation.BLL.Models.Primitives
+﻿namespace Abdm.Calculation.Maths.Models
 {
     public struct Vector3D
     {

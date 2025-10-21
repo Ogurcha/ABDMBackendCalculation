@@ -1,8 +1,7 @@
-﻿using Abdm.Calculation.BLL.Helpers;
-using Abdm.Calculation.BLL.Models.Primitives;
-using g4;
+﻿using Abdm.Calculation.Maths.Helpers;
+using Abdm.Calculation.Maths.Models;
 
-namespace Abdm.Calculation.BLL.Extensions
+namespace Abdm.Calculation.Maths.Extensions
 {
     public static class MathExtensions
     {
