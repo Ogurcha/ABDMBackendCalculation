@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Abdm.Calculation.BLL.Extensions
+namespace Abdm.Calculation.Maths.Extensions
 {
     /// <summary>
     /// Здесь решаем классические проблемы плавающей запятой, когда: 

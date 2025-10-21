@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Entities;
+using Abdm.Calculation.Maths.Models;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Services
@@ -58,7 +59,7 @@ namespace Abdm.Calculation.BLL.Services
             return new ResultExceptionContainer<SurfaceDataDto>(surface);
         }
 
-        private IEnumerable<(double X, double Y, double Z)> ReadPointsYZ(BinaryReader reader, int pointsToRead)
+        private IEnumerable<Vector3D> ReadPointsYZ(BinaryReader reader, int pointsToRead)
         {
             for (int i = 0; i < pointsToRead; i++)
             {
@@ -66,7 +67,7 @@ namespace Abdm.Calculation.BLL.Services
             }
         }
 
-        private IEnumerable<(double X, double Y, double Z)> ReadPoints3D(BinaryReader reader, int pointsToRead)
+        private IEnumerable<Vector3D> ReadPoints3D(BinaryReader reader, int pointsToRead)
         {
             for (int i = 0; i < pointsToRead; i++)
             {
@@ -74,7 +75,7 @@ namespace Abdm.Calculation.BLL.Services
             }
         }
 
-        private IEnumerable<(int, int, int)> ReadTriangles(BinaryReader reader, int trianglesToRead, int pointsCount)
+        private IEnumerable<Vector3I> ReadTriangles(BinaryReader reader, int trianglesToRead, int pointsCount)
         {
             for (int i = 0; i < trianglesToRead; i++)
             {

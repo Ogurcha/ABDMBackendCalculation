@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using Abdm.Calculation.DAL.Enums;
+﻿using Abdm.Calculation.DAL.Enums;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.DAL.Entities
 {
@@ -20,7 +20,7 @@ namespace Abdm.Calculation.DAL.Entities
         /// <summary>
         /// Точки поверхности влияния в 3д пространстве
         /// </summary>
-        public required (double X, double Y, double Z)[] Points { get; set; }
+        public required Vector3D[] Points { get; set; }
 
         /// <summary>
         /// Число треугольникув. Дублирует <see cref="Triangles"/>.Length, но нужно для чтения BinaryReader'ом
@@ -30,7 +30,7 @@ namespace Abdm.Calculation.DAL.Entities
         /// <summary>
         /// Полигоны. Индексы точек (base 0), по которым нужно соединять точки, чтобы получить пов-ть
         /// </summary>
-        public (int, int, int)[]? Triangles { get; set; }
+        public Vector3I[]? Triangles { get; set; }
 
         /// <summary>
         /// тип проверки на чекпоинте - зависит от типа дефформации

@@ -6,12 +6,26 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.WebApi", "Abdm.Calculation.WebApi\Abdm.Calculation.WebApi.csproj", "{0393320B-E784-4103-B8CE-27DB715A1D4F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Tests", "Abdm.Calculation.Tests\Abdm.Calculation.Tests.csproj", "{D6AE7C12-1DA0-497F-8269-96BDB7B5BFC6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.DAL", "Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj", "{8BB60979-A04A-4353-AC33-9B96073374B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Graphics", "Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj", "{91FF09D5-A7AE-40A1-86D6-A769E145D6F3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.BLL", "Abdm.Calculation.BLL\Abdm.Calculation.BLL.csproj", "{C60E4D1A-3D20-443B-AB11-A8E47C740BF9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Maths", "Abdm.Calculation.Math\Abdm.Calculation.Maths.csproj", "{F41426D2-D721-46AF-BF19-37D0D11B3840}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +53,10 @@ Global
 		{C60E4D1A-3D20-443B-AB11-A8E47C740BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C60E4D1A-3D20-443B-AB11-A8E47C740BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C60E4D1A-3D20-443B-AB11-A8E47C740BF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F41426D2-D721-46AF-BF19-37D0D11B3840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F41426D2-D721-46AF-BF19-37D0D11B3840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F41426D2-D721-46AF-BF19-37D0D11B3840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F41426D2-D721-46AF-BF19-37D0D11B3840}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

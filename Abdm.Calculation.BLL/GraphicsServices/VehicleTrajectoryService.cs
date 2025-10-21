@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Helpers;
 using g4;
 
 namespace Abdm.Calculation.BLL.GraphicsServices
@@ -123,8 +123,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             RoadRule[] roadRules)
         {
             var result = new List<VehicleXPosition>();
-            var wheelOffsetsMap = Formulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
-            var safeDistance = Formulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(loadModel, roadRules);
+            var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var safeDistance = PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(loadModel, roadRules);
             var low = passageInterval.AbsolutePositionLeft + safeDistance;
             var high = passageInterval.AbsolutePositionRight - safeDistance;
 
@@ -167,7 +167,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
         {
-            var wheelOffsetsMap = Formulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
             var xPosition = GetXPostition(centerXPosition, wheelOffsetsMap.Keys);
             return GetVehicleTrajectory(xPosition, mesh, centerXPosition);
         }

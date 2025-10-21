@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Extensions;
+using Abdm.Calculation.Maths.Extensions;
 
 namespace Abdm.Calculation.BLL.Helpers
 {

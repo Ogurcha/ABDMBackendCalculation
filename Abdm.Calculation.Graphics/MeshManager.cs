@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Models;
 using g4;
 
 namespace Abdm.Calculation.Graphics
@@ -10,13 +11,17 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
-        public Mesh GetMeshFromPoints((double X, double Y, double Z)[] points, (int p1, int p2, int p3)[] triangleList)
+        public Mesh GetMeshFromPoints(Vector3D[] points, Vector3I[] triangleList, bool mirrorZ = false)
         {
             ArgumentNullException.ThrowIfNull(points);
 
+            Func<Vector3D, Vector3d> vectorConvertFunc = mirrorZ 
+                ? (Vector3D v) => new Vector3d(v.X, v.Y, -v.Z) 
+                : (Vector3D v) => new Vector3d(v.X, v.Y, v.Z);
+
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
-                points.Select(p => new Vector3d(p.X, p.Y, p.Z)), 
-                triangleList.Select(t => new Index3i(t.p1, t.p2, t.p3)));
+                points.Select(vectorConvertFunc), 
+                triangleList.Select(t => new Index3i(t.X, t.Y, t.Z)));
 
             var data = UpdateMeshData(mesh);
 

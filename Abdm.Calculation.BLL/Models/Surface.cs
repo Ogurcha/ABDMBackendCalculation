@@ -1,5 +1,5 @@
-﻿using Abdm.Calculation.BLL.Models.Primitives;
-using Abdm.Calculation.DAL.Enums;
+﻿using Abdm.Calculation.DAL.Enums;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Models
 {

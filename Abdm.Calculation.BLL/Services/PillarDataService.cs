@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL.Entities;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -17,8 +18,8 @@ namespace Abdm.Calculation.BLL.Services
 
             var finish = passageIntervals.Select(x => x.AbsolutePositionRight).Max();
 
-            surface.Points = surface.Points.SelectMany(p => new List<(double X, double Y, double Z)>() { (start, p.Y, p.Z), (finish, p.Y, p.Z) }).ToArray();
-            var triangles = new List<(int, int, int)>();
+            surface.Points = surface.Points.SelectMany(p => new List<Vector3D>() { (start, p.Y, p.Z), (finish, p.Y, p.Z) }).ToArray();
+            var triangles = new List<Vector3I>();
             for (var i = 0; i < surface.Points.Length - 2; i++)
             {
                 triangles.Add((i, i + 1, i + 2));
