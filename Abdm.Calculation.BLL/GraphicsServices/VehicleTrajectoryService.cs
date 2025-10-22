@@ -155,12 +155,16 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="Y">Точка, в которой считаем напряжение</param>
         /// <param name="load">параметры нагрузки</param>
         /// <returns></returns>
-        public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load)
+        public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
         {
+            Func<Axle, double> axleFunc = invertAxles
+            ? (axle) => { return Y + load.Length - axle.AbsolutePosition; }
+            : (axle) => { return Y + axle.AbsolutePosition; };
+
             return load.Axles.Sum(axle => 
                 axle.WheelsDistance.Sum(distance => 
-                    profileYZService.GetStrain(trajectory.Left[distance], Y + axle.AbsolutePosition, axle.WheelWeight) 
-                    + profileYZService.GetStrain(trajectory.Right[distance], Y + axle.AbsolutePosition, axle.WheelWeight)
+                    profileYZService.GetStrain(trajectory.Left[distance], axleFunc(axle), axle.WheelWeight) 
+                    + profileYZService.GetStrain(trajectory.Right[distance], axleFunc(axle), axle.WheelWeight)
                 )
             );
         }

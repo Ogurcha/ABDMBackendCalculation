@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -16,60 +17,78 @@ namespace Abdm.Calculation.BLL.Services
     /// </summary>
     public class VehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
-        public double? CachedDelta { get; set; }
+        private double CachedDelta = Double.NaN;
+
+        private double CachedDeltaBackwards = Double.NaN;
 
         /// <summary>
         /// Найти максимальное напряжение от нагрузки в траектории в определенной позиции.
         /// </summary>
         public double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, LoadModel load)
         {
-            if (CachedDelta == null)
+            if (load.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
-                CachedDelta = -load.Length;
+                return Math.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
             }
-            var position = startingPosition + CachedDelta.Value;
-            double? oldStrain = null;
-            var maxSteps = (int)Math.Round(load.Length / NormConstants.StrainMeasuringStepSize);
-            var goForward = true;
+            else if (load.Direction == Enums.DriveDirectionEnum.Backward)
+            {
+                return GetStrain(false, ref CachedDeltaBackwards);
+            }
+            else
+            {
+                return GetStrain(true, ref CachedDelta);
+            }
 
-            while (maxSteps > 0) {
-                maxSteps--;
-                var strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
-                    position,
-                    load);
 
-                if (strain <= oldStrain)
+            double GetStrain(bool loadDirectionForward, ref double cachedDelta)
+            {
+                var goForward = loadDirectionForward;
+                if (double.IsNaN(cachedDelta))
                 {
-                    if (goForward) {
-                        goForward = false;
-                        position -= NormConstants.StrainMeasuringStepSize;
-                        strain = oldStrain ?? strain;
+                    cachedDelta = goForward ? - load.Length : load.Length;
+                }
+                var position = startingPosition + cachedDelta;
+                double? oldStrain = null;
+                var maxSteps = (int)Math.Round(load.Length / NormConstants.StrainMeasuringStepSize);
+                var stepSize = loadDirectionForward ? NormConstants.StrainMeasuringStepSize : -NormConstants.StrainMeasuringStepSize;
+
+                while (maxSteps > 0)
+                {
+                    maxSteps--;
+                    var strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
+                        position,
+                        load,
+                        !loadDirectionForward);
+
+                    if (strain <= oldStrain)
+                    {
+                        if (goForward)
+                        {
+                            goForward = false;
+                            position -= stepSize;
+                            strain = oldStrain ?? strain;
+                        }
+                        else
+                        {
+                            CachedDelta = Math.Min(load.Length, Math.Max(-load.Length, position - startingPosition));
+                            return oldStrain.Value;
+                        }
+                    }
+
+                    if (goForward)
+                    {
+                        position += stepSize;
                     }
                     else
                     {
-                        CachedDelta = Math.Min(load.Length, Math.Max(-load.Length, position - startingPosition));
-                        return oldStrain.Value;
+                        position -= stepSize;
                     }
+
+                    oldStrain = strain;
                 }
 
-                if (goForward)
-                {
-                    position += NormConstants.StrainMeasuringStepSize;
-                }
-                else
-                {
-                    position -= NormConstants.StrainMeasuringStepSize;
-                }
-
-                oldStrain = strain;
+                return oldStrain ?? 0;
             }
-
-            return oldStrain ?? 0;
-        }
-
-        public double GetStrainFromVehicleInPositionNoCaching(VehicleTrajectory trajectory, double startingPosition, LoadModel load)
-        {
-            return vehicleTrajectoryService.GetStrainOnTrajectory(trajectory, startingPosition, load);
         }
     }
 }

@@ -55,5 +55,10 @@ namespace Abdm.Calculation.Maths.Helpers
 
             return (values[leftIndex], values[rightIndex]);
         }
+
+        public static bool IsOdd(int number)
+        {
+            return number % 2 != 0;
+        }
     }
 }
