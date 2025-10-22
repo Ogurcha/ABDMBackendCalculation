@@ -19,7 +19,7 @@ namespace Abdm.Calculation.BLL.Services
             var strainResults = new List<StrainResult>();
             foreach (var interval in intervals) {
                 var trajectories = trajectorySelector.GetTrajectoriesStrainsMap(interval, rules, data);
-                strainResults.AddRange(strainCalculator.Calculate(trajectories, interval, rules, data, mesh));
+                strainResults.AddRange(strainCalculator.GetStrainResultFromTrajectories(trajectories, interval, rules, data, mesh));
             }
             strainResults = strainResults.GroupBy(x => x.RoadRuleRef).Select(x => new StrainResult() { 
                 RoadRuleRef = x.Key, 

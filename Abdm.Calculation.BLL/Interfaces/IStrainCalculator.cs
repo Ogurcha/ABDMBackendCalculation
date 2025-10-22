@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainCalculator
     {
-        IEnumerable<StrainResult> Calculate(Dictionary<RoadRule, 
+        IEnumerable<StrainResult> GetStrainResultFromTrajectories(Dictionary<RoadRule, 
             (double X, double Strain)[]> orderedTrajectoriesMap, 
             IntervalModel intervalModel, 
             IEnumerable<RoadRule> roadRules, 
