@@ -29,5 +29,9 @@ namespace Abdm.Calculation.BLL.Models
         /// </summary>
         public required Axle[] Axles { get; set; }
 
+        /// <summary>
+        /// Индентичен ли перед нагрузки с его задом
+        /// </summary>
+        public bool? IsSymmetric { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace Abdm.Calculation.BLL.Services
     /// И в таком случае нам надо расположить ТС только с одной стороны от максимума 
     /// Чтобы хоть как то оптимизировать процесс, я кэширую удачную дельту, чтобы в следующем цикле считать уже от удачной позиции
     /// </summary>
-    public class VehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
+    public class VehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService, IEqualityComparer<double> equalityComparer) : IVehiclePositioner
     {
         private double CachedDelta = Double.NaN;
 
@@ -26,7 +26,11 @@ namespace Abdm.Calculation.BLL.Services
         /// </summary>
         public double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, LoadModel load)
         {
-            if (load.Direction == Enums.DriveDirectionEnum.Bidirection)
+            if (load.IsSymmetric == null)
+            {
+                load.IsSymmetric = IsLoadSymmetric(load);
+            }
+            if (!load.IsSymmetric!.Value && load.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
                 return Math.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
             }
@@ -38,7 +42,6 @@ namespace Abdm.Calculation.BLL.Services
             {
                 return GetStrain(true, ref CachedDelta);
             }
-
 
             double GetStrain(bool loadDirectionForward, ref double cachedDelta)
             {
@@ -89,6 +92,27 @@ namespace Abdm.Calculation.BLL.Services
 
                 return oldStrain ?? 0;
             }
+        }
+
+        private bool IsLoadSymmetric(LoadModel load)
+        {
+            int mid = load.Axles.Length / 2;
+            if (Formulas.IsOdd(load.Axles.Length) && !equalityComparer.Equals(load.Axles[mid].AbsolutePosition, load.Length / 2))
+            {
+                return false;
+            }
+            for (int i = 0; i < mid; i++)
+            {
+                var a1 = load.Axles[i];
+                var a2 = load.Axles[load.Axles.Length - i - 1];
+
+                if (!equalityComparer.Equals(a1.AbsolutePosition, load.Length - a2.AbsolutePosition)
+                    || !a1.WheelsDistance.SequenceEqual(a2.WheelsDistance))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
