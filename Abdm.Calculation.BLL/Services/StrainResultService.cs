@@ -1,16 +1,14 @@
-﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class CalculationCoordinator(
-        ITrajectorySelector trajectorySelector,
+    public class StrainResultService(
         IStrainCalculator strainCalculator,
-        IPassTypeResolver passTypeResolver) : ICalculationCoordinator
+        IStrainSelector strainSelector) : IStrainResultService
     {
-        public PassTypeEnum GetPassType(
+        public List<StrainResult> GetStrainResults(
             PassTypeSmallModel data,
             IEnumerable<IntervalModel> intervals,
             IEnumerable<RoadRule> rules, 
@@ -18,8 +16,8 @@ namespace Abdm.Calculation.BLL.Services
         {
             var strainResults = new List<StrainResult>();
             foreach (var interval in intervals) {
-                var trajectories = trajectorySelector.GetTrajectoriesStrainsMap(interval, rules, data);
-                strainResults.AddRange(strainCalculator.GetStrainResultFromTrajectories(trajectories, interval, rules, data, mesh));
+                var strainsMap = strainCalculator.GetStrainsMap(interval, rules, data);
+                strainResults.AddRange(strainSelector.GetStrainResults(strainsMap, interval, rules, data, mesh));
             }
             strainResults = strainResults.GroupBy(x => x.RoadRuleRef).Select(x => new StrainResult() { 
                 RoadRuleRef = x.Key, 
@@ -27,7 +25,7 @@ namespace Abdm.Calculation.BLL.Services
                 StrainOneAuto = x.Select(s => s.StrainOneAuto).Max()
             }).ToList();
 
-            return passTypeResolver.Resolve(strainResults, data.Surface);
+            return strainResults;
         }
     }
 }

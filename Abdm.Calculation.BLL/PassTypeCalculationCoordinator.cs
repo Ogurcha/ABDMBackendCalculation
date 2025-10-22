@@ -13,9 +13,10 @@ namespace Abdm.Calculation.BLL
         ISurfaceDataService surfaceDataService,
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
-        ICalculationCoordinator calculationCoordinator,
+        IStrainResultService strainResultService,
         IVehicleTrajectoryService vehicleTrajectoryService,
-        IPillarDataService pillarDataService
+        IPillarDataService pillarDataService,
+        IPassTypeResolver passTypeResolver
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -82,7 +83,8 @@ namespace Abdm.Calculation.BLL
                 intervalModels.Add(intervalModel);
             }
 
-            PassTypeEnum resultPassType = calculationCoordinator.GetPassType(dataModel, intervalModels, roadRules, mesh);
+            var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels, roadRules, mesh);
+            var resultPassType = passTypeResolver.Resolve(strainResults, dataModel.Surface); 
 
             var response = ComposeMessage(resultPassType, data);
 

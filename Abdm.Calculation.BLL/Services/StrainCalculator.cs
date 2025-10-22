@@ -1,112 +1,106 @@
-﻿using System.Data;
+﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class StrainCalculator(IVehicleTrajectoryService vehicleTrajectoryService, ITrajectorySelector trajectorySelector) : IStrainCalculator
+    public class StrainCalculator(IProfileYZService profileYZService,
+        IVehiclePositioner vehiclePositioner) : IStrainCalculator
     {
-        public IEnumerable<StrainResult> GetStrainResultFromTrajectories(
-        Dictionary<RoadRule, (double X, double Strain)[]> orderedTrajectoriesMap,
-        IntervalModel intervalModel,
-        IEnumerable<RoadRule> roadRules,
-        PassTypeSmallModel data,
-        Mesh mesh)
-        {
-            foreach (var roadRule in roadRules)
-            {
-                var actualVehicleCount = Math.Min(roadRule.MaxVehicleCount, intervalModel.PassageIntervalRef.LaneCount);
-                
-                if (actualVehicleCount == 1)
-                {
-                    yield return
-                        new StrainResult
-                        {
-                            RoadRuleRef = roadRule,
-                            Strain = orderedTrajectoriesMap[roadRule].First().Strain,
-                            StrainOneAuto = orderedTrajectoriesMap[roadRule].First().Strain
-                        };
-                }
-                else
-                {
-                    yield return GetStrainResult(orderedTrajectoriesMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
-                }
-            }
-        }
-
-        private StrainResult GetStrainResult((double X, double Strain)[] sortedTrajStrains,
+        public Dictionary<RoadRule, (double X, double Strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
-            RoadRule roadRule,
-            PassTypeSmallModel data,
-            Mesh mesh,
-            int actualVehicleCount)
+            IEnumerable<RoadRule> roadRules,
+            PassTypeSmallModel data)
         {
-            var strainResult = new StrainResult
+            var strainMap = new Dictionary<double, double>();
+
+            var trajectoriesMap = new Dictionary<RoadRule, (double X, double strain)[]>();
+
+            var groupedBySafetyLine = roadRules.GroupBy(r => (
+            actualSafetyLineLeft: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineLeft : (double)default,
+            actualSafetyLineRight: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineRight : (double)default,
+            r.DoTrafficJamLoadCalulation));
+
+            foreach (var ruleGroup in groupedBySafetyLine)
             {
-                RoadRuleRef = roadRule,
-                Strain = 0d,
-                StrainOneAuto = Double.NaN
-            };
+                var start = intervalModel.PassageIntervalRef.AbsolutePositionLeft
+                + ruleGroup.Key.actualSafetyLineLeft
+                + PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
+                var finish = intervalModel.PassageIntervalRef.AbsolutePositionRight
+                - ruleGroup.Key.actualSafetyLineRight
+                - PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
 
-            var trajectoriesCanUse = sortedTrajStrains.Select(x => x.X).ToHashSet();
-            var sortedAdditionalTrajectories = new List<(double X, double Strain)>();
+                var actualTrajectories = intervalModel.Trajectories.Where(t => t.X >= start && t.X <= finish);
 
-            for (var i = 0; i < actualVehicleCount; i++)
-            {
-                if (trajectoriesCanUse.Count > 0)
+                foreach (var trajectory in actualTrajectories)
                 {
-                    break;
-                }
-                (double X, double Strain)? maxTrajectoryOriginal
-                    = sortedTrajStrains.FirstOrDefault(x => trajectoriesCanUse.Contains(x.X));
-                (double X, double Strain)? maxTrajectoryAdditional
-                    = sortedAdditionalTrajectories.FirstOrDefault(x => trajectoriesCanUse.Contains(x.X));
-
-                if ((maxTrajectoryOriginal?.Strain ?? 0d) >= (maxTrajectoryAdditional?.Strain ?? 0d))
-                {
-                    UseTrajectory(maxTrajectoryOriginal);
-                }
-                else
-                {
-                    UseTrajectory(maxTrajectoryAdditional);
-                }
-            }
-
-            return strainResult;
-
-            void UseTrajectory((double X, double Strain)? trajNullable)
-            {
-                if (trajNullable is not (double X, double Strain) traj)
-                {
-                    return;
-                }
-                strainResult.Strain += traj.Strain;
-                if (Double.IsNaN(strainResult.StrainOneAuto))
-                {
-                    strainResult.StrainOneAuto = traj.Strain;
-                }
-                var left = traj.X - roadRule.MinTrajectoryDistance - data.Load.Width;
-                var right = traj.X + roadRule.MinTrajectoryDistance + data.Load.Width;
-                trajectoriesCanUse.RemoveWhere(t => left < t && t < right);
-
-                TryAddTrajectory(left);
-                TryAddTrajectory(right);
-            }
-
-            void TryAddTrajectory(double traj)
-            {
-                if (!trajectoriesCanUse.Contains(traj)
-                            && intervalModel.PassageIntervalRef.AbsolutePositionLeft <= traj
-                            && traj <= intervalModel.PassageIntervalRef.AbsolutePositionRight)
-                {
-                    if (vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory)
+                    if (!strainMap.ContainsKey(trajectory.X))
                     {
-                        var additionalTrajectoryStrain = trajectorySelector.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max();
-                        sortedAdditionalTrajectories = sortedAdditionalTrajectories.Append((traj, additionalTrajectoryStrain)).OrderByDescending(x => x.Item2).ToList();
-                        trajectoriesCanUse.Add(traj);
+                        strainMap[trajectory.X] = GetStrainForEachPositivePiece(
+                            trajectory, 
+                            data, 
+                            ruleGroup.Key.DoTrafficJamLoadCalulation).Max();
                     }
                 }
+
+                foreach (var rule in ruleGroup)
+                {
+                    trajectoriesMap.Add(rule, actualTrajectories.OrderByDescending(t => strainMap[t.X])
+                        .Select(t => (t.X, strainMap[t.X])).ToArray());
+                }
+            }
+
+            return trajectoriesMap;
+        }
+
+        /// <summary>
+        /// ИССО может быть устроена таким образом, 
+        /// что более высокий пик в поверхности влияния выдаст меньшее напряжение из-за того, 
+        /// что края высокого пика могут опускаться в ноль слишком резко, 
+        /// в то время, как более низкий, 
+        /// но более пологий пик выдаст напряжение больше. 
+        /// Пользуясь фактом того, что пики поверхности влияния чередуются с отрицательными зонами, 
+        /// мы можем найти все потенциальные пики вырезая положильные куски графика. 
+        /// Данный метод делит траекторию на положительные отрезки, 
+        /// чтобы проверить все пики и выдать напряжение по каждому из них
+        /// </summary>
+        public IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, PassTypeSmallModel data, bool doTrafficJamCalulation)
+        {
+            var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
+            var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
+
+            if (positivePieces.Count() == 0)
+            {
+                yield return 0;
+            }
+
+            var trafficJamStrain = 0d;
+            if (doTrafficJamCalulation)
+            {
+                var areaLeft = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray());
+                var areaRight = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray());
+                var areaAverage = (areaLeft + areaRight) / 2;
+
+                trafficJamStrain += areaAverage
+                    * data.Load.Axles.Sum(a => a.Weight)
+                    * NormConstants.TrafficJamApproximationParam;
+            }
+
+            foreach (var positivePiece in positivePieces)
+            {
+                var start = positivePiece.X;
+                var end = positivePiece.Y;
+
+                var highestZVector = centerVectors.Where(v => v.X >= start && v.X <= end).OrderByDescending(v => v.Y).First();
+
+                var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
+                    highestZVector.X,
+                    data.Load);
+                yield return
+                    strain * StrainCoefficientFormulas.GetBasicStrainCoefficient(data.Surface.Lambda)
+                    + trafficJamStrain * StrainCoefficientFormulas.GetTrafficJamStrainCoefficient(data.Surface.Lambda);
             }
         }
     }
