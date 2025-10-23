@@ -43,7 +43,6 @@ namespace Abdm.Calculation.Infrastructure
             {
                 new AbStrategy(),
                 new AClassCommonStrategy(),
-                new EN3Strategy(),
                 new HeavyStrategy()
             }));
 

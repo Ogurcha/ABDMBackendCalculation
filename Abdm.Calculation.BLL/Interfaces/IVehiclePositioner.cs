@@ -4,6 +4,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IVehiclePositioner
     {
-        double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, LoadModel load);
+        double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, PassTypeSmallModel data);
     }
 }

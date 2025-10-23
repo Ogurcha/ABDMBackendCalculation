@@ -97,7 +97,7 @@ namespace Abdm.Calculation.BLL.Services
 
                 var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,
-                    data.Load);
+                    data);
                 yield return
                     strain * StrainCoefficientFormulas.GetBasicStrainCoefficient(data.Surface.Lambda)
                     + trafficJamStrain * StrainCoefficientFormulas.GetTrafficJamStrainCoefficient(data.Surface.Lambda);

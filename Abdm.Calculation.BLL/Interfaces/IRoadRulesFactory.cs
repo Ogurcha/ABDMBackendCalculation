@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IRoadRulesFactory
     {
-        public RoadRule[]? CreateRoadRuleStrategy(LoadEnum loadId);
+        public RoadRule[]? CreateRoadRuleStrategy(LoadGroupTypeEnum type, LoadEnum loadId);
     }
 }

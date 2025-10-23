@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -49,27 +50,21 @@ namespace Abdm.Calculation.BLL
             }
 
             //TODO: ABDMP-371 - реализация кастомных нагрузок LoadSchema.Id, подгрузка их из бд
-            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Id);
+            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id);
             if (roadRulesNullable is not RoadRule[] roadRules)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(roadRulesNotFound));
             }
 
+            var dataModel = data.Adapt<PassTypeSmallModel>();
+            DataModelFixer.Fix(dataModel, surfaceDataContainer.Data, data);
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Data.Points, 
                 surfaceDataContainer.Data.Triangles,
-                data.Surface.MyStrength < 0);
+                dataModel.Surface.IsMirroredByZ);
             if (mesh?.Data?.DistinctXs == null || mesh.Data.DistinctYs == null)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(meshErrorMessage));
-            }
-            var dataModel = data.Adapt<PassTypeSmallModel>(); 
-            dataModel.Surface.Lambda = surfaceDataContainer.Data.Lambda;
-            if (dataModel.Surface.MyStrength < 0)
-            {
-                dataModel.Surface.MyStrength = -dataModel.Surface.MyStrength;
-                dataModel.Surface.ConstLoad = -dataModel.Surface.ConstLoad;
-                dataModel.Surface.PedestrianLoad = -dataModel.Surface.PedestrianLoad;
             }
 
             var intervalModels = new List<IntervalModel>();

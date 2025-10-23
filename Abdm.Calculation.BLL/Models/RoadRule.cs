@@ -29,7 +29,7 @@
         /// <summary>
         /// Максимальное количество ТС
         /// </summary>
-        public int MaxVehicleCount { get; set; }
+        public int MaxTrajectoriesCount { get; set; }
 
         /// <summary>
         /// Минимальное расстояние между центров траекторий движения. 

@@ -41,5 +41,10 @@ namespace Abdm.Calculation.BLL.Models
         /// лямбда - используется для расчета коеффициентов напряжения
         /// </summary>
         public double Lambda { get; set; }
+
+        /// <summary>
+        /// перевёрнута ли поверхность
+        /// </summary>
+        public bool IsMirroredByZ { get; internal set; } = false;
     }
 }

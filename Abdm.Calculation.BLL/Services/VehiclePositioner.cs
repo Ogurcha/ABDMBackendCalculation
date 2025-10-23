@@ -24,17 +24,17 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Найти максимальное напряжение от нагрузки в траектории в определенной позиции.
         /// </summary>
-        public double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, LoadModel load)
+        public double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, PassTypeSmallModel data)
         {
-            if (load.IsSymmetric == null)
+            if (data.Load.IsSymmetric == null)
             {
-                load.IsSymmetric = IsLoadSymmetric(load);
+                data.Load.IsSymmetric = IsLoadSymmetric(data.Load);
             }
-            if (!load.IsSymmetric!.Value && load.Direction == Enums.DriveDirectionEnum.Bidirection)
+            if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
                 return Math.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
             }
-            else if (load.Direction == Enums.DriveDirectionEnum.Backward)
+            else if (data.Direction == Enums.DriveDirectionEnum.Backward)
             {
                 return GetStrain(false, ref CachedDeltaBackwards);
             }
@@ -48,11 +48,11 @@ namespace Abdm.Calculation.BLL.Services
                 var goForward = loadDirectionForward;
                 if (double.IsNaN(cachedDelta))
                 {
-                    cachedDelta = goForward ? - load.Length : load.Length;
+                    cachedDelta = goForward ? - data.Load.Length : data.Load.Length;
                 }
                 var position = startingPosition + cachedDelta;
                 double? oldStrain = null;
-                var maxSteps = (int)Math.Round(load.Length / NormConstants.StrainMeasuringStepSize);
+                var maxSteps = (int)Math.Round(data.Load.Length / NormConstants.StrainMeasuringStepSize);
                 var stepSize = loadDirectionForward ? NormConstants.StrainMeasuringStepSize : -NormConstants.StrainMeasuringStepSize;
 
                 while (maxSteps > 0)
@@ -60,7 +60,7 @@ namespace Abdm.Calculation.BLL.Services
                     maxSteps--;
                     var strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
                         position,
-                        load,
+                        data.Load,
                         !loadDirectionForward);
 
                     if (strain <= oldStrain)
@@ -73,7 +73,7 @@ namespace Abdm.Calculation.BLL.Services
                         }
                         else
                         {
-                            CachedDelta = Math.Min(load.Length, Math.Max(-load.Length, position - startingPosition));
+                            CachedDelta = Math.Min(data.Load.Length, Math.Max(-data.Load.Length, position - startingPosition));
                             return oldStrain.Value;
                         }
                     }

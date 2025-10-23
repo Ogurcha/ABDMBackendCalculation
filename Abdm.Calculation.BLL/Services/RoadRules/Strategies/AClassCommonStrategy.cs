@@ -6,17 +6,18 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 {
     public class AClassCommonStrategy : BaseRRStrategy
     {
-        public override List<LoadEnum> LoadIds => new List<LoadEnum> {
-            LoadEnum.A8,
-            LoadEnum.A11,
-            LoadEnum.A14,
+        public override List<LoadGroupTypeEnum> LoadGroupTypes => new List<LoadGroupTypeEnum> {
+            LoadGroupTypeEnum.Common,
+            LoadGroupTypeEnum.AClass
         };
 
-        public override RoadRule[] GetRoadRules()
+        public override RoadRule[] GetRoadRules(LoadEnum loadId)
         {
-            var value = RoadRulesConstants.RR1;
-            var valueSecondary = RoadRulesConstants.RR2;
-            return [value, valueSecondary];
+            if (loadId == LoadEnum.EN3)
+            {
+                return [RoadRulesConstants.RR1_1, RoadRulesConstants.RR2_1];
+            }
+            return [RoadRulesConstants.RR1, RoadRulesConstants.RR2];
         }
     }
 }

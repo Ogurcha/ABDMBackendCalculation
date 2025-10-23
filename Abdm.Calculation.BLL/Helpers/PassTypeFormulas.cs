@@ -10,7 +10,7 @@ namespace Abdm.Calculation.Maths.Helpers
         /// </summary>
         public static double DistanceBetweenIntervalEdgeAndTrajectoryCenter(LoadModel loadModel, IEnumerable<RoadRule> roadRules)
         {
-            return Math.Max(loadModel.Width, roadRules.Min(x => x.MinTrajectoryDistance)) / 2;
+            return Math.Max(loadModel.Width + loadModel.Interval, roadRules.Min(x => x.MinTrajectoryDistance)) / 2;
         }
 
         /// <summary>

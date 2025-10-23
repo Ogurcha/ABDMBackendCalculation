@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
             HasSafetyLine = false,
-            MaxVehicleCount = int.MaxValue,
+            MaxTrajectoriesCount = int.MaxValue,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = true,
@@ -26,7 +26,7 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
             HasSafetyLine = false,
-            MaxVehicleCount = int.MaxValue,
+            MaxTrajectoriesCount = int.MaxValue,
             MaxVehicleInTrajectory = 2,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
@@ -38,7 +38,7 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
             HasSafetyLine = true,
-            MaxVehicleCount = 2,
+            MaxTrajectoriesCount = 2,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = true,
@@ -50,7 +50,7 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
             HasSafetyLine = true,
-            MaxVehicleCount = 2,
+            MaxTrajectoriesCount = 2,
             MaxVehicleInTrajectory = 2,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
@@ -62,20 +62,20 @@ namespace Abdm.Calculation.BLL.Helpers
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
             HasSafetyLine = false,
-            MaxVehicleCount = 1,
+            MaxTrajectoriesCount = 1,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
         };
 
-        [Description("IV. \"Специальная АБ\" движущаяся")]
-        public static RoadRule RR4 => new RoadRule()
+        [Description("V. \"Специальная АБ\" не движущаяся")]
+        public static RoadRule RR5 => new RoadRule()
         {
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
             HasSafetyLine = true,
-            MaxVehicleCount = 1,
-            MaxVehicleInTrajectory = 1,
+            MaxTrajectoriesCount = int.MaxValue,
+            MaxVehicleInTrajectory = 3,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
         };

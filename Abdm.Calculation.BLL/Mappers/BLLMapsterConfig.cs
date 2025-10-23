@@ -30,18 +30,18 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
             .Map(dst => dst.OtherLoad, src => src.OtherLoad);
 
-            TypeAdapterConfig<PassTypeCalculationParameters, LoadModel>
+            TypeAdapterConfig<LoadSchema, LoadModel>
             .NewConfig()
-            .Map(dst => dst.Direction, src => src.Direction)
-            .Map(dst => dst.Width, src => src.LoadSchema.Width ?? NormConstants.DefaultVehicleWidth)
-            .Map(dst => dst.Length, src => src.LoadSchema.Length ?? NormConstants.DefaultVehicleLength)
-            .Map(dst => dst.Distance, src => src.LoadSchema.Distance ?? NormConstants.DefaultVehicleDistance)
-            .Map(dst => dst.Axles, src => src.LoadSchema.Axles);
+            .Map(dst => dst.Width, src => src.Width ?? NormConstants.DefaultVehicleWidth)
+            .Map(dst => dst.Length, src => src.Length ?? NormConstants.DefaultVehicleLength)
+            .Map(dst => dst.Distance, src => src.Distance ?? NormConstants.DefaultVehicleDistance)
+            .Map(dst => dst.Axles, src => src.Axles);
 
             TypeAdapterConfig<PassTypeCalculationParameters, PassTypeSmallModel>
             .NewConfig()
+            .Map(dst => dst.Direction, src => src.Direction)
             .Map(dst => dst.Surface, src => src.Surface)
-            .Map(dst => dst.Load, src => src);
+            .Map(dst => dst.Load, src => src.LoadSchema);
 
             TypeAdapterConfig<SurfaceRawDataDto, SurfaceDataDto>
             .NewConfig()

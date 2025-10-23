@@ -54,5 +54,11 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// </summary>
         [JsonPropertyName("roadway")]
         public RoadwayRequestModel? Roadway { get; set; }
+
+        /// <summary>
+        /// для прицепов, вагонов и т.п.
+        /// </summary>
+        [JsonPropertyName("secondary_load_schema")]
+        public LoadSchemaRequestModel? SecondaryLoadSchema { get; set; }
     }
 }

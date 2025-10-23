@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -16,7 +17,7 @@ namespace Abdm.Calculation.BLL.Services
         {
             foreach (var roadRule in roadRules)
             {
-                var actualVehicleCount = Math.Min(roadRule.MaxVehicleCount, intervalModel.PassageIntervalRef.LaneCount);
+                var actualVehicleCount = Math.Min(roadRule.MaxTrajectoriesCount, intervalModel.PassageIntervalRef.LaneCount);
                 
                 if (actualVehicleCount == 1)
                 {
@@ -86,8 +87,8 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     strainResult.StrainOneAuto = traj.Strain;
                 }
-                var left = traj.X - roadRule.MinTrajectoryDistance - data.Load.Width;
-                var right = traj.X + roadRule.MinTrajectoryDistance + data.Load.Width;
+                var left = traj.X - PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, [roadRule]);
+                var right = traj.X + PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, [roadRule]);
                 strainsCanUse.RemoveWhere(t => left < t && t < right);
 
                 TryAddTrajectory(left);
@@ -97,15 +98,15 @@ namespace Abdm.Calculation.BLL.Services
             void TryAddTrajectory(double traj)
             {
                 if (!strainsCanUse.Contains(traj)
-                            && intervalModel.PassageIntervalRef.AbsolutePositionLeft <= traj
-                            && traj <= intervalModel.PassageIntervalRef.AbsolutePositionRight)
+                    && intervalModel.PassageIntervalRef.AbsolutePositionLeft < traj
+                    && traj < intervalModel.PassageIntervalRef.AbsolutePositionRight
+                    && !sortedStrains.Select(s => s.X).Contains(traj)
+                    && !sortedAdditionalStrains.Select(s => s.X).Contains(traj)
+                    && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory)
                 {
-                    if (vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory)
-                    {
-                        var additionalTrajectoryStrain = strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max();
-                        sortedAdditionalStrains = sortedAdditionalStrains.Append((traj, additionalTrajectoryStrain)).OrderByDescending(x => x.Item2).ToList();
-                        strainsCanUse.Add(traj);
-                    }
+                    var additionalTrajectoryStrain = strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max();
+                    sortedAdditionalStrains = sortedAdditionalStrains.Append((traj, additionalTrajectoryStrain)).OrderByDescending(x => x.Item2).ToList();
+                    strainsCanUse.Add(traj);
                 }
             }
         }
