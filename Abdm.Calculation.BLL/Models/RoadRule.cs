@@ -27,7 +27,7 @@
         public int MaxVehicleInTrajectory { get; set; }
 
         /// <summary>
-        /// Максимальное количество ТС
+        /// Максимальное количество траекторий движения
         /// </summary>
         public int MaxTrajectoriesCount { get; set; }
 

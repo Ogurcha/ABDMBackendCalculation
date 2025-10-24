@@ -42,7 +42,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
                 new AbStrategy(),
-                new AClassCommonStrategy(),
+                new CommonStrategy(),
                 new HeavyStrategy()
             }));
 
