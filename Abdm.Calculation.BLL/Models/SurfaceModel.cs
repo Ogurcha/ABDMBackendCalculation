@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Abdm.Calculation.BLL.Entities;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -46,5 +47,10 @@ namespace Abdm.Calculation.BLL.Models
         /// перевёрнута ли поверхность
         /// </summary>
         public bool IsMirroredByZ { get; internal set; } = false;
+
+        /// <summary>
+        /// Дополнительная опциональная информация для конкретного типа деформации
+        /// </summary>
+        public IStrainTypeSpecificData? StrainTypeSpecificData { get; internal set; }
     }
 }

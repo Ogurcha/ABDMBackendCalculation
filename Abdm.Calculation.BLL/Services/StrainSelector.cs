@@ -55,7 +55,7 @@ namespace Abdm.Calculation.BLL.Services
 
             for (var i = 0; i < actualVehicleCount; i++)
             {
-                if (strainsCanUse.Count > 0)
+                if (strainsCanUse.Count <= 0)
                 {
                     break;
                 }

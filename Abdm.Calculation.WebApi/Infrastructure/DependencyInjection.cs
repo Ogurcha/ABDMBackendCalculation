@@ -8,6 +8,7 @@ using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
+using Abdm.Calculation.BLL.Services.SteelConcrete;
 using Abdm.Calculation.BLL.Services.SurfaceData;
 using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
 using Abdm.Calculation.BLL.StrainCalculation;
@@ -53,10 +54,15 @@ namespace Abdm.Calculation.Infrastructure
                 new PillarSurfaceBinaryParser(new PillarDataService()),
                 new SteelConcreteSurfaceBinaryParser()
             }));
+            services.AddSingleton<IPassTypeResolverFactory, PassTypeResolverFactory>(x => new PassTypeResolverFactory(new List<IPassTypeResolver>
+            {
+                new PassTypeResolver(),
+                new SteelConcretePassTypeResolver()
+            }));
+
 
             services.AddScoped<IProfileYZService, ProfileYZService>();
             services.AddScoped<IVehiclePositioner, VehiclePositioner>();
-            services.AddScoped<IPassTypeResolver, PassTypeResolver>();
 
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();

@@ -4,6 +4,7 @@ using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.Graphics;
 using Mapster;
 
@@ -16,16 +17,16 @@ namespace Abdm.Calculation.BLL
         IRoadRulesFactory roadRulesFactory,
         IStrainResultService strainResultService,
         IVehicleTrajectoryService vehicleTrajectoryService,
-
-        IPassTypeResolver passTypeResolver,
+        IPassTypeResolverFactory passTypeResolverFactory,
         ISymmetryService symmetryService
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
         private const string noIntersectionsErrorMessage = "Mesh has no intersections in given passage intervals";
         private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
-        private const string surfaceDataNotFound = "Surface data for given isso and checkpoint was not found";
-        private const string roadRulesNotFound = "Road rules for given load were not found";
+        private const string surfaceDataNotFoundErrorMessage = "Surface data for given isso and checkpoint was not found";
+        private const string roadRulesNotFoundErrorMessage = "Road rules for given load were not found";
+        private const string passTypeResolverNotFoundErrorMessage = "Pass type resolver for given load were not found";
 
         public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(
             [DisallowNull] PassTypeCalculationParameters data, 
@@ -41,7 +42,7 @@ namespace Abdm.Calculation.BLL
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceDataContainer?.Data?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {
-                var surfaceDataException = new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(surfaceDataNotFound));
+                var surfaceDataException = new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(surfaceDataNotFoundErrorMessage));
                 if (surfaceDataContainer?.Exception != null)
                 {
                     surfaceDataException.AddException(surfaceDataContainer.Exception);
@@ -53,12 +54,13 @@ namespace Abdm.Calculation.BLL
             var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id);
             if (roadRulesNullable is not RoadRule[] roadRules)
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(roadRulesNotFound));
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(roadRulesNotFoundErrorMessage));
             }
 
             var dataModel = data.Adapt<PassTypeSmallModel>();
             DataModelFixer.Fix(dataModel, surfaceDataContainer.Data, data);
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
+            dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Data.StrainTypeSpecificData;
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Data.Points, 
                 surfaceDataContainer.Data.Triangles,
@@ -80,7 +82,12 @@ namespace Abdm.Calculation.BLL
             }
 
             var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels, roadRules, mesh);
-            var resultPassType = passTypeResolver.Resolve(strainResults, dataModel.Surface); 
+            var ptr = passTypeResolverFactory.GetPassTypeResolver(surfaceDataContainer.Data.StrainCalculationType);
+            if (ptr == null)
+            {
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passTypeResolverNotFoundErrorMessage));
+            }
+            var resultPassType = ptr.Resolve(strainResults, dataModel.Surface);
 
             var response = ComposeMessage(resultPassType, data);
 

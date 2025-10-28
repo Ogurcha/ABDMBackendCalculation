@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Graphics.Extensions;
 using Abdm.Calculation.Graphics.Models;
