@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Helpers;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -7,7 +8,6 @@ namespace Abdm.Calculation.BLL.Models
     /// </summary>
     public class LoadModel
     {
-
         /// <summary>
         /// Ширина ТС
         /// </summary>
@@ -36,7 +36,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// минимальное расстояние между транспортными колоннами
         /// </summary>
-        public double Interval { get; internal set; } = 0d;
+        public double Interval { get; internal set; } = NormConstants.MinimalDistanceBetweenTrajectories;
 
         /// <summary>
         /// Для прицепов, вагонов поезда и т.п.

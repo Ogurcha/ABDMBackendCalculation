@@ -8,6 +8,8 @@ using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
+using Abdm.Calculation.BLL.Services.SurfaceData;
+using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
@@ -30,7 +32,6 @@ namespace Abdm.Calculation.Infrastructure
         {
             MapsterConfig.MapsterSetup();
             BLLMapsterConfig.BLLMapsterSetup();
-            services.AddScoped<IPillarDataService, PillarDataService>();
             services.AddScoped<IEqualityComparer<double>, DoubleEqualityComparer>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
@@ -38,6 +39,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddScoped<IMeshManager, MeshManager>();
             services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
+            services.AddScoped<ISymmetryService, SymmetryService>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
@@ -45,10 +47,17 @@ namespace Abdm.Calculation.Infrastructure
                 new CommonStrategy(),
                 new HeavyStrategy()
             }));
+            services.AddSingleton<ISurfaceBinaryParserFactory, SurfaceBinaryParserFactory>(x => new SurfaceBinaryParserFactory(new List<ISurfaceBinaryParser>
+            {
+                new BaseSurfaceBinaryParser(),
+                new PillarSurfaceBinaryParser(new PillarDataService()),
+                new SteelConcreteSurfaceBinaryParser()
+            }));
 
             services.AddScoped<IProfileYZService, ProfileYZService>();
             services.AddScoped<IVehiclePositioner, VehiclePositioner>();
             services.AddScoped<IPassTypeResolver, PassTypeResolver>();
+
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();
             services.AddScoped<IStrainResultService, StrainResultService>();

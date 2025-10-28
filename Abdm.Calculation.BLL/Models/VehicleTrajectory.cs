@@ -24,6 +24,9 @@ namespace Abdm.Calculation.BLL.Models
         /// </summary>
         public required Dictionary<double, ProfileYZ> Right { get; set; }
 
+        /// <summary>
+        /// Координата X условного центра траектории
+        /// </summary>
         public double X => Center.X;
     }
 }

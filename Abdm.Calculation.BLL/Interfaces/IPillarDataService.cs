@@ -1,5 +1,4 @@
 ﻿using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.DAL.Entities;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {

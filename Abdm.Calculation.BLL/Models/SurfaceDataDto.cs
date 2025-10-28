@@ -1,7 +1,8 @@
-﻿using Abdm.Calculation.DAL.Enums;
+﻿using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.Maths.Models;
 
-namespace Abdm.Calculation.DAL.Entities
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Информация о поверхности влияния
@@ -46,5 +47,10 @@ namespace Abdm.Calculation.DAL.Entities
         /// лямбда - используется для расчета коеффициентов напряжения
         /// </summary>
         public double Lambda { get; set; }
+
+        /// <summary>
+        /// Дополнительная опциональная информация для конкретного типа деформации
+        /// </summary>
+        public IStrainTypeSpecificData? StrainTypeSpecificData { get; set; }
     }
 }

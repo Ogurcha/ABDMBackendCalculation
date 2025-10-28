@@ -15,7 +15,7 @@ namespace Abdm.Calculation.BLL.Services
     /// И в таком случае нам надо расположить ТС только с одной стороны от максимума 
     /// Чтобы хоть как то оптимизировать процесс, я кэширую удачную дельту, чтобы в следующем цикле считать уже от удачной позиции
     /// </summary>
-    public class VehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService, IEqualityComparer<double> equalityComparer) : IVehiclePositioner
+    public class VehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
         private double CachedDelta = Double.NaN;
 
@@ -26,10 +26,6 @@ namespace Abdm.Calculation.BLL.Services
         /// </summary>
         public double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, PassTypeSmallModel data)
         {
-            if (data.Load.IsSymmetric == null)
-            {
-                data.Load.IsSymmetric = IsLoadSymmetric(data.Load);
-            }
             if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
                 return Math.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
@@ -94,25 +90,6 @@ namespace Abdm.Calculation.BLL.Services
             }
         }
 
-        private bool IsLoadSymmetric(LoadModel load)
-        {
-            int mid = load.Axles.Length / 2;
-            if (Formulas.IsOdd(load.Axles.Length) && !equalityComparer.Equals(load.Axles[mid].AbsolutePosition, load.Length / 2))
-            {
-                return false;
-            }
-            for (int i = 0; i < mid; i++)
-            {
-                var a1 = load.Axles[i];
-                var a2 = load.Axles[load.Axles.Length - i - 1];
-
-                if (!equalityComparer.Equals(a1.AbsolutePosition, load.Length - a2.AbsolutePosition)
-                    || !a1.WheelsDistance.SequenceEqual(a2.WheelsDistance))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.DAL.Entities;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Helpers

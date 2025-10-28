@@ -36,13 +36,13 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
         public static RoadRule RRCommonNoSafetyLine => new RoadRule()
         {
             IsDynamicMovement = true,
-            MaxTrajectoriesCount = int.MaxValue,
+            MaxVehicleInTrajectory = int.MaxValue,
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalulation = false,
 
             IsPedestrianAllowed = true,
             HasSafetyLine = false,
-            MaxVehicleInTrajectory = int.MaxValue,
+            MaxTrajectoriesCount = int.MaxValue,
         };
 
         [Description("I(1). Вариант – не более 2-х грузовиков в колонне")]

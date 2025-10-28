@@ -2,7 +2,7 @@
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Microsoft.Extensions.Logging;
 
-namespace Abdm.Calculation.BLL.Services.PassTypes
+namespace Abdm.Calculation.BLL.Services
 {
     public class PassTypeService(
         IPassTypeCalculationCoordinator ptcCoordinator,
@@ -11,7 +11,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
     {
         private const string infoMsg = "PassType calculation for (IssoId = {0}, Check point number = {1}) started";
         private const string exceptionMsg = "Failed PassType calculation for (IssoId = {0}, Check point number = {1})";
-        private const string errorMsg = "Error while calculating PassType";
+        private const string errorMsg = "Error while calculating PassType for {0}, n = {1}";
 
         public async Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken)
         {
@@ -28,7 +28,9 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
                 {
                     if (result.Exception != null)
                     {
-                        logger.LogError(result.Exception, errorMsg);
+                        logger.LogError(
+                            result.Exception,
+                            string.Format(errorMsg, requestModel.IssoId, requestModel.CheckPointNumber));
                     }
                     return ptcCoordinator.GetFailedResponse(requestModel);
                 }

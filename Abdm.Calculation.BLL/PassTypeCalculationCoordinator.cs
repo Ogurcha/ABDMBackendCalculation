@@ -16,8 +16,9 @@ namespace Abdm.Calculation.BLL
         IRoadRulesFactory roadRulesFactory,
         IStrainResultService strainResultService,
         IVehicleTrajectoryService vehicleTrajectoryService,
-        IPillarDataService pillarDataService,
-        IPassTypeResolver passTypeResolver
+
+        IPassTypeResolver passTypeResolver,
+        ISymmetryService symmetryService
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -36,8 +37,7 @@ namespace Abdm.Calculation.BLL
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passageIntervalErrorMessage));
             }
-            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, cancellationToken);
-            pillarDataService.UpdateSurfaceDataFromPillarData(surfaceDataContainer.Data, intervals);
+            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, intervals, cancellationToken);
             //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
             if (surfaceDataContainer?.Data?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {
@@ -58,6 +58,7 @@ namespace Abdm.Calculation.BLL
 
             var dataModel = data.Adapt<PassTypeSmallModel>();
             DataModelFixer.Fix(dataModel, surfaceDataContainer.Data, data);
+            dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Data.Points, 
                 surfaceDataContainer.Data.Triangles,

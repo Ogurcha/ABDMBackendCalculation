@@ -1,9 +1,8 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.Maths.Models;
 
-namespace Abdm.Calculation.BLL.Services
+namespace Abdm.Calculation.BLL.Services.SurfaceData
 {
     public class PillarDataService : IPillarDataService
     {
