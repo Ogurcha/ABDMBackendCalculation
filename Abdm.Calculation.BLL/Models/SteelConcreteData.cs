@@ -1,14 +1,15 @@
 ﻿using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.SteelConcrete.Models;
 
-namespace Abdm.Calculation.BLL.Models.SteelConcrete
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Данные для проверок деформаций железобетонных чекпоинтов
     /// </summary>
     public class SteelConcreteData : IStrainTypeSpecificData
     {
-        public required SteelConcreteDataRectangle[] Rectangles { get; set; }
+        public required CrossSection CrossSection { get; set; }
 
-        public required SteelConcreteDataCorner[] Corners { get; set; }
+        public required IssoSteelConcreteParameters SteelConcreteParameters { get; set; }
     }
 }

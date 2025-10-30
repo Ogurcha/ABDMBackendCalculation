@@ -99,7 +99,7 @@ namespace Abdm.Calculation.BLL
             AllowedEnum allowed = resultPassType switch
             {
                 PassTypeEnum.NoLimit => AllowedEnum.Allowed,
-                PassTypeEnum.WithoutPedestian 
+                PassTypeEnum.WithoutPedestrian 
                 or PassTypeEnum.MaxSpeed10 
                 or PassTypeEnum.SingleAutoOnly 
                 or PassTypeEnum.SingleOnlyAndPlace => AllowedEnum.Restricted,

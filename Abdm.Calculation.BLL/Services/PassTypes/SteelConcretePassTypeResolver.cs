@@ -2,12 +2,13 @@
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.BLL.Models.SteelConcrete;
 using Abdm.Calculation.DAL.Enums;
+using Abdm.Calculation.SteelConcrete;
+using Abdm.Calculation.SteelConcrete.SteelConcrete;
 
-namespace Abdm.Calculation.BLL.Services.SteelConcrete
+namespace Abdm.Calculation.BLL.Services.PassTypes
 {
-    public class SteelConcretePassTypeResolver : IPassTypeResolver
+    public class SteelConcretePassTypeResolver(ISteelConcretePassChecker steelConcretePassChecker) : IPassTypeResolver
     {
         public StrainCalculationTypeEnum[] StrainCalculationTypes => [StrainCalculationTypeEnum.st40];
 
@@ -20,8 +21,22 @@ namespace Abdm.Calculation.BLL.Services.SteelConcrete
                 return PassTypeEnum.Unknown;
             }
 
+            if (!steelConcretePassChecker.CheckPass(fullStrain,
+                surface.PedestrianLoad,
+                steelConcreteData.CrossSection,
+                out var withoutPedestrianOnly))
+            {
+                return PassTypeEnum.Denied;
+            }
+
+            if (withoutPedestrianOnly)
+            {
+                return PassTypeEnum.WithoutPedestrian;
+            }
 
             return PassTypeEnum.NoLimit;
         }
+
+
     }
 }

@@ -15,6 +15,7 @@ using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
+using Abdm.Calculation.SteelConcrete;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,6 +42,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IMeshManager, MeshManager>();
             services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISymmetryService, SymmetryService>();
+            services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {

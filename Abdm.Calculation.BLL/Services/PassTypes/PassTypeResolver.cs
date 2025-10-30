@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
             new()
             {
                 (new NoLimitCondition(), PassTypeEnum.NoLimit),
-                (new WithoutPedestrianCondition(), PassTypeEnum.WithoutPedestian),
+                (new WithoutPedestrianCondition(), PassTypeEnum.WithoutPedestrian),
                 (new Speed10Condition(), PassTypeEnum.MaxSpeed10),
                 (new SingleAutoOnlyCondition(), PassTypeEnum.SingleAutoOnly)
             };
