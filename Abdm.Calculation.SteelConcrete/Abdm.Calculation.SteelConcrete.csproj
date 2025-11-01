@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Abdm.Calculation.Math\Abdm.Calculation.Maths.csproj" />
+  </ItemGroup>
+
 </Project>

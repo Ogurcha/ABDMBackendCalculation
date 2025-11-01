@@ -3,6 +3,11 @@
     public enum SteelConcretePassCheckResultEnum
     {
         /// <summary>
+        /// Нельзя проезжать
+        /// </summary>
+        CanNotPass,
+
+        /// <summary>
         /// Можно проезжать
         /// </summary>
         CanPass,

@@ -15,6 +15,12 @@ namespace Abdm.Calculation.SteelConcrete.Helpers
                 M2g = M2g,
                 Mp = Mp,
                 Rb = Rb,
+                Sd = Sd,
+                L = L,
+                PlateType = PlateType,
+                TetaKrParam = TetaKrParam,
+                SigmaAlfaShrParam = SigmaAlfaShrParam,
+                SigmaBetaShrParam = SigmaBetaShrParam,
             };
         }
 
@@ -31,6 +37,18 @@ namespace Abdm.Calculation.SteelConcrete.Helpers
         public const double Ea = 206000;
 
         public const double Rb = 20;
+
+        public const double Sd = 0;
+
+        public const double L = 0;
+
+        public const double TetaKrParam = 0;
+
+        public const double SigmaAlfaShrParam = 0;
+
+        public const double SigmaBetaShrParam = 0;
+
+        public const PlateTypeEnum PlateType = PlateTypeEnum.Combined;
 
     }
 }

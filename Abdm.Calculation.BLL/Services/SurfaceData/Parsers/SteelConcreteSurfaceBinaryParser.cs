@@ -2,8 +2,10 @@
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.SteelConcrete.Enums;
+using Abdm.Calculation.SteelConcrete.Helpers;
 using Abdm.Calculation.SteelConcrete.Models;
 using Abdm.Calculation.SteelConcrete.SteelConcrete;
+using g4;
 
 namespace Abdm.Calculation.BLL.Services.SurfaceData.Parsers
 {
@@ -19,10 +21,14 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData.Parsers
             base.ParseData(surface, reader, intervals);
             SkipSomeBytes(reader);
 
-            surface.StrainTypeSpecificData = new SteelConcreteCrossSection
-            {
-                Rectangles = ReadRectangles(reader).ToArray(),
-                Corners = ReadCorners(reader).ToArray()
+            surface.StrainTypeSpecificData = new SteelConcreteData
+            { 
+                CrossSection = new CrossSection
+                {
+                    Rectangles = ReadRectangles(reader).ToArray(),
+                    Corners = ReadCorners(reader).ToArray()
+                },
+                SteelConcreteParameters = CheckPointTestData.GetParameters(),
             };
 
             return surface;
