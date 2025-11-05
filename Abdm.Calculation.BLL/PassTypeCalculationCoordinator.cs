@@ -27,6 +27,7 @@ namespace Abdm.Calculation.BLL
         private const string surfaceDataNotFoundErrorMessage = "Surface data for given isso and checkpoint was not found";
         private const string roadRulesNotFoundErrorMessage = "Road rules for given load were not found";
         private const string passTypeResolverNotFoundErrorMessage = "Pass type resolver for given load were not found";
+        private const string strainIsNaNErrorMessage = "Calculation error. Strain equals Double.NaN";
 
         public async Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(
             [DisallowNull] PassTypeCalculationParameters data, 
@@ -82,6 +83,10 @@ namespace Abdm.Calculation.BLL
             }
 
             var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels, roadRules, mesh);
+            if (strainResults.Any(x => x.Strain == Double.NaN))
+            {
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
+            }
             var ptr = passTypeResolverFactory.GetPassTypeResolver(surfaceDataContainer.Data.StrainCalculationType);
             if (ptr == null)
             {
