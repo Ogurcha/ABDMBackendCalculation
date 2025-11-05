@@ -68,7 +68,7 @@ namespace Abdm.Calculation.BLL.Services
                         }
                         else
                         {
-                            cachedDelta = Math.Min(data.Load.Length, Math.Max(-data.Load.Length, position - startingPosition));
+                            cachedDelta = Math.Min(data.Load.Length, Math.Max(-data.Load.Length, position + stepSize - startingPosition));
                             return oldStrain.Value;
                         }
                     }
