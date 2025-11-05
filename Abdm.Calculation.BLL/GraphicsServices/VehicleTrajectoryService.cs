@@ -158,7 +158,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
         {
             Func<Axle, double> axleFunc = invertAxles
-            ? (axle) => { return Y + load.Length - axle.AbsolutePosition; }
+            ? (axle) => { return Y - axle.AbsolutePosition; }
             : (axle) => { return Y + axle.AbsolutePosition; };
 
             return load.Axles.Sum(axle => 
