@@ -4,6 +4,7 @@ using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
@@ -33,6 +34,7 @@ namespace Abdm.Calculation.Infrastructure
         {
             MapsterConfig.MapsterSetup();
             BLLMapsterConfig.BLLMapsterSetup();
+            services.Configure<BLLSettings>(configuration.GetSection("BLLSettings"));
             services.AddScoped<IEqualityComparer<double>, DoubleEqualityComparer>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
@@ -47,7 +49,8 @@ namespace Abdm.Calculation.Infrastructure
             {
                 new AbStrategy(),
                 new CommonStrategy(),
-                new HeavyStrategy()
+                new HeavyStrategy(),
+                new VehicleColumnStrategy(),
             }));
             services.AddSingleton<ISurfaceBinaryParserFactory, SurfaceBinaryParserFactory>(x => new SurfaceBinaryParserFactory(new List<ISurfaceBinaryParser>
             {
@@ -63,7 +66,15 @@ namespace Abdm.Calculation.Infrastructure
 
 
             services.AddScoped<IProfileYZService, ProfileYZService>();
-            services.AddScoped<IVehiclePositioner, VehiclePositioner>();
+            if (configuration.GetSection("BLLSettings").GetSection("UseLegacyLogic").Value == true.ToString())
+            {
+                services.AddScoped<IVehiclePositioner, AxleVehiclePositioner>();
+            }
+            else
+            {
+                services.AddScoped<IVehiclePositioner, IterationVehiclePositioner>();
+            }
+            
 
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();

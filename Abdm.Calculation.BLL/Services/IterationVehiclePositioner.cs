@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL.Services
     /// И в таком случае нам надо расположить ТС только с одной стороны от максимума 
     /// Чтобы хоть как то оптимизировать процесс, я кэширую удачную дельту, чтобы в следующем цикле считать уже от удачной позиции
     /// </summary>
-    public class VehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
+    public class IterationVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
         private double CachedDelta = Double.NaN;
 
