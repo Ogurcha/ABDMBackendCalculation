@@ -7,7 +7,8 @@ using Abdm.Calculation.Maths.Helpers;
 namespace Abdm.Calculation.BLL.Services
 {
     public class StrainCalculator(IProfileYZService profileYZService,
-        IVehiclePositioner vehiclePositioner) : IStrainCalculator
+        IVehiclePositioner vehiclePositioner,
+        IStrainCoefficientFactory strainCoefficientFactory) : IStrainCalculator
     {
         public Dictionary<RoadRule, (double X, double Strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
@@ -86,6 +87,11 @@ namespace Abdm.Calculation.BLL.Services
                 trafficJamStrain += areaAverage
                     * data.Load.Axles.Sum(a => a.Weight)
                     * NormConstants.TrafficJamApproximationParam;
+
+                if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
+                {
+                    trafficJamStrain *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+                }
             }
 
             foreach (var positivePiece in positivePieces)
@@ -98,9 +104,13 @@ namespace Abdm.Calculation.BLL.Services
                 var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,
                     data);
-                yield return
-                    strain * StrainCoefficientFormulas.GetBasicStrainCoefficient(data.Surface.Lambda)
-                    + trafficJamStrain * StrainCoefficientFormulas.GetTrafficJamStrainCoefficient(data.Surface.Lambda);
+
+                if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
+                {
+                    strain *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+                }
+
+                yield return strain + trafficJamStrain;
             }
         }
     }

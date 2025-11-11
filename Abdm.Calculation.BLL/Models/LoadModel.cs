@@ -42,5 +42,10 @@ namespace Abdm.Calculation.BLL.Models
         /// Для прицепов, вагонов поезда и т.п.
         /// </summary>
         public LoadModel? SecondaryLoadModel { get; set; }
+
+        /// <summary>
+        /// Тип нагрузки
+        /// </summary>
+        public LoadGroupTypeEnum Type { get; set; }
     }
 }

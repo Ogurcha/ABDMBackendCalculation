@@ -4,7 +4,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
 {
     public class Speed10Condition : IPassTypeCondition
     {
-        public bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surface)
+        public bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surface, double? dynamicCoefficient)
         {
             return columnList.Select(x =>
             {

@@ -5,7 +5,7 @@ using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainCoefficients
 {
-    public class DynamicMovementCoefficientCalculator : ICoefficientCalculator<SurfaceMaterial>
+    public class DynamicMovementCoefficientCalculator : AbstractCoefficientCalculator<SurfaceMaterial>, ICoefficientCalculator
     {
         public StrainCoefficientTypeEnum StrainCoefficientType => StrainCoefficientTypeEnum.DynamicMovement;
 
@@ -15,10 +15,13 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
             StrainCalculationGroupTypeEnum.SteelConcrete,
         ];
 
-        public double Get(double lambda, LoadGroupTypeEnum loadGroupType, SurfaceMaterial material) => Math.Min(NormConstants.MaxStrainCoefficient, Math.Max(NormConstants.MinStrainCoefficient, GetCoefficient(lambda, loadGroupType, material)));
-
-        private double GetCoefficient(double lambda, LoadGroupTypeEnum loadGroupType, SurfaceMaterial material)
+        public override double GetCoefficient(double lambda, LoadGroupTypeEnum loadGroupType, SurfaceMaterial? materialNullable)
         {
+            if (materialNullable is not SurfaceMaterial material)
+            {
+                return NormConstants.MinStrainCoefficient;
+            }
+
             switch (loadGroupType)
             {
                 case LoadGroupTypeEnum.Common when IsMetal():

@@ -95,7 +95,7 @@ namespace Abdm.Calculation.BLL
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passTypeResolverNotFoundErrorMessage));
             }
-            var resultPassType = ptr.Resolve(strainResults, dataModel.Surface);
+            var resultPassType = ptr.Resolve(strainResults, dataModel);
 
             var response = ComposeMessage(resultPassType, data);
 

@@ -5,7 +5,7 @@ using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
 {
-    public class PassTypeResolver : IPassTypeResolver
+    public class PassTypeResolver(IStrainCoefficientFactory strainCoefficientFactory) : IPassTypeResolver
     {
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
             new()
@@ -22,11 +22,17 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
             StrainCalculationGroupTypeEnum.Pillar,
         ];
 
-        public PassTypeEnum Resolve(List<StrainResult> strainResults, SurfaceModel surfaceModel)
+        public PassTypeEnum Resolve(List<StrainResult> strainResults, PassTypeSmallModel data)
         {
+            double? dynamicCoefficient = null;
+            if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)
+            {
+                dynamicCoefficient = calculator.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+            }
+
             foreach (var c in PassTypeConditions)
             {
-                if (c.condition.CanPassCondition(strainResults, surfaceModel))
+                if (c.condition.CanPassCondition(strainResults, data.Surface, dynamicCoefficient))
                 {
                     return c.passType;
                 }

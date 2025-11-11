@@ -2,15 +2,12 @@
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface ICoefficientCalculator<T> : ICoefficientCalculator where T : IMaterial 
-    {
-        public double Get(double lambda, LoadGroupTypeEnum loadGroupType, T material);
-    }
-
     public interface ICoefficientCalculator
     {
         StrainCalculationGroupTypeEnum[] StrainCalculationTypes { get; }
 
         StrainCoefficientTypeEnum StrainCoefficientType { get; }
+
+        public double Get(double lambda, LoadGroupTypeEnum loadGroupType, IMaterial? material);
     }
 }
