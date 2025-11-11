@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.Graphics;
@@ -17,7 +18,8 @@ namespace Abdm.Calculation.BLL
         IStrainResultService strainResultService,
         IVehicleTrajectoryService vehicleTrajectoryService,
         IPassTypeResolverFactory passTypeResolverFactory,
-        ISymmetryService symmetryService
+        ISymmetryService symmetryService,
+        IMaterialService materialService
         ) : IPassTypeCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -60,7 +62,9 @@ namespace Abdm.Calculation.BLL
             var dataModel = data.Adapt<PassTypeSmallModel>();
             DataModelFixer.Fix(dataModel, surfaceDataContainer.Data, data);
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
+            dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Data.StrainCalculationType.Map();
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Data.StrainTypeSpecificData;
+            dataModel.Surface.Material = await materialService.GetMaterial(data, surfaceDataContainer.Data.CheckPointType, cancellationToken);
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Data.Points, 
                 surfaceDataContainer.Data.Triangles,
@@ -86,7 +90,7 @@ namespace Abdm.Calculation.BLL
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
             }
-            var ptr = passTypeResolverFactory.GetPassTypeResolver(surfaceDataContainer.Data.StrainCalculationType);
+            var ptr = passTypeResolverFactory.GetPassTypeResolver(dataModel.Surface.StrainCalculationGroupType);
             if (ptr == null)
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passTypeResolverNotFoundErrorMessage));

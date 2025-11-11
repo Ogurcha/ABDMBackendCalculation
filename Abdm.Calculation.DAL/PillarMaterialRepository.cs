@@ -9,14 +9,14 @@ using Npgsql;
 namespace Abdm.Calculation.DAL
 {
     /// <summary>
-    /// Репозиторий для работы с поверхностью влияния
+    /// репозиторий типа материалов поверхности
     /// </summary>
-    public class SurfaceRepository(IOptions<ConnectionStrings> connectionStrings) : ISurfaceRepository
+    public class PillarMaterialRepository(IOptions<ConnectionStrings> connectionStrings) : IPillarMaterialRepository
     {
         /// <summary>
-        /// Получает массив байтов из бд, содержащих информацию о поверхности влияния
+        /// Возвращает типы материалов поверхности
         /// </summary>
-        public async Task<SurfaceRawDataDto?> GetSurfaceData(long issoId, int checkpointNumber, CancellationToken cancellationToken)
+        public async Task<PillarMaterialDto?> GetPillarMaterial(long issoId, int checkpointNumber, CancellationToken cancellationToken)
         {
             using (var connection = new NpgsqlConnection(connectionStrings.Value.MainConnection))
             {
@@ -25,8 +25,8 @@ namespace Abdm.Calculation.DAL
                 parameters.Add("@cpNumber", checkpointNumber, DbType.Int32);
 
                 const string sqlQuery = @"
-                SELECT c_typnk, c_cptype, lambda, data 
-                FROM i_checkpoint 
+                SELECT c_matop, c_typop 
+                FROM i_opora 
                 WHERE c_isso = @issoId 
                 AND n = @cpNumber";
 
@@ -37,7 +37,7 @@ namespace Abdm.Calculation.DAL
                     cancellationToken: cancellationToken
                     );
 
-                var query = await connection.QueryAsync<SurfaceRawDataDto> (command);
+                var query = await connection.QueryAsync<PillarMaterialDto>(command);
 
                 return query.FirstOrDefault();
             }

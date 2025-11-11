@@ -8,18 +8,18 @@ namespace Abdm.Calculation.DAL.Enums
     public enum CheckPointTypeEnum
     {
         [Description("Пролетное строение")]
-        TypNk_PS = 10,
+        Surface = 10,
 
         [Description("Опорные части")]
-        TypNk_OpCH = 20,
+        PillarParts = 20,
 
         [Description("Опора")]
-        TypNk_Opora = 30,
+        Pillar = 30,
 
         [Description("Фундамент")]
-        TypNk_Fund = 40,
+        Foundation = 40,
 
         [Description("Основание")]
-        TypNk_Osnov = 50
+        Basement = 50
     }
 }

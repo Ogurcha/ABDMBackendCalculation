@@ -1,20 +1,19 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.SteelConcrete.Enums;
 using Abdm.Calculation.SteelConcrete.Helpers;
 using Abdm.Calculation.SteelConcrete.Models;
 using Abdm.Calculation.SteelConcrete.SteelConcrete;
-using g4;
 
 namespace Abdm.Calculation.BLL.Services.SurfaceData.Parsers
 {
     public class SteelConcreteSurfaceBinaryParser : BaseSurfaceBinaryParser, ISurfaceBinaryParser
     {
-        public override IList<StrainCalculationTypeEnum> StrainCalculationTypes =>
-           new List<StrainCalculationTypeEnum> {
-                 StrainCalculationTypeEnum.st40
-           };
+        public override IList<StrainCalculationGroupTypeEnum> StrainCalculationTypes =>
+        [
+            StrainCalculationGroupTypeEnum.SteelConcrete
+        ];
 
         public override SurfaceDataDto ParseData(SurfaceDataDto surface, BinaryReader reader, PassageInterval[] intervals)
         {

@@ -44,5 +44,15 @@
         /// Минимальное расстояние между траекториями 
         /// </summary>
         public const double MinimalDistanceBetweenTrajectories = 0.1d;
+
+        /// <summary>
+        /// Минимальное значение кооеффициента нагрузки
+        /// </summary>
+        public const double MinStrainCoefficient = 1d;
+
+        /// <summary>
+        /// Максимальное значение кооеффициента нагрузки
+        /// </summary>
+        public const double MaxStrainCoefficient = 1.5d;
     }
 }

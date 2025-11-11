@@ -9,10 +9,12 @@ using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
+using Abdm.Calculation.BLL.Services.StrainCoefficients;
 using Abdm.Calculation.BLL.Services.SurfaceData;
 using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
 using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
+using Abdm.Calculation.DAL.Interfaces;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
 using Abdm.Calculation.SteelConcrete;
@@ -38,6 +40,9 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IEqualityComparer<double>, DoubleEqualityComparer>();
             services.AddScoped<IPassageIntervalRepository, PassageIntervalRepository>();
             services.AddScoped<ISurfaceRepository, SurfaceRepository>();
+            services.AddScoped<ISurfaceMaterialRepository, SurfaceMaterialRepository>();
+            services.AddScoped<IPillarMaterialRepository, PillarMaterialRepository>();
+            services.AddScoped<IMaterialService, MaterialService>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddScoped<IMeshManager, MeshManager>();
@@ -63,7 +68,13 @@ namespace Abdm.Calculation.Infrastructure
                 new PassTypeResolver(),
                 new SteelConcretePassTypeResolver(new SteelConcretePassChecker())
             }));
-
+            services.AddSingleton<IStrainCoefficientFactory, StrainCoefficientFactory>(x => new StrainCoefficientFactory(new List<ICoefficientCalculator>
+            {
+                new BasicStrainCoefficientCalculator(),
+                new DynamicMovementCoefficientCalculator(),
+                new DynamicMovementPillarCoefficientCalculator(),
+                new TrafficJamStrainCoefficientCalculator(),
+            }));
 
             services.AddScoped<IProfileYZService, ProfileYZService>();
             if (configuration.GetSection("BLLSettings").GetSection("UseLegacyLogic").Value == true.ToString())

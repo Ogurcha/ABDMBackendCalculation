@@ -1,8 +1,10 @@
-﻿using Abdm.Calculation.BLL.Helpers;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL.DataTransferObjects;
 using Abdm.Calculation.DAL.Entities;
+using Abdm.Calculation.DAL.Enums;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Mappers
@@ -52,13 +54,90 @@ namespace Abdm.Calculation.BLL.Mappers
              {
                  if (!Enum.IsDefined(dst.StrainCalculationType))
                  {
-                     dst.StrainCalculationType = DAL.Enums.StrainCalculationTypeEnum.Other;
+                     dst.StrainCalculationType = StrainCalculationTypeEnum.Other;
                  }
                  if (!Enum.IsDefined(dst.CheckPointType))
                  {
-                     dst.CheckPointType = DAL.Enums.CheckPointTypeEnum.TypNk_PS;
+                     dst.CheckPointType = CheckPointTypeEnum.Surface;
                  }
              });
+
+            TypeAdapterConfig<PillarMaterialDto, PillarMaterial>
+            .NewConfig()
+            .Map(dst => dst.MaterialType, src => src.c_matop)
+            .Map(dst => dst.PillarType, src => src.c_typop)
+            .AfterMapping(dst =>
+            {
+                if (!Enum.IsDefined(dst.MaterialType))
+                {
+                    dst.MaterialType = MaterialTypeEnum.Other;
+                }
+                if (!Enum.IsDefined(dst.PillarType))
+                {
+                    dst.PillarType = PillarTypeEnum.Other;
+                }
+            });
+
+            TypeAdapterConfig<SurfaceMaterialDto, SurfaceMaterial>
+            .NewConfig()
+            .Map(dst => dst.MaterialType, src => src.c_mpsbm)
+            .Map(dst => dst.StaticSystemType, src => src.c_typps)
+            .Map(dst => dst.SuperStructureType, src => src.c_sistps)
+            .AfterMapping(dst =>
+            {
+                if (!Enum.IsDefined(dst.MaterialType))
+                {
+                    dst.MaterialType = MaterialTypeEnum.Other;
+                }
+                if (!Enum.IsDefined(dst.StaticSystemType))
+                {
+                    dst.StaticSystemType = StaticSystemTypeEnum.Other;
+                }
+                if (!Enum.IsDefined(dst.StaticSystemType))
+                {
+                    dst.SuperStructureType = SuperStructureTypeEnum.Other;
+                }
+            });
+        }
+
+        public static StrainCalculationGroupTypeEnum Map(this StrainCalculationTypeEnum source)
+        {
+            return source switch
+            {
+                StrainCalculationTypeEnum.st10 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st12 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st14 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st20 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st22 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st24 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st30 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st50 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st60 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st80 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st90 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st510=> StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st520 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st530 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st553 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st556 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st558 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st540 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st560 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st610 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st630 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st632 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st710 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st720 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st730 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st740 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st760 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st770 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st790 => StrainCalculationGroupTypeEnum.Default,
+
+                StrainCalculationTypeEnum.st40 => StrainCalculationGroupTypeEnum.SteelConcrete,
+                StrainCalculationTypeEnum.st70 => StrainCalculationGroupTypeEnum.Pillar,
+                _ => StrainCalculationGroupTypeEnum.Unknown
+            };
         }
     }
 }

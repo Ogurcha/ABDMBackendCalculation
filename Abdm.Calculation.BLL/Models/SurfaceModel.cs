@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Abdm.Calculation.BLL.Entities;
+using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Interfaces;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -39,7 +41,7 @@ namespace Abdm.Calculation.BLL.Models
         public double OtherLoad { get; set; }
 
         /// <summary>
-        /// лямбда - используется для расчета коеффициентов напряжения
+        /// лямбда, некая функция от длины моста (или длины пролёта моста) - используется для расчета коеффициентов напряжения
         /// </summary>
         public double Lambda { get; set; }
 
@@ -49,8 +51,18 @@ namespace Abdm.Calculation.BLL.Models
         public bool IsMirroredByZ { get; internal set; } = false;
 
         /// <summary>
+        /// Тип нагрузки
+        /// </summary>
+        public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }
+
+        /// <summary>
         /// Дополнительная опциональная информация для конкретного типа деформации
         /// </summary>
         public IStrainTypeSpecificData? StrainTypeSpecificData { get; internal set; }
+
+        /// <summary>
+        /// Материал поверхности
+        /// </summary>
+        public IMaterial? Material { get; set; }
     }
 }

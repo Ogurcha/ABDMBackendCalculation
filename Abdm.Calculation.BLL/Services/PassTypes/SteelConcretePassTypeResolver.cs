@@ -2,7 +2,6 @@
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.SteelConcrete;
 using Mapster;
 
@@ -10,7 +9,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
 {
     public class SteelConcretePassTypeResolver(ISteelConcretePassChecker steelConcretePassChecker) : IPassTypeResolver
     {
-        public StrainCalculationTypeEnum[] StrainCalculationTypes => [StrainCalculationTypeEnum.st40];
+        public StrainCalculationGroupTypeEnum[] StrainCalculationTypes => [StrainCalculationGroupTypeEnum.SteelConcrete];
 
         public PassTypeEnum Resolve(List<StrainResult> strainResults, SurfaceModel surface)
         {

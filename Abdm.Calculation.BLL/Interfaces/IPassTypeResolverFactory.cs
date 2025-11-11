@@ -1,9 +1,9 @@
-﻿using Abdm.Calculation.DAL.Enums;
+﻿using Abdm.Calculation.BLL.Enums;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IPassTypeResolverFactory
     {
-        IPassTypeResolver? GetPassTypeResolver(StrainCalculationTypeEnum strainCalculationType);
+        IPassTypeResolver? GetPassTypeResolver(StrainCalculationGroupTypeEnum strainCalculationType);
     }
 }

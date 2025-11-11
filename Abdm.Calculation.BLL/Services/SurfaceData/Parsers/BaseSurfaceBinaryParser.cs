@@ -1,45 +1,16 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.SurfaceData.Parsers
 {
     public class BaseSurfaceBinaryParser : ISurfaceBinaryParser
     {
-        public virtual IList<StrainCalculationTypeEnum> StrainCalculationTypes => 
-            new List<StrainCalculationTypeEnum>()
-            {
-                StrainCalculationTypeEnum.st10,
-                StrainCalculationTypeEnum.st12,
-                StrainCalculationTypeEnum.st14,
-                StrainCalculationTypeEnum.st20,
-                StrainCalculationTypeEnum.st22,
-                StrainCalculationTypeEnum.st24,
-                StrainCalculationTypeEnum.st30,
-                StrainCalculationTypeEnum.st50,
-                StrainCalculationTypeEnum.st60,
-                StrainCalculationTypeEnum.st80,
-                StrainCalculationTypeEnum.st90,
-                StrainCalculationTypeEnum.st510,
-                StrainCalculationTypeEnum.st520,
-                StrainCalculationTypeEnum.st530,
-                StrainCalculationTypeEnum.st553,
-                StrainCalculationTypeEnum.st556,
-                StrainCalculationTypeEnum.st558,
-                StrainCalculationTypeEnum.st540,
-                StrainCalculationTypeEnum.st560,
-                StrainCalculationTypeEnum.st610,
-                StrainCalculationTypeEnum.st630,
-                StrainCalculationTypeEnum.st632,
-                StrainCalculationTypeEnum.st710,
-                StrainCalculationTypeEnum.st720,
-                StrainCalculationTypeEnum.st730,
-                StrainCalculationTypeEnum.st740,
-                StrainCalculationTypeEnum.st760,
-                StrainCalculationTypeEnum.st770,
-                StrainCalculationTypeEnum.st790,
-            };
+        public virtual IList<StrainCalculationGroupTypeEnum> StrainCalculationTypes => 
+        [
+            StrainCalculationGroupTypeEnum.Default
+        ];
 
         public virtual SurfaceDataDto ParseData(SurfaceDataDto surface, BinaryReader reader, PassageInterval[] intervals)
         {

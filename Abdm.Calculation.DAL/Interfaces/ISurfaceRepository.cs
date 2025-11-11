@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.DAL.DataTransferObjects;
 
-namespace Abdm.Calculation.DAL
+namespace Abdm.Calculation.DAL.Interfaces
 {
     public interface ISurfaceRepository
     {

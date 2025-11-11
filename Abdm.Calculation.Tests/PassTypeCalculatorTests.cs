@@ -13,13 +13,13 @@ using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.StrainCalculation;
-using Abdm.Calculation.DAL;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Tests;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Moq;
 using NUnit.Framework;
 using Abdm.Calculation.DAL.DataTransferObjects;
+using Abdm.Calculation.DAL.Interfaces;
 
 [TestFixture]
 public class PassTypeCalculatorTests

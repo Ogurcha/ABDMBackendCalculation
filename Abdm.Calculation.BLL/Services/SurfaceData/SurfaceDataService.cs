@@ -1,7 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.DAL;
+using Abdm.Calculation.DAL.Interfaces;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Services.SurfaceData
