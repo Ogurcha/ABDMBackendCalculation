@@ -39,5 +39,20 @@
         /// Равномерно расположенные ТС по всей длине ИССО считаются, как равномерная 5% нагрузка по всей длине ИССО
         /// </summary>
         public const double TrafficJamApproximationParam = 0.05d;
+
+        /// <summary>
+        /// Минимальное расстояние между траекториями 
+        /// </summary>
+        public const double MinimalDistanceBetweenTrajectories = 0.1d;
+
+        /// <summary>
+        /// Минимальное значение кооеффициента нагрузки
+        /// </summary>
+        public const double MinStrainCoefficient = 1d;
+
+        /// <summary>
+        /// Максимальное значение кооеффициента нагрузки
+        /// </summary>
+        public const double MaxStrainCoefficient = 1.5d;
     }
 }

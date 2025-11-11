@@ -55,5 +55,20 @@ namespace Abdm.Calculation.Maths.Helpers
 
             return (values[leftIndex], values[rightIndex]);
         }
+
+        public static bool IsOdd(int number)
+        {
+            return number % 2 != 0;
+        }
+
+        public static double GetOrdinat(Vector2D v1, Vector2D v2, double X)
+            => (X - v1.X) * (v2.Y - v1.Y) / (v2.X - v1.X) + v1.Y;
+
+
+        public static double GetYValueByX(this SortedList<double, Vector2D> sorted, double X)
+        {
+            (Vector2D v1, Vector2D v2) = FindBetweenValues(sorted, X);
+            return GetOrdinat(v1, v2, X);
+        }
     }
 }

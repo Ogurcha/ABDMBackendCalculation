@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.Enums
         [Description("Пропуск возможен без ограничений")]
         NoLimit,
         [Description("Пропуск возможен при отсутствии пешеходов на тротуарах")]
-        WithoutPedestian,
+        WithoutPedestrian,
         [Description("Пропуск возможен с ограничением скорости до 10км/ч")]
         MaxSpeed10,
         [Description("Пропуск возможен в одиночном порядке с ограничением скорости до 10км/ч")]

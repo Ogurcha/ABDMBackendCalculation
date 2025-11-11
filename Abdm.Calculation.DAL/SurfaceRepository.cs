@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Abdm.Calculation.DAL.DataTransferObjects;
+using Abdm.Calculation.DAL.Interfaces;
 using Abdm.Calculation.Infrastructure.Settings;
 using Dapper;
 using Microsoft.Extensions.Options;

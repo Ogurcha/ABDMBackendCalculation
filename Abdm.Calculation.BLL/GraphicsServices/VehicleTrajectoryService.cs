@@ -6,9 +6,12 @@ using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.Maths.Helpers;
 using g4;
 
+
 namespace Abdm.Calculation.BLL.GraphicsServices
 {
-    public class VehicleTrajectoryService(IMeshManager meshManager, IProfileYZService profileYZService) : IVehicleTrajectoryService
+    public class VehicleTrajectoryService(
+        IMeshManager meshManager,
+        IProfileYZService profileYZService) : IVehicleTrajectoryService
     {
         public IntervalModel GetIntervalModel(PassTypeSmallModel data, Mesh mesh, PassageInterval interval, RoadRule[] roadRules)
         {
@@ -111,7 +114,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         }
 
         /// <summary>
-        /// Добирает координаты для проверок с учётом размера тележек
+        /// Добирает координаты для проверок с учётом ширины тележек
         /// </summary>
         /// <param name="distinctXs">Массив точек по оси Х для всей поверхности ИССО</param>
         /// <param name="passageInterval">Интервал проезда по оси Х, по которому должно проехать ТС</param>
@@ -129,8 +132,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             var high = passageInterval.AbsolutePositionRight - safeDistance;
 
             var groupedBySafetyLine = roadRules.GroupBy(r => (
-            actualSafetyLineLeft: r.HasSafetyLine ? passageInterval.SafetyLineLeft : (double)default,
-            actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight : (double)default));
+                    actualSafetyLineLeft: r.HasSafetyLine ? passageInterval.SafetyLineLeft : (double)default,
+                    actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight : (double)default));
             foreach (var roadRule in groupedBySafetyLine)
             {
                 result.Add(GetXPostition(low + roadRule.Key.actualSafetyLineLeft, wheelOffsetsMap.Keys));
@@ -155,12 +158,16 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="Y">Точка, в которой считаем напряжение</param>
         /// <param name="load">параметры нагрузки</param>
         /// <returns></returns>
-        public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load)
+        public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
         {
+            Func<Axle, double> axleFunc = invertAxles
+            ? (axle) => { return Y - axle.AbsolutePosition; }
+            : (axle) => { return Y + axle.AbsolutePosition; };
+
             return load.Axles.Sum(axle => 
                 axle.WheelsDistance.Sum(distance => 
-                    profileYZService.GetStrain(trajectory.Left[distance], Y + axle.AbsolutePosition, axle.WheelWeight) 
-                    + profileYZService.GetStrain(trajectory.Right[distance], Y + axle.AbsolutePosition, axle.WheelWeight)
+                    profileYZService.GetStrain(trajectory.Left[distance], axleFunc(axle), axle.WheelWeight) 
+                    + profileYZService.GetStrain(trajectory.Right[distance], axleFunc(axle), axle.WheelWeight)
                 )
             );
         }

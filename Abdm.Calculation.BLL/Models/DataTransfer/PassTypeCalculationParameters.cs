@@ -37,6 +37,7 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         /// </summary>
         public required LoadSchema LoadSchema { get; set; }
 
+
         /// <summary>
         /// Характеристики "поверхности влияния" иссо
         /// </summary>
@@ -46,5 +47,10 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         /// Характеристики пути
         /// </summary>
         public required Roadway Roadway { get; set; }
+
+        /// <summary>
+        /// для прицепов, вагонов и т.п.
+        /// </summary>
+        public LoadSchema? SecondaryLoadSchema { get; set; }
     }
 }

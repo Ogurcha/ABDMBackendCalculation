@@ -5,6 +5,8 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IPassTypeResolver
     {
+        public StrainCalculationGroupTypeEnum[] StrainCalculationTypes { get; }
+
         PassTypeEnum Resolve(List<StrainResult> strainResults, SurfaceModel surfaceModel);
     }
 }

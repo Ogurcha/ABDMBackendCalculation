@@ -83,7 +83,8 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Direction, src => src.Direction)
             .Map(dst => dst.LoadSchema, src => src.LoadSchema)
             .Map(dst => dst.Surface, src => src.Surface)
-            .Map(dst => dst.Roadway, src => src.Roadway);
+            .Map(dst => dst.Roadway, src => src.Roadway)
+            .Map(dst => dst.SecondaryLoadSchema, src => src.SecondaryLoadSchema);
 
 
             TypeAdapterConfig<PassTypeCalculationResult, PassTypeCalculationResponse>

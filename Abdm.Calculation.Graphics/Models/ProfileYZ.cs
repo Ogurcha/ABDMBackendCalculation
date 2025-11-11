@@ -8,7 +8,7 @@ namespace Abdm.Calculation.Graphics.Models
     public class ProfileYZ
     {
         /// <summary>
-        /// значение по оси X
+        /// значение по оси X - индентификатор профиля
         /// </summary>
         public double X { get; set; }
 

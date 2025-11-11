@@ -10,8 +10,9 @@ namespace Abdm.Calculation.Graphics.Extensions
         /// возвращает ординату по значению на оси абсцисс
         /// </summary>
         public static double GetOrdinat(Vector2d v1, Vector2d v2, double X)
-            => (X - v1.x) * (v2.y - v1.y) / (v2.x - v1.x) + v1.y;
-
+            => v2.x == v1.x
+            ? v1.y
+            : (X - v1.x) * (v2.y - v1.y) / (v2.x - v1.x) + v1.y;
 
         public static double GetZValueByY(this ProfileYZ profile, double pointY)
         {

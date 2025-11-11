@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Helpers;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -7,8 +8,6 @@ namespace Abdm.Calculation.BLL.Models
     /// </summary>
     public class LoadModel
     {
-        public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
-
         /// <summary>
         /// Ширина ТС
         /// </summary>
@@ -20,7 +19,7 @@ namespace Abdm.Calculation.BLL.Models
         public required double Length { get; set; }
 
         /// <summary>
-        /// Расстояние между ТС
+        /// Расстояние до следующего ТС в транспорнтной колонне
         /// </summary>
         public required double Distance { get; set; }
 
@@ -29,5 +28,19 @@ namespace Abdm.Calculation.BLL.Models
         /// </summary>
         public required Axle[] Axles { get; set; }
 
+        /// <summary>
+        /// Индентичен ли перед нагрузки с его задом
+        /// </summary>
+        public bool? IsSymmetric { get; set; }
+
+        /// <summary>
+        /// минимальное расстояние между транспортными колоннами
+        /// </summary>
+        public double Interval { get; internal set; } = NormConstants.MinimalDistanceBetweenTrajectories;
+
+        /// <summary>
+        /// Для прицепов, вагонов поезда и т.п.
+        /// </summary>
+        public LoadModel? SecondaryLoadModel { get; set; }
     }
 }
