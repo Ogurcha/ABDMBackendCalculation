@@ -52,7 +52,6 @@ namespace Abdm.Calculation.BLL
                 return surfaceDataException;
             }
 
-            //TODO: ABDMP-371 - реализация кастомных нагрузок LoadSchema.Id, подгрузка их из бд
             var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id);
             if (roadRulesNullable is not RoadRule[] roadRules)
             {
