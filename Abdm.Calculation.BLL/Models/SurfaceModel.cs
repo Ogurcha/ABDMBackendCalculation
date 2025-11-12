@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Abdm.Calculation.BLL.Entities;
+﻿using Abdm.Calculation.BLL.Entities;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 
@@ -51,7 +50,7 @@ namespace Abdm.Calculation.BLL.Models
         public bool IsMirroredByZ { get; internal set; } = false;
 
         /// <summary>
-        /// Тип нагрузки
+        /// Тип расчётов 
         /// </summary>
         public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }
 

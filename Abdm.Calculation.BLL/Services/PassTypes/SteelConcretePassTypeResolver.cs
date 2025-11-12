@@ -1,5 +1,4 @@
 ﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.SteelConcrete;
@@ -7,21 +6,27 @@ using Mapster;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
 {
-    public class SteelConcretePassTypeResolver(ISteelConcretePassChecker steelConcretePassChecker) : IPassTypeResolver
+    public class SteelConcretePassTypeResolver(IStrainCoefficientFactory strainCoefficientFactory,
+        ISteelConcretePassChecker steelConcretePassChecker) : IPassTypeResolver
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationTypes => [StrainCalculationGroupTypeEnum.SteelConcrete];
 
-        public PassTypeEnum Resolve(List<StrainResult> strainResults, SurfaceModel surface)
+        public PassTypeEnum Resolve(List<StrainResult> strainResults, PassTypeSmallModel data)
         {
-            var fullStrain = strainResults.Max(x => x.Strain) * StrainCoefficientFormulas.GetDynamicMovementCoefficient(surface.Lambda);
+            var fullStrain = strainResults.Max(x => x.Strain);
 
-            if (surface.StrainTypeSpecificData is not SteelConcreteData steelConcreteData)
+            if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)
+            {
+                fullStrain *= calculator.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+            }
+
+            if (data.Surface.StrainTypeSpecificData is not SteelConcreteData steelConcreteData)
             {
                 return PassTypeEnum.Unknown;
             }
 
             var passResult = steelConcretePassChecker.CheckPass(fullStrain,
-                surface.PedestrianLoad,
+                data.Surface.PedestrianLoad,
                 steelConcreteData.CrossSection,
                 steelConcreteData.SteelConcreteParameters
                 );

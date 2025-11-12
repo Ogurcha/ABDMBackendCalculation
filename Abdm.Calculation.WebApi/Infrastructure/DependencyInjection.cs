@@ -63,17 +63,17 @@ namespace Abdm.Calculation.Infrastructure
                 new PillarSurfaceBinaryParser(new PillarDataService()),
                 new SteelConcreteSurfaceBinaryParser()
             }));
-            services.AddSingleton<IPassTypeResolverFactory, PassTypeResolverFactory>(x => new PassTypeResolverFactory(new List<IPassTypeResolver>
-            {
-                new PassTypeResolver(),
-                new SteelConcretePassTypeResolver(new SteelConcretePassChecker())
-            }));
             services.AddSingleton<IStrainCoefficientFactory, StrainCoefficientFactory>(x => new StrainCoefficientFactory(new List<ICoefficientCalculator>
             {
                 new BasicStrainCoefficientCalculator(),
                 new DynamicMovementCoefficientCalculator(),
                 new DynamicMovementPillarCoefficientCalculator(),
                 new TrafficJamStrainCoefficientCalculator(),
+            }));
+            services.AddSingleton<IPassTypeResolverFactory, PassTypeResolverFactory>(x => new PassTypeResolverFactory(new List<IPassTypeResolver>
+            {
+                new PassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>()),
+                new SteelConcretePassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>(), new SteelConcretePassChecker())
             }));
 
             services.AddScoped<IProfileYZService, ProfileYZService>();

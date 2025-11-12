@@ -37,7 +37,8 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.Width, src => src.Width ?? NormConstants.DefaultVehicleWidth)
             .Map(dst => dst.Length, src => src.Length ?? NormConstants.DefaultVehicleLength)
             .Map(dst => dst.Distance, src => src.Distance ?? NormConstants.DefaultVehicleDistance)
-            .Map(dst => dst.Axles, src => src.Axles);
+            .Map(dst => dst.Axles, src => src.Axles)
+            .Map(dst => dst.Type, src => src.Type);
 
             TypeAdapterConfig<PassTypeCalculationParameters, PassTypeSmallModel>
             .NewConfig()

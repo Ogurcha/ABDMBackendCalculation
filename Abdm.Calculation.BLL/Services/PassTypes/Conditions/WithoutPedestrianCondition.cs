@@ -5,15 +5,15 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
 {
     public class WithoutPedestrianCondition : IPassTypeCondition
     {
-        public bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surface)
+        public bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surface, double? dynamicCoefficient)
         {
             return columnList.GroupBy(x =>
             x.RoadRuleRef.IsDynamicMovement).Select(x =>
             {
                 var load = x.Max(c => c.Strain);
-                if (x.Key)
+                if (x.Key && dynamicCoefficient is double coeff)
                 {
-                    load *= StrainCoefficientFormulas.GetDynamicMovementCoefficient(surface.Lambda);
+                    load *= coeff;
                 }
                 return surface.MyStrength > surface.ConstLoad + surface.OtherLoad + load;
             }).All(succeded => succeded);
