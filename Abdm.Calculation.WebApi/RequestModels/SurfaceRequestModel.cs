@@ -59,11 +59,6 @@ namespace Abdm.Calculation.WebApi.RequestModels
         [JsonPropertyName("myStrength")]
         public double? MyStrength { get; set; }
 
-        /// <summary>
-        /// Отдельная устойчивость при расчете опор
-        /// </summary>
-        [JsonPropertyName("SuperStrength")]
-        public double? SuperStrength { get; set; }
 
         /// <summary>
         /// Фиксированная нагрузка от собственного веса
@@ -88,6 +83,90 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// </summary>
         [JsonPropertyName("kStrength")]
         public double? KStrength { get; set; }
+
+        #region PillarProperties
+
+        /// <summary>
+        /// Отдельная устойчивость при расчете опор
+        /// </summary>
+        [JsonPropertyName("SuperStrength")]
+        public double? SuperStrength { get; set; }
+        #endregion
+
+        #region SteelConcreteProperties
+
+        [JsonPropertyName("workSign")]
+        public double? WorkSign { get; set; }
+
+        [JsonPropertyName("Es")]
+        public double? Es { get; set; }
+
+        [JsonPropertyName("Ea")]
+        public double? Ea { get; set; }
+
+        [JsonPropertyName("Eb")]
+        public double? Eb { get; set; }
+
+        [JsonPropertyName("ϕ_kr")]
+        public double? TetaKr { get; set; }
+
+        [JsonPropertyName("ε_b_lim")]
+        public double? EpsilonBetaLim { get; set; }
+
+        [JsonPropertyName("Rs1")]
+        public double? Rs1 { get; set; }
+
+        [JsonPropertyName("Rs2")]
+        public double? Rs2 { get; set; }
+
+        [JsonPropertyName("Rr")]
+        public double? Rr { get; set; }
+
+        [JsonPropertyName("Rb")]
+        public double? Rb { get; set; }
+
+        [JsonPropertyName("tmax")]
+        public double? Tmax { get; set; }
+
+        [JsonPropertyName("plateType")]
+        public double? PlateType { get; set; }
+
+        [JsonPropertyName("L")]
+        public double? L { get; set; }
+
+        [JsonPropertyName("Sd")]
+        public double? Sd { get; set; }
+
+        [JsonPropertyName("σ_b_kr")]
+        public double? SigmaBetaKr { get; set; }
+
+        [JsonPropertyName("σ_a_kr")]
+        public double? SigmaAlfaKr { get; set; }
+
+        [JsonPropertyName("σ_b_shr")]
+        public double? SigmaBetaShr { get; set; }
+
+        [JsonPropertyName("σ_a_shr")]
+        public double? SigmaAlfaShr { get; set; }
+
+        [JsonPropertyName("σ_b_t")]
+        public double? SigmaBetaT { get; set; }
+
+        [JsonPropertyName("σ_a_t")]
+        public double? SigmaAlfaT { get; set; }
+
+        [JsonPropertyName("M1")]
+        public double? M1 { get; set; }
+
+        [JsonPropertyName("M2g")]
+        public double? M2g { get; set; }
+
+        [JsonPropertyName("χ1")]
+        public double? Xsi1 { get; set; }
+
+        [JsonPropertyName("Mp")]
+        public double? Mp { get; set; }
+        #endregion
     }
 
     public class SurfaceDataItemRequestModel

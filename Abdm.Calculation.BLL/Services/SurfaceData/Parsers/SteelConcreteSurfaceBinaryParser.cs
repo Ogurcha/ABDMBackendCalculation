@@ -27,7 +27,6 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData.Parsers
                     Rectangles = ReadRectangles(reader).ToArray(),
                     Corners = ReadCorners(reader).ToArray()
                 },
-                SteelConcreteParameters = CheckPointTestData.GetParameters(),
             };
 
             return surface;

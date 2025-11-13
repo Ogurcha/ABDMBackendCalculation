@@ -6,6 +6,7 @@ using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.Graphics;
+using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
 
 namespace Abdm.Calculation.BLL
@@ -63,6 +64,10 @@ namespace Abdm.Calculation.BLL
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
             dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Data.StrainCalculationType.Map();
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Data.StrainTypeSpecificData;
+            if (dataModel.Surface.StrainTypeSpecificData is SteelConcreteData steelConcreteData)
+            {
+                steelConcreteData.SteelConcreteParameters = data.Surface.Adapt<IssoSteelConcreteParameters>();
+            }
             dataModel.Surface.Material = await materialService.GetMaterial(data, surfaceDataContainer.Data.CheckPointType, cancellationToken);
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Data.Points, 

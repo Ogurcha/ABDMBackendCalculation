@@ -10,6 +10,6 @@ namespace Abdm.Calculation.BLL.Models
     {
         public required CrossSection CrossSection { get; set; }
 
-        public required IssoSteelConcreteParameters SteelConcreteParameters { get; set; }
+        public IssoSteelConcreteParameters? SteelConcreteParameters { get; set; }
     }
 }

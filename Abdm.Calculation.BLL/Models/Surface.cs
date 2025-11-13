@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.DAL.Enums;
+﻿using System.Text.Json.Serialization;
+using Abdm.Calculation.DAL.Enums;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Models
@@ -70,5 +71,55 @@ namespace Abdm.Calculation.BLL.Models
         /// Коэффициент устойчивости. По дефолту всегда 1.
         /// </summary>
         public double KStrength { get; set; }
+
+        #region SteelConcreteProperties
+        public double? WorkSign { get; set; }
+
+        public double? Es { get; set; }
+
+        public double? Ea { get; set; }
+
+        public double? Eb { get; set; }
+
+        public double? TetaKr { get; set; }
+
+        public double? EpsilonBetaLim { get; set; }
+
+        public double? Rs1 { get; set; }
+
+        public double? Rs2 { get; set; }
+
+        public double? Rr { get; set; }
+
+        public double? Rb { get; set; }
+
+        public double? Tmax { get; set; }
+
+        public double? PlateType { get; set; }
+
+        public double? L { get; set; }
+
+        public double? Sd { get; set; }
+
+        public double? SigmaBetaKr { get; set; }
+
+        public double? SigmaAlfaKr { get; set; }
+
+        public double? SigmaBetaShr { get; set; }
+
+        public double? SigmaAlfaShr { get; set; }
+
+        public double? SigmaBetaT { get; set; }
+
+        public double? SigmaAlfaT { get; set; }
+
+        public double? M1 { get; set; }
+
+        public double? M2g { get; set; }
+
+        public double? Xsi1 { get; set; }
+
+        public double? Mp { get; set; }
+        #endregion
     }
 }
