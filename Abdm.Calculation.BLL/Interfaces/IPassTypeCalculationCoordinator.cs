@@ -6,6 +6,6 @@ namespace Abdm.Calculation.BLL.Interfaces
     {
         Task<ResultExceptionContainer<PassTypeCalculationResult>> GetPassType(PassTypeCalculationParameters data, CancellationToken cancellationToken);
 
-        PassTypeCalculationResult GetFailedResponse(PassTypeCalculationParameters? data);
+        PassTypeCalculationResult GetErrorResponse(PassTypeCalculationParameters? data);
     }
 }
