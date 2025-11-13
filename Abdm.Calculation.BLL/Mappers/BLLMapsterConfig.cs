@@ -5,6 +5,7 @@ using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.DAL.DataTransferObjects;
 using Abdm.Calculation.DAL.Entities;
 using Abdm.Calculation.DAL.Enums;
+using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Mappers
@@ -99,6 +100,33 @@ namespace Abdm.Calculation.BLL.Mappers
                     dst.SuperStructureType = SuperStructureTypeEnum.Other;
                 }
             });
+
+            TypeAdapterConfig<Surface, IssoSteelConcreteParameters>
+            .NewConfig()
+            .Map(dst => dst.WorkSign, src => src.WorkSign)
+            .Map(dst => dst.Es, src => src.Es)
+            .Map(dst => dst.Ea, src => src.Ea)
+            .Map(dst => dst.Eb, src => src.Eb)
+            .Map(dst => dst.TetaKrParam, src => src.TetaKr)
+            .Map(dst => dst.EpsilonBetaLim, src => src.EpsilonBetaLim)
+            .Map(dst => dst.Rs1, src => src.Rs1)
+            .Map(dst => dst.Rs2, src => src.Rs2)
+            .Map(dst => dst.Rr, src => src.Rr)
+            .Map(dst => dst.Rb, src => src.Rb)
+            .Map(dst => dst.TMax, src => src.Tmax)
+            .Map(dst => dst.PlateType, src => src.PlateType)
+            .Map(dst => dst.L, src => src.L)
+            .Map(dst => dst.Sd, src => src.Sd)
+            .Map(dst => dst.SigmaBetaKrParam, src => src.SigmaBetaKr)
+            .Map(dst => dst.SigmaAlfaKrParam, src => src.SigmaAlfaKr)
+            .Map(dst => dst.SigmaBetaShrParam, src => src.SigmaBetaShr)
+            .Map(dst => dst.SigmaAlfaShrParam, src => src.SigmaAlfaShr)
+            .Map(dst => dst.SigmaBetaTParam, src => src.SigmaBetaT)
+            .Map(dst => dst.SigmaAlfaTParam, src => src.SigmaAlfaT)
+            .Map(dst => dst.M1, src => src.M1)
+            .Map(dst => dst.M2g, src => src.M2g)
+            .Map(dst => dst.X1Coefficient, src => src.Xsi1)
+            .Map(dst => dst.Mp, src => src.Mp);
         }
 
         public static StrainCalculationGroupTypeEnum Map(this StrainCalculationTypeEnum source)

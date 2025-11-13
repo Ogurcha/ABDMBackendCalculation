@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.SteelConcrete;
+using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
@@ -24,11 +25,11 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
             {
                 return PassTypeEnum.Unknown;
             }
-
+            
             var passResult = steelConcretePassChecker.CheckPass(fullStrain,
                 data.Surface.PedestrianLoad,
                 steelConcreteData.CrossSection,
-                steelConcreteData.SteelConcreteParameters
+                steelConcreteData.SteelConcreteParameters!
                 );
 
             return passResult.Adapt<PassTypeEnum>();

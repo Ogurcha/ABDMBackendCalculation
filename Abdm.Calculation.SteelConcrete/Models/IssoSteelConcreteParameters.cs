@@ -2,6 +2,8 @@
 {
     public class IssoSteelConcreteParameters
     {
+        public int WorkSign { get; set; }
+
         public double Ea { get; internal set; }
 
         public double Es { get; internal set; }
@@ -81,6 +83,10 @@
         /// Максимальная разность температур, С˚
         /// </summary>
         public double TMax { get; internal set; }
+
+        public double SigmaBetaKrParam { get; internal set; }
+
+        public double SigmaAlfaKrParam { get; internal set; }
 
     }
 }
