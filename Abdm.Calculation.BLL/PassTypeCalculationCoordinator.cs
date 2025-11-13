@@ -131,7 +131,7 @@ namespace Abdm.Calculation.BLL
             };
         }
 
-        public PassTypeCalculationResult GetFailedResponse(PassTypeCalculationParameters? data)
+        public PassTypeCalculationResult GetErrorResponse(PassTypeCalculationParameters? data)
         {
             if (data == null)
             {

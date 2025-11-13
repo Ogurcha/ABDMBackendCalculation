@@ -32,14 +32,14 @@ namespace Abdm.Calculation.BLL.Services
                             result.Exception,
                             string.Format(errorMsg, requestModel.IssoId, requestModel.CheckPointNumber));
                     }
-                    return ptcCoordinator.GetFailedResponse(requestModel);
+                    return ptcCoordinator.GetErrorResponse(requestModel);
                 }
             }
             catch (Exception e)
             {
                 logger.LogError(string.Format(exceptionMsg, requestModel?.IssoId, requestModel?.CheckPointNumber));
                 logger.LogError(e.StackTrace);
-                return ptcCoordinator.GetFailedResponse(requestModel);
+                return ptcCoordinator.GetErrorResponse(requestModel);
             }
         }
     }
