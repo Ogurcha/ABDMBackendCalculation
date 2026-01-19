@@ -17,7 +17,7 @@ namespace Abdm.Calculation.WebApi.RequestModels
         /// Тип нагрузки
         /// </summary>
         [JsonPropertyName("type_id")]
-        public string? TypeId { get; set; }
+        public int? TypeId { get; set; }
 
         /// <summary>
         /// Название типа нагрузки
