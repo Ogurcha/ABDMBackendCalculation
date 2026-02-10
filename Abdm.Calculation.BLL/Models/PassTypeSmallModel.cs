@@ -1,5 +1,5 @@
-﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Interfaces;
+﻿using System.Diagnostics.CodeAnalysis;
+using Abdm.Calculation.BLL.Enums;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -13,11 +13,13 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Модель поверхности, по которой едет ТС
         /// </summary>
+        [NotNull]
         public required SurfaceModel Surface { get; set; }
 
         /// <summary>
         /// Модель нагрузки
         /// </summary>
+        [NotNull]
         public required LoadModel Load { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Interfaces

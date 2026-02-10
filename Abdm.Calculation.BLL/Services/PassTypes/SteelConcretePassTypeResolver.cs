@@ -1,8 +1,8 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.SteelConcrete;
-using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
 
         public PassTypeEnum Resolve(List<StrainResult> strainResults, PassTypeSmallModel data)
         {
-            var fullStrain = strainResults.Max(x => x.Strain);
+            var fullStrain = strainResults.Max(x => x.Strain.TotalStrain);
 
             if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)
             {

@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.StrainCalculation
         /// <summary>
         /// Рассчет напряжения на профиле
         /// </summary>
-        /// <param name="X"></param>
+        /// <param name="Y"></param>
         public double GetStrain(ProfileYZ profile, double Y, double wheelWeight)
         {
             return wheelWeight * profile.GetZValueByY(Y);

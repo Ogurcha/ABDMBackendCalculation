@@ -1,5 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
 {
@@ -10,7 +11,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
             return columnList.GroupBy(x =>
             x.RoadRuleRef.IsDynamicMovement).Select(x =>
             {
-                var load = x.Max(c => c.Strain);
+                var load = x.Max(c => c.Strain.TotalStrain);
                 if (x.Key && dynamicCoefficient is double coeff)
                 {
                     load *= coeff;

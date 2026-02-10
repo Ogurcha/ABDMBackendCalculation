@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes

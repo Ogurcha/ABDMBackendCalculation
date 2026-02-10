@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Helpers;
 
 namespace Abdm.Calculation.BLL.Models
@@ -26,6 +27,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Оси ТС
         /// </summary>
+        [NotNull]
         public required Axle[] Axles { get; set; }
 
         /// <summary>

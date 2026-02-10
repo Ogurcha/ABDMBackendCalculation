@@ -90,7 +90,7 @@ namespace Abdm.Calculation.BLL
             }
 
             var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels, roadRules, mesh);
-            if (strainResults.Any(x => x.Strain == Double.NaN))
+            if (strainResults.Any(x => x.Strain.TotalStrain == Double.NaN))
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
             }
