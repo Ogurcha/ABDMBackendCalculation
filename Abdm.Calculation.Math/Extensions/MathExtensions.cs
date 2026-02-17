@@ -72,5 +72,10 @@ namespace Abdm.Calculation.Maths.Extensions
 
             return totalArea;
         }
+
+        public static T Max<T>(T first, T second) where T : IComparable<T>
+        {
+            return first.CompareTo(second) >= 0 ? first : second;
+        }
     }
 }

@@ -7,11 +7,6 @@
     public class PositivePieceStrain
     {
         /// <summary>
-        /// Значение напряжения
-        /// </summary>
-        //public double Strain { get; set; }
-
-        /// <summary>
         /// Расстояние от начала траектории движения
         /// до начала учёта данного напряжения
         /// </summary>

@@ -3,6 +3,7 @@ using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
+using Abdm.Calculation.Maths.Extensions;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -30,16 +31,7 @@ namespace Abdm.Calculation.BLL.Services
         {
             if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
-                var forwardStrain = GetStrain(true, ref CachedDelta);
-                var backwardStrain = GetStrain(false, ref CachedDeltaBackwards);
-                if (forwardStrain.SumStrain > backwardStrain.SumStrain)
-                {
-                    return forwardStrain; 
-                }
-                else
-                {
-                    return backwardStrain;
-                }
+                return MathExtensions.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
             }
             else if (data.Direction == Enums.DriveDirectionEnum.Backward)
             {
