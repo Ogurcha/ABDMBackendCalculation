@@ -9,7 +9,7 @@ using Abdm.Calculation.Graphics;
 using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
 
-namespace Abdm.Calculation.BLL
+namespace Abdm.Calculation.BLL.Coordinators
 {
     public class PassTypeCalculationCoordinator (
         IPassageIntervalService passageIntervalManager,
@@ -90,7 +90,7 @@ namespace Abdm.Calculation.BLL
             }
 
             var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels, roadRules, mesh);
-            if (strainResults.Any(x => x.Strain.TotalStrain == Double.NaN))
+            if (strainResults.Any(x => x.Strain.TotalStrain == double.NaN))
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
             }

@@ -2,7 +2,7 @@
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
-using Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions;
+using Abdm.Calculation.BLL.Services.PassTypes.Conditions;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
 {

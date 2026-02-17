@@ -2,7 +2,7 @@
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface IPassTypeService
+    public interface IWorkerWrapper
     {
         Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken);
     }

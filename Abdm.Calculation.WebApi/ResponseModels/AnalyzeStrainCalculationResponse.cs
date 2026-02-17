@@ -2,7 +2,7 @@
 
 namespace Abdm.Calculation.WebApi.ResponseModels
 {
-    public class MaximumStrainCalculationResponse
+    public class AnalyzeStrainCalculationResponse
     {
         /// <summary>
         /// идентификатор искусственного сооружения

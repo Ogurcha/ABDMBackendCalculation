@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.Coordinators;
 using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
@@ -91,7 +91,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IStrainSelector, StrainSelector>();
             services.AddScoped<IStrainResultService, StrainResultService>();
             services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
-            services.AddScoped<IPassTypeService, PassTypeService>();
+            services.AddScoped<IWorkerWrapper, WorkerWrapper>();
         }
     }
 }

@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class PassTypeService(
+    public class WorkerWrapper(
         IPassTypeCalculationCoordinator ptcCoordinator,
-        ILogger<PassTypeService> logger
-        ) : IPassTypeService
+        ILogger<WorkerWrapper> logger
+        ) : IWorkerWrapper
     {
         private const string infoMsg = "PassType calculation for (IssoId = {0}, Check point number = {1}) started";
         private const string exceptionMsg = "Failed PassType calculation for (IssoId = {0}, Check point number = {1})";

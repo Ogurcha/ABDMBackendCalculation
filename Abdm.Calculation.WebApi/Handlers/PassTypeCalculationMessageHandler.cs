@@ -17,7 +17,7 @@ namespace Abdm.Calculation.WebApi.Handlers
     /// Рассчет условий пропуска
     /// </summary>
     public class PassTypeCalculationMessageHandler(
-        IPassTypeService passTypeService, 
+        IWorkerWrapper passTypeService, 
         ILogger<PassTypeCalculationMessageHandler> logger,
         IKafkaProducer<string, PassTypeCalculationResponse> messageProducer
         ) : IKafkaMessageHandler<string, PassTypeCalculationRequest>

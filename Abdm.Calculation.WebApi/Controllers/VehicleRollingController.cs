@@ -10,21 +10,21 @@ namespace Abdm.Calculation.WebApi.Controllers
 {
     [ApiController]
     [Route("/api/vehicleRolling")]
-    public class VehicleRollingController(IPassTypeService passTypeService) : Controller
+    public class VehicleRollingController(IWorkerWrapper workerWrapper) : Controller
     {
         [HttpGet("passType")]
         public async Task<ActionResult<PassTypeCalculationResponse>> GetPassType(PassTypeCalculationRequest requestModel)
         {
             var data = requestModel.Adapt<PassTypeCalculationParameters>();
-            var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
+            var responseContent = await workerWrapper.GetPassType(data, new System.Threading.CancellationToken());
             return Ok(responseContent.Adapt<PassTypeCalculationResponse>());
         }
 
-        [HttpGet("maximumStrain")]
-        public async Task<ActionResult<MaximumStrainCalculationResponse>> GetMaximumStrain(PassTypeCalculationRequest requestModel)
+        [HttpGet("analyzeStrain")]
+        public async Task<ActionResult<AnalyzeStrainCalculationResponse>> GetAnalyzeStrain(PassTypeCalculationRequest requestModel)
         {
             var data = requestModel.Adapt<PassTypeCalculationParameters>();
-            var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
+            var responseContent = await workerWrapper.GetPassType(data, new System.Threading.CancellationToken());
             return Ok(responseContent.Adapt<PassTypeCalculationResponse>());
         }
     }

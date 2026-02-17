@@ -1,7 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 
-namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
+namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
 {
     public class SingleAutoOnlyCondition : IPassTypeCondition
     {

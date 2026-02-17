@@ -19,9 +19,9 @@ namespace Abdm.Calculation.BLL.Services
     /// </summary>
     public class IterationVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
-        private double CachedDelta = Double.NaN;
+        private double CachedDelta = double.NaN;
 
-        private double CachedDeltaBackwards = Double.NaN;
+        private double CachedDeltaBackwards = double.NaN;
 
         /// <summary>
         /// Найти максимальное напряжение от нагрузки в траектории в определенной позиции.
