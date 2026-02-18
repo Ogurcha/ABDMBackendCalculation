@@ -23,7 +23,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
             StrainCalculationGroupTypeEnum.Pillar,
         ];
 
-        public PassTypeEnum Resolve(List<StrainResult> strainResults, PassTypeSmallModel data)
+        public PassTypeEnum Resolve(List<StrainResult> strainResults, VehicleRollingSmallModel data)
         {
             double? dynamicCoefficient = null;
             if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)

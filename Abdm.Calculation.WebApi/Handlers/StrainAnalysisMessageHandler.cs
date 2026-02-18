@@ -16,24 +16,24 @@ namespace Abdm.Calculation.WebApi.Handlers
     /// Хендлер для сообщений из брокера.
     /// Рассчет условий пропуска
     /// </summary>
-    public class PassTypeCalculationMessageHandler(
-        IWorkerWrapper<PassTypeCalculationParameters, PassTypeCalculationResult> passTypeService, 
-        ILogger<PassTypeCalculationMessageHandler> logger,
-        IKafkaProducer<string, PassTypeCalculationResponse> messageProducer
-        ) : IKafkaMessageHandler<string, PassTypeCalculationRequest>
+    public class StrainAnalysisMessageHandler(
+        IWorkerWrapper<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyzer, 
+        ILogger<StrainAnalysisMessageHandler> logger,
+        IKafkaProducer<string, AnalyzeStrainCalculationResponse> messageProducer
+        ) : IKafkaMessageHandler<string, PassTypeCalculationRequest2>
     {
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string brokerClassNameStr = "class-calculated";
 
         public async Task Handle(
-            PassTypeCalculationRequest dto, 
-            MessageContext<string, PassTypeCalculationRequest> context)
+            PassTypeCalculationRequest2 dto, 
+            MessageContext<string, PassTypeCalculationRequest2> context)
         {
             var data = dto.Adapt<PassTypeCalculationParameters>();
             try
             {
-                var responseContent = await passTypeService.Run(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<PassTypeCalculationResponse>());
+                var responseContent = await strainAnalyzer.Run(data, new System.Threading.CancellationToken());
+                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<AnalyzeStrainCalculationResponse>());
             }
             catch (Exception ex)
             {

@@ -62,8 +62,7 @@ namespace Abdm.Calculation.Graphics
 
             var result = new MeshData
             {
-                DistinctXs = veticles.Select(v => v.x).Order().Distinct(doubleEqualityComparer).ToArray(),
-                DistinctYs = veticles.Select(v => v.y).Order().Distinct(doubleEqualityComparer).ToArray()
+                DistinctXs = veticles.Select(v => v.x).Order().Distinct(doubleEqualityComparer).ToArray()
             };
             
             return result;

@@ -1,9 +1,7 @@
-﻿using Abdm.Calculation.BLL.Models.DataTransfer;
-
-namespace Abdm.Calculation.BLL.Interfaces
+﻿namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface IWorkerWrapper
+    public interface IWorkerWrapper<Param, Result>
     {
-        Task<PassTypeCalculationResult> GetPassType(PassTypeCalculationParameters requestModel, CancellationToken cancellationToken);
+        Task<Result> Run(Param param, CancellationToken cancellationToken);
     }
 }

@@ -16,7 +16,7 @@ namespace Abdm.Calculation.BLL.Helpers
         private const double AB151Distance = 7.5d;
         private const double AB151Interval = 0.96d;
 
-        public static PassTypeSmallModel Fix(PassTypeSmallModel dataModel, SurfaceDataDto surfaceDataDto, PassTypeCalculationParameters rawData)
+        public static VehicleRollingSmallModel Fix(VehicleRollingSmallModel dataModel, SurfaceDataDto surfaceDataDto, PassTypeCalculationParameters rawData)
         {
             dataModel.Surface.Lambda = surfaceDataDto.Lambda;
             if (dataModel.Surface.MyStrength < 0)
@@ -24,7 +24,6 @@ namespace Abdm.Calculation.BLL.Helpers
                 dataModel.Surface.MyStrength = -dataModel.Surface.MyStrength;
                 dataModel.Surface.ConstLoad = -dataModel.Surface.ConstLoad;
                 dataModel.Surface.PedestrianLoad = -dataModel.Surface.PedestrianLoad;
-                dataModel.Surface.IsMirroredByZ = true;
             }
             if (rawData.LoadSchema.Id == Enums.LoadEnum.AB51)
             {

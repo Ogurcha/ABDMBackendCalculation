@@ -25,6 +25,19 @@ namespace Abdm.Calculation.Infrastructure
                 producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
                 producer.UseJsonMessageSerializer();
             });
+
+            //services.AddKafkaConsumer<string, PassTypeCalculationRequest2, StrainAnalysisMessageHandler>(consumer =>
+            //{
+            //    consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
+            //    consumer.UseJsonMessageDeserializer();
+            //    consumer.ConsumersCount = 1;
+            //});
+
+            //services.AddKafkaProducer<string, AnalyzeStrainCalculationResponse>(producer =>
+            //{
+            //    producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
+            //    producer.UseJsonMessageSerializer();
+            //});
         }
     }
 }

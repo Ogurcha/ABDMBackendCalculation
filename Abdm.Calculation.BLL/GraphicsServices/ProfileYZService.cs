@@ -29,7 +29,7 @@ namespace Abdm.Calculation.BLL.StrainCalculation
         /// <summary>
         /// Экспериментальный метод по поиску супер-профиля, который возникает, если сложить вместе все профили по каждоый оси ТС со сдвигами, соответствующими расстоянию на каждой оси. Получение суперпрофиля позволило бы при каждом просчете напряжения не считать напряжения на каждом колесе и складывать, а сразу считать напряжение от ТС в точке. Также это дает возможность не считать напряжение отдельно на каждом положительном интервале, а брать максимальное значение сразу. Но по прикидкам, поиск суперпрофиля - слишком длительный процесс. Выигрыш по времени если и есть (что не факт), то минимален. Но, возможно, стоит рассмотреть данный вариант, если будет возможность кэшировать суперпрофили (как-нибудь ночью в фоновом режиме).
         /// </summary>
-        private SortedList<double, Vector3d> GetSuperProfileVectors(VehicleTrajectory vehicleTrajectory, PassTypeSmallModel data, bool invertAxles)
+        private SortedList<double, Vector3d> GetSuperProfileVectors(VehicleTrajectory vehicleTrajectory, VehicleRollingSmallModel data, bool invertAxles)
         {
             Func<Axle, double, double> axleFunc = invertAxles
             ? (axle, y) => { return y + data.Load.Length - axle.AbsolutePosition; }

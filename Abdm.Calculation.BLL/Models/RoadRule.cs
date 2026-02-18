@@ -1,4 +1,6 @@
-﻿namespace Abdm.Calculation.BLL.Models
+﻿using System.Xml.Linq;
+
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Параметры использования ИССО. Чем серьезнее условия, тем тяжелее ИССО будет пройти проверку.

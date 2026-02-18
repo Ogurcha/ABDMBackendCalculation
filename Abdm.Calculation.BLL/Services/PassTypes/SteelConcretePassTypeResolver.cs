@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationTypes => [StrainCalculationGroupTypeEnum.SteelConcrete];
 
-        public PassTypeEnum Resolve(List<StrainResult> strainResults, PassTypeSmallModel data)
+        public PassTypeEnum Resolve(List<StrainResult> strainResults, VehicleRollingSmallModel data)
         {
             var fullStrain = strainResults.Max(x => x.Strain.TotalStrain);
 

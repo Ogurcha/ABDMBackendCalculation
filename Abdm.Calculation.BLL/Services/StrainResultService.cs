@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
-using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -11,15 +9,13 @@ namespace Abdm.Calculation.BLL.Services
         IStrainSelector strainSelector) : IStrainResultService
     {
         public List<StrainResult> GetStrainResults(
-            PassTypeSmallModel data,
-            IEnumerable<IntervalModel> intervals,
-            IEnumerable<RoadRule> rules, 
-            Mesh mesh)
+            VehicleRollingBigModel data,
+            IEnumerable<IntervalModel> intervals)
         {
             var strainResults = new List<StrainResult>();
             foreach (var interval in intervals) {
-                var strainsMap = strainCalculator.GetStrainsMap(interval, rules, data);
-                strainResults.AddRange(strainSelector.GetStrainResults(strainsMap, interval, rules, data, mesh));
+                var strainsMap = strainCalculator.GetStrainsMap(interval, data);
+                strainResults.AddRange(strainSelector.GetStrainResults(strainsMap, interval, data));
             }
 
             return strainResults;

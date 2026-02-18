@@ -13,9 +13,10 @@ namespace Abdm.Calculation.BLL.Services
     {
         public Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
-            IEnumerable<RoadRule> roadRules,
-            PassTypeSmallModel data)
+            VehicleRollingBigModel bigData)
         {
+            var data = bigData.Data;
+            var roadRules = bigData.RoadRules;
             var strainMap = new Dictionary<double, VehicleStrain>();
 
             var trajectoriesMap = new Dictionary<RoadRule, (double X, VehicleStrain strain)[]>();
@@ -69,7 +70,7 @@ namespace Abdm.Calculation.BLL.Services
         /// Данный метод делит траекторию на положительные отрезки, 
         /// чтобы проверить все пики и выдать напряжение по каждому из них
         /// </summary>
-        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, PassTypeSmallModel data, bool doTrafficJamCalulation)
+        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, bool doTrafficJamCalulation)
         {
             var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
             var positivePieces = MathExtensions.GetPositvePieces(centerVectors);

@@ -2,7 +2,7 @@
 {
     public class ResultExceptionContainer<T> where T : class
     {
-        public T? Data { get; set; }
+        public T? Result { get; set; }
 
         public bool IsSuccess => Exception == null;
 
@@ -10,7 +10,7 @@
 
         public ResultExceptionContainer(T data)
         {
-            Data = data;
+            Result = data;
         }
 
         public ResultExceptionContainer(Exception exception)
@@ -20,10 +20,9 @@
 
         public ResultExceptionContainer(T data, Exception exception)
         {
-            Data = data;
+            Result = data;
             Exception = exception;
         }
-
 
         public void AddException(Exception ex)
         {

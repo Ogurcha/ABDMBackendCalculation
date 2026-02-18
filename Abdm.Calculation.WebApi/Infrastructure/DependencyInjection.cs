@@ -5,6 +5,7 @@ using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
@@ -49,6 +50,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISymmetryService, SymmetryService>();
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
+            services.AddScoped<IStrainAnalyzer, StrainAnalyzer>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
@@ -85,13 +87,18 @@ namespace Abdm.Calculation.Infrastructure
             {
                 services.AddScoped<IVehiclePositioner, IterationVehiclePositioner>();
             }
-            
+
 
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();
             services.AddScoped<IStrainResultService, StrainResultService>();
-            services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
-            services.AddScoped<IWorkerWrapper, WorkerWrapper>();
+            services.AddScoped<IBaseVehicleRollingCalculationCoordinator, BaseVehicleRollingCalculationCoordinator>();
+
+            services.AddScoped<PassTypeCalculationCoordinator>();
+            services.AddScoped<IWorkerWrapper<PassTypeCalculationParameters, PassTypeCalculationResult>, WorkerWrapper<PassTypeCalculationCoordinator, PassTypeCalculationParameters, PassTypeCalculationResult>>();
+
+            services.AddScoped<StrainAnalysisCalulationCoordinator>();
+            services.AddScoped<IWorkerWrapper<PassTypeCalculationParameters, StrainAnalysisResult>, WorkerWrapper<StrainAnalysisCalulationCoordinator, PassTypeCalculationParameters, StrainAnalysisResult>>();
         }
     }
 }

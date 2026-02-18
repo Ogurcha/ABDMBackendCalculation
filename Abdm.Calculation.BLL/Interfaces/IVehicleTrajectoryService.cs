@@ -7,10 +7,9 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IVehicleTrajectoryService
     {
-        IntervalModel GetIntervalModel(PassTypeSmallModel data,
-            Mesh mesh,
-            PassageInterval interval, 
-            RoadRule[] roadRules);
+        IntervalModel GetIntervalModel(
+            VehicleRollingBigModel data,
+            PassageInterval interval);
 
         ProfileYZ? GetProfileYZ(Mesh mesh, 
             double X,

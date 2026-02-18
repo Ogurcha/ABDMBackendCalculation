@@ -5,7 +5,8 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainCalculator
     {
-        IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, PassTypeSmallModel data, bool doTrafficJamCalulation);
-        Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(IntervalModel intervalModel, IEnumerable<RoadRule> roadRules, PassTypeSmallModel data);
+        IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, bool doTrafficJamCalulation);
+
+        Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(IntervalModel intervalModel, VehicleRollingBigModel data);
     }
 }

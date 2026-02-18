@@ -1,5 +1,4 @@
-﻿using Abdm.Calculation.BLL.Helpers;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions

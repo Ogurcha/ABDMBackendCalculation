@@ -14,10 +14,11 @@ namespace Abdm.Calculation.BLL.Services
         public IEnumerable<StrainResult> GetStrainResults(
         Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> orderedStrainsMap,
         IntervalModel intervalModel,
-        IEnumerable<RoadRule> roadRules,
-        PassTypeSmallModel data,
-        Mesh mesh)
+        VehicleRollingBigModel bigData)
         {
+            var data = bigData.Data;
+            var mesh = bigData.Mesh;
+            var roadRules = bigData.RoadRules;
             foreach (var roadRule in roadRules)
             {
                 var actualVehicleCount = Math.Min(roadRule.MaxTrajectoriesCount, intervalModel.PassageIntervalRef.LaneCount);
@@ -54,7 +55,7 @@ namespace Abdm.Calculation.BLL.Services
         private StrainResult GetStrainResult((double X, VehicleStrain Strain)[] sortedStrains,
             IntervalModel intervalModel,
             RoadRule roadRule,
-            PassTypeSmallModel data,
+            VehicleRollingSmallModel data,
             Mesh mesh,
             int actualVehicleCount)
         {

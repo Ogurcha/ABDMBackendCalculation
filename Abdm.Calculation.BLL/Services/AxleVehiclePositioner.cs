@@ -12,7 +12,7 @@ namespace Abdm.Calculation.BLL.Services
     public class AxleVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
         [MemberNotNull]
-        public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, PassTypeSmallModel data)
+        public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, VehicleRollingSmallModel data)
         {
 
             if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)

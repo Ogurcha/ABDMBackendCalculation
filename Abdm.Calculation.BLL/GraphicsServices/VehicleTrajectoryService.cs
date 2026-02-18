@@ -15,12 +15,23 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         IMeshManager meshManager,
         IProfileYZService profileYZService) : IVehicleTrajectoryService
     {
-        public IntervalModel GetIntervalModel(PassTypeSmallModel data, Mesh mesh, PassageInterval interval, RoadRule[] roadRules)
+
+        public IntervalModel GetIntervalModel(
+            VehicleRollingBigModel dataModel, 
+            PassageInterval interval)
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
 
-            var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(mesh.Data.DistinctXs, interval, data.Load, roadRules);
-            result.Trajectories = GetVehicleTrajectories(distinctXs, mesh, data.Load.Axles);
+            var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(
+                dataModel.Mesh.Data.DistinctXs, 
+                interval, 
+                dataModel.Data.Load,
+                dataModel.RoadRules);
+
+            result.Trajectories = GetVehicleTrajectories(
+                distinctXs, 
+                dataModel.Mesh, 
+                dataModel.Data.Load.Axles);
 
             return result;
         }
@@ -68,10 +79,10 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             Mesh mesh, 
             Axle[] axles)
         {
-            var wheelLesngthAvg = axles.Select(x => x.Wx).Average();
+            var wheelLengthAvg = axles.Select(x => x.Wx).Average();
 
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectory(x, mesh, wheelLesngthAvg))
+                .Select(x => GetVehicleTrajectory(x, mesh, wheelLengthAvg))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }

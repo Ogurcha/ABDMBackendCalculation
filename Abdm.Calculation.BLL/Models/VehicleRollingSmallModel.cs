@@ -6,7 +6,7 @@ namespace Abdm.Calculation.BLL.Models
     /// <summary>
     /// Уменьшенная модель расчета напряжения и условий пропуска
     /// </summary>
-    public class PassTypeSmallModel
+    public class VehicleRollingSmallModel
     {
         public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
 
