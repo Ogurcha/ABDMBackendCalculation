@@ -94,11 +94,16 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IStrainResultService, StrainResultService>();
             services.AddScoped<IBaseVehicleRollingCalculationCoordinator, BaseVehicleRollingCalculationCoordinator>();
 
-            services.AddScoped<PassTypeCalculationCoordinator>();
-            services.AddScoped<IWorkerWrapper<PassTypeCalculationParameters, PassTypeCalculationResult>, WorkerWrapper<PassTypeCalculationCoordinator, PassTypeCalculationParameters, PassTypeCalculationResult>>();
+           
+            services.AddWorker<PassTypeCalculationCoordinator, PassTypeCalculationParameters, PassTypeCalculationResult>();
+            services.AddWorker<StrainAnalysisCalulationCoordinator, PassTypeCalculationParameters, StrainAnalysisResult>();
+            
+        }
 
-            services.AddScoped<StrainAnalysisCalulationCoordinator>();
-            services.AddScoped<IWorkerWrapper<PassTypeCalculationParameters, StrainAnalysisResult>, WorkerWrapper<StrainAnalysisCalulationCoordinator, PassTypeCalculationParameters, StrainAnalysisResult>>();
+        public static void AddWorker<T, Param, Result>(this IServiceCollection services) where T : class, ICoordinator<Param, Result> where Result : class where Param : class
+        {
+            services.AddScoped<T>();
+            services.AddScoped<ICanWork<Param, Result>, WorkerWrapper<T, Param, Result>>();
         }
     }
 }

@@ -2,10 +2,8 @@
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface ICoordinator<Param, Result> where Result : class
+    public interface ICoordinator<Param, Result> : ICanWork<Param, ResultExceptionContainer<Result>> where Result : class
     {
-        Task<ResultExceptionContainer<Result>> Run(Param param, CancellationToken cancellationToken);
-
         Result GetFailedResult(Param param);
 
         string InfoMsg(Param param);

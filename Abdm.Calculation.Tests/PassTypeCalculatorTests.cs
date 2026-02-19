@@ -1,25 +1,16 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
-using Abdm.Calculation.BLL;
-using Abdm.Calculation.BLL.GraphicsServices;
-using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Mappers;
-using Abdm.Calculation.BLL.Coordinators;
-using Abdm.Calculation.BLL.Coordinators.RoadRules;
-using Abdm.Calculation.BLL.Coordinators.RoadRules.Strategies;
-using Abdm.Calculation.BLL.StrainCalculation;
-using Abdm.Calculation.Graphics;
+using Abdm.Calculation.DAL.DataTransferObjects;
+using Abdm.Calculation.DAL.Interfaces;
 using Abdm.Calculation.Tests;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Moq;
 using NUnit.Framework;
-using Abdm.Calculation.DAL.DataTransferObjects;
-using Abdm.Calculation.DAL.Interfaces;
 
 [TestFixture]
 public class PassTypeCalculatorTests

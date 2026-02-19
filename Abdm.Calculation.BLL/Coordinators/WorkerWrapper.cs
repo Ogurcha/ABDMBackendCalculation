@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Coordinators
 {
     public class WorkerWrapper<T, Param, Result>(
         T coordinator,
-        ILogger<T> logger) : IWorkerWrapper<Param, Result> 
+        ILogger<T> logger) : ICanWork<Param, Result> 
         where T : class, ICoordinator<Param, Result> where Result : class
     {
         public async Task<Result> Run(Param param, CancellationToken cancellationToken)

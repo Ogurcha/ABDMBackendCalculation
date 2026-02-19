@@ -13,13 +13,13 @@ namespace Abdm.Calculation.WebApi.ResponseModels
         /// <summary>
         /// Номер чекпоинта данного сооружения
         /// </summary>
-        [JsonPropertyName("CheckPointNumber")]
+        [JsonPropertyName("checkPointNumber")]
         public int CheckPointNumber { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        [JsonPropertyName("LoadId")]
+        [JsonPropertyName("loadId")]
         public long LoadId { get; set; }
 
         /// <summary>
@@ -33,9 +33,5 @@ namespace Abdm.Calculation.WebApi.ResponseModels
         /// </summary>
         [JsonPropertyName("snipId")]
         public int SnipId { get; set; }
-
-
-
-
     }
 }
