@@ -15,9 +15,10 @@ namespace Abdm.Calculation.BLL.Services
             VehicleRollingBigModel dataModel)
         {
             var strains = defaultRolling.StrainResults.Union(mirroredRolling.StrainResults);
-            var maxStrainResult = strains.OrderBy(x => x.Strain.TotalStrain).First();
+            var maxStrainResult = strains.OrderBy(x => x.Strain.TotalStrain).Last();
 
-            var result = new AnalysisSummary { Vehicles = maxStrainResult.Strain.Select(GetAnalysisVehicle).ToList()};
+            var result = new AnalysisSummary { Vehicles = maxStrainResult.Strain.Select(GetAnalysisVehicle)
+                .OrderBy(x => x.Axles.Average(x => x.PositionX)).ToList()};
 
             return result;
         }
