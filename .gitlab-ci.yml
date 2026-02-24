@@ -120,7 +120,6 @@ deploy:dev:
   script:
     - docker compose pull back-calculation
     - docker compose up -d
-    - docker rmi $(docker images | grep 'none' | awk '{print $3}')
   cache: []
   dependencies:
     - build_docker_image:master
