@@ -3,5 +3,7 @@
     public class AnalysisSummary
     {
         public required List<AnalysisVehicle> Vehicles { get; set; }
+
+
     }
 }

@@ -13,31 +13,31 @@ namespace Abdm.Calculation.Infrastructure
     {
         public static void AddKafka(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddKafkaConsumer<string, PassTypeCalculationRequest, PassTypeCalculationMessageHandler>(consumer =>
-            //{
-            //    consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
-            //    consumer.UseJsonMessageDeserializer();
-            //    consumer.ConsumersCount = 1;
-            //});
-
-            //services.AddKafkaProducer<string, PassTypeCalculationResponse>(producer =>
-            //{
-            //    producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
-            //    producer.UseJsonMessageSerializer();
-            //});
-
-            services.AddKafkaConsumer<string, PassTypeCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
+            services.AddKafkaConsumer<string, PassTypeCalculationRequest, PassTypeCalculationMessageHandler>(consumer =>
             {
                 consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
                 consumer.UseJsonMessageDeserializer();
                 consumer.ConsumersCount = 1;
             });
 
-            //services.AddKafkaProducer<string, AnalyzeStrainCalculationResponse>(producer =>
-            //{
-            //    producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
-            //    producer.UseJsonMessageSerializer();
-            //});
+            services.AddKafkaProducer<string, PassTypeCalculationResponse>(producer =>
+            {
+                producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
+                producer.UseJsonMessageSerializer();
+            });
+
+            services.AddKafkaConsumer<string, PassTypeCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
+            {
+                consumer.Configuration.LoadFromConfiguration("StrainAnalysisMessageConsumer");
+                consumer.UseJsonMessageDeserializer();
+                consumer.ConsumersCount = 1;
+            });
+
+            services.AddKafkaProducer<string, AnalyzeStrainCalculationResponse>(producer =>
+            {
+                producer.Configuration.LoadFromConfiguration("StrainAnalysisMessageProducer");
+                producer.UseJsonMessageSerializer();
+            });
         }
     }
 }

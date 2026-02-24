@@ -33,5 +33,9 @@ namespace Abdm.Calculation.WebApi.ResponseModels
         /// </summary>
         [JsonPropertyName("snipId")]
         public int SnipId { get; set; }
+
+        [JsonPropertyName("summary")]
+        public AnalysisSummaryModel Summary { get; set; }
+        
     }
 }

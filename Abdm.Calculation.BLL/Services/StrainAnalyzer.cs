@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
