@@ -118,8 +118,8 @@ deploy:dev:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - cd /opt/$SERVICE_NAME
   script:
-    - docker-compose pull back-calculation
-    - docker-compose up -d
+    - docker compose pull back-calculation
+    - docker compose up -d
     - docker rmi $(docker images | grep 'none' | awk '{print $3}')
   cache: []
   dependencies:
