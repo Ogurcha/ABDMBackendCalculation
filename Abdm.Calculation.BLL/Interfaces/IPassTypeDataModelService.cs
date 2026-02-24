@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IPassTypeDataModelService
     {
-        PassTypeSmallModel ComposePassTypeDataModel(PassTypeCalculationParameters inputData, PassageInterval[] passageIntervals, RoadRule[] roadRules);
+        VehicleRollingSmallModel ComposePassTypeDataModel(PassTypeCalculationParameters inputData, PassageInterval[] passageIntervals, RoadRule[] roadRules);
     }
 }

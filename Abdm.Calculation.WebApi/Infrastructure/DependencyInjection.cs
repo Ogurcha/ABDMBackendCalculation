@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using Abdm.Calculation.BLL;
+using Abdm.Calculation.BLL.Coordinators;
 using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
@@ -49,6 +50,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISymmetryService, SymmetryService>();
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
+            services.AddScoped<IStrainAnalyzer, StrainAnalyzer>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
@@ -85,13 +87,23 @@ namespace Abdm.Calculation.Infrastructure
             {
                 services.AddScoped<IVehiclePositioner, IterationVehiclePositioner>();
             }
-            
+
 
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();
             services.AddScoped<IStrainResultService, StrainResultService>();
-            services.AddScoped<IPassTypeCalculationCoordinator, PassTypeCalculationCoordinator>();
-            services.AddScoped<IPassTypeService, PassTypeService>();
+            services.AddScoped<IBaseVehicleRollingCalculationCoordinator, BaseVehicleRollingCalculationCoordinator>();
+
+           
+            services.AddWorker<PassTypeCalculationCoordinator, PassTypeCalculationParameters, PassTypeCalculationResult>();
+            services.AddWorker<StrainAnalysisCalulationCoordinator, PassTypeCalculationParameters, StrainAnalysisResult>();
+            
+        }
+
+        public static void AddWorker<T, Param, Result>(this IServiceCollection services) where T : class, ICoordinator<Param, Result> where Result : class where Param : class
+        {
+            services.AddScoped<T>();
+            services.AddScoped<ICanWork<Param, Result>, WorkerWrapper<T, Param, Result>>();
         }
     }
 }

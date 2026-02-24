@@ -13,17 +13,6 @@ namespace Abdm.Reports.Calculation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddLogging(cfg =>
-            {
-                cfg.ClearProviders();
-                cfg.SetMinimumLevel(LogLevel.Trace);
-                cfg.AddConfiguration(builder.Configuration.GetSection("Logging"));
-#if DEBUG
-                cfg.AddDebug();
-#endif
-                cfg.AddNLog();
-            });
-
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -31,6 +20,18 @@ namespace Abdm.Reports.Calculation
             builder.Services.AddSettings(builder.Configuration);
             builder.Services.AddServices(builder.Configuration);
             builder.Services.AddKafka(builder.Configuration);
+
+            builder.Services.AddLogging(cfg =>
+            {
+                cfg.ClearProviders();
+                cfg.AddNLog();
+                cfg.SetMinimumLevel(LogLevel.Information);
+                cfg.AddConfiguration(builder.Configuration.GetSection("Logging"));
+#if DEBUG
+                cfg.AddDebug();
+#endif
+                cfg.AddConsole();
+            });
 
             var app = builder.Build();
 

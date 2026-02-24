@@ -1,6 +1,9 @@
-﻿using Abdm.Calculation.BLL.Helpers;
+﻿using System.Diagnostics.CodeAnalysis;
+using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
+using Abdm.Calculation.Maths.Extensions;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -16,18 +19,19 @@ namespace Abdm.Calculation.BLL.Services
     /// </summary>
     public class IterationVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
-        private double CachedDelta = Double.NaN;
+        private double CachedDelta = double.NaN;
 
-        private double CachedDeltaBackwards = Double.NaN;
+        private double CachedDeltaBackwards = double.NaN;
 
         /// <summary>
         /// Найти максимальное напряжение от нагрузки в траектории в определенной позиции.
         /// </summary>
-        public double GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, PassTypeSmallModel data)
+        [MemberNotNull]
+        public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, VehicleRollingSmallModel data)
         {
             if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
-                return Math.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
+                return MathExtensions.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
             }
             else if (data.Direction == Enums.DriveDirectionEnum.Backward)
             {
@@ -38,7 +42,7 @@ namespace Abdm.Calculation.BLL.Services
                 return GetStrain(true, ref CachedDelta);
             }
 
-            double GetStrain(bool loadDirectionForward, ref double cachedDelta)
+            VehicleStrain GetStrain(bool loadDirectionForward, ref double cachedDelta)
             {
                 var goForward = loadDirectionForward;
                 if (double.IsNaN(cachedDelta))
@@ -46,7 +50,7 @@ namespace Abdm.Calculation.BLL.Services
                     cachedDelta = goForward ? - data.Load.Length : data.Load.Length;
                 }
                 var position = startingPosition + cachedDelta;
-                double? oldStrain = null;
+                VehicleStrain? oldStrain = null;
                 var maxSteps = (int)Math.Round(data.Load.Length / NormConstants.StrainMeasuringStepSize);
                 var stepSize = loadDirectionForward ? NormConstants.StrainMeasuringStepSize : -NormConstants.StrainMeasuringStepSize;
 
@@ -58,7 +62,7 @@ namespace Abdm.Calculation.BLL.Services
                         data.Load,
                         !loadDirectionForward);
 
-                    if (strain <= oldStrain)
+                    if (strain.SumStrain <= oldStrain?.SumStrain)
                     {
                         if (goForward)
                         {
@@ -69,7 +73,7 @@ namespace Abdm.Calculation.BLL.Services
                         else
                         {
                             cachedDelta = Math.Min(data.Load.Length, Math.Max(-data.Load.Length, position + stepSize - startingPosition));
-                            return oldStrain.Value;
+                            return oldStrain;
                         }
                     }
 
@@ -85,10 +89,8 @@ namespace Abdm.Calculation.BLL.Services
                     oldStrain = strain;
                 }
 
-                return oldStrain ?? 0;
+                return oldStrain!;
             }
         }
-
-        
     }
 }

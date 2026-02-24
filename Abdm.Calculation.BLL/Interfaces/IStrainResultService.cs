@@ -1,11 +1,10 @@
-﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.Graphics.Models;
+﻿using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainResultService
     {
-        List<StrainResult> GetStrainResults(PassTypeSmallModel data, IEnumerable<IntervalModel> intervals, IEnumerable<RoadRule> rules, Mesh mesh);
+        List<StrainResult> GetStrainResults(VehicleRollingBigModel dataModel, IEnumerable<IntervalModel> intervals);
     }
 }

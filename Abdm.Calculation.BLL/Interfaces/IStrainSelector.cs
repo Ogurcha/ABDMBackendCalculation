@@ -1,15 +1,13 @@
 ﻿using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainSelector
     {
         IEnumerable<StrainResult> GetStrainResults(Dictionary<RoadRule, 
-            (double X, double Strain)[]> orderedTrajectoriesMap, 
+            (double X, VehicleStrain Strain)[]> orderedTrajectoriesMap, 
             IntervalModel intervalModel, 
-            IEnumerable<RoadRule> roadRules, 
-            PassTypeSmallModel data,
-            Mesh mesh);
+            VehicleRollingBigModel data);
     }
 }

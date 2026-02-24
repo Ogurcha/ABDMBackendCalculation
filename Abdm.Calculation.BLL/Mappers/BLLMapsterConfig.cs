@@ -41,7 +41,7 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.Axles, src => src.Axles)
             .Map(dst => dst.Type, src => src.Type);
 
-            TypeAdapterConfig<PassTypeCalculationParameters, PassTypeSmallModel>
+            TypeAdapterConfig<PassTypeCalculationParameters, VehicleRollingSmallModel>
             .NewConfig()
             .Map(dst => dst.Direction, src => src.Direction)
             .Map(dst => dst.Surface, src => src.Surface)

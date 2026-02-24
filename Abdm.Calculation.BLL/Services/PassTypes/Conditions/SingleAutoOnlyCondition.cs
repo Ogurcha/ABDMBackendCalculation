@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 
-namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
+namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
 {
     public class SingleAutoOnlyCondition : IPassTypeCondition
     {
@@ -8,7 +9,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.PassTypeConditions
         {
             return columnList.Select(x =>
             {
-                var load = x.StrainOneAuto;
+                var load = x.StrainOneAuto.TotalStrain;
                 return surface.MyStrength > surface.ConstLoad + surface.OtherLoad + load;
             }).All(succeded => succeded);
         }

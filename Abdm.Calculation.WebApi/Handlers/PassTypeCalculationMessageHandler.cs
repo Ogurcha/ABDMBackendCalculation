@@ -17,7 +17,7 @@ namespace Abdm.Calculation.WebApi.Handlers
     /// Рассчет условий пропуска
     /// </summary>
     public class PassTypeCalculationMessageHandler(
-        IPassTypeService passTypeService, 
+        ICanWork<PassTypeCalculationParameters, PassTypeCalculationResult> passTypeService, 
         ILogger<PassTypeCalculationMessageHandler> logger,
         IKafkaProducer<string, PassTypeCalculationResponse> messageProducer
         ) : IKafkaMessageHandler<string, PassTypeCalculationRequest>
@@ -32,7 +32,7 @@ namespace Abdm.Calculation.WebApi.Handlers
             var data = dto.Adapt<PassTypeCalculationParameters>();
             try
             {
-                var responseContent = await passTypeService.GetPassType(data, new System.Threading.CancellationToken());
+                var responseContent = await passTypeService.Run(data, new System.Threading.CancellationToken());
                 await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<PassTypeCalculationResponse>());
             }
             catch (Exception ex)

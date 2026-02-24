@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.Maths.Helpers;
+using Abdm.Calculation.Maths.Models;
 using g4;
 
 
@@ -13,12 +15,23 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         IMeshManager meshManager,
         IProfileYZService profileYZService) : IVehicleTrajectoryService
     {
-        public IntervalModel GetIntervalModel(PassTypeSmallModel data, Mesh mesh, PassageInterval interval, RoadRule[] roadRules)
+
+        public IntervalModel GetIntervalModel(
+            VehicleRollingBigModel dataModel, 
+            PassageInterval interval)
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
 
-            var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(mesh.Data.DistinctXs, interval, data.Load, roadRules);
-            result.Trajectories = GetVehicleTrajectories(distinctXs, mesh, data.Load.Axles);
+            var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(
+                dataModel.Mesh.Data.DistinctXs, 
+                interval, 
+                dataModel.Data.Load,
+                dataModel.RoadRules);
+
+            result.Trajectories = GetVehicleTrajectories(
+                distinctXs, 
+                dataModel.Mesh, 
+                dataModel.Data.Load.Axles);
 
             return result;
         }
@@ -66,10 +79,10 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             Mesh mesh, 
             Axle[] axles)
         {
-            var wheelLesngthAvg = axles.Select(x => x.Wx).Average();
+            var wheelLengthAvg = axles.Select(x => x.Wx).Average();
 
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectory(x, mesh, wheelLesngthAvg))
+                .Select(x => GetVehicleTrajectory(x, mesh, wheelLengthAvg))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }
@@ -157,19 +170,49 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="trajectory">Траектория по которой двигается ТС</param>
         /// <param name="Y">Точка, в которой считаем напряжение</param>
         /// <param name="load">параметры нагрузки</param>
+        /// <param name="invertAxles">ТС едет задом наперёд</param>
         /// <returns></returns>
-        public double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
+        [MemberNotNull]
+        public VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
         {
             Func<Axle, double> axleFunc = invertAxles
             ? (axle) => { return Y - axle.AbsolutePosition; }
             : (axle) => { return Y + axle.AbsolutePosition; };
 
-            return load.Axles.Sum(axle => 
-                axle.WheelsDistance.Sum(distance => 
-                    profileYZService.GetStrain(trajectory.Left[distance], axleFunc(axle), axle.WheelWeight) 
-                    + profileYZService.GetStrain(trajectory.Right[distance], axleFunc(axle), axle.WheelWeight)
-                )
+            IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
+                axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
+                {
+                    var strain = profileYZService.GetStrain(trajectory.Left[distance], axleFunc(axle), axle.WheelWeight);
+                    var leftWheel = new WheelStrain
+                    {
+                        Position = new Vector2D
+                        {
+                            X = trajectory.Left[distance].X,
+                            Y = axleFunc(axle)
+                        },
+                        AxleRef = axle,
+                        Strain = strain
+                    };
+                    strain = profileYZService.GetStrain(trajectory.Right[distance], axleFunc(axle), axle.WheelWeight);
+                    var rightWheel = new WheelStrain
+                    {
+                        Position = new Vector2D
+                        {
+                            X = trajectory.Right[distance].X,
+                            Y = axleFunc(axle)
+                        },
+                        AxleRef = axle,
+                        Strain = strain
+                    };
+                    return [leftWheel, rightWheel];
+                })
             );
+
+            return new VehicleStrain
+            {
+                SumStrain = wheelStrains.Sum(x => x.Strain),
+                WheelStrains = wheelStrains.ToArray()
+            };
         }
 
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)

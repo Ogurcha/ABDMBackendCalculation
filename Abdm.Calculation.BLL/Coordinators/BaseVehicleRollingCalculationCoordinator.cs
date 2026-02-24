@@ -1,0 +1,121 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Mappers;
+using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.Graphics;
+using Abdm.Calculation.SteelConcrete.Models;
+using Mapster;
+
+namespace Abdm.Calculation.BLL.Coordinators
+{
+    /// <summary>
+    /// Базовый координатор по прокатке ТС по поверхности влияния.
+    /// </summary>
+    public class BaseVehicleRollingCalculationCoordinator(IPassageIntervalService passageIntervalManager,
+        ISurfaceDataService surfaceDataService,
+        IMeshManager meshManager,
+        IRoadRulesFactory roadRulesFactory,
+        IStrainResultService strainResultService,
+        IVehicleTrajectoryService vehicleTrajectoryService,
+        ISymmetryService symmetryService,
+        IMaterialService materialService
+        ) : IBaseVehicleRollingCalculationCoordinator
+    {
+        private const string meshErrorMessage = "Mesh construction failed";
+        private const string noIntersectionsErrorMessage = "Mesh has no intersections in given passage intervals";
+        private const string passageIntervalErrorMessage = "Passage intervals for this isso have not been found";
+        private const string surfaceDataNotFoundErrorMessage = "Surface data for given isso and checkpoint was not found";
+        private const string roadRulesNotFoundErrorMessage = "Road rules for given load were not found";
+
+        public async Task<ResultExceptionContainer<VehicleRollingBigModel>> PrepareDataModel(
+            [DisallowNull] PassTypeCalculationParameters data,
+            bool? IsMirroredByZ,
+            CancellationToken cancellationToken)
+        {
+            var intervals = await passageIntervalManager.GetPassageIntervals(data.IssoId,
+                data.Roadway.PositionShift, cancellationToken);
+            if (intervals?.Any() != true)
+            {
+                return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(passageIntervalErrorMessage));
+            }
+            var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, intervals, cancellationToken);
+            //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
+            if (surfaceDataContainer?.Result?.Triangles == null || !surfaceDataContainer.IsSuccess)
+            {
+                var surfaceDataException = new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(surfaceDataNotFoundErrorMessage));
+                if (surfaceDataContainer?.Exception != null)
+                {
+                    surfaceDataException.AddException(surfaceDataContainer.Exception);
+                }
+                return surfaceDataException;
+            }
+
+            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id);
+            if (roadRulesNullable is not RoadRule[] roadRules)
+            {
+                return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(roadRulesNotFoundErrorMessage));
+            }
+
+            var dataModel = data.Adapt<VehicleRollingSmallModel>();
+            DataModelFixer.Fix(dataModel, surfaceDataContainer.Result, data);
+            dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
+            dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Result.StrainCalculationType.Map();
+            dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Result.StrainTypeSpecificData;
+            if (dataModel.Surface.StrainTypeSpecificData is SteelConcreteData steelConcreteData)
+            {
+                steelConcreteData.SteelConcreteParameters = data.Surface.Adapt<IssoSteelConcreteParameters>();
+            }
+            dataModel.Surface.Material = await materialService.GetMaterial(data, surfaceDataContainer.Result.CheckPointType, cancellationToken);
+
+            var mesh = meshManager.GetMeshFromPoints(
+                surfaceDataContainer.Result.Points,
+                surfaceDataContainer.Result.Triangles,
+                IsMirroredByZ == true);
+            if (mesh?.Data?.DistinctXs == null)
+            {
+                return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(meshErrorMessage));
+            }
+
+            var secondaryMesh = IsMirroredByZ == null
+                ? meshManager.GetMeshFromPoints(
+                surfaceDataContainer.Result.Points,
+                surfaceDataContainer.Result.Triangles,
+                true)
+                : null;
+
+            return new ResultExceptionContainer<VehicleRollingBigModel>(new VehicleRollingBigModel
+            {
+                Data = dataModel,
+                Intervals = intervals,
+                RoadRules = roadRules,
+                Mesh = mesh,
+                SecondaryMesh = secondaryMesh
+            });
+        }
+
+        public ResultExceptionContainer<VehicleRollingResult> RollAndGetStrainResult(
+            [DisallowNull] VehicleRollingBigModel dataModel,
+            CancellationToken cancellationToken)
+        {
+            var intervalModels = new List<IntervalModel>();
+            foreach (var interval in dataModel.Intervals)
+            {
+                var intervalModel = vehicleTrajectoryService.GetIntervalModel(dataModel, interval);
+                if (intervalModel.Trajectories?.Any() != true)
+                {
+                    return new ResultExceptionContainer<VehicleRollingResult>(new Exception(noIntersectionsErrorMessage));
+                }
+                intervalModels.Add(intervalModel);
+            }
+
+            var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels);
+
+            return new ResultExceptionContainer<VehicleRollingResult>(new VehicleRollingResult() { 
+                DataModel = dataModel, 
+                StrainResults = strainResults
+            });
+        }
+    }
+}

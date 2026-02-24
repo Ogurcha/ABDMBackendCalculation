@@ -45,11 +45,6 @@ namespace Abdm.Calculation.BLL.Models
         public double Lambda { get; set; }
 
         /// <summary>
-        /// перевёрнута ли поверхность
-        /// </summary>
-        public bool IsMirroredByZ { get; internal set; } = false;
-
-        /// <summary>
         /// Тип расчётов 
         /// </summary>
         public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
 
@@ -10,14 +11,15 @@ namespace Abdm.Calculation.BLL.Services
         IVehiclePositioner vehiclePositioner,
         IStrainCoefficientFactory strainCoefficientFactory) : IStrainCalculator
     {
-        public Dictionary<RoadRule, (double X, double Strain)[]> GetStrainsMap(
+        public Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
-            IEnumerable<RoadRule> roadRules,
-            PassTypeSmallModel data)
+            VehicleRollingBigModel bigData)
         {
-            var strainMap = new Dictionary<double, double>();
+            var data = bigData.Data;
+            var roadRules = bigData.RoadRules;
+            var strainMap = new Dictionary<double, VehicleStrain>();
 
-            var trajectoriesMap = new Dictionary<RoadRule, (double X, double strain)[]>();
+            var trajectoriesMap = new Dictionary<RoadRule, (double X, VehicleStrain strain)[]>();
 
             var groupedBySafetyLine = roadRules.GroupBy(r => (
             actualSafetyLineLeft: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineLeft : (double)default,
@@ -37,12 +39,13 @@ namespace Abdm.Calculation.BLL.Services
 
                 foreach (var trajectory in actualTrajectories)
                 {
-                    if (!strainMap.ContainsKey(trajectory.X))
+                    if (!strainMap.ContainsKey(trajectory.X) 
+                        && GetStrainForEachPositivePiece(
+                            trajectory,
+                            data,
+                            ruleGroup.Key.DoTrafficJamLoadCalulation).Max() is VehicleStrain vehicleStrain)
                     {
-                        strainMap[trajectory.X] = GetStrainForEachPositivePiece(
-                            trajectory, 
-                            data, 
-                            ruleGroup.Key.DoTrafficJamLoadCalulation).Max();
+                        strainMap[trajectory.X] = vehicleStrain;
                     }
                 }
 
@@ -67,30 +70,35 @@ namespace Abdm.Calculation.BLL.Services
         /// Данный метод делит траекторию на положительные отрезки, 
         /// чтобы проверить все пики и выдать напряжение по каждому из них
         /// </summary>
-        public IEnumerable<double> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, PassTypeSmallModel data, bool doTrafficJamCalulation)
+        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, bool doTrafficJamCalulation)
         {
             var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
             var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
 
             if (positivePieces.Count() == 0)
             {
-                yield return 0;
+                yield return new VehicleStrain { SumStrain = 0, WheelStrains = [] };
             }
 
-            var trafficJamStrain = 0d;
+            TrafficJamStrain? trafficJamStrain = null;
             if (doTrafficJamCalulation)
             {
                 var areaLeft = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray());
                 var areaRight = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray());
                 var areaAverage = (areaLeft + areaRight) / 2;
 
-                trafficJamStrain += areaAverage
+                trafficJamStrain = new TrafficJamStrain 
+                { 
+                    Strains = positivePieces.Select(x => 
+                    new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray() 
+                };
+                trafficJamStrain.SumStrain += areaAverage
                     * data.Load.Axles.Sum(a => a.Weight)
                     * NormConstants.TrafficJamApproximationParam;
 
                 if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
                 {
-                    trafficJamStrain *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+                    trafficJamStrain.Coefficient *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
                 }
             }
 
@@ -104,13 +112,14 @@ namespace Abdm.Calculation.BLL.Services
                 var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,
                     data);
+                strain.TrafficJamStrain = trafficJamStrain;
 
                 if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
                 {
-                    strain *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+                    strain.Coefficient *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
                 }
 
-                yield return strain + trafficJamStrain;
+                yield return strain;
             }
         }
     }

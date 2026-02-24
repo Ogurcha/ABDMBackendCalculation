@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Graphics.Models;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IVehicleTrajectoryService
     {
-        IntervalModel GetIntervalModel(PassTypeSmallModel data,
-            Mesh mesh,
-            PassageInterval interval, 
-            RoadRule[] roadRules);
+        IntervalModel GetIntervalModel(
+            VehicleRollingBigModel data,
+            PassageInterval interval);
 
         ProfileYZ? GetProfileYZ(Mesh mesh, 
             double X,
@@ -33,7 +33,7 @@ namespace Abdm.Calculation.BLL.Interfaces
             LoadModel loadModel,
             RoadRule[] roadRules);
 
-        double GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles);
-        
+        [MemberNotNull]
+        VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles);
     }
 }

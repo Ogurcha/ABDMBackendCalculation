@@ -23,10 +23,10 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
                 case LoadGroupTypeEnum.AClass:
                     return lambda <= 0
                         ? NormConstants.MaxStrainCoefficient
-                        : (lambda >= 30
+                        : lambda >= 30
                             ? 1.2
                             : 1.2 + 0.01 * (30 - lambda)
-                          );
+                          ;
                 case LoadGroupTypeEnum.Single:
                 case LoadGroupTypeEnum.NClass:
                 case LoadGroupTypeEnum.Track:
