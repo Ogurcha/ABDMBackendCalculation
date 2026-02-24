@@ -26,7 +26,7 @@ namespace Abdm.Calculation.Infrastructure
                 producer.UseJsonMessageSerializer();
             });
 
-            services.AddKafkaConsumer<string, PassTypeCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
+            services.AddKafkaConsumer<string, StrainAnalysisCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
             {
                 consumer.Configuration.LoadFromConfiguration("StrainAnalysisMessageConsumer");
                 consumer.UseJsonMessageDeserializer();
