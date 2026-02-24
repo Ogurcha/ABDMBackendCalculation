@@ -20,14 +20,14 @@ namespace Abdm.Calculation.WebApi.Handlers
         ICanWork<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyzer, 
         ILogger<StrainAnalysisMessageHandler> logger,
         IKafkaProducer<string, AnalyzeStrainCalculationResponse> messageProducer
-        ) : IKafkaMessageHandler<string, PassTypeCalculationRequest>
+        ) : IKafkaMessageHandler<string, StrainAnalysisCalculationRequest>
     {
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string brokerClassNameStr = "class-calculated";
 
         public async Task Handle(
-            PassTypeCalculationRequest dto, 
-            MessageContext<string, PassTypeCalculationRequest> context)
+            StrainAnalysisCalculationRequest dto, 
+            MessageContext<string, StrainAnalysisCalculationRequest> context)
         {
             var data = dto.Adapt<PassTypeCalculationParameters>();
             try

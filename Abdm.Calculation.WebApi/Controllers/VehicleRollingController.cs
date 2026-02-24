@@ -23,7 +23,7 @@ namespace Abdm.Calculation.WebApi.Controllers
         }
 
         [HttpGet("strain-analysis")]
-        public async Task<ActionResult<AnalyzeStrainCalculationResponse>> GetAnalyzeStrain(PassTypeCalculationRequest requestModel)
+        public async Task<ActionResult<AnalyzeStrainCalculationResponse>> GetAnalyzeStrain(StrainAnalysisCalculationRequest requestModel)
         {
             var data = requestModel.Adapt<PassTypeCalculationParameters>();
             var responseContent = await strainAnalyzer.Run(data, new System.Threading.CancellationToken());
