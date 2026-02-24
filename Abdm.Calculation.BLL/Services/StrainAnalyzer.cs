@@ -35,14 +35,14 @@ namespace Abdm.Calculation.BLL.Services
         {
             return new AnalysisWheel()
             {
-                Height = wheelStrain.AxleRef.Wy,
-                Width = wheelStrain.AxleRef.Wx,
-                Strain = wheelStrain.Strain,
-                PositionX = wheelStrain.Position.X,
-                PositionY = wheelStrain.Position.Y,
-                Z = wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight,
-                Weight = wheelStrain.AxleRef.WheelWeight,
-                Pressure = wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx
+                Height = decimal.Round((decimal)wheelStrain.AxleRef.Wy, 2),
+                Width = decimal.Round((decimal)wheelStrain.AxleRef.Wx, 2),
+                Strain = decimal.Round((decimal)wheelStrain.Strain, 2),
+                PositionX = decimal.Round((decimal)wheelStrain.Position.X, 2),
+                PositionY = decimal.Round((decimal)wheelStrain.Position.Y, 2),
+                Z = decimal.Round((decimal)(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight), 2),
+                Weight = decimal.Round((decimal)wheelStrain.AxleRef.WheelWeight, 2),
+                Pressure = decimal.Round((decimal)(wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx), 2)
             };
         }
     }

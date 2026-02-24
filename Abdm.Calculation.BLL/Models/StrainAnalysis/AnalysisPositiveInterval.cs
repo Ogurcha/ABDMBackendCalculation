@@ -2,26 +2,26 @@
 {
     public class AnalysisPositiveInterval
     {
-        public double Number { get; set; }
+        public int Number { get; set; }
 
-        public double LeftIntervalStart { get; set; }
+        public decimal LeftIntervalStart { get; set; }
 
-        public double LeftIntervalEnd { get; set; }
+        public decimal LeftIntervalEnd { get; set; }
 
-        public double LeftIntervalLength { get; set; }
+        public decimal LeftIntervalLength { get; set; }
 
-        public double LeftIntervalZ { get; set; }
+        public decimal LeftIntervalZ { get; set; }
 
-        public double LeftIntervalStrain { get; set; }
+        public decimal LeftIntervalStrain { get; set; }
 
-        public double RightIntervalStart { get; set; }
+        public decimal RightIntervalStart { get; set; }
 
-        public double RightIntervalEnd { get; set; }
+        public decimal RightIntervalEnd { get; set; }
 
-        public double RightIntervalLength { get; set; }
+        public decimal RightIntervalLength { get; set; }
 
-        public double RightIntervalZ { get; set; }
+        public decimal RightIntervalZ { get; set; }
 
-        public double RightIntervalStrain { get; set; }
+        public decimal RightIntervalStrain { get; set; }
     }
 }

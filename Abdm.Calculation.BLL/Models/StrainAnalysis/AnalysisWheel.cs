@@ -4,36 +4,36 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
 {
     public class AnalysisWheel
     {
-        public double Number { get; set; }
+        public int Number { get; set; }
 
-        public double SubNumber { get; set; }
+        public int SubNumber { get; set; }
 
         /// <summary>
         /// Вес колеса
         /// </summary>
-        public double Weight { get; set; }
+        public decimal Weight { get; set; }
 
         /// <summary>
         /// Ширина отпечатка колеса
         /// </summary>
-        public double Width { get; set; }
+        public decimal Width { get; set; }
 
         /// <summary>
         /// Длина отпечатка колеса
         /// </summary>
-        public double Height { get; set; }
+        public decimal Height { get; set; }
 
         /// <summary>
         /// Давление колеса на поверхность
         /// </summary>
-        public double Pressure { get; set; }
+        public decimal Pressure { get; set; }
 
-        public double PositionX { get; set; }
+        public decimal PositionX { get; set; }
 
-        public double PositionY { get; set; }
+        public decimal PositionY { get; set; }
 
-        public double Strain { get; set; }
+        public decimal Strain { get; set; }
 
-        public double Z { get; set; }
+        public decimal Z { get; set; }
     }
 }

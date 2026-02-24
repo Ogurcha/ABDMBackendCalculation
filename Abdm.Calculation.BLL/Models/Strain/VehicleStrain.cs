@@ -20,7 +20,7 @@
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента
         /// </summary>
-        public override double TotalStrain => SumStrain * Coefficient + TrafficJamStrain?.TotalStrain ?? 0d;
+        public override double TotalStrain => SumStrain * Coefficient + (TrafficJamStrain?.TotalStrain ?? 0d);
 
         /// <summary>
         /// Напряжение по колёсам ТС

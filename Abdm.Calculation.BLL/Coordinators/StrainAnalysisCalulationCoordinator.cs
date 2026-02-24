@@ -38,7 +38,7 @@ namespace Abdm.Calculation.BLL.Coordinators
 
             var strainAnalysis = strainAnalyzer.Analyze(defaultRoll, mirroredRoll, data);
 
-            SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
+            //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
 
             return new ResultExceptionContainer<StrainAnalysisResult>(strainAnalysis.Adapt<StrainAnalysisResult>());
         }
