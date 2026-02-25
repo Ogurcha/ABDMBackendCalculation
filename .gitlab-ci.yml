@@ -130,3 +130,27 @@ deploy:dev:
   tags:
     - abdm-reports
     - deploy
+
+
+deploy:83:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+    SERVICE_NAME: "abdm-reports"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd /opt/$SERVICE_NAME
+  script:
+    - docker compose pull back-calculation
+    - docker compose up -d
+  cache: []
+  dependencies:
+    - build_docker_image:master
+  needs:
+    - build_docker_image:master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  tags:
+    - abdm-83
+    - deploy
+
