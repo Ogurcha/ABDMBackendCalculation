@@ -17,9 +17,9 @@ namespace Abdm.Calculation.WebApi.Handlers
     /// Рассчет условий пропуска
     /// </summary>
     public class StrainAnalysisMessageHandler(
-        ICanWork<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyzer, 
+        ICanWork<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyser, 
         ILogger<StrainAnalysisMessageHandler> logger,
-        IKafkaProducer<string, AnalyzeStrainCalculationResponse> messageProducer
+        IKafkaProducer<string, AnalyseStrainCalculationResponse> messageProducer
         ) : IKafkaMessageHandler<string, StrainAnalysisCalculationRequest>
     {
         private const string producerErrorMsg = "Message producer failed to send message";
@@ -32,8 +32,8 @@ namespace Abdm.Calculation.WebApi.Handlers
             var data = dto.Adapt<PassTypeCalculationParameters>();
             try
             {
-                var responseContent = await strainAnalyzer.Run(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<AnalyzeStrainCalculationResponse>());
+                var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
+                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<AnalyseStrainCalculationResponse>());
             }
             catch (Exception ex)
             {

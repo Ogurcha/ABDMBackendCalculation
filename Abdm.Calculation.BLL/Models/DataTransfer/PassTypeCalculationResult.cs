@@ -35,7 +35,7 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         public PassTypeEnum PassType { get; set; }
 
         /// <summary>
-        /// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
+        /// можно ли проезжать (рассчитывается из PassType). 2 - зеленый свет, 0 - нельзя, 
         /// </summary>
         public AllowedEnum Allowed { get; set; }
 

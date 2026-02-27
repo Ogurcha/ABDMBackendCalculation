@@ -12,7 +12,7 @@ namespace Abdm.Calculation.WebApi.Controllers
     [Route("/api/vehicleRolling")]
     public class VehicleRollingController(
         ICanWork<PassTypeCalculationParameters, PassTypeCalculationResult> passTypeCalculator,
-        ICanWork<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyzer) : Controller
+        ICanWork<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyser) : Controller
     {
         [HttpGet("pass-type")]
         public async Task<ActionResult<PassTypeCalculationResponse>> GetPassType(PassTypeCalculationRequest requestModel)
@@ -23,11 +23,11 @@ namespace Abdm.Calculation.WebApi.Controllers
         }
 
         [HttpGet("strain-analysis")]
-        public async Task<ActionResult<AnalyzeStrainCalculationResponse>> GetAnalyzeStrain(StrainAnalysisCalculationRequest requestModel)
+        public async Task<ActionResult<AnalyseStrainCalculationResponse>> GetAnalyseStrain(StrainAnalysisCalculationRequest requestModel)
         {
             var data = requestModel.Adapt<PassTypeCalculationParameters>();
-            var responseContent = await strainAnalyzer.Run(data, new System.Threading.CancellationToken());
-            return Ok(responseContent.Adapt<AnalyzeStrainCalculationResponse>());
+            var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
+            return Ok(responseContent.Adapt<AnalyseStrainCalculationResponse>());
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using Abdm.Calculation.Maths.Models;
-
-namespace Abdm.Calculation.BLL.Models.StrainAnalysis
+﻿namespace Abdm.Calculation.BLL.Models.StrainAnalysis.Default
 {
-    public class AnalysisWheel
+    public class WheelAnalysis
     {
         public int Number { get; set; }
 

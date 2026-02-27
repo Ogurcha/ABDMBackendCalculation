@@ -10,6 +10,8 @@ using Abdm.Calculation.BLL.Services;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
+using Abdm.Calculation.BLL.Services.StrainAnlysis;
+using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
 using Abdm.Calculation.BLL.Services.StrainCoefficients;
 using Abdm.Calculation.BLL.Services.SurfaceData;
 using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
@@ -50,7 +52,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISymmetryService, SymmetryService>();
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
-            services.AddScoped<IStrainAnalyzer, StrainAnalyzer>();
+            services.AddScoped<IStrainAnalyser, StrainAnalyser>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
@@ -76,6 +78,12 @@ namespace Abdm.Calculation.Infrastructure
             {
                 new PassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>()),
                 new SteelConcretePassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>(), new SteelConcretePassChecker())
+            }));
+            services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<ISAStrategy>
+            {
+                new DefaultSAStrategy(),
+                new PillarSAStrategy(),
+                new SteelConcreteSAStrategy(),
             }));
 
             services.AddScoped<IProfileYZService, ProfileYZService>();

@@ -1,6 +1,6 @@
-﻿namespace Abdm.Calculation.BLL.Models.StrainAnalysis
+﻿namespace Abdm.Calculation.BLL.Models.StrainAnalysis.Default
 {
-    public class AnalysisPositiveInterval
+    public class TrafficJamStrainAnalysis
     {
         public int Number { get; set; }
 
@@ -10,8 +10,6 @@
 
         public decimal LeftIntervalLength { get; set; }
 
-        public decimal LeftIntervalZ { get; set; }
-
         public decimal LeftIntervalStrain { get; set; }
 
         public decimal RightIntervalStart { get; set; }
@@ -20,8 +18,8 @@
 
         public decimal RightIntervalLength { get; set; }
 
-        public decimal RightIntervalZ { get; set; }
-
         public decimal RightIntervalStrain { get; set; }
+
+        public decimal SumStrain { get; set; }
     }
 }

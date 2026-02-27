@@ -77,5 +77,13 @@ namespace Abdm.Calculation.Maths.Extensions
         {
             return first.CompareTo(second) >= 0 ? first : second;
         }
+
+        /// <summary>
+        /// перевод в decimal с 2мя знаками после запятой
+        /// </summary>
+        public static decimal ToDecimal(double value)
+        {
+            return decimal.Round((decimal)value, 2);
+        }
     }
 }

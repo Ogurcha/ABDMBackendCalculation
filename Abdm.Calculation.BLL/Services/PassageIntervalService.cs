@@ -55,7 +55,7 @@ namespace Abdm.Calculation.BLL.Services
         /// что если интервал содержит две полосы 
         /// и на нем нет ограждений, то этот интервал 
         /// можно использовать как двуполосное движение 
-        /// для маеленьких машин, так и однополосное для больших
+        /// для маленьких машин, так и однополосное для больших
         /// </summary>
         private PassageInterval[] FilterIntervals(PassageInterval[]? passageIntervals)
         {
