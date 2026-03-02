@@ -9,7 +9,8 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainSelector(
         IVehicleTrajectoryService vehicleTrajectoryService
-        , IStrainCalculator strainCalculator) : IStrainSelector
+        , IStrainCalculator strainCalculator
+        , IEqualityComparer<double> equalityComparer) : IStrainSelector
     {
         public IEnumerable<StrainResult> GetStrainResults(
         Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> orderedStrainsMap,
@@ -115,11 +116,13 @@ namespace Abdm.Calculation.BLL.Services
 
             void TryAddTrajectory(double traj)
             {
-                if (!strainsCanUse.Contains(traj)
+                if (!strainsCanUse.Contains(traj, equalityComparer)
                     && intervalModel.PassageIntervalRef.AbsolutePositionLeft < traj
+                    && !equalityComparer.Equals(intervalModel.PassageIntervalRef.AbsolutePositionLeft, traj)
                     && traj < intervalModel.PassageIntervalRef.AbsolutePositionRight
-                    && !sortedStrains.Select(s => s.X).Contains(traj)
-                    && !sortedAdditionalStrains.Select(s => s.X).Contains(traj)
+                    && !equalityComparer.Equals(traj, intervalModel.PassageIntervalRef.AbsolutePositionRight)
+                    && !sortedStrains.Select(s => s.X).Contains(traj, equalityComparer)
+                    && !sortedAdditionalStrains.Select(s => s.X).Contains(traj, equalityComparer)
                     && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory
                     && strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max() is VehicleStrain additionalTrajectoryStrain)
                 {
