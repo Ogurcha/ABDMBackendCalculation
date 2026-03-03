@@ -4,8 +4,8 @@ using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface IStrainAnalyzer
+    public interface IStrainAnalyser
     {
-        AnalysisSummary Analyze(VehicleRollingResult defaultRolling, VehicleRollingResult mirroredRolling, VehicleRollingBigModel dataModel);
+        AnalysisSummary GetAnalysis(VehicleRollingResult defaultRolling, VehicleRollingResult mirroredRolling);
     }
 }

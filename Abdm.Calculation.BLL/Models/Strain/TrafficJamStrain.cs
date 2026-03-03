@@ -21,8 +21,23 @@
         public override double TotalStrain => SumStrain * Coefficient;
 
         /// <summary>
-        /// Напряжения по отрезкам траектории движения
+        /// Напряжение от профилей слева от центра ТС
         /// </summary>
-        public required PositivePieceStrain[] Strains { get; set; }
+        public double LeftStrain { get; set; }
+
+        /// <summary>
+        /// Напряжение от профилей справа от центра ТС
+        /// </summary>
+        public double RightStrain { get; set; }
+
+        /// <summary>
+        /// Напряжения по отрезкам траектории движения слева
+        /// </summary>
+        public required PositivePieceStrain[] LeftPieces { get; set; }
+
+        /// <summary>
+        /// Напряжения по отрезкам траектории движения справа
+        /// </summary>
+        public required PositivePieceStrain[] RightPieces { get; set; }
     }
 }

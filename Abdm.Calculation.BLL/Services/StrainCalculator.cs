@@ -9,7 +9,8 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainCalculator(IProfileYZService profileYZService,
         IVehiclePositioner vehiclePositioner,
-        IStrainCoefficientFactory strainCoefficientFactory) : IStrainCalculator
+        IStrainCoefficientFactory strainCoefficientFactory,
+        IEqualityComparer<double> equalityComparer) : IStrainCalculator
     {
         public Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
@@ -39,7 +40,7 @@ namespace Abdm.Calculation.BLL.Services
 
                 foreach (var trajectory in actualTrajectories)
                 {
-                    if (!strainMap.ContainsKey(trajectory.X) 
+                    if (!strainMap.Keys.Contains(trajectory.X, equalityComparer) 
                         && GetStrainForEachPositivePiece(
                             trajectory,
                             data,
@@ -83,18 +84,22 @@ namespace Abdm.Calculation.BLL.Services
             TrafficJamStrain? trafficJamStrain = null;
             if (doTrafficJamCalulation)
             {
-                var areaLeft = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray());
-                var areaRight = MathExtensions.CalculateAreaUnderCurve(profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray());
-                var areaAverage = (areaLeft + areaRight) / 2;
+                var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray();
+                var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray();
+                var areaLeft = MathExtensions.CalculateAreaUnderCurve(curveLeft);
+                var areaRight = MathExtensions.CalculateAreaUnderCurve(curveRight);
 
                 trafficJamStrain = new TrafficJamStrain 
                 { 
-                    Strains = positivePieces.Select(x => 
-                    new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray() 
+                    LeftPieces = MathExtensions.GetPositvePieces(curveLeft).Select(x => 
+                    new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray(),
+                    RightPieces = MathExtensions.GetPositvePieces(curveRight).Select(x => 
+                    new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray()
                 };
-                trafficJamStrain.SumStrain += areaAverage
-                    * data.Load.Axles.Sum(a => a.Weight)
-                    * NormConstants.TrafficJamApproximationParam;
+                var totalWeight = data.Load.Axles.Sum(a => a.Weight);
+                trafficJamStrain.LeftStrain = GetTraffciJamStrainForOneSide(areaLeft, totalWeight);
+                trafficJamStrain.RightStrain = GetTraffciJamStrainForOneSide(areaRight, totalWeight);
+                trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
 
                 if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
                 {
@@ -121,6 +126,15 @@ namespace Abdm.Calculation.BLL.Services
 
                 yield return strain;
             }
+        }
+
+        /// <summary>
+        /// Расчёт равномерного напряжения для одной стороны ТС (левой или правой). 
+        /// Делим на 2, так как вес сюда передается по сумме ВСЕХ, а нас интересуют лишь колёса слева (справа)
+        /// </summary>
+        private double GetTraffciJamStrainForOneSide(double area, double totalAxlesWeight)
+        {
+            return area * totalAxlesWeight * NormConstants.TrafficJamApproximationParam / 2;
         }
     }
 }

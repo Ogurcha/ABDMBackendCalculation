@@ -9,7 +9,8 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainSelector(
         IVehicleTrajectoryService vehicleTrajectoryService
-        , IStrainCalculator strainCalculator) : IStrainSelector
+        , IStrainCalculator strainCalculator
+        , IEqualityComparer<double> equalityComparer) : IStrainSelector
     {
         public IEnumerable<StrainResult> GetStrainResults(
         Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> orderedStrainsMap,
@@ -71,9 +72,9 @@ namespace Abdm.Calculation.BLL.Services
                     break;
                 }
                 (double X, VehicleStrain Strain)? maxStrainOriginal
-                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
+                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X, equalityComparer));
                 (double X, VehicleStrain Strain)? maxStrainAdditional
-                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
+                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X, equalityComparer));
 
                 if ((maxStrainOriginal?.Strain?.TotalStrain ?? 0d) >= (maxStrainAdditional?.Strain?.TotalStrain ?? 0d))
                 {
@@ -105,9 +106,9 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     vehicleStrain = traj.Strain;
                 }
-                var left = traj.X - PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, [roadRule]);
-                var right = traj.X + PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, [roadRule]);
-                strainsCanUse.RemoveWhere(t => left < t && t < right);
+                var left = traj.X - Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
+                var right = traj.X + Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
+                strainsCanUse.RemoveWhere(t => left < t && t < right && !equalityComparer.Equals(left, t) && !equalityComparer.Equals(t, right));
 
                 TryAddTrajectory(left);
                 TryAddTrajectory(right);
@@ -115,11 +116,13 @@ namespace Abdm.Calculation.BLL.Services
 
             void TryAddTrajectory(double traj)
             {
-                if (!strainsCanUse.Contains(traj)
+                if (!strainsCanUse.Contains(traj, equalityComparer)
                     && intervalModel.PassageIntervalRef.AbsolutePositionLeft < traj
+                    && !equalityComparer.Equals(intervalModel.PassageIntervalRef.AbsolutePositionLeft, traj)
                     && traj < intervalModel.PassageIntervalRef.AbsolutePositionRight
-                    && !sortedStrains.Select(s => s.X).Contains(traj)
-                    && !sortedAdditionalStrains.Select(s => s.X).Contains(traj)
+                    && !equalityComparer.Equals(traj, intervalModel.PassageIntervalRef.AbsolutePositionRight)
+                    && !sortedStrains.Select(s => s.X).Contains(traj, equalityComparer)
+                    && !sortedAdditionalStrains.Select(s => s.X).Contains(traj, equalityComparer)
                     && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory
                     && strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max() is VehicleStrain additionalTrajectoryStrain)
                 {

@@ -43,7 +43,7 @@
         /// <summary>
         /// Минимальное расстояние между траекториями 
         /// </summary>
-        public const double MinimalDistanceBetweenTrajectories = 0.1d;
+        public const double MinimalDistanceBetweenTrajectories = 0d;
 
         /// <summary>
         /// Минимальное значение кооеффициента нагрузки

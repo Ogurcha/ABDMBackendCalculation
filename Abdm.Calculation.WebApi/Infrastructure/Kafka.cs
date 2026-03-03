@@ -33,7 +33,7 @@ namespace Abdm.Calculation.Infrastructure
                 consumer.ConsumersCount = 1;
             });
 
-            services.AddKafkaProducer<string, AnalyzeStrainCalculationResponse>(producer =>
+            services.AddKafkaProducer<string, AnalyseStrainCalculationResponse>(producer =>
             {
                 producer.Configuration.LoadFromConfiguration("StrainAnalysisMessageProducer");
                 producer.UseJsonMessageSerializer();
