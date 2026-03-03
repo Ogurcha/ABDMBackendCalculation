@@ -9,7 +9,8 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainCalculator(IProfileYZService profileYZService,
         IVehiclePositioner vehiclePositioner,
-        IStrainCoefficientFactory strainCoefficientFactory) : IStrainCalculator
+        IStrainCoefficientFactory strainCoefficientFactory,
+        IEqualityComparer<double> equalityComparer) : IStrainCalculator
     {
         public Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
@@ -39,7 +40,7 @@ namespace Abdm.Calculation.BLL.Services
 
                 foreach (var trajectory in actualTrajectories)
                 {
-                    if (!strainMap.ContainsKey(trajectory.X) 
+                    if (!strainMap.Keys.Contains(trajectory.X, equalityComparer) 
                         && GetStrainForEachPositivePiece(
                             trajectory,
                             data,

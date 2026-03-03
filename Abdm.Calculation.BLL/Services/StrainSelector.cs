@@ -72,9 +72,9 @@ namespace Abdm.Calculation.BLL.Services
                     break;
                 }
                 (double X, VehicleStrain Strain)? maxStrainOriginal
-                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
+                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X, equalityComparer));
                 (double X, VehicleStrain Strain)? maxStrainAdditional
-                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
+                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X, equalityComparer));
 
                 if ((maxStrainOriginal?.Strain?.TotalStrain ?? 0d) >= (maxStrainAdditional?.Strain?.TotalStrain ?? 0d))
                 {
@@ -106,9 +106,9 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     vehicleStrain = traj.Strain;
                 }
-                var left = traj.X - PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, [roadRule]);
-                var right = traj.X + PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, [roadRule]);
-                strainsCanUse.RemoveWhere(t => left < t && t < right);
+                var left = traj.X - Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
+                var right = traj.X + Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
+                strainsCanUse.RemoveWhere(t => left < t && t < right && !equalityComparer.Equals(left, t) && !equalityComparer.Equals(t, right));
 
                 TryAddTrajectory(left);
                 TryAddTrajectory(right);
