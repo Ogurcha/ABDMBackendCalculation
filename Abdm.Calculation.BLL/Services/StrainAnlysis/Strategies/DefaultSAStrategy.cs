@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
@@ -14,21 +15,38 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.Default,
         ];}
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, StrainResult strainResult, VehicleRollingBigModel dataModel)
+        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
         {
-            var vehicles = new List<AnalysisDefault>();
-            var columnCounter = 1;
-            foreach (var strain in strainResult.Strain.OrderBy(x => x.WheelStrains.Min(w => w.Position.X)))
+            var defaults = new List<AnalysisDefault>();
+            var dataModel = vehicleRollingResult.DataModel;
+
+            foreach (var strain in vehicleRollingResult.StrainResults)
             {
-                vehicles.Add(GetAnalysisVehicle(strain, dataModel.Intervals.First().AbsolutePositionLeft, columnCounter));
-                columnCounter++;
+                defaults.Add(new AnalysisDefault { 
+                    HasSafetyLine = strain.RoadRuleRef.HasSafetyLine, 
+                    Vehicles = GetAnalysisVehicles(strain, dataModel).ToArray() 
+                });
             }
 
-            analysis.Default = vehicles;
+            analysis.Default = defaults;
+
             return analysis;
         }
 
-        private AnalysisDefault GetAnalysisVehicle(VehicleStrain vehicleStrain, double leftIntervalStart, int columNumber)
+        private List<AnalysisVehicle> GetAnalysisVehicles(StrainResult strainResult, VehicleRollingBigModel data)
+        {
+            var vehicles = new List<AnalysisVehicle>();
+            var columnCounter = 1;
+            foreach (var strain in strainResult.Strain.OrderBy(x => x.WheelStrains.Min(w => w.Position.X)))
+            {
+                vehicles.Add(GetAnalysisVehicle(strain, data.Intervals.First().AbsolutePositionLeft, columnCounter));
+                columnCounter++;
+            }
+
+            return vehicles;
+        }
+
+        private AnalysisVehicle GetAnalysisVehicle(VehicleStrain vehicleStrain, double leftIntervalStart, int columNumber)
         {
             var wheelCounter = 1;
             var wheels = new List<WheelAnalysis>();
@@ -71,7 +89,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 }
             }
 
-            return new AnalysisDefault
+            return new AnalysisVehicle
             {
                 ColumnNumber = columNumber,
                 Wheels = wheels,

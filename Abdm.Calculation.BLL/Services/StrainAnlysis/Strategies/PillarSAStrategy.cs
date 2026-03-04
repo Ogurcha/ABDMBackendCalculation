@@ -1,6 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Pillar;
@@ -14,13 +14,14 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.Pillar
         ];}
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, StrainResult strainResult, VehicleRollingBigModel dataModel)
+        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
         {
+            var strainResult = vehicleRollingResult.StrainResults.OrderBy(x => x.Strain.TotalStrain).Last();
             var pillars = new List<AnalysisPillar>();
             var columnCounter = 1;
             foreach (var strain in strainResult.Strain.OrderBy(x => x.WheelStrains.Min(w => w.Position.X)))
             {
-                pillars.Add(GetAnalysisPillar(strain, dataModel.Intervals.First().AbsolutePositionLeft, columnCounter));
+                pillars.Add(GetAnalysisPillar(strain, vehicleRollingResult.DataModel.Intervals.First().AbsolutePositionLeft, columnCounter));
                 columnCounter++;
             }
 

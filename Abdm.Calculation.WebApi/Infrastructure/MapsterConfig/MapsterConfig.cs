@@ -132,6 +132,9 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.PassType, src => src.PassType)
             .Map(dst => dst.Allowed, src => src.Allowed)
             .Map(dst => dst.Intervals, src => src.Intervals);
+
+            TypeAdapterConfig<StrainAnalysisResult, AnalyseStrainCalculationResponse>
+            .NewConfig();
         }
     }
 }
