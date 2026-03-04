@@ -5,8 +5,7 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainSelector
     {
-        IEnumerable<StrainResult> GetStrainResults(Dictionary<RoadRule, 
-            (double X, VehicleStrain Strain)[]> orderedTrajectoriesMap, 
+        IEnumerable<StrainResult> GetStrainResults(Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> orderedTrajectoriesMap, 
             IntervalModel intervalModel, 
             VehicleRollingBigModel data);
     }
