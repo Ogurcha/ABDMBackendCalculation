@@ -82,7 +82,7 @@ namespace Abdm.Calculation.BLL.Services
 
             if (positivePieces.Count() == 0)
             {
-                yield return new VehicleStrain { SumStrain = 0, WheelStrains = [] };
+                yield return null;
             }
 
             foreach (var positivePiece in positivePieces)
