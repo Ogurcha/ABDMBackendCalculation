@@ -3,14 +3,14 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Graphics.Models;
-using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
     public class StrainSelector(
-        IVehicleTrajectoryService vehicleTrajectoryService
-        , IStrainCalculator strainCalculator
-        , IEqualityComparer<double> equalityComparer) : IStrainSelector
+        IVehicleTrajectoryService vehicleTrajectoryService, 
+        IStrainCalculator strainCalculator, 
+        IEqualityComparer<double> equalityComparer,
+        ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainSelector
     {
         public IEnumerable<StrainResult> GetStrainResults(
         Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> orderedStrainsMap,
@@ -60,11 +60,14 @@ namespace Abdm.Calculation.BLL.Services
             Mesh mesh,
             int actualVehicleCount)
         {
-            var strainsCanUse = sortedStrains.Select(x => x.X).ToHashSet();
+            var strainsCanUse = sortedStrains.Select(x => x.X).ToHashSet(equalityComparer);
             var sortedAdditionalStrains = new List<(double X, VehicleStrain Strain)>();
 
             VehicleStrainList vehicleStrains = new VehicleStrainList();
             VehicleStrain? vehicleStrain = null;
+
+            var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
+
             for (var i = 0; i < actualVehicleCount; i++)
             {
                 if (strainsCanUse.Count <= 0)
@@ -72,9 +75,9 @@ namespace Abdm.Calculation.BLL.Services
                     break;
                 }
                 (double X, VehicleStrain Strain)? maxStrainOriginal
-                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X, equalityComparer));
+                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
                 (double X, VehicleStrain Strain)? maxStrainAdditional
-                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X, equalityComparer));
+                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
 
                 if ((maxStrainOriginal?.Strain?.TotalStrain ?? 0d) >= (maxStrainAdditional?.Strain?.TotalStrain ?? 0d))
                 {
@@ -116,16 +119,14 @@ namespace Abdm.Calculation.BLL.Services
 
             void TryAddTrajectory(double traj)
             {
-                if (!strainsCanUse.Contains(traj, equalityComparer)
-                    && intervalModel.PassageIntervalRef.AbsolutePositionLeft < traj
-                    && !equalityComparer.Equals(intervalModel.PassageIntervalRef.AbsolutePositionLeft, traj)
-                    && traj < intervalModel.PassageIntervalRef.AbsolutePositionRight
-                    && !equalityComparer.Equals(traj, intervalModel.PassageIntervalRef.AbsolutePositionRight)
+                if (!strainsCanUse.Contains(traj)
+                    && trajectoryFilter.Filter(traj)
                     && !sortedStrains.Select(s => s.X).Contains(traj, equalityComparer)
                     && !sortedAdditionalStrains.Select(s => s.X).Contains(traj, equalityComparer)
                     && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory
-                    && strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data, roadRule.DoTrafficJamLoadCalulation).Max() is VehicleStrain additionalTrajectoryStrain)
+                    && strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data).Max() is VehicleStrain additionalTrajectoryStrain)
                 {
+                    additionalTrajectoryStrain.TrafficJamStrain = roadRule.DoTrafficJamLoadCalulation ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data) : null;
                     sortedAdditionalStrains = sortedAdditionalStrains.Append((traj, additionalTrajectoryStrain)).OrderByDescending(x => x.Item2).ToList();
                     strainsCanUse.Add(traj);
                 }

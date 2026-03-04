@@ -13,7 +13,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 {
     public class VehicleTrajectoryService(
         IMeshManager meshManager,
-        IProfileYZService profileYZService) : IVehicleTrajectoryService
+        IProfileYZService profileYZService,
+        ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
 
         public IntervalModel GetIntervalModel(
@@ -140,25 +141,17 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         {
             var result = new List<VehicleXPosition>();
             var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
-            var safeDistance = PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(loadModel, roadRules);
-            var low = passageInterval.AbsolutePositionLeft + safeDistance;
-            var high = passageInterval.AbsolutePositionRight - safeDistance;
 
-            var groupedBySafetyLine = roadRules.GroupBy(r => (
-                    actualSafetyLineLeft: r.HasSafetyLine ? passageInterval.SafetyLineLeft : (double)default,
-                    actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight : (double)default));
-            foreach (var roadRule in groupedBySafetyLine)
+            var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
+            foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
             {
-                result.Add(GetXPostition(low + roadRule.Key.actualSafetyLineLeft, wheelOffsetsMap.Keys));
-                result.Add(GetXPostition(high - roadRule.Key.actualSafetyLineLeft, wheelOffsetsMap.Keys));
+                result.Add(GetXPostition(filteredX, wheelOffsetsMap.Keys));
             }
 
-            foreach (var x in distinctXs)
+            foreach (var edge in trajectoryFilters.Select(filter => (filter.EdgeCaseLeft, filter.EdgeCaseRight)))
             {
-                if (low < x && x < high)
-                {
-                    result.Add(GetXPostition(x, wheelOffsetsMap.Keys));
-                }
+                result.Add(GetXPostition(edge.EdgeCaseLeft, wheelOffsetsMap.Keys));
+                result.Add(GetXPostition(edge.EdgeCaseRight, wheelOffsetsMap.Keys));
             }
 
             return result.OrderBy(x => x.CenterXPosition).ToArray();
