@@ -7,7 +7,7 @@ namespace Abdm.Calculation.BLL.Enums
     /// </summary>
     public enum StrainCalculationGroupTypeEnum
     {
-        Unknown = -1,
+        Failed = -1,
 
         /// <summary>
         /// Обычный расчет (железобетон)
