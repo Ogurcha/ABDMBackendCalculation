@@ -23,7 +23,7 @@ namespace Abdm.Calculation.WebApi.Handlers
         ) : IKafkaMessageHandler<string, PassTypeCalculationRequest>
     {
         private const string producerErrorMsg = "Message producer failed to send message";
-        private const string brokerClassNameStr = "class-calculated";
+        private const string brokerClassNameStr = "load-calculation-group";
 
         public async Task Handle(
             PassTypeCalculationRequest dto, 

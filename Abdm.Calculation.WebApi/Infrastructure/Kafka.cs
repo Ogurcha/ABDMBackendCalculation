@@ -17,7 +17,7 @@ namespace Abdm.Calculation.Infrastructure
             {
                 consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
                 consumer.UseJsonMessageDeserializer();
-                consumer.ConsumersCount = 1;
+                consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
             });
 
             services.AddKafkaProducer<string, PassTypeCalculationResponse>(producer =>
@@ -30,7 +30,7 @@ namespace Abdm.Calculation.Infrastructure
             {
                 consumer.Configuration.LoadFromConfiguration("StrainAnalysisMessageConsumer");
                 consumer.UseJsonMessageDeserializer();
-                consumer.ConsumersCount = 1;
+                consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
             });
 
             services.AddKafkaProducer<string, AnalyseStrainCalculationResponse>(producer =>

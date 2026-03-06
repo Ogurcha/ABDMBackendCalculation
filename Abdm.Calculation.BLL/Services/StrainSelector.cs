@@ -22,6 +22,11 @@ namespace Abdm.Calculation.BLL.Services
             var roadRules = bigData.RoadRules;
             foreach (var roadRule in roadRules)
             {
+                if (!orderedStrainsMap.Any())
+                {
+                    continue;
+                }
+
                 var actualVehicleCount = Math.Min(roadRule.MaxTrajectoriesCount, intervalModel.PassageIntervalRef.LaneCount);
                 
                 if (actualVehicleCount == 1)
@@ -36,7 +41,12 @@ namespace Abdm.Calculation.BLL.Services
                 }
                 else
                 {
-                    yield return GetStrainResult(orderedStrainsMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
+                    var strainResult = GetStrainResult(orderedStrainsMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
+                    if (strainResult == null) 
+                    { 
+                        continue; 
+                    }
+                    yield return strainResult!;
                 }
             }
         }
@@ -53,7 +63,7 @@ namespace Abdm.Calculation.BLL.Services
         /// <param name="mesh">Поверхность влияния</param>
         /// <param name="actualVehicleCount">Количество ТС</param>
         /// <returns></returns>
-        private StrainResult GetStrainResult((double X, VehicleStrain Strain)[] sortedStrains,
+        private StrainResult? GetStrainResult((double X, VehicleStrain Strain)[] sortedStrains,
             IntervalModel intervalModel,
             RoadRule roadRule,
             VehicleRollingSmallModel data,
@@ -89,14 +99,21 @@ namespace Abdm.Calculation.BLL.Services
                 }
             }
 
-            var strainResult = new StrainResult
+            if (vehicleStrain == null || vehicleStrains.Count == 0)
             {
-                RoadRuleRef = roadRule,
-                Strain = vehicleStrains,
-                StrainOneAuto = vehicleStrain!
-            };
+                return null;
+            }
+            else
+            {
+                var strainResult = new StrainResult
+                {
+                    RoadRuleRef = roadRule,
+                    Strain = vehicleStrains,
+                    StrainOneAuto = vehicleStrain
+                };
 
-            return strainResult;
+                return strainResult;
+            }
 
             void UseStrain((double X, VehicleStrain Strain)? trajNullable)
             {

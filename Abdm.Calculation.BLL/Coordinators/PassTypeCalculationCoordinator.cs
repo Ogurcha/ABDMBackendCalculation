@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -12,6 +13,7 @@ namespace Abdm.Calculation.BLL.Coordinators
     {
         private const string passTypeResolverNotFoundErrorMessage = "Pass type resolver for given load were not found";
         private const string strainIsNaNErrorMessage = "Calculation error. Strain equals Double.NaN";
+        private const string cantGetValidStrainResults = "Calculation error. Can't get valid Strain results";
 
         public async Task<ResultExceptionContainer<PassTypeCalculationResult>> Run(
             [DisallowNull] PassTypeCalculationParameters parameters, 
@@ -33,6 +35,10 @@ namespace Abdm.Calculation.BLL.Coordinators
             var strainResults = strainsContainer.Result!.StrainResults;
             var dataModel = strainsContainer.Result.DataModel;
 
+            if (!strainResults.Any())
+            {
+                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(cantGetValidStrainResults));
+            }
             if (strainResults.Any(x => x.Strain.TotalStrain == double.NaN))
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
