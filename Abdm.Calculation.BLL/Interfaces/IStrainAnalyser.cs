@@ -6,6 +6,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainAnalyser
     {
-        AnalysisSummary GetAnalysis(VehicleRollingResult defaultRolling, VehicleRollingResult mirroredRolling);
+        AnalysisSummary? GetAnalysis(VehicleRollingResult defaultRolling, VehicleRollingResult mirroredRolling);
     }
 }

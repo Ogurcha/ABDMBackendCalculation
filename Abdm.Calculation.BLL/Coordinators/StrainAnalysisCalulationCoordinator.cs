@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
@@ -38,6 +37,10 @@ namespace Abdm.Calculation.BLL.Coordinators
             var mirroredRoll = mirroredRollResult.Result!;
 
             var strainAnalysis = strainAnalyser.GetAnalysis(defaultRoll, mirroredRoll);
+            if (strainAnalysis == null)
+            {
+                return new ResultExceptionContainer<StrainAnalysisResult>(GetFailedResult(parameters));
+            }
 
             //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
 
@@ -74,7 +77,18 @@ namespace Abdm.Calculation.BLL.Coordinators
 
         public StrainAnalysisResult GetFailedResult(PassTypeCalculationParameters param)
         {
-            throw new NotImplementedException();
+            return new StrainAnalysisResult()
+            {
+                IssoId = param.IssoId,
+                CheckPointNumber = param.CheckPointNumber,
+                LoadId = (int)param.LoadSchema.Id,
+                Direction = (int)param.Direction,
+                SnipId = (int)param.Snip,
+                Data = new AnalysisSummary()
+                {
+                    CalculationType = Enums.StrainCalculationGroupTypeEnum.Unknown
+                }
+            };
         }
 
         private StrainAnalysisResult ComposeMessage(PassTypeCalculationParameters param, AnalysisSummary analysisSummary)

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis;
 
 namespace Abdm.Calculation.WebApi.ResponseModels
 {
