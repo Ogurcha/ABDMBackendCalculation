@@ -23,7 +23,7 @@ namespace Abdm.Calculation.WebApi.Handlers
         ) : IKafkaMessageHandler<string, StrainAnalysisCalculationRequest>
     {
         private const string producerErrorMsg = "Message producer failed to send message";
-        private const string brokerClassNameStr = "class-calculated";
+        private const string brokerClassNameStr = "strain-analysis-calculated";
 
         public async Task Handle(
             StrainAnalysisCalculationRequest dto, 
