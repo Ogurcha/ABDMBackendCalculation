@@ -94,6 +94,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 ColumnNumber = columNumber,
                 Wheels = wheels,
                 Intervals = intervals,
+                PositionX = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Average(x => x.Position.X) - leftIntervalStart),
+                PositionY = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Min(x => x.Position.Y)),
+                SumStrain = wheels.Sum(w => w.Strain)
             };
         }
 
