@@ -22,7 +22,7 @@ namespace Abdm.Calculation.BLL.Services
             var roadRules = bigData.RoadRules;
             foreach (var roadRule in roadRules)
             {
-                if (!orderedStrainsMap.Any())
+                if (!orderedStrainsMap[roadRule].Any())
                 {
                     continue;
                 }
