@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Mapster;
+using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
 namespace Abdm.Calculation.BLL.Coordinators
 {
@@ -40,7 +41,7 @@ namespace Abdm.Calculation.BLL.Coordinators
 
             //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
 
-            return new ResultExceptionContainer<StrainAnalysisResult>(strainAnalysis.Adapt<StrainAnalysisResult>());
+            return new ResultExceptionContainer<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis));
         }
 
         public static void SerializeToJsonFile(object obj, string filename = "output.json")
@@ -74,6 +75,19 @@ namespace Abdm.Calculation.BLL.Coordinators
         public StrainAnalysisResult GetFailedResult(PassTypeCalculationParameters param)
         {
             throw new NotImplementedException();
+        }
+
+        private StrainAnalysisResult ComposeMessage(PassTypeCalculationParameters param, AnalysisSummary analysisSummary)
+        {
+            return new StrainAnalysisResult()
+            {
+                IssoId = param.IssoId,
+                CheckPointNumber = param.CheckPointNumber,
+                LoadId = (int)param.LoadSchema.Id,
+                Direction = (int)param.Direction,
+                SnipId = (int)param.Snip,
+                Data = analysisSummary
+            };
         }
     }
 }

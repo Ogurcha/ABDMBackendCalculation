@@ -46,6 +46,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<ISurfaceMaterialRepository, SurfaceMaterialRepository>();
             services.AddScoped<IPillarMaterialRepository, PillarMaterialRepository>();
             services.AddScoped<IMaterialService, MaterialService>();
+            services.AddScoped<ITrajectoryFilterProvider, TrajectoryFilterProvider>();
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddScoped<IMeshManager, MeshManager>();

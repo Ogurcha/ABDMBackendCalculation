@@ -13,9 +13,14 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         public StrainCalculationGroupTypeEnum CalculationType { get; set; }
 
         /// <summary>
-        /// Правила, по которым была рассчитана нагрузка
+        /// Положение ограждения слева
         /// </summary>
-        public required RoadRule RoadRule { get; set; }
+        public decimal AbsolutePositionLeft { get; set; }
+
+        /// <summary>
+        /// Положение ограждения справа
+        /// </summary>
+        public decimal AbsolutePositionRight { get; set; }
 
         /// <summary>
         /// Результат при обычном расчете (железобетон)

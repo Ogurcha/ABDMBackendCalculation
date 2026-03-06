@@ -3,60 +3,64 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
-using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
     public class StrainCalculator(IProfileYZService profileYZService,
         IVehiclePositioner vehiclePositioner,
         IStrainCoefficientFactory strainCoefficientFactory,
-        IEqualityComparer<double> equalityComparer) : IStrainCalculator
+        IEqualityComparer<double> equalityComparer,
+        ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainCalculator
     {
-        public Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> GetStrainsMap(
+        public Dictionary<RoadRule, (double X, VehicleStrain strain)[]> GetStrainsMap(
             IntervalModel intervalModel,
             VehicleRollingBigModel bigData)
         {
             var data = bigData.Data;
             var roadRules = bigData.RoadRules;
-            var strainMap = new Dictionary<double, VehicleStrain>();
 
-            var trajectoriesMap = new Dictionary<RoadRule, (double X, VehicleStrain strain)[]>();
+            var strainMap = new Dictionary<double, VehicleStrain>(equalityComparer);
+            var trafficJamStrainMap = new Dictionary<double, TrafficJamStrain?>(equalityComparer);
+            var doTrafficJamStrainCalulation = roadRules.Any(r => r.DoTrafficJamLoadCalulation);
 
-            var groupedBySafetyLine = roadRules.GroupBy(r => (
-            actualSafetyLineLeft: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineLeft : (double)default,
-            actualSafetyLineRight: r.HasSafetyLine ? intervalModel.PassageIntervalRef.SafetyLineRight : (double)default,
-            r.DoTrafficJamLoadCalulation));
-
-            foreach (var ruleGroup in groupedBySafetyLine)
+            foreach (var trajectory in intervalModel.Trajectories)
             {
-                var start = intervalModel.PassageIntervalRef.AbsolutePositionLeft
-                + ruleGroup.Key.actualSafetyLineLeft
-                + PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
-                var finish = intervalModel.PassageIntervalRef.AbsolutePositionRight
-                - ruleGroup.Key.actualSafetyLineRight
-                - PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(data.Load, ruleGroup);
-
-                var actualTrajectories = intervalModel.Trajectories.Where(t => t.X >= start && t.X <= finish);
-
-                foreach (var trajectory in actualTrajectories)
+                if (!strainMap.ContainsKey(trajectory.X))
                 {
-                    if (!strainMap.Keys.Contains(trajectory.X, equalityComparer) 
-                        && GetStrainForEachPositivePiece(
+                    var vehicleStrains = GetStrainForEachPositivePiece(
                             trajectory,
-                            data,
-                            ruleGroup.Key.DoTrafficJamLoadCalulation).Max() is VehicleStrain vehicleStrain)
+                            data)
+                        .Where(x => x != null)
+                        .Cast<VehicleStrain>()
+                        .ToArray();
+                    if (vehicleStrains.Any())
                     {
-                        strainMap[trajectory.X] = vehicleStrain;
+                        strainMap[trajectory.X] = vehicleStrains.Max()!;
                     }
                 }
-
-                foreach (var rule in ruleGroup)
+                if (doTrafficJamStrainCalulation && !trafficJamStrainMap.ContainsKey(trajectory.X))
                 {
-                    trajectoriesMap.Add(rule, actualTrajectories.OrderByDescending(t => strainMap[t.X])
-                        .Select(t => (t.X, strainMap[t.X])).ToArray());
+                    trafficJamStrainMap[trajectory.X] = GetTrafficJamStrain(trajectory, data);
                 }
             }
 
+            var trajectoriesMap = new Dictionary<RoadRule, (double X, VehicleStrain strain)[]>();
+            foreach (var roadRule in roadRules)
+            {
+                List<(double X, VehicleStrain strain)> strainList = new();
+                var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
+                foreach (var strains in strainMap.Where(s => trajectoryFilter.Filter(s.Key)))
+                {
+                    var vehicleStrain = strains.Value;
+                    if (roadRule.DoTrafficJamLoadCalulation)
+                    {
+                        vehicleStrain.TrafficJamStrain = trafficJamStrainMap[strains.Key];
+                    }
+                    strainList.Add((strains.Key, strains.Value));
+                }
+                trajectoriesMap.Add(roadRule, strainList.OrderByDescending(s => s.strain.TotalStrain).ToArray());
+            }
+            
             return trajectoriesMap;
         }
 
@@ -71,40 +75,14 @@ namespace Abdm.Calculation.BLL.Services
         /// Данный метод делит траекторию на положительные отрезки, 
         /// чтобы проверить все пики и выдать напряжение по каждому из них
         /// </summary>
-        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, bool doTrafficJamCalulation)
+        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
             var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
             var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
 
             if (positivePieces.Count() == 0)
             {
-                yield return new VehicleStrain { SumStrain = 0, WheelStrains = [] };
-            }
-
-            TrafficJamStrain? trafficJamStrain = null;
-            if (doTrafficJamCalulation)
-            {
-                var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray();
-                var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray();
-                var areaLeft = MathExtensions.CalculateAreaUnderCurve(curveLeft);
-                var areaRight = MathExtensions.CalculateAreaUnderCurve(curveRight);
-
-                trafficJamStrain = new TrafficJamStrain 
-                { 
-                    LeftPieces = MathExtensions.GetPositvePieces(curveLeft).Select(x => 
-                    new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray(),
-                    RightPieces = MathExtensions.GetPositvePieces(curveRight).Select(x => 
-                    new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray()
-                };
-                var totalWeight = data.Load.Axles.Sum(a => a.Weight);
-                trafficJamStrain.LeftStrain = GetTraffciJamStrainForOneSide(areaLeft, totalWeight);
-                trafficJamStrain.RightStrain = GetTraffciJamStrainForOneSide(areaRight, totalWeight);
-                trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
-
-                if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
-                {
-                    trafficJamStrain.Coefficient *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
-                }
+                yield return null;
             }
 
             foreach (var positivePiece in positivePieces)
@@ -117,7 +95,6 @@ namespace Abdm.Calculation.BLL.Services
                 var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,
                     data);
-                strain.TrafficJamStrain = trafficJamStrain;
 
                 if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
                 {
@@ -126,6 +103,33 @@ namespace Abdm.Calculation.BLL.Services
 
                 yield return strain;
             }
+        }
+
+        public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
+        {
+            var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray();
+            var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray();
+            var areaLeft = MathExtensions.CalculateAreaUnderCurve(curveLeft);
+            var areaRight = MathExtensions.CalculateAreaUnderCurve(curveRight);
+
+            var trafficJamStrain = new TrafficJamStrain
+            {
+                LeftPieces = MathExtensions.GetPositvePieces(curveLeft).Select(x =>
+                new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray(),
+                RightPieces = MathExtensions.GetPositvePieces(curveRight).Select(x =>
+                new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray()
+            };
+            var totalWeight = data.Load.Axles.Sum(a => a.Weight);
+            trafficJamStrain.LeftStrain = GetTraffciJamStrainForOneSide(areaLeft, totalWeight);
+            trafficJamStrain.RightStrain = GetTraffciJamStrainForOneSide(areaRight, totalWeight);
+            trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
+
+            if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
+            {
+                trafficJamStrain.Coefficient *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+            }
+
+            return trafficJamStrain;
         }
 
         /// <summary>

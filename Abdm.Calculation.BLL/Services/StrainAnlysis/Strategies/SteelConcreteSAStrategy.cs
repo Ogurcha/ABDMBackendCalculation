@@ -1,7 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
-using Abdm.Calculation.BLL.Models;
-using Abdm.Calculation.BLL.Models.Strain;
+using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
@@ -12,7 +11,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.SteelConcrete
         ];}
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, StrainResult strainResult, VehicleRollingBigModel bigModel)
+        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
         {
             throw new NotImplementedException();
         }
