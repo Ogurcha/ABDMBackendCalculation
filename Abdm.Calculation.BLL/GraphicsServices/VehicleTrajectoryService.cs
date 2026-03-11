@@ -98,13 +98,13 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 return null;
             }
 
-            var left = Map(xPosition.LeftXPosition);
+            var left = new SortedList<double, ProfileYZ>(Map(xPosition.LeftXPosition)!);
             if (left == null)
             {
                 return null;
             }
 
-            var right = Map(xPosition.RightXPosition);
+            var right = new SortedList<double, ProfileYZ>(Map(xPosition.RightXPosition)!);
             if (right == null)
             {
                 return null;

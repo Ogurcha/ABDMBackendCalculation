@@ -3,6 +3,7 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -75,14 +76,34 @@ namespace Abdm.Calculation.BLL.Services
         /// Данный метод делит траекторию на положительные отрезки, 
         /// чтобы проверить все пики и выдать напряжение по каждому из них
         /// </summary>
-        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
+        public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, 
+            VehicleRollingSmallModel data)
         {
-            var centerVectors = profileYZService.GetYZFromProfile(trajectory.Center).ToArray();
-            var positivePieces = MathExtensions.GetPositvePieces(centerVectors);
+            var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Last().Value).ToArray();
+            var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Last().Value).ToArray();
+            var positivePiecesLeft = MathExtensions.GetPositvePieces(curveLeft)
+                .Where(p => data.Load.Length < p.Y - p.X)
+                .ToArray();
+            var positivePiecesRight = MathExtensions.GetPositvePieces(curveRight)
+                .Where(p => data.Load.Length < p.Y - p.X)
+                .ToArray();
 
-            if (positivePieces.Count() == 0)
+            if (positivePiecesLeft.Length == 0 && positivePiecesRight.Length == 0)
             {
                 yield return null;
+            }
+
+            Vector2D[] positivePieces;
+            Vector2D[] curve;
+            if (positivePiecesLeft.Sum(v => v.Y - v.X) > positivePiecesRight.Sum(v => v.Y - v.X))
+            {
+                positivePieces = positivePiecesLeft;
+                curve = curveLeft;
+            }
+            else
+            {
+                positivePieces = positivePiecesRight;
+                curve = curveRight;
             }
 
             foreach (var positivePiece in positivePieces)
@@ -90,7 +111,7 @@ namespace Abdm.Calculation.BLL.Services
                 var start = positivePiece.X;
                 var end = positivePiece.Y;
 
-                var highestZVector = centerVectors.Where(v => v.X >= start && v.X <= end).OrderByDescending(v => v.Y).First();
+                var highestZVector = curve.Where(v => v.X >= start && v.X <= end).OrderByDescending(v => v.Y).First();
 
                 var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
                     highestZVector.X,
@@ -107,8 +128,8 @@ namespace Abdm.Calculation.BLL.Services
 
         public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
-            var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Values.First()).ToArray();
-            var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Values.First()).ToArray();
+            var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Last().Value).ToArray();
+            var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Last().Value).ToArray();
             var areaLeft = MathExtensions.CalculateAreaUnderCurve(curveLeft);
             var areaRight = MathExtensions.CalculateAreaUnderCurve(curveRight);
 

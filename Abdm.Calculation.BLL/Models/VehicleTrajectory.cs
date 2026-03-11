@@ -11,7 +11,7 @@ namespace Abdm.Calculation.BLL.Models
         /// Траектория колёс слева. 
         /// Ключ - <see cref="Axle.WheelsDistance"/>
         /// </summary>
-        public required Dictionary<double, ProfileYZ> Left { get; set; }
+        public required SortedList<double, ProfileYZ> Left { get; set; }
 
         /// <summary>
         /// траектория условного центра
@@ -22,7 +22,7 @@ namespace Abdm.Calculation.BLL.Models
         /// Траектория колёс слева. 
         /// Ключ - <see cref="Axle.WheelsDistance"/>
         /// </summary>
-        public required Dictionary<double, ProfileYZ> Right { get; set; }
+        public required SortedList<double, ProfileYZ> Right { get; set; }
 
         /// <summary>
         /// Координата X условного центра траектории
