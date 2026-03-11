@@ -41,7 +41,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels
         public int PassType { get; set; }
 
         /// <summary>
-        /// можно ли проезжать (рассчитывается из PassType). 1 - зеленый свет, 0 - нельзя, 
+        /// можно ли проезжать (рассчитывается из PassType). 2 - зеленый свет, 0 - нельзя, 
         /// </summary>
         [JsonPropertyName("allowed")]
         public int Allowed { get; set; }

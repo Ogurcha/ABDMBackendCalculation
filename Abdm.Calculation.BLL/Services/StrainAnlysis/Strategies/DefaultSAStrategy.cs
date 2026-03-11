@@ -13,6 +13,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
 
         public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)

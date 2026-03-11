@@ -88,27 +88,46 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 .ToArray();
         }
 
-        public VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, 
+        public VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition,
             Mesh mesh,
             double wheelLength)
         {
+            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x, wheelLength);
+
             var center = Get(xPosition.CenterXPosition);
             if (center == null)
             {
                 return null;
             }
 
-            var left = Map(xPosition.LeftXPosition);
-            if (left == null)
+            Dictionary<double, ProfileYZ>? Map(Dictionary<double, double> positions)
+            {
+                var resolved = positions
+                    .Select(kv => (kv.Key, Value: Get(kv.Value)))
+                    .ToList();
+
+                if (resolved.Any(r => r.Value == null))
+                {
+                    return null;
+                }
+
+                return resolved.ToDictionary(r => r.Key, r => r.Value!);
+            }
+
+            var leftDict = Map(xPosition.LeftXPosition);
+            if (leftDict == null)
             {
                 return null;
             }
 
-            var right = Map(xPosition.RightXPosition);
-            if (right == null)
+            var rightDict = Map(xPosition.RightXPosition);
+            if (rightDict == null)
             {
                 return null;
             }
+
+            var left = new SortedList<double, ProfileYZ>(leftDict);
+            var right = new SortedList<double, ProfileYZ>(rightDict);
 
             return new VehicleTrajectory
             {
@@ -116,15 +135,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 Left = left,
                 Right = right
             };
-
-            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x, wheelLength);
-
-            Dictionary<double, ProfileYZ>? Map(Dictionary<double, double> positions) =>
-                positions
-                    .Select(kv => (kv.Key, Value: Get(kv.Value)))
-                    .All(p => p.Value != null)
-                        ? positions.ToDictionary(kv => kv.Key, kv => Get(kv.Value)!)
-                        : null;
         }
 
         /// <summary>
@@ -165,7 +175,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="load">параметры нагрузки</param>
         /// <param name="invertAxles">ТС едет задом наперёд</param>
         /// <returns></returns>
-        [MemberNotNull]
         public VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
         {
             Func<Axle, double> axleFunc = invertAxles
@@ -212,7 +221,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         {
             var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
             var xPosition = GetXPostition(centerXPosition, wheelOffsetsMap.Keys);
-            return GetVehicleTrajectory(xPosition, mesh, centerXPosition);
+            return GetVehicleTrajectory(xPosition, mesh, wheelOffsetsMap.Keys.Average());
         }
 
         private VehicleXPosition GetXPostition(double centerXPosition, IEnumerable<double> halfWheelOffsets)

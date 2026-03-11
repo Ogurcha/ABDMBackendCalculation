@@ -1,70 +1,62 @@
 ﻿using System.Text.Json.Serialization;
+using Abdm.Calculation.BLL.Enums;
 
-namespace Abdm.Calculation.WebApi.RequestModels
+namespace Abdm.Calculation.BLL.Models.DataTransfer
 {
     /// <summary>
     /// реквест сообщение для начала расчётов
     /// </summary>
-    public class StrainAnalysisCalculationRequest
+    public class StrainAnalysisParameters
     {
         /// <summary>
         /// идентификатор искусственного сооружения
         /// </summary>
-        [JsonPropertyName("c_isso")]
-        public long CIsso { get; set; }
+        public long IssoId { get; set; }
 
         /// <summary>
         /// Номер чекпоинта данного сооружения
         /// </summary>
-        [JsonPropertyName("number")]
-        public int Number { get; set; }
+        public int CheckPointNumber { get; set; }
 
         /// <summary>
         /// идентификатор нагрузки на сооружение
         /// </summary>
-        [JsonPropertyName("c_nagruzka")]
-        public int CNagruzka { get; set; }
+        public int LoadId { get; set; }
 
         /// <summary>
         /// номер выбранного снипа, по которому пойдут расчет
         /// </summary>
-        [JsonPropertyName("snip")]
-        public int Snip { get; set; }
+        public SnipEnum Snip { get; set; } = SnipEnum.odm16;
 
         /// <summary>
         /// Направление физичесrого воздействия
         /// </summary>
-        [JsonPropertyName("direction")]
-        public int Direction { get; set; }
+        public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
 
         /// <summary>
         /// Подробные характеристики нагрузки на данное сооружение
         /// </summary>
-        [JsonPropertyName("load_schema")]
-        public LoadSchemaRequestModel? LoadSchema { get; set; }
+        public required LoadSchema LoadSchema { get; set; }
+
 
         /// <summary>
         /// Характеристики "поверхности влияния" иссо
         /// </summary>
-        [JsonPropertyName("surface")]
-        public SurfaceRequestModel? Surface { get; set; }
+        public required Surface Surface { get; set; }
 
         /// <summary>
         /// Характеристики пути
         /// </summary>
-        [JsonPropertyName("roadway")]
-        public RoadwayRequestModel? Roadway { get; set; }
+        public required Roadway Roadway { get; set; }
 
         /// <summary>
         /// для прицепов, вагонов и т.п.
         /// </summary>
-        [JsonPropertyName("secondary_load_schema")]
-        public LoadSchemaRequestModel? SecondaryLoadSchema { get; set; }
+        public LoadSchema? SecondaryLoadSchema { get; set; }
 
         /// <summary>
         /// идентификатор отчёта, для которого будет выполнен расчёт.
         /// </summary>
-        [JsonPropertyName("report_id")]
         public int ReportId { get; set; }
     }
 }

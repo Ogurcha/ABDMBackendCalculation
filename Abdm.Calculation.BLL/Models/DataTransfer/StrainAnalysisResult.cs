@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Abdm.Calculation.BLL.Models.StrainAnalysis;
+﻿using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
 namespace Abdm.Calculation.BLL.Models.DataTransfer
 {
@@ -34,5 +33,10 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         /// Результат расчётов
         /// </summary>
         public required AnalysisSummary Data { get; set; }
+
+        /// <summary>
+        /// идентификатор отчёта, для которого будет выполнен расчёт.
+        /// </summary>
+        public int ReportId { get; set; }
     }
 }

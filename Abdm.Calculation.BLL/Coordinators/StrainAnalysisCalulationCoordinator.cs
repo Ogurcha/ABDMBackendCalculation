@@ -3,19 +3,20 @@ using System.Text.Json;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
+using Mapster;
 
 namespace Abdm.Calculation.BLL.Coordinators
 {
     public class StrainAnalysisCalulationCoordinator(
         IBaseVehicleRollingCalculationCoordinator baseCoordinator,
         IStrainAnalyser strainAnalyser
-        ) : ICoordinator<PassTypeCalculationParameters, StrainAnalysisResult>
+        ) : ICoordinator<StrainAnalysisParameters, StrainAnalysisResult>
     {
         public async Task<ResultExceptionContainer<StrainAnalysisResult>> Run(
-            [DisallowNull] PassTypeCalculationParameters parameters,
+            [DisallowNull] StrainAnalysisParameters parameters,
             CancellationToken cancellationToken)
         {
-            var bigDataResult = await baseCoordinator.PrepareDataModel(parameters, null, cancellationToken);
+            var bigDataResult = await baseCoordinator.PrepareDataModel(parameters.Adapt<PassTypeCalculationParameters>(), null, cancellationToken);
             if (!bigDataResult.IsSuccess)
             {
                 return new ResultExceptionContainer<StrainAnalysisResult>(bigDataResult.Exception!);
@@ -60,22 +61,22 @@ namespace Abdm.Calculation.BLL.Coordinators
             Console.WriteLine($"JSON serialized to {Path.GetFullPath(filename)}");
         }
 
-        public string InfoMsg(PassTypeCalculationParameters param)
+        public string InfoMsg(StrainAnalysisParameters param)
         {
             return string.Format("PassType calculation for (IssoId = {0}, Check point number = {1}) started", param.IssoId, param.CheckPointNumber);
         }
 
-        public string ErrorMsg(PassTypeCalculationParameters param)
+        public string ErrorMsg(StrainAnalysisParameters param)
         {
             return string.Format("Error while calculating PassType for {0}, n = {1}", param.IssoId, param.CheckPointNumber);
         }
 
-        public string ExceptionMsg(PassTypeCalculationParameters param)
+        public string ExceptionMsg(StrainAnalysisParameters param)
         {
             return string.Format("Failed PassType calculation for (IssoId = {0}, Check point number = {1})", param.IssoId, param.CheckPointNumber);
         }
 
-        public StrainAnalysisResult GetFailedResult(PassTypeCalculationParameters param)
+        public StrainAnalysisResult GetFailedResult(StrainAnalysisParameters param)
         {
             return new StrainAnalysisResult()
             {
@@ -87,11 +88,12 @@ namespace Abdm.Calculation.BLL.Coordinators
                 Data = new AnalysisSummary()
                 {
                     CalculationType = Enums.StrainCalculationGroupTypeEnum.Unknown
-                }
+                },
+                ReportId = param.ReportId,
             };
         }
 
-        private StrainAnalysisResult ComposeMessage(PassTypeCalculationParameters param, AnalysisSummary analysisSummary)
+        private StrainAnalysisResult ComposeMessage(StrainAnalysisParameters param, AnalysisSummary analysisSummary)
         {
             return new StrainAnalysisResult()
             {
@@ -100,7 +102,8 @@ namespace Abdm.Calculation.BLL.Coordinators
                 LoadId = (int)param.LoadSchema.Id,
                 Direction = (int)param.Direction,
                 SnipId = (int)param.Snip,
-                Data = analysisSummary
+                Data = analysisSummary,
+                ReportId = param.ReportId,
             };
         }
     }

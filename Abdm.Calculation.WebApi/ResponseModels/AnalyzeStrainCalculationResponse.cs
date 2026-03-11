@@ -38,6 +38,12 @@ namespace Abdm.Calculation.WebApi.ResponseModels
 
         [JsonPropertyName("data")]
         public AnalysisSummaryModel Data { get; set; }
-        
+
+        /// <summary>
+        /// идентификатор отчёта, для которого будет выполнен расчёт.
+        /// </summary>
+        [JsonPropertyName("report_id")]
+        public int ReportId { get; set; }
+
     }
 }
