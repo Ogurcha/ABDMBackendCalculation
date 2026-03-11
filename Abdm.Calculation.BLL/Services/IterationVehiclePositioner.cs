@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Helpers;
+﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
@@ -26,7 +25,6 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Найти максимальное напряжение от нагрузки в траектории в определенной позиции.
         /// </summary>
-        [MemberNotNull]
         public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, VehicleRollingSmallModel data)
         {
             if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)

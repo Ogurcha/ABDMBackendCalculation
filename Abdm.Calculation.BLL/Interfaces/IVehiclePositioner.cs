@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Interfaces
@@ -10,7 +9,6 @@ namespace Abdm.Calculation.BLL.Interfaces
     /// </summary>
     public interface IVehiclePositioner
     {
-        [MemberNotNull]
         VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, VehicleRollingSmallModel data);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
@@ -11,7 +10,6 @@ namespace Abdm.Calculation.BLL.Services
     /// </summary>
     public class AxleVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
-        [MemberNotNull]
         public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, VehicleRollingSmallModel data)
         {
 
