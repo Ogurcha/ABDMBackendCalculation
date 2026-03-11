@@ -110,7 +110,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Roadway, src => src.Roadway)
             .Map(dst => dst.SecondaryLoadSchema, src => src.SecondaryLoadSchema);
 
-            TypeAdapterConfig<StrainAnalysisCalculationRequest, PassTypeCalculationParameters>
+            TypeAdapterConfig<StrainAnalysisCalculationRequest, StrainAnalysisParameters>
             .NewConfig()
             .Map(dst => dst.IssoId, src => src.CIsso)
             .Map(dst => dst.CheckPointNumber, src => src.Number)

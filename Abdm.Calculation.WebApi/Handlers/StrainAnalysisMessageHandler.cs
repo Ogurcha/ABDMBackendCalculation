@@ -17,7 +17,7 @@ namespace Abdm.Calculation.WebApi.Handlers
     /// Рассчет условий пропуска
     /// </summary>
     public class StrainAnalysisMessageHandler(
-        ICanWork<PassTypeCalculationParameters, StrainAnalysisResult> strainAnalyser, 
+        ICanWork<StrainAnalysisParameters, StrainAnalysisResult> strainAnalyser, 
         ILogger<StrainAnalysisMessageHandler> logger,
         IKafkaProducer<string, AnalyseStrainCalculationResponse> messageProducer
         ) : IKafkaMessageHandler<string, StrainAnalysisCalculationRequest>
@@ -29,7 +29,7 @@ namespace Abdm.Calculation.WebApi.Handlers
             StrainAnalysisCalculationRequest dto, 
             MessageContext<string, StrainAnalysisCalculationRequest> context)
         {
-            var data = dto.Adapt<PassTypeCalculationParameters>();
+            var data = dto.Adapt<StrainAnalysisParameters>();
             try
             {
                 var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
