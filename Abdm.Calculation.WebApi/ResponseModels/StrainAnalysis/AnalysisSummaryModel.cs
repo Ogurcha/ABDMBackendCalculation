@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.Pillar;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
 {
@@ -13,7 +12,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// Тип расчета напряжений. Влияет на выбор стратегии анализа и на структуру результирующей модели
         /// </summary>
         [JsonPropertyName("calculationType")]
-        public StrainCalculationGroupTypeEnum CalculationType { get; set; }
+        public int CalculationType { get; set; }
 
         /// <summary>
         /// Положение ограждения слева
@@ -31,18 +30,18 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// Результат при обычном расчете (железобетон)
         /// </summary>
         [JsonPropertyName("default")]
-        public List<AnalysisDefault>? Default { get; set; }
+        public List<AnalysisDefaultModel>? Default { get; set; }
 
         /// <summary>
         /// Результат при расчёте по опорам
         /// </summary>
         [JsonPropertyName("pillar")]
-        public List<AnalysisPillar>? Pillar { get; set; }
+        public List<AnalysisPillarModel>? Pillar { get; set; }
 
         /// <summary>
         /// Результат при расчёте по стжб
         /// </summary>
         [JsonPropertyName("steelConcrete")]
-        public List<AnalysisSteelConcrete>? SteelConcrete { get; set; }
+        public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
     }
 }

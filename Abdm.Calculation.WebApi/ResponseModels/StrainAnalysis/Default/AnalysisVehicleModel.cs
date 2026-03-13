@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
 {
@@ -15,12 +14,12 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         public decimal PositionY { get; set; }
 
         [JsonPropertyName("wheels")]
-        public required List<WheelAnalysisModel> Wheels { get; set; }
+        public required WheelAnalysisModel[] Wheels { get; set; }
 
         [JsonPropertyName("sumStrain")]
         public decimal SumStrain { get; set; }
 
         [JsonPropertyName("intervals")]
-        public List<TrafficJamStrainAnalysisModel>? Intervals { get; set; }
+        public TrafficJamStrainAnalysisModel[]? Intervals { get; set; }
     }
 }

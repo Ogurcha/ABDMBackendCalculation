@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar
 {
@@ -9,9 +8,9 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar
         public int ColumnNumber { get; set; }
 
         [JsonPropertyName("axles")]
-        public required List<AxleAnalysisModel> Axles { get; set; }
+        public required AxleAnalysisModel[] Axles { get; set; }
 
         [JsonPropertyName("intervals")]
-        public List<TrafficJamStrainAnalysisSlimModel>? Intervals { get; set; }
+        public TrafficJamStrainAnalysisSlimModel[]? Intervals { get; set; }
     }
 }
