@@ -47,7 +47,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return vehicles;
         }
 
-        private AnalysisVehicle GetAnalysisVehicle(VehicleStrain vehicleStrain, double leftIntervalStart, int columNumber)
+        private AnalysisVehicle GetAnalysisVehicle(VehicleStrain vehicleStrain, 
+            double leftIntervalStart, 
+            int columNumber)
         {
             var wheelCounter = 1;
             var wheels = new List<WheelAnalysis>();
@@ -101,20 +103,24 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             };
         }
 
-        private WheelAnalysis GetAnalysisWheel(WheelStrain wheelStrain, double leftIntervalStart, int number, int subNumber)
+        private WheelAnalysis GetAnalysisWheel(WheelStrain wheelStrain, 
+            double leftIntervalStart, 
+            int number, 
+            int subNumber)
         {
             return new WheelAnalysis()
             {
                 Number = number,
                 SubNumber = subNumber,
-                Height = MathExtensions.ToDecimal(wheelStrain.AxleRef.Wy),
-                Width = MathExtensions.ToDecimal(wheelStrain.AxleRef.Wx),
                 Strain = MathExtensions.ToDecimal(wheelStrain.Strain),
                 PositionX = MathExtensions.ToDecimal(wheelStrain.Position.X - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
                 Z = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight),
                 Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
-                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx)
+                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx),
+                FootPrintSizeFirst = 0.56m,
+                FootPrintSizeSecond = 0.96m,
+                ZVolume = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight / 0.56 / 0.96),
             };
         }
     }

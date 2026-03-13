@@ -38,10 +38,10 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         [JsonPropertyName("pillar")]
         public List<AnalysisPillarModel>? Pillar { get; set; }
 
-        /// <summary>
-        /// Результат при расчёте по стжб
-        /// </summary>
-        [JsonPropertyName("steelConcrete")]
-        public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
+        ///// <summary>
+        ///// Результат при расчёте по стжб
+        ///// </summary>
+        //[JsonPropertyName("steelConcrete")]
+        //public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
     }
 }
