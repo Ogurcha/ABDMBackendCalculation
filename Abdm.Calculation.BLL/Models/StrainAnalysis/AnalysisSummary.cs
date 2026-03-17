@@ -32,9 +32,9 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// </summary>
         public List<AnalysisPillar>? Pillar { get; set; }
 
-        /// <summary>
-        /// Результат при расчёте по стжб
-        /// </summary>
-        public List<AnalysisSteelConcrete>? SteelConcrete { get; set; }
+        ///// <summary>
+        ///// Результат при расчёте по стжб
+        ///// </summary>
+        //public List<AnalysisSteelConcrete>? SteelConcrete { get; set; }
     }
 }

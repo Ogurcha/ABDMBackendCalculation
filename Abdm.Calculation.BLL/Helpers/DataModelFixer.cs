@@ -41,6 +41,7 @@ namespace Abdm.Calculation.BLL.Helpers
                 dataModel.Load.Interval = AB151Interval;
             }
             dataModel.Load.SecondaryLoadModel = rawData.SecondaryLoadSchema.Adapt<LoadModel>();
+            dataModel.Surface.RoadCoatSize = rawData.Roadway.RoadHeight;
 
             return dataModel;
         }

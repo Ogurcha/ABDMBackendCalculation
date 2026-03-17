@@ -11,18 +11,6 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         public int SubNumber { get; set; }
 
         /// <summary>
-        /// Вес колеса
-        /// </summary>
-        [JsonPropertyName("weight")]
-        public decimal Weight { get; set; }
-
-        /// <summary>
-        /// Ширина отпечатка колеса
-        /// </summary>
-        [JsonPropertyName("width")]
-        public decimal Width { get; set; }
-
-        /// <summary>
         /// Длина отпечатка колеса
         /// </summary>
         [JsonPropertyName("height")]
@@ -45,5 +33,23 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
 
         [JsonPropertyName("z")]
         public decimal Z { get; set; }
+
+        /// <summary>
+        /// Размер отпечатка колеса с учётом добавочной длины дорожной одежды (первый множитель)
+        /// </summary>
+        [JsonPropertyName("footPrintSizeFirst")]
+        public decimal FootPrintSizeFirst { get; set; }
+
+        /// <summary>
+        /// Размер отпечатка колеса с учётом добавочной длины дорожной одежды (второй множитель)
+        /// </summary>
+        [JsonPropertyName("footPrintSizeSecond")]
+        public decimal FootPrintSizeSecond { get; set; }
+
+        /// <summary>
+        /// Объем поверхности под отпечатком
+        /// </summary>
+        [JsonPropertyName("zVolume")]
+        public decimal ZVolume { get; set; }
     }
 }

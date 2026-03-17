@@ -58,5 +58,10 @@ namespace Abdm.Calculation.BLL.Models
         /// Материал поверхности
         /// </summary>
         public IMaterial? Material { get; set; }
+
+        /// <summary>
+        /// Толщина дорожной одежды
+        /// </summary>
+        public double RoadCoatSize { get; set; }
     }
 }
