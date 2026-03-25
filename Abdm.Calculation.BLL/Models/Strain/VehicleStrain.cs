@@ -31,5 +31,11 @@
         /// Напряжение, которое эмулирует равномерное скопление машин в пробке
         /// </summary>
         public TrafficJamStrain? TrafficJamStrain { get; set; }
+
+
+        /// <summary>
+        /// Траектория, на которой находилось ТС при замере напряжения.
+        /// </summary>
+        public required VehicleTrajectory VehicleTrajectoryRef { get; set; }
     }
 }

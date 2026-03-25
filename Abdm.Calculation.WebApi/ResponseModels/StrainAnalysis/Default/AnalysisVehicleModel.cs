@@ -21,5 +21,8 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
 
         [JsonPropertyName("intervals")]
         public TrafficJamStrainAnalysisModel[]? Intervals { get; set; }
+
+        [JsonPropertyName("intervalProfilePoints")]
+        public ProfileVectorModel[]? IntervalProfileVectors { get; set; }
     }
 }

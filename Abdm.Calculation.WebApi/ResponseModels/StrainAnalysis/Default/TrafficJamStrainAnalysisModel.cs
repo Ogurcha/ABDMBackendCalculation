@@ -33,5 +33,20 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
 
         [JsonPropertyName("sumStrain")]
         public decimal SumStrain { get; set; }
+
+        [JsonPropertyName("centerIntervalStart")]
+        public decimal CenterIntervalStart { get; set; }
+
+        [JsonPropertyName("centerIntervalEnd")]
+        public decimal CenterIntervalEnd { get; set; }
+
+        [JsonPropertyName("centerIntervalLength")]
+        public decimal CenterIntervalLength { get; set; }
+
+        [JsonPropertyName("leftIntervalVolume")]
+        public decimal LeftIntervalVolume { get; set; }
+
+        [JsonPropertyName("rightIntervalVolume")]
+        public decimal RightIntervalVolume { get; set; }
     }
 }

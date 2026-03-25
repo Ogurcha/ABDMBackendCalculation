@@ -11,10 +11,10 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         public int SubNumber { get; set; }
 
         /// <summary>
-        /// Длина отпечатка колеса
+        /// Вес колеса
         /// </summary>
-        [JsonPropertyName("height")]
-        public decimal Height { get; set; }
+        [JsonPropertyName("weight")]
+        public decimal Weight { get; set; }
 
         /// <summary>
         /// Давление колеса на поверхность

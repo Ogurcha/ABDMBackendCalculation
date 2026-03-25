@@ -29,15 +29,5 @@
         /// Напряжение от профилей справа от центра ТС
         /// </summary>
         public double RightStrain { get; set; }
-
-        /// <summary>
-        /// Напряжения по отрезкам траектории движения слева
-        /// </summary>
-        public required PositivePieceStrain[] LeftPieces { get; set; }
-
-        /// <summary>
-        /// Напряжения по отрезкам траектории движения справа
-        /// </summary>
-        public required PositivePieceStrain[] RightPieces { get; set; }
     }
 }

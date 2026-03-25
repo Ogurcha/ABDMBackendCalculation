@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Helpers;
+﻿using Abdm.Calculation.BLL.Extensions;
+using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
@@ -7,8 +8,7 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class StrainCalculator(IProfileYZService profileYZService,
-        IVehiclePositioner vehiclePositioner,
+    public class StrainCalculator(IVehiclePositioner vehiclePositioner,
         IStrainCoefficientFactory strainCoefficientFactory,
         IEqualityComparer<double> equalityComparer,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainCalculator
@@ -79,8 +79,8 @@ namespace Abdm.Calculation.BLL.Services
         public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, 
             VehicleRollingSmallModel data)
         {
-            var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Last().Value).ToArray();
-            var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Last().Value).ToArray();
+            var curveLeft = trajectory.Left.Last().Value.GetYZ().ToArray();
+            var curveRight = trajectory.Right.Last().Value.GetYZ().ToArray();
             var positivePiecesLeft = MathExtensions.GetPositvePieces(curveLeft)
                 .Where(p => data.Load.Length < p.Y - p.X)
                 .ToArray();
@@ -128,18 +128,13 @@ namespace Abdm.Calculation.BLL.Services
 
         public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
-            var curveLeft = profileYZService.GetYZFromProfile(trajectory.Left.Last().Value).ToArray();
-            var curveRight = profileYZService.GetYZFromProfile(trajectory.Right.Last().Value).ToArray();
+            var curveLeft = trajectory.Left.Last().Value.GetYZ().ToArray();
+            var curveRight = trajectory.Right.Last().Value.GetYZ().ToArray();
             var areaLeft = MathExtensions.CalculateAreaUnderCurve(curveLeft);
             var areaRight = MathExtensions.CalculateAreaUnderCurve(curveRight);
 
-            var trafficJamStrain = new TrafficJamStrain
-            {
-                LeftPieces = MathExtensions.GetPositvePieces(curveLeft).Select(x =>
-                new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray(),
-                RightPieces = MathExtensions.GetPositvePieces(curveRight).Select(x =>
-                new PositivePieceStrain { BeginY = x.X, EndY = x.Y }).ToArray()
-            };
+            var trafficJamStrain = new TrafficJamStrain();
+            
             var totalWeight = data.Load.Axles.Sum(a => a.Weight);
             trafficJamStrain.LeftStrain = GetTraffciJamStrainForOneSide(areaLeft, totalWeight);
             trafficJamStrain.RightStrain = GetTraffciJamStrainForOneSide(areaRight, totalWeight);

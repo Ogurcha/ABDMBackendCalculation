@@ -15,7 +15,6 @@ using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
 using Abdm.Calculation.BLL.Services.StrainCoefficients;
 using Abdm.Calculation.BLL.Services.SurfaceData;
 using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
-using Abdm.Calculation.BLL.StrainCalculation;
 using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Interfaces;
 using Abdm.Calculation.Graphics;
@@ -87,7 +86,7 @@ namespace Abdm.Calculation.Infrastructure
                 new SteelConcreteSAStrategy(),
             }));
 
-            services.AddScoped<IProfileYZService, ProfileYZService>();
+
             if (configuration.GetSection("BLLSettings").GetSection("UseLegacyLogic").Value == true.ToString())
             {
                 services.AddScoped<IVehiclePositioner, AxleVehiclePositioner>();

@@ -21,5 +21,15 @@
         public decimal RightIntervalStrain { get; set; }
 
         public decimal SumStrain { get; set; }
+
+        public decimal CenterIntervalStart { get; set; }
+
+        public decimal CenterIntervalEnd { get; set; }
+
+        public decimal CenterIntervalLength { get; set; }
+
+        public decimal LeftIntervalVolume { get; set; }
+
+        public decimal RightIntervalVolume { get; set; }
     }
 }

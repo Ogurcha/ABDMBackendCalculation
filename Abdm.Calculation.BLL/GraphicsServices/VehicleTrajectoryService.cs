@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
@@ -13,7 +14,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 {
     public class VehicleTrajectoryService(
         IMeshManager meshManager,
-        IProfileYZService profileYZService,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
 
@@ -184,7 +184,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var strain = profileYZService.GetStrain(trajectory.Left[distance], axleFunc(axle), axle.WheelWeight);
+                    var strain = trajectory.Left[distance].GetStrain(axleFunc(axle), axle.WheelWeight);
                     var leftWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -195,7 +195,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         AxleRef = axle,
                         Strain = strain
                     };
-                    strain = profileYZService.GetStrain(trajectory.Right[distance], axleFunc(axle), axle.WheelWeight);
+                    strain = trajectory.Right[distance].GetStrain(axleFunc(axle), axle.WheelWeight);
                     var rightWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -213,7 +213,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             return new VehicleStrain
             {
                 SumStrain = wheelStrains.Sum(x => x.Strain),
-                WheelStrains = wheelStrains.ToArray()
+                WheelStrains = wheelStrains.ToArray(),
+                VehicleTrajectoryRef = trajectory
             };
         }
 
