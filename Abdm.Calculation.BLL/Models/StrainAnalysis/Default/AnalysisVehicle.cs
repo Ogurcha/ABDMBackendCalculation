@@ -13,5 +13,7 @@
         public decimal SumStrain { get; set; }
 
         public List<TrafficJamStrainAnalysis>? Intervals { get; set; }
+
+        public ProfileVector[]? IntervalProfileVectors { get; set; }
     }
 }

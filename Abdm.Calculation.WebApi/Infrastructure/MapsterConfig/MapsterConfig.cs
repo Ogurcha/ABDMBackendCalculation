@@ -2,9 +2,11 @@
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.Maths.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
 using Mapster;
 
 namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig

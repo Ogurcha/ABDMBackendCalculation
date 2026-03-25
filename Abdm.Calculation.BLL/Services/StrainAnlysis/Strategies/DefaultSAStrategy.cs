@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -6,6 +7,7 @@ using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
@@ -29,7 +31,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 });
             }
 
-            analysis.Default = defaults;
+            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).ToList();
 
             return analysis;
         }
@@ -65,31 +67,62 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             }
 
             List<TrafficJamStrainAnalysis>? intervals = null;
+            ProfileVector[]? intervalProfileVectors = null; 
             if (vehicleStrain.TrafficJamStrain != null)
             {
                 intervals = new List<TrafficJamStrainAnalysis>();
+                var trajectory = vehicleStrain.VehicleTrajectoryRef;
 
-                for (var i = 0; i < Math.Min(vehicleStrain.TrafficJamStrain.LeftPieces.Length, vehicleStrain.TrafficJamStrain.RightPieces.Length); i++) {
-                    var left = vehicleStrain.TrafficJamStrain.LeftPieces[i];
-                    var right = vehicleStrain.TrafficJamStrain.RightPieces[i];
+                var curveLeft = trajectory.Left.Last().Value.GetYZ().ToArray();
+                var curveRight = trajectory.Right.Last().Value.GetYZ().ToArray();
+                var curveCenter = trajectory.Center.GetYZ().ToArray();
+
+                var positivePiecesLeft = MathExtensions.GetPositvePieces(curveLeft);
+                var positivePiecesRight = MathExtensions.GetPositvePieces(curveRight);
+                var positivePiecesCenter = MathExtensions.GetPositvePieces(curveCenter);
+                var leftPieces = positivePiecesLeft.Select<Vector2D, (double BeginY, double EndY)>(x => new(x.X, x.Y)).ToArray();
+                var rightPieces = positivePiecesRight.Select<Vector2D, (double BeginY, double EndY)>(x => new(x.X, x.Y)).ToArray();
+                var centerPieces = positivePiecesCenter.Select<Vector2D, (double BeginY, double EndY)>(x => new(x.X, x.Y)).ToArray();
+
+                for (var i = 0; 
+                    i < Math.Min(leftPieces.Length, Math.Min(rightPieces.Length, centerPieces.Length)); 
+                    i++) {
+
+                    var left = leftPieces[i];
+                    var right = rightPieces[i];
+                    var center = centerPieces[i];
+
+                    var minusKiller = 0d;
+                    if (left.BeginY < 0 || right.BeginY < 0)
+                    {
+                        minusKiller = Math.Min(left.BeginY, right.BeginY);
+                    }
 
                     var leftLength = left.EndY - left.BeginY;
                     var rightLength = right.EndY - right.BeginY;
+                    var centerLength = center.EndY - center.BeginY;
 
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = columNumber,
-                        LeftIntervalStart = MathExtensions.ToDecimal(left.BeginY),
-                        LeftIntervalEnd = MathExtensions.ToDecimal(left.EndY),
+                        LeftIntervalStart = MathExtensions.ToDecimal(left.BeginY - minusKiller),
+                        LeftIntervalEnd = MathExtensions.ToDecimal(left.EndY - minusKiller),
                         LeftIntervalLength = MathExtensions.ToDecimal(leftLength),
                         LeftIntervalStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.LeftStrain),
-                        RightIntervalStart = MathExtensions.ToDecimal(right.BeginY),
-                        RightIntervalEnd = MathExtensions.ToDecimal(right.EndY),
+                        RightIntervalStart = MathExtensions.ToDecimal(right.BeginY - minusKiller),
+                        RightIntervalEnd = MathExtensions.ToDecimal(right.EndY - minusKiller),
                         RightIntervalLength = MathExtensions.ToDecimal(rightLength),
                         RightIntervalStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.RightStrain),
-                        SumStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.SumStrain)
+                        SumStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.SumStrain),
+                        CenterIntervalStart = MathExtensions.ToDecimal(center.BeginY - minusKiller),
+                        CenterIntervalEnd = MathExtensions.ToDecimal(center.EndY - minusKiller),
+                        CenterIntervalLength = MathExtensions.ToDecimal(centerLength),
+                        LeftIntervalVolume = MathExtensions.ToDecimal(MathExtensions.CalculateAreaUnderCurve(curveLeft)),
+                        RightIntervalVolume = MathExtensions.ToDecimal(MathExtensions.CalculateAreaUnderCurve(curveRight)),
                     });
                 }
+
+                intervalProfileVectors = curveCenter.Select<Vector2D, ProfileVector>(x => (MathExtensions.ToDecimal(x.X), MathExtensions.ToDecimal(x.Y))).ToArray();
             }
 
             return new AnalysisVehicle
@@ -99,7 +132,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Intervals = intervals,
                 PositionX = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Average(x => x.Position.X) - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Min(x => x.Position.Y)),
-                SumStrain = wheels.Sum(w => w.Strain)
+                SumStrain = wheels.Sum(w => w.Strain),
+                IntervalProfileVectors = intervalProfileVectors,
             };
         }
 
@@ -118,6 +152,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Z = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight),
                 Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
                 Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx),
+
                 FootPrintSizeFirst = 0.56m,
                 FootPrintSizeSecond = 0.96m,
                 ZVolume = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight / 0.56 / 0.96),

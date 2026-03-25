@@ -1,10 +1,13 @@
-﻿using Abdm.Calculation.BLL.Enums;
+﻿using System.Linq;
+using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Pillar;
 using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
@@ -39,22 +42,33 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 wheelCounter++;
             }
 
+            var trajectory = vehicleStrain.VehicleTrajectoryRef;
+            var curveLeft = trajectory.Left.Last().Value.GetYZ().ToArray();
+            var positivePiecesLeft = MathExtensions.GetPositvePieces(curveLeft);
+            var leftPieces = positivePiecesLeft.Select<Vector2D, (double BeginY, double EndY)>(x => new(x.X, x.Y)).ToArray();
+
             List<TrafficJamStrainAnalysisSlim>? intervals = null;
             if (vehicleStrain.TrafficJamStrain != null)
             {
                 intervals = new List<TrafficJamStrainAnalysisSlim>();
 
-                for (var i = 0; i < vehicleStrain.TrafficJamStrain.LeftPieces.Length; i++)
+                for (var i = 0; i < leftPieces.Length; i++)
                 {
-                    var left = vehicleStrain.TrafficJamStrain.LeftPieces[i];
+                    var left = leftPieces[i];
 
                     var leftLength = left.EndY - left.BeginY;
+
+                    var minusKiller = 0d;
+                    if (left.BeginY < 0)
+                    {
+                        minusKiller = left.BeginY;
+                    }
 
                     intervals.Add(new TrafficJamStrainAnalysisSlim
                     {
                         Number = columNumber,
-                        IntervalStart = MathExtensions.ToDecimal(left.BeginY),
-                        IntervalEnd = MathExtensions.ToDecimal(left.EndY),
+                        IntervalStart = MathExtensions.ToDecimal(left.BeginY - minusKiller),
+                        IntervalEnd = MathExtensions.ToDecimal(left.EndY - minusKiller),
                         IntervalLength = MathExtensions.ToDecimal(leftLength),
                         SumStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.SumStrain)
                     });
