@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
 {
     public interface IPassTypeCondition
     {
-        bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surfaceModel, double? dynamicCoefficient);
+        bool CanPassCondition(List<StrainResult> strainResults, SurfaceModel surfaceModel, double? dynamicCoefficient);
     }
 }

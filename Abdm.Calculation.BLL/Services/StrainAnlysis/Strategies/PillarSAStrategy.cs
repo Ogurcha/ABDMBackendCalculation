@@ -80,6 +80,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 ColumnNumber = columNumber,
                 Axles = wheels,
                 Intervals = intervals,
+                IsForward = vehicleStrain.IsDirectionForward
             };
         }
 

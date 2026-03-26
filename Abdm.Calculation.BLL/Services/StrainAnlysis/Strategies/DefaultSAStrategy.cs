@@ -27,8 +27,18 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             {
                 defaults.Add(new AnalysisDefault { 
                     HasSafetyLine = strain.RoadRuleRef.HasSafetyLine, 
-                    Vehicles = GetAnalysisVehicles(strain, dataModel).ToArray() 
+                    Vehicles = GetAnalysisVehicles(strain.Strain, dataModel).ToArray() ,
+                    IsForward = strain.Strain.Any(x => x.IsDirectionForward)
                 });
+                if (strain.Strain.Any(x => x.InvertedDirectionStrain != null))
+                {
+                    defaults.Add(new AnalysisDefault
+                    {
+                        HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
+                        Vehicles = GetAnalysisVehicles(strain.Strain.Select(x => x.InvertedDirectionStrain).Where(x => x != null).Cast<VehicleStrain>(), dataModel).ToArray(),
+                        IsForward = strain.Strain.Select(x => x.InvertedDirectionStrain).Any(x => x.IsDirectionForward),
+                    });
+                }
             }
 
             analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).ToList();
@@ -36,11 +46,11 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return analysis;
         }
 
-        private List<AnalysisVehicle> GetAnalysisVehicles(StrainResult strainResult, VehicleRollingBigModel data)
+        private List<AnalysisVehicle> GetAnalysisVehicles(IEnumerable<VehicleStrain> strainResults, VehicleRollingBigModel data)
         {
             var vehicles = new List<AnalysisVehicle>();
             var columnCounter = 1;
-            foreach (var strain in strainResult.Strain.OrderBy(x => x.WheelStrains.Min(w => w.Position.X)))
+            foreach (var strain in strainResults.OrderBy(x => x.WheelStrains.Min(w => w.Position.X)))
             {
                 vehicles.Add(GetAnalysisVehicle(strain, data.Intervals.First().AbsolutePositionLeft, columnCounter));
                 columnCounter++;

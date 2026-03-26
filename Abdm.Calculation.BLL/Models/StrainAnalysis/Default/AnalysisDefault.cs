@@ -2,7 +2,9 @@
 {
     public class AnalysisDefault()
     {
-        public bool HasSafetyLine { get; set; }
+        public required bool HasSafetyLine { get; set; }
+
+        public required bool IsForward { get; set; }
 
         public required AnalysisVehicle[] Vehicles { get; set; }
     }

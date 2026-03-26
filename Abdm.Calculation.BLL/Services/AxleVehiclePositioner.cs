@@ -15,7 +15,18 @@ namespace Abdm.Calculation.BLL.Services
 
             if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
             {
-                return MathExtensions.Max(GetStrain(true), GetStrain(false));
+                var forwardStrain = GetStrain(true);
+                var backwardStrain = GetStrain(false);
+                if (forwardStrain.CompareTo(backwardStrain) > 0)
+                {
+                    forwardStrain.InvertedDirectionStrain = backwardStrain;
+                    return forwardStrain;
+                }
+                else
+                {
+                    backwardStrain.InvertedDirectionStrain = forwardStrain;
+                    return backwardStrain;
+                }                
             }
             else if (data.Direction == Enums.DriveDirectionEnum.Backward)
             {
