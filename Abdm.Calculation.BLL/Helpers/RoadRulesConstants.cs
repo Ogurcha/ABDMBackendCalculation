@@ -13,7 +13,7 @@ namespace Abdm.Calculation.BLL.Helpers
         {
             IsPedestrianAllowed = false,
             IsDynamicMovement = true,
-            HasSafetyLine = false,
+            HasSafetyLine = true,
             MaxTrajectoriesCount = 1,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
@@ -25,7 +25,7 @@ namespace Abdm.Calculation.BLL.Helpers
         {
             IsPedestrianAllowed = true,
             IsDynamicMovement = true,
-            HasSafetyLine = true,
+            HasSafetyLine = false,
             MaxTrajectoriesCount = int.MaxValue,
             MaxVehicleInTrajectory = 3,
             MinTrajectoryDistance = 3,

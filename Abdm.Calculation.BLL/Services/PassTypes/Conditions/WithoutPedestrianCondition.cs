@@ -1,14 +1,13 @@
-﻿using Abdm.Calculation.BLL.Helpers;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
 {
     public class WithoutPedestrianCondition : IPassTypeCondition
     {
-        public bool CanPassCondition(List<StrainResult> columnList, SurfaceModel surface, double? dynamicCoefficient)
+        public bool CanPassCondition(List<StrainResult> strainResults, SurfaceModel surface, double? dynamicCoefficient)
         {
-            return columnList.GroupBy(x =>
+            return strainResults.GroupBy(x =>
             x.RoadRuleRef.IsDynamicMovement).Select(x =>
             {
                 var load = x.Max(c => c.Strain.TotalStrain);

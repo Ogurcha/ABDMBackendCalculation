@@ -32,10 +32,23 @@
         /// </summary>
         public TrafficJamStrain? TrafficJamStrain { get; set; }
 
-
         /// <summary>
         /// Траектория, на которой находилось ТС при замере напряжения.
         /// </summary>
         public required VehicleTrajectory VehicleTrajectoryRef { get; set; }
+
+        /// <summary>
+        /// Направление движения ТС, которое использовалось для расчёта напряжения
+        /// true - ТС смотрит в направлении движения, false - ТС смотрит против направления движения
+        /// </summary>
+        public required bool IsDirectionForward { get; set; }
+
+        /// <summary>
+        /// Итоговое напряжение от ТС, если бы оно было расположено в противоположном направлении.
+        /// Не влияет на алгоритмы сравнения, суммирования и т.д., 
+        /// т.к. в <see cref="InvertedDirectionStrain"/> содержит напряжение заведомо меньшее, а, значит, не актуальное. 
+        /// Используется только для аналитики и отображения в отчётах.
+        /// </summary>
+        public VehicleStrain? InvertedDirectionStrain { get; set; }
     }
 }
