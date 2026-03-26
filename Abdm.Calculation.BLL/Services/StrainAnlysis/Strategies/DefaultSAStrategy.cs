@@ -41,7 +41,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 }
             }
 
-            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).ToList();
+            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).OrderByDescending(x => x.IsForward).ToList();
 
             return analysis;
         }

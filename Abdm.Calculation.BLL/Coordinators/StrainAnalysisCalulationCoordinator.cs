@@ -43,7 +43,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 return new ResultExceptionContainer<StrainAnalysisResult>(GetFailedResult(parameters));
             }
 
-            SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
+            //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
 
             return new ResultExceptionContainer<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis));
         }
