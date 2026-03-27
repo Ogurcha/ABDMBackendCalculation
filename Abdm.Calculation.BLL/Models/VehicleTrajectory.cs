@@ -1,6 +1,4 @@
-﻿using Abdm.Calculation.Graphics.Models;
-
-namespace Abdm.Calculation.BLL.Models
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Траектория движения транспортного средства

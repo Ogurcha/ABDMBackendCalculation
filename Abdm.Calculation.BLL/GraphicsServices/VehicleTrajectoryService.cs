@@ -55,18 +55,19 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             }
 
             var sorted = profile.OrderBy(v => v.y);
-            var firstVector = new Vector3d(sorted.First().x, sorted.First().y - wheelLength, 0); 
-            var lastVector = new Vector3d(sorted.Last().x, sorted.Last().y + wheelLength, 0); 
-            var vectors = new SortedList<double, Vector3d>(
-                sorted.Prepend(firstVector)
+            var firstVector = new KeyValuePair<double, Vector2D>(sorted.First().y, (sorted.First().y - wheelLength, 0)); 
+            var lastVector = new KeyValuePair<double, Vector2D>(sorted.Last().y, (sorted.Last().y + wheelLength, 0)); 
+            var vectors = new SortedList<double, Vector2D>(
+                sorted.Select((item) => new KeyValuePair<double, Vector2D>(item.y, (item.y, item.z)))
+                .Prepend(firstVector)
                 .Append(lastVector)
-                .Select((item) => new KeyValuePair<double, Vector3d>(item.y, item))
                 .ToDictionary());
 
             return new ProfileYZ
             {
                 X = X,
-                Vectors = vectors
+                Vectors = vectors,
+                Extremums = FindAllExtremums(vectors).ToArray() 
             };
         }
 
@@ -241,6 +242,49 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 LeftXPosition = left,
                 RightXPosition = right,
             };
+        }
+
+        /// <summary>
+        /// Находит все строгие локальные экстремумы функции, заданной отсортированным списком точек.
+        /// Сложность: O(n), один проход по данным.
+        /// </summary>
+        /// <param name="sortedPoints">
+        /// SortedList<double, Vector2d>, где Key — X, Value.Y — f(X).
+        /// Список должен быть отсортирован по возрастанию Key.
+        /// </param>
+        /// <returns>Список всех локальных максимумов и минимумов.</returns>
+        public static List<ProfileExtremum> FindAllExtremums(SortedList<double, Vector2D> sortedPoints)
+        {
+            var result = new List<ProfileExtremum>();
+
+            if (sortedPoints.Count < 3)
+            {
+                return result;
+            }
+                
+            var keys = sortedPoints.Keys;
+            var values = sortedPoints.Values;
+
+            for (int i = 1; i < sortedPoints.Count - 1; i++)
+            {
+                double yPrev = values[i - 1].Y;
+                double yCurr = values[i].Y;
+                double yNext = values[i + 1].Y;
+
+                bool isMax = yPrev < yCurr && yCurr > yNext;
+                bool isMin = yPrev > yCurr && yCurr < yNext;
+
+                if (isMax || isMin)
+                {
+                    result.Add(new ProfileExtremum
+                    {
+                        Position = keys[i],
+                        isMaximum = isMax
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }

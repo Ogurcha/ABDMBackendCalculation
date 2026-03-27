@@ -11,7 +11,7 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class DefaultSAStrategy : ISAStrategy
+    public class DefaultStrainAnalyser : ISAStrategy
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,

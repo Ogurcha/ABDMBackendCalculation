@@ -11,9 +11,5 @@
         /// </summary>
         public required double[] DistinctXs { get; set; }
 
-        /// <summary>
-        /// Закешированные профили срезов плоскостями YZ
-        /// </summary>
-        public List<ProfileYZ> Profiles { get; set; } = [];
     }
 }

@@ -1,6 +1,6 @@
-﻿using g4;
+﻿using Abdm.Calculation.Maths.Models;
 
-namespace Abdm.Calculation.Graphics.Models
+namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Кривая в плоскости YZ, обозначающая поверхность влияния в этой плоскости
@@ -14,9 +14,13 @@ namespace Abdm.Calculation.Graphics.Models
 
         /// <summary>
         /// точки, через которые проходит кривая, отсортированные по Y
-        /// первые значения у всех точек идентичны <see cref="X"/>, но не
-        /// стал маппить в 2д вектора, чтобы не было путаницы с наименованиями осей
         /// </summary>
-        public required SortedList<double, Vector3d> Vectors { get; set; }
+        public required SortedList<double, Vector2D> Vectors { get; set; }
+
+        /// <summary>
+        /// Экстремумы кривой. 
+        /// Концы кривой не включены в экстремумы, но на краях могут быть лишние экстремумы из-за зануления профиля по краям. 
+        /// </summary>
+        public required ProfileExtremum[] Extremums { get; set; }
     }
 }
