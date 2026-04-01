@@ -27,18 +27,14 @@ namespace Abdm.Calculation.BLL.Services
         /// </summary>
         public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double startingPosition, VehicleRollingSmallModel data)
         {
-            if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
-            {
-                return MathExtensions.Max(GetStrain(true, ref CachedDelta), GetStrain(false, ref CachedDeltaBackwards));
-            }
-            else if (data.Direction == Enums.DriveDirectionEnum.Backward)
-            {
-                return GetStrain(false, ref CachedDeltaBackwards);
-            }
-            else
-            {
-                return GetStrain(true, ref CachedDelta);
-            }
+            var directions = data.Load.ActualDirection;
+            var vehicleStrains = directions.Select(x => x 
+            ? GetStrain(x, ref CachedDelta) 
+            : GetStrain(x, ref CachedDeltaBackwards))
+                .OrderDescending().ToArray();
+            var result = vehicleStrains.First();
+            result.InvertedDirectionStrain = vehicleStrains.ElementAtOrDefault(1);
+            return result;
 
             VehicleStrain GetStrain(bool loadDirectionForward, ref double cachedDelta)
             {

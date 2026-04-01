@@ -10,32 +10,15 @@ namespace Abdm.Calculation.BLL.Services
     /// </summary>
     public class AxleVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
     {
-        public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, double position, VehicleRollingSmallModel data)
+        public VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory, 
+            double position, 
+            VehicleRollingSmallModel data)
         {
-
-            if (!data.Load.IsSymmetric!.Value && data.Direction == Enums.DriveDirectionEnum.Bidirection)
-            {
-                var forwardStrain = GetStrain(true);
-                var backwardStrain = GetStrain(false);
-                if (forwardStrain.CompareTo(backwardStrain) > 0)
-                {
-                    forwardStrain.InvertedDirectionStrain = backwardStrain;
-                    return forwardStrain;
-                }
-                else
-                {
-                    backwardStrain.InvertedDirectionStrain = forwardStrain;
-                    return backwardStrain;
-                }                
-            }
-            else if (data.Direction == Enums.DriveDirectionEnum.Backward)
-            {
-                return GetStrain(false);
-            }
-            else
-            {
-                return GetStrain(true);
-            }
+            var directions = data.Load.ActualDirection;
+            var vehicleStrains = directions.Select(GetStrain).OrderDescending().ToArray();
+            var result = vehicleStrains.First();
+            result.InvertedDirectionStrain = vehicleStrains.ElementAtOrDefault(1);
+            return result;
 
             VehicleStrain GetStrain(bool loadDirectionForward)
             {

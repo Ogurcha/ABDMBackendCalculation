@@ -3,7 +3,7 @@
     /// <summary>
     /// Точка профиля, в которой достигается экстремум (максима или минимума) в зависимости от значения <see cref="isMaximum"/>
     /// </summary>
-    public class ProfileExtremum
+    public struct ProfileExtremum
     {
         /// <summary>
         /// Позиция экстремума в <see cref="ProfileYZ"/>

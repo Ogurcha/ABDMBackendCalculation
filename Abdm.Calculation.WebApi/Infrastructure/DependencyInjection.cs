@@ -49,8 +49,8 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddScoped<IMeshManager, MeshManager>();
-            services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISymmetryService, SymmetryService>();
+            services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
             services.AddScoped<IStrainAnalyser, StrainAnalyser>();
 

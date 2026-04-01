@@ -36,7 +36,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     {
                         HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
                         Vehicles = GetAnalysisVehicles(strain.Strain.Select(x => x.InvertedDirectionStrain).Where(x => x != null).Cast<VehicleStrain>(), dataModel).ToArray(),
-                        IsForward = strain.Strain.Select(x => x.InvertedDirectionStrain).Any(x => x.IsDirectionForward),
+                        IsForward = strain.Strain.Select(x => x.InvertedDirectionStrain).Any(x => x?.IsDirectionForward == true),
                     });
                 }
             }

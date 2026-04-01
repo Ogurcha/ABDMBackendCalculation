@@ -88,6 +88,8 @@ namespace Abdm.Calculation.BLL.Services
                 .Where(p => data.Load.Length < p.Y - p.X)
                 .ToArray();
 
+            ///короче вместо положительных кусков, где просто использовать поло
+
             if (positivePiecesLeft.Length == 0 && positivePiecesRight.Length == 0)
             {
                 yield return null;

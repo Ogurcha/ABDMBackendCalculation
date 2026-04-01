@@ -17,10 +17,7 @@ namespace Abdm.Calculation.BLL.Extensions
 
         public static IEnumerable<Vector2D> GetYZ(this ProfileYZ profile)
         {
-            foreach (var v in profile.Vectors)
-            {
-                yield return new Vector2D(v.Value.X, v.Value.Y);
-            }
+            return profile.Vectors.Values;
         }
 
         public static double GetZValueByY(this ProfileYZ profile, double pointY)

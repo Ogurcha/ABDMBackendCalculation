@@ -5,34 +5,35 @@ using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
-using g4;
-
 
 namespace Abdm.Calculation.BLL.GraphicsServices
 {
     public class VehicleTrajectoryService(
+        IEqualityComparer<double> equalityComparer,
         IMeshManager meshManager,
-        ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
+        ITrajectoryFilterProvider trajectoryFilterProvider,
+        BLLSettings settings) : IVehicleTrajectoryService
     {
-
         public IntervalModel GetIntervalModel(
-            VehicleRollingBigModel dataModel, 
+            VehicleRollingBigModel dataModel,
             PassageInterval interval)
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
 
             var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(
-                dataModel.Mesh.Data.DistinctXs, 
-                interval, 
+                dataModel.Mesh.Data.DistinctXs,
+                interval,
                 dataModel.Data.Load,
                 dataModel.RoadRules);
 
             result.Trajectories = GetVehicleTrajectories(
-                distinctXs, 
-                dataModel.Mesh, 
-                dataModel.Data.Load.Axles);
+                distinctXs,
+                dataModel.Mesh,
+                dataModel.Data.Load.Axles,
+                dataModel.Data.Load.ActualDirection);
 
             return result;
         }
@@ -43,7 +44,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// По краям сразу зануляем профиль, чтобы ТС вышедшее краем за пределы не влияло на результат
         /// </summary>
         /// <param name="wheelLength">длина колеса нужна для зануления профиля</param>
-        public ProfileYZ? GetProfileYZ(Mesh mesh, 
+        public ProfileYZ? GetProfileYZ(Mesh mesh,
             double X,
             double wheelLength)
         {
@@ -55,19 +56,22 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             }
 
             var sorted = profile.OrderBy(v => v.y);
-            var firstVector = new KeyValuePair<double, Vector2D>(sorted.First().y, (sorted.First().y - wheelLength, 0)); 
-            var lastVector = new KeyValuePair<double, Vector2D>(sorted.Last().y, (sorted.Last().y + wheelLength, 0)); 
+            var firstVector = new KeyValuePair<double, Vector2D>(sorted.First().y, (sorted.First().y - wheelLength, 0));
+            var lastVector = new KeyValuePair<double, Vector2D>(sorted.Last().y, (sorted.Last().y + wheelLength, 0));
             var vectors = new SortedList<double, Vector2D>(
                 sorted.Select((item) => new KeyValuePair<double, Vector2D>(item.y, (item.y, item.z)))
                 .Prepend(firstVector)
                 .Append(lastVector)
                 .ToDictionary());
 
+            var (extremums, maximums) = MathExtensions.FindAllExtremums(vectors);
+
             return new ProfileYZ
             {
                 X = X,
                 Vectors = vectors,
-                Extremums = FindAllExtremums(vectors).ToArray() 
+                Extremums = extremums.ToArray(),
+                MaximumIndexes = maximums.ToArray()
             };
         }
 
@@ -77,23 +81,25 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// </summary>
         /// <param name="wheelLength">длина колеса нужна для зануления профиля по краям</param>
         /// <returns></returns>
-        public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, 
-            Mesh mesh, 
-            Axle[] axles)
+        public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions,
+            Mesh mesh,
+            Axle[] axles,
+            bool[] direction)
         {
-            var wheelLengthAvg = axles.Select(x => x.Wx).Average();
-
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectory(x, mesh, wheelLengthAvg))
+                .Select(x => GetVehicleTrajectoryBase(x, mesh, axles, direction))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }
 
-        public VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition,
+        public VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
             Mesh mesh,
-            double wheelLength)
+            Axle[] axles,
+            bool[] directions)
         {
-            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x, wheelLength);
+            var wheelLengthAvg = axles.Select(x => x.Wx).Average();
+
+            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x, wheelLengthAvg);
 
             var center = Get(xPosition.CenterXPosition);
             if (center == null)
@@ -130,12 +136,26 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             var left = new SortedList<double, ProfileYZ>(leftDict);
             var right = new SortedList<double, ProfileYZ>(rightDict);
 
-            return new VehicleTrajectory
+            var trajectory = new VehicleTrajectory
             {
                 Center = center,
                 Left = left,
                 Right = right
             };
+
+            //if (settings.UseSuperProfiles)
+            //{
+            //    var superProfiles = directions.Select(d =>
+            //    new KeyValuePair<bool, ProfileYZ>(d,
+            //    new ProfileYZ() { 
+            //        Vectors = GetSuperProfileVectors(trajectory, axles, !d), 
+            //        X = center.X }))
+            //        .ToList();
+
+            //    trajectory.SuperProfile = new Dictionary<bool, ProfileYZ>(superProfiles);
+            //}
+
+            return trajectory;
         }
 
         /// <summary>
@@ -224,7 +244,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         {
             var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
             var xPosition = GetXPostition(centerXPosition, wheelOffsetsMap.Keys);
-            return GetVehicleTrajectory(xPosition, mesh, wheelOffsetsMap.Keys.Average());
+            return GetVehicleTrajectoryBase(xPosition, mesh, loadModel.Axles, loadModel.ActualDirection);
         }
 
         private VehicleXPosition GetXPostition(double centerXPosition, IEnumerable<double> halfWheelOffsets)
@@ -245,46 +265,35 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         }
 
         /// <summary>
-        /// Находит все строгие локальные экстремумы функции, заданной отсортированным списком точек.
-        /// Сложность: O(n), один проход по данным.
+        /// Экспериментальный метод по поиску супер-профиля, который возникает, если сложить вместе все профили по каждоый оси ТС со сдвигами, соответствующими расстоянию на каждой оси. Получение суперпрофиля позволило бы при каждом просчете напряжения не считать напряжения на каждом колесе и складывать, а сразу считать напряжение от ТС в точке. Также это дает возможность не считать напряжение отдельно на каждом положительном интервале, а брать максимальное значение сразу. Но по прикидкам, поиск суперпрофиля - слишком длительный процесс. Выигрыш по времени если и есть (что не факт), то минимален. Но, возможно, стоит рассмотреть данный вариант, если будет возможность кэшировать суперпрофили (как-нибудь ночью в фоновом режиме).
         /// </summary>
-        /// <param name="sortedPoints">
-        /// SortedList<double, Vector2d>, где Key — X, Value.Y — f(X).
-        /// Список должен быть отсортирован по возрастанию Key.
-        /// </param>
-        /// <returns>Список всех локальных максимумов и минимумов.</returns>
-        public static List<ProfileExtremum> FindAllExtremums(SortedList<double, Vector2D> sortedPoints)
+        private SortedList<double, Vector2D> GetSuperProfileVectors(VehicleTrajectory vehicleTrajectory, 
+            Axle[] axles, 
+            bool invertAxles)
         {
-            var result = new List<ProfileExtremum>();
+            Func<Axle, double, double> axleFunc = invertAxles
+            ? (axle, x) => { return x - axle.AbsolutePosition; }
+            : (axle, x) => { return x + axle.AbsolutePosition; };
 
-            if (sortedPoints.Count < 3)
-            {
-                return result;
-            }
-                
-            var keys = sortedPoints.Keys;
-            var values = sortedPoints.Values;
+            var wheelsValues = axles.SelectMany(axle => axle.WheelsDistance.Select(wheelDistanceItem => (wheelDistanceItem, axle)));
 
-            for (int i = 1; i < sortedPoints.Count - 1; i++)
-            {
-                double yPrev = values[i - 1].Y;
-                double yCurr = values[i].Y;
-                double yNext = values[i + 1].Y;
+            var distinctXs = vehicleTrajectory.Center.Vectors.Select(center => center.Value.X)
+            .SelectMany(x => wheelsValues,
+            (x, wheel) => axleFunc(wheel.axle, x)).Distinct(equalityComparer);
 
-                bool isMax = yPrev < yCurr && yCurr > yNext;
-                bool isMin = yPrev > yCurr && yCurr < yNext;
-
-                if (isMax || isMin)
-                {
-                    result.Add(new ProfileExtremum
+            return new SortedList<double, Vector2D>
+                (distinctXs.Select(x =>
+                    new Vector2D
                     {
-                        Position = keys[i],
-                        isMaximum = isMax
-                    });
-                }
-            }
-
-            return result;
+                        X = x,
+                        Y = wheelsValues.Sum(wheelValue =>
+                            vehicleTrajectory.Left[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x))
+                            * wheelValue.axle.WheelWeight
+                            + vehicleTrajectory.Right[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x))
+                            * wheelValue.axle.WheelWeight)
+                    }).Select((item) => new KeyValuePair<double, Vector2D>(item.X, item))
+                        .ToDictionary()
+                );
         }
     }
 }
