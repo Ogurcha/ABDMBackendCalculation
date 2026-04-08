@@ -160,9 +160,9 @@ build_docker_image:branch:
   after_script:
     - docker image rm $IMAGE_NAME
   dependencies:
-    - build_back:master
+    - build_back:branch
   needs:
-    - build_back:master
+    - build_back:branch
   rules:
     - if: $CI_COMMIT_BRANCH == $TARGET_BRANCH
 
@@ -179,9 +179,9 @@ deploy:stage:
     - docker compose up -d
   cache: []
   dependencies:
-    - build_docker_image:master
+    - build_docker_image:branch
   needs:
-    - build_docker_image:master
+    - build_docker_image:branch
   rules:
     - if: $CI_COMMIT_BRANCH == $TEST_BRANCH
   tags:
