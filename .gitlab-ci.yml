@@ -183,7 +183,7 @@ deploy:stage:
   needs:
     - build_docker_image:branch
   rules:
-    - if: $CI_COMMIT_BRANCH == $TEST_BRANCH
+    - if: $CI_COMMIT_BRANCH == $TARGET_BRANCH
   tags:
     - abdm-reports
     - deploy
