@@ -155,10 +155,10 @@ build_docker_image:branch:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker build --pull -t $IMAGE_NAME -f forCI.Dockerfile .
-    - docker push $IMAGE_NAME
+    - docker build --pull -t registry.norddig.ru/abdm/abdm_backend_calculation:$TARGET_BRANCH -f forCI.Dockerfile .
+    - docker push registry.norddig.ru/abdm/abdm_backend_calculation:$TARGET_BRANCH
   after_script:
-    - docker image rm $IMAGE_NAME
+    - docker image rm registry.norddig.ru/abdm/abdm_backend_calculation:$TARGET_BRANCH
   dependencies:
     - build_back:branch
   needs:
