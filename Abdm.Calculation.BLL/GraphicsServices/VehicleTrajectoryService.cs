@@ -65,7 +65,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 .Append(lastVector);
 
             var vectors = new SortedList<double, Vector2D>(
-                sortedFullList.Select((item) => new KeyValuePair<double, Vector2D>(item.y, (item.y, item.z)))
+                sortedFullList.Select((item) => new KeyValuePair<double, Vector2D>(item.X, (item.X, item.Y)))
                 .ToDictionary());
 
             var (extremums, maximums) = MathExtensions.FindAllExtremums(sortedFullList);
