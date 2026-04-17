@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Pillar;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
+using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.BLL.Models.StrainAnalysis
 {
@@ -32,7 +33,7 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// </summary>
         public List<AnalysisPillar>? Pillar { get; set; }
 
-        public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }
+        public StrainCalculationTypeEnum StrainCalculationType { get; set; }
 
         ///// <summary>
         ///// Результат при расчёте по стжб

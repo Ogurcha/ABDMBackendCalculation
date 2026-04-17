@@ -7,9 +7,6 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("columnNumber")]
         public int ColumnNumber { get; set; }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
         [JsonPropertyName("vehicleNumber")]
         public int VehicleNumber { get; set; } = 1;
 

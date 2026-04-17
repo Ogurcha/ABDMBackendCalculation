@@ -63,6 +63,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
             dataModel.Load.ActualDirection = symmetryService.CalculateDirection(dataModel.Load.IsSymmetric, data.Direction);
             dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Result.StrainCalculationType.Map();
+            dataModel.Surface.StrainCalculationType = surfaceDataContainer.Result.StrainCalculationType;
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Result.StrainTypeSpecificData;
             if (dataModel.Surface.StrainTypeSpecificData is SteelConcreteData steelConcreteData)
             {
