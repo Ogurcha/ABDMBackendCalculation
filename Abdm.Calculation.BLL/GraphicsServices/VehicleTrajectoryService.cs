@@ -55,8 +55,10 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             }
 
             var sorted = profile.OrderBy(v => v.y);
-            var firstVector = new KeyValuePair<double, Vector2D>(sorted.First().y, (sorted.First().y - wheelLength, 0));
-            var lastVector = new KeyValuePair<double, Vector2D>(sorted.Last().y, (sorted.Last().y + wheelLength, 0));
+            var firstIndex = sorted.First().y - wheelLength;
+            var lastIndex = sorted.Last().y + wheelLength;
+            var firstVector = new KeyValuePair<double, Vector2D>(firstIndex, (firstIndex, 0));
+            var lastVector = new KeyValuePair<double, Vector2D>(lastIndex, (lastIndex, 0));
             var vectors = new SortedList<double, Vector2D>(
                 sorted.Select((item) => new KeyValuePair<double, Vector2D>(item.y, (item.y, item.z)))
                 .Prepend(firstVector)

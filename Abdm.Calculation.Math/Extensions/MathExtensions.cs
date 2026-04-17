@@ -107,9 +107,9 @@ namespace Abdm.Calculation.Maths.Extensions
 
             for (int i = 1; i < sortedPoints.Count - 1; i++)
             {
-                double yPrev = sortedPoints.Values[i - 1].Y;
-                double yCurr = sortedPoints.Values[i].Y;
-                double yNext = sortedPoints.Values[i + 1].Y;
+                double yPrev = sortedPoints.ElementAt(i - 1).Value.Y;
+                double yCurr = sortedPoints.ElementAt(i).Value.Y;
+                double yNext = sortedPoints.ElementAt(i + 1).Value.Y;
 
                 bool isMax = yPrev < yCurr && yCurr > yNext;
                 bool isMin = yPrev > yCurr && yCurr < yNext;
@@ -117,12 +117,12 @@ namespace Abdm.Calculation.Maths.Extensions
                 var counter = 0;
                 if (isMax)
                 {
-                    extremums.Add(sortedPoints[i]);
+                    extremums.Add(sortedPoints.ElementAt(i).Value);
                     maximums.Add(counter++);
                 }
                 if (isMin)
                 {
-                    extremums.Add(sortedPoints[i]);
+                    extremums.Add(sortedPoints.ElementAt(i).Value);
                     counter++;
                 }
             }
