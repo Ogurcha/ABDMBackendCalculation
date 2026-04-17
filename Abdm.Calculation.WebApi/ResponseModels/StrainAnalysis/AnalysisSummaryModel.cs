@@ -43,5 +43,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         ///// </summary>
         //[JsonPropertyName("steelConcrete")]
         //public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
+
+        public 
     }
 }

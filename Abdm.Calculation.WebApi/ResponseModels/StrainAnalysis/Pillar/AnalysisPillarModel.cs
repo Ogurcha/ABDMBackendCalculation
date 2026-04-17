@@ -48,5 +48,8 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar
         /// </summary>
         [JsonPropertyName("totalStrain")]
         public decimal TotalStrain { get; set; } = 83.2m;
+
+        [JsonPropertyName("forward")]
+        public bool IsForward { get; set; }
     }
 }

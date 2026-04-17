@@ -32,6 +32,8 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// </summary>
         public List<AnalysisPillar>? Pillar { get; set; }
 
+        public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }
+
         ///// <summary>
         ///// Результат при расчёте по стжб
         ///// </summary>
