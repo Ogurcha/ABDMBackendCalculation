@@ -11,7 +11,12 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// <summary>
         /// Тип расчета напряжений. Влияет на выбор стратегии анализа и на структуру результирующей модели
         /// </summary>
-        public StrainCalculationGroupTypeEnum CalculationType { get; set; }
+        public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }
+
+        /// <summary>
+        /// Тип напряжения не сгруппированный по типу расчёта
+        /// </summary>
+        public StrainCalculationTypeEnum StrainCalculationType { get; set; }
 
         /// <summary>
         /// Положение ограждения слева
@@ -33,7 +38,6 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// </summary>
         public List<AnalysisPillar>? Pillar { get; set; }
 
-        public StrainCalculationTypeEnum StrainCalculationType { get; set; }
 
         ///// <summary>
         ///// Результат при расчёте по стжб

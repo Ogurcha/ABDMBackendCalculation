@@ -37,13 +37,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
 
             var summary = new AnalysisSummary
             {
-                CalculationType = dataModel.Data.Surface.StrainCalculationGroupType,
+                StrainCalculationGroupType = dataModel.Data.Surface.StrainCalculationGroupType,
                 AbsolutePositionLeft = MathExtensions.ToDecimal(dataModel.Intervals.First().AbsolutePositionLeft),
                 AbsolutePositionRight = MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionRight),
                 StrainCalculationType = dataModel.Data.Surface.StrainCalculationType
             };
             
-            var analyser = analyserFactory.GetStrainAnalyser(summary.CalculationType);
+            var analyser = analyserFactory.GetStrainAnalyser(summary.StrainCalculationGroupType);
             analyser.Analyse(summary, maxStrainResult);
 
             return summary;

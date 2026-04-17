@@ -87,7 +87,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 SnipId = (int)param.Snip,
                 Data = new AnalysisSummary()
                 {
-                    CalculationType = Enums.StrainCalculationGroupTypeEnum.Unknown
+                    StrainCalculationGroupType = Enums.StrainCalculationGroupTypeEnum.Unknown
                 },
                 ReportId = param.ReportId,
             };

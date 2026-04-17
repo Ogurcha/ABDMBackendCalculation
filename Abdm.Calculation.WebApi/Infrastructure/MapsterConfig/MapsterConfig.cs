@@ -2,11 +2,11 @@
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
+using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.Maths.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
-using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis;
 using Mapster;
 
 namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
@@ -137,6 +137,16 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
 
             TypeAdapterConfig<StrainAnalysisResult, AnalyseStrainCalculationResponse>
             .NewConfig();
+
+            TypeAdapterConfig<AnalysisSummary, AnalysisSummaryModel>
+            .NewConfig()
+            .Map(dst => dst.StrainCalculationGroupType, src => (int)src.StrainCalculationGroupType)
+            .Map(dst => dst.StrainCalculationType, src => (int)src.StrainCalculationType)
+            .Map(dst => dst.AbsolutePositionLeft, src => src.AbsolutePositionLeft)
+            .Map(dst => dst.AbsolutePositionRight, src => src.AbsolutePositionRight)
+            .Map(dst => dst.Default, src => src.Default)
+            .Map(dst => dst.Pillar, src => src.Pillar);
+
         }
     }
 }
