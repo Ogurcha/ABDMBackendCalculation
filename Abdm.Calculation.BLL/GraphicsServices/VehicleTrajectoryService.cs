@@ -57,15 +57,18 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             var sorted = profile.OrderBy(v => v.y);
             var firstIndex = sorted.First().y - wheelLength;
             var lastIndex = sorted.Last().y + wheelLength;
-            var firstVector = new KeyValuePair<double, Vector2D>(firstIndex, (firstIndex, 0));
-            var lastVector = new KeyValuePair<double, Vector2D>(lastIndex, (lastIndex, 0));
-            var vectors = new SortedList<double, Vector2D>(
-                sorted.Select((item) => new KeyValuePair<double, Vector2D>(item.y, (item.y, item.z)))
+            var firstVector = new Vector2D(firstIndex, 0);
+            var lastVector = new Vector2D(lastIndex, 0);
+
+            var sortedFullList = sorted.Select((item) => new Vector2D(item.y, item.z))
                 .Prepend(firstVector)
-                .Append(lastVector)
+                .Append(lastVector);
+
+            var vectors = new SortedList<double, Vector2D>(
+                sortedFullList.Select((item) => new KeyValuePair<double, Vector2D>(item.y, (item.y, item.z)))
                 .ToDictionary());
 
-            var (extremums, maximums) = MathExtensions.FindAllExtremums(vectors);
+            var (extremums, maximums) = MathExtensions.FindAllExtremums(sortedFullList);
 
             return new ProfileYZ
             {

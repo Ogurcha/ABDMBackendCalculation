@@ -95,21 +95,23 @@ namespace Abdm.Calculation.Maths.Extensions
         /// Список должен быть отсортирован по возрастанию Key.
         /// </param>
         /// <returns>Список всех экстремумов и индексы экстремумов, которые являются максимумами.</returns>
-        public static (List<Vector2D> extremums, List<int> maximums) FindAllExtremums(SortedList<double, Vector2D> sortedPoints)
+        public static (List<Vector2D> extremums, List<int> maximums) FindAllExtremums(IEnumerable<Vector2D> vectors)
         {
             var extremums = new List<Vector2D>();
             var maximums = new List<int>();
 
-            if (sortedPoints.Count < 3)
+            var array = vectors.ToArray();
+
+            if (array.Length < 3)
             {
                 return (extremums, []);
             }
 
-            for (int i = 1; i < sortedPoints.Count - 1; i++)
+            for (int i = 1; i < array.Length - 1; i++)
             {
-                double yPrev = sortedPoints.ElementAt(i - 1).Value.Y;
-                double yCurr = sortedPoints.ElementAt(i).Value.Y;
-                double yNext = sortedPoints.ElementAt(i + 1).Value.Y;
+                double yPrev = array[i - 1].Y;
+                double yCurr = array[i].Y;
+                double yNext = array[i + 1].Y;
 
                 bool isMax = yPrev < yCurr && yCurr > yNext;
                 bool isMin = yPrev > yCurr && yCurr < yNext;
@@ -117,12 +119,12 @@ namespace Abdm.Calculation.Maths.Extensions
                 var counter = 0;
                 if (isMax)
                 {
-                    extremums.Add(sortedPoints.ElementAt(i).Value);
+                    extremums.Add(array[i]);
                     maximums.Add(counter++);
                 }
                 if (isMin)
                 {
-                    extremums.Add(sortedPoints.ElementAt(i).Value);
+                    extremums.Add(array[i]);
                     counter++;
                 }
             }
