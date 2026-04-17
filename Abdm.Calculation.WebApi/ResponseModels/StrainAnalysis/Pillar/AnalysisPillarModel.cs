@@ -13,6 +13,9 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar
         [JsonPropertyName("vehicleNumber")]
         public int VehicleNumber { get; set; } = 1;
 
+        [JsonPropertyName("forward")]
+        public bool IsForward { get; set; }
+
         /// <summary>
         /// TODO
         /// </summary>
@@ -48,8 +51,5 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar
         /// </summary>
         [JsonPropertyName("totalStrain")]
         public decimal TotalStrain { get; set; } = 83.2m;
-
-        [JsonPropertyName("forward")]
-        public bool IsForward { get; set; }
     }
 }

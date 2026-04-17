@@ -14,8 +14,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
     public class VehicleTrajectoryService(
         IEqualityComparer<double> equalityComparer,
         IMeshManager meshManager,
-        ITrajectoryFilterProvider trajectoryFilterProvider,
-        BLLSettings settings) : IVehicleTrajectoryService
+        ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
         public IntervalModel GetIntervalModel(
             VehicleRollingBigModel dataModel,
