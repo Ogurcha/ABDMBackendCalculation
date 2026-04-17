@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar;
-using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
 {
@@ -12,7 +11,13 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// Тип расчета напряжений. Влияет на выбор стратегии анализа и на структуру результирующей модели
         /// </summary>
         [JsonPropertyName("calculationType")]
-        public int CalculationType { get; set; }
+        public int StrainCalculationGroupType { get; set; }
+
+        /// <summary>
+        /// Тип напряжения не сгруппированный по типу расчёта
+        /// </summary>
+        [JsonPropertyName("cptype")]
+        public int StrainCalculationType { get; set; }
 
         /// <summary>
         /// Положение ограждения слева
@@ -44,7 +49,6 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         //[JsonPropertyName("steelConcrete")]
         //public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
 
-        [JsonPropertyName("cptype")]
-        public int StrainCalculationType { get; set; }
+        
     }
 }
