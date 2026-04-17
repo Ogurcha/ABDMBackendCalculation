@@ -11,7 +11,7 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class PillarSAStrategy : ISAStrategy
+    public class PillarStrainAnalyser : ISAStrategy
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Pillar

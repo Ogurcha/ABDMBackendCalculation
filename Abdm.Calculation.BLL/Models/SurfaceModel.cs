@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Entities;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -50,6 +51,11 @@ namespace Abdm.Calculation.BLL.Models
         public StrainCalculationGroupTypeEnum StrainCalculationGroupType { get; set; }
 
         /// <summary>
+        /// Тип точки проверки - влияет на типа расчётов
+        /// </summary>
+        public StrainCalculationTypeEnum StrainCalculationType { get; internal set; }
+
+        /// <summary>
         /// Дополнительная опциональная информация для конкретного типа деформации
         /// </summary>
         public IStrainTypeSpecificData? StrainTypeSpecificData { get; internal set; }
@@ -63,5 +69,7 @@ namespace Abdm.Calculation.BLL.Models
         /// Толщина дорожной одежды
         /// </summary>
         public double RoadCoatSize { get; set; }
+
+
     }
 }

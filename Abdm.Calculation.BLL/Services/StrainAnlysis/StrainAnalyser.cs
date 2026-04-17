@@ -39,9 +39,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             {
                 CalculationType = dataModel.Data.Surface.StrainCalculationGroupType,
                 AbsolutePositionLeft = MathExtensions.ToDecimal(dataModel.Intervals.First().AbsolutePositionLeft),
-                AbsolutePositionRight = MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionRight)
+                AbsolutePositionRight = MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionRight),
+                StrainCalculationType = dataModel.Data.Surface.StrainCalculationType
             };
-
+            
             var analyser = analyserFactory.GetStrainAnalyser(summary.CalculationType);
             analyser.Analyse(summary, maxStrainResult);
 

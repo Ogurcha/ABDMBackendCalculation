@@ -26,5 +26,25 @@ namespace Abdm.Calculation.BLL.Services
             }
             return true;
         }
+
+        /// <summary>
+        /// Считает направления, по которым надо прогонять ТС, исходя из симметрии нагрузки и параметров прогона
+        /// </summary>
+        /// <returns>[true, false] = прогонять и туда и обратно, [true] только вперёд, [false] только обратно</returns>
+        public bool[] CalculateDirection(bool? isSymmetric, Enums.DriveDirectionEnum directionEnum)
+        {
+            if (!isSymmetric!.Value && directionEnum == Enums.DriveDirectionEnum.Bidirection)
+            {
+                return [true, false];
+            }
+            else if (directionEnum == Enums.DriveDirectionEnum.Backward)
+            {
+                return [false];
+            }
+            else
+            {
+                return [true];
+            }
+        }
     }
 }

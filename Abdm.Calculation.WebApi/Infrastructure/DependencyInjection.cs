@@ -49,8 +49,8 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IPassageIntervalService, PassageIntervalService>();
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddScoped<IMeshManager, MeshManager>();
-            services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISymmetryService, SymmetryService>();
+            services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
             services.AddScoped<IStrainAnalyser, StrainAnalyser>();
 
@@ -81,8 +81,8 @@ namespace Abdm.Calculation.Infrastructure
             }));
             services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<ISAStrategy>
             {
-                new DefaultSAStrategy(),
-                new PillarSAStrategy(),
+                new DefaultStrainAnalyser(),
+                new PillarStrainAnalyser(),
                 new SteelConcreteSAStrategy(),
             }));
 

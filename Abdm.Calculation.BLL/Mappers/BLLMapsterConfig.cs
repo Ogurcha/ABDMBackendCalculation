@@ -43,7 +43,6 @@ namespace Abdm.Calculation.BLL.Mappers
 
             TypeAdapterConfig<PassTypeCalculationParameters, VehicleRollingSmallModel>
             .NewConfig()
-            .Map(dst => dst.Direction, src => src.Direction)
             .Map(dst => dst.Surface, src => src.Surface)
             .Map(dst => dst.Load, src => src.LoadSchema);
 

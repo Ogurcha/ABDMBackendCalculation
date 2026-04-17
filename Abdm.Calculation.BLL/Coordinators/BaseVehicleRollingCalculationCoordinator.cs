@@ -41,7 +41,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(passageIntervalErrorMessage));
             }
             var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, intervals, cancellationToken);
-            //TODO: ABDMP-357 - Реализация триангуляции, если ничего не пришло. Запись новой триангуляции обратно в бд
+
             if (surfaceDataContainer?.Result?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {
                 var surfaceDataException = new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(surfaceDataNotFoundErrorMessage));
@@ -61,7 +61,9 @@ namespace Abdm.Calculation.BLL.Coordinators
             var dataModel = data.Adapt<VehicleRollingSmallModel>();
             DataModelFixer.Fix(dataModel, surfaceDataContainer.Result, data);
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
+            dataModel.Load.ActualDirection = symmetryService.CalculateDirection(dataModel.Load.IsSymmetric, data.Direction);
             dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Result.StrainCalculationType.Map();
+            dataModel.Surface.StrainCalculationType = surfaceDataContainer.Result.StrainCalculationType;
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Result.StrainTypeSpecificData;
             if (dataModel.Surface.StrainTypeSpecificData is SteelConcreteData steelConcreteData)
             {

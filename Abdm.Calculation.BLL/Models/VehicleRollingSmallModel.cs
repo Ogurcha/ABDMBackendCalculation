@@ -8,8 +8,6 @@ namespace Abdm.Calculation.BLL.Models
     /// </summary>
     public class VehicleRollingSmallModel
     {
-        public DriveDirectionEnum Direction { get; set; } = DriveDirectionEnum.Bidirection;
-
         /// <summary>
         /// Модель поверхности, по которой едет ТС
         /// </summary>

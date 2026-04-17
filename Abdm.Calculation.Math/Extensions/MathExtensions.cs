@@ -85,5 +85,49 @@ namespace Abdm.Calculation.Maths.Extensions
         {
             return decimal.Round((decimal)value, 2);
         }
+
+        /// <summary>
+        /// Находит все строгие локальные экстремумы функции, заданной отсортированным списком точек.
+        /// Сложность: O(n), один проход по данным.
+        /// </summary>
+        /// <param name="sortedPoints">
+        /// SortedList<double, Vector2d>, где Key — X, Value.Y — f(X).
+        /// Список должен быть отсортирован по возрастанию Key.
+        /// </param>
+        /// <returns>Список всех экстремумов и индексы экстремумов, которые являются максимумами.</returns>
+        public static (List<Vector2D> extremums, List<int> maximums) FindAllExtremums(SortedList<double, Vector2D> sortedPoints)
+        {
+            var extremums = new List<Vector2D>();
+            var maximums = new List<int>();
+
+            if (sortedPoints.Count < 3)
+            {
+                return (extremums, []);
+            }
+
+            for (int i = 1; i < sortedPoints.Count - 1; i++)
+            {
+                double yPrev = sortedPoints.Values[i - 1].Y;
+                double yCurr = sortedPoints.Values[i].Y;
+                double yNext = sortedPoints.Values[i + 1].Y;
+
+                bool isMax = yPrev < yCurr && yCurr > yNext;
+                bool isMin = yPrev > yCurr && yCurr < yNext;
+
+                var counter = 0;
+                if (isMax)
+                {
+                    extremums.Add(sortedPoints[i]);
+                    maximums.Add(counter++);
+                }
+                if (isMin)
+                {
+                    extremums.Add(sortedPoints[i]);
+                    counter++;
+                }
+            }
+
+            return (extremums, maximums);
+        }
     }
 }

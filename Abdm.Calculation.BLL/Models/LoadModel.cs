@@ -33,7 +33,12 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Индентичен ли перед нагрузки с его задом
         /// </summary>
-        public bool? IsSymmetric { get; set; }
+        public bool IsSymmetric { get; set; }
+
+        /// <summary>
+        /// Направления для прокатки ТС. true - вперед, false - назад. true+false = оба.
+        /// </summary>
+        public bool[] ActualDirection { get; set; } = [true];
 
         /// <summary>
         /// минимальное расстояние между транспортными колоннами

@@ -1,6 +1,4 @@
-﻿using Abdm.Calculation.Graphics.Models;
-
-namespace Abdm.Calculation.BLL.Models
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
     /// Траектория движения транспортного средства
@@ -28,5 +26,11 @@ namespace Abdm.Calculation.BLL.Models
         /// Координата X условного центра траектории
         /// </summary>
         public double X => Center.X;
+
+        /// <summary>
+        /// Суперпрофиль, который содержит в себе суммы всех профилей данной траектории. 
+        /// Суперпрофиля может быть два в случае двунаправленного движения. 
+        /// </summary>
+        public Dictionary<bool, ProfileYZ>? SuperProfile { get; set; }
     }
 }
