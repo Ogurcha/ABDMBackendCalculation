@@ -8,7 +8,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         public int ColumnNumber { get; set; }
 
         [JsonPropertyName("vehicleNumber")]
-        public int VehicleNumber { get; set; } = 1;
+        public int VehicleNumber { get; set; }
 
         [JsonPropertyName("positionX")]
         public decimal PositionX { get; set; }
@@ -22,34 +22,19 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("sumStrain")]
         public decimal SumStrain { get; set; }
 
+        [JsonPropertyName("totalStrain")]
+        public decimal TotalStrain { get; set; }
+
         [JsonPropertyName("intervals")]
         public TrafficJamStrainAnalysisModel[]? Intervals { get; set; }
 
         [JsonPropertyName("intervalProfilePoints")]
         public ProfileVectorModel[]? IntervalProfileVectors { get; set; }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        [JsonPropertyName("lambda")]
-        public decimal Lambda { get; set; } = 33m;
+        [JsonPropertyName("lambdaSmall")]
+        public decimal LambdaSmall { get; set; }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        [JsonPropertyName("partLength")]
-        public decimal PartLength { get; set; } = 33m;
-
-        /// <summary>
-        /// TODO
-        /// </summary>
         [JsonPropertyName("dynamicCoefficient")]
-        public decimal DynamicCoefficient { get; set; } = 1.1m;
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        [JsonPropertyName("totalStrain")]
-        public decimal TotalStrain { get; set; } = 83.2m;
+        public decimal DynamicCoefficient { get; set; }
     }
 }

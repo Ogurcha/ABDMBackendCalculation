@@ -144,9 +144,8 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.StrainCalculationType, src => (int)src.StrainCalculationType)
             .Map(dst => dst.AbsolutePositionLeft, src => src.AbsolutePositionLeft)
             .Map(dst => dst.AbsolutePositionRight, src => src.AbsolutePositionRight)
-            .Map(dst => dst.Default, src => src.Default)
-            .Map(dst => dst.Pillar, src => src.Pillar);
-
+            .Map(dst => dst.Lambda, src => src.Lambda)
+            .Map(dst => dst.Default, src => src.Default);
         }
     }
 }

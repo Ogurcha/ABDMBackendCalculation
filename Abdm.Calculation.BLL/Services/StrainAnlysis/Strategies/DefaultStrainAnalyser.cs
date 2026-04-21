@@ -15,6 +15,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.Pillar,
             StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
 
@@ -41,6 +42,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 }
             }
 
+            analysis.Lambda = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.Lambda);
             analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).OrderByDescending(x => x.IsForward).ToList();
 
             return analysis;
@@ -138,12 +140,16 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return new AnalysisVehicle
             {
                 ColumnNumber = columNumber,
+                VehicleNumber = 1, //TODO: добавить поддержку нескольких машин в колонне
                 Wheels = wheels,
                 Intervals = intervals,
                 PositionX = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Average(x => x.Position.X) - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Min(x => x.Position.Y)),
                 SumStrain = wheels.Sum(w => w.Strain),
+                TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
                 IntervalProfileVectors = intervalProfileVectors,
+                LambdaSmall = MathExtensions.ToDecimal(33), //TODO: добавить поддержку реального lambdaSmall
+                DynamicCoefficient = MathExtensions.ToDecimal(1.1), //TODO: добавить поддержку реального динамического коэффициента
             };
         }
 

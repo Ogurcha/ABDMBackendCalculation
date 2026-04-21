@@ -1,7 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.Pillar;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
 using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.BLL.Models.StrainAnalysis
@@ -29,14 +27,19 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         public decimal AbsolutePositionRight { get; set; }
 
         /// <summary>
+        /// лямбда - используется для расчета коеффициентов напряжения
+        /// </summary>
+        public decimal Lambda { get; set; }
+
+        /// <summary>
         /// Результат при обычном расчете (железобетон)
         /// </summary>
         public List<AnalysisDefault>? Default { get; set; }
 
-        /// <summary>
-        /// Результат при расчёте по опорам
-        /// </summary>
-        public List<AnalysisPillar>? Pillar { get; set; }
+        ///// <summary>
+        ///// Результат при расчёте по опорам
+        ///// </summary>
+        //public List<AnalysisPillar>? Pillar { get; set; }
 
 
         ///// <summary>

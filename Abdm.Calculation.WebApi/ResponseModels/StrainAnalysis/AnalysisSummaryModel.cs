@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
-using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Pillar;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
 {
@@ -32,6 +31,12 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         public decimal AbsolutePositionRight { get; set; }
 
         /// <summary>
+        /// лямбда - используется для расчета коеффициентов напряжения
+        /// </summary>
+        [JsonPropertyName("lambda")]
+        public decimal Lambda { get; set; }
+
+        /// <summary>
         /// Результат при обычном расчете (железобетон)
         /// </summary>
         [JsonPropertyName("default")]
@@ -40,8 +45,8 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// <summary>
         /// Результат при расчёте по опорам
         /// </summary>
-        [JsonPropertyName("pillar")]
-        public List<AnalysisPillarModel>? Pillar { get; set; }
+        //[JsonPropertyName("pillar")]
+        //public List<AnalysisPillarModel>? Pillar { get; set; }
 
         ///// <summary>
         ///// Результат при расчёте по стжб
