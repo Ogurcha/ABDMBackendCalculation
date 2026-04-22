@@ -10,6 +10,9 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("forward")]
         public bool IsForward { get; set; }
 
+        [JsonPropertyName("lambda")]
+        public decimal Lambda { get; set; }
+
         [JsonPropertyName("vehicles")]
         public required AnalysisVehicleModel[] Vehicles { get; set; }
     }

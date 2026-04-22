@@ -5,7 +5,7 @@ using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class SteelConcreteSAStrategy : ISAStrategy
+    public class SteelConcreteAnalyser : ISAStrategy
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             
