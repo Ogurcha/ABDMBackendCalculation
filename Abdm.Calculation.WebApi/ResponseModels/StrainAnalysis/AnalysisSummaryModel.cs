@@ -4,6 +4,9 @@ using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
 {
+    /// <summary>
+    /// Модель анализа напряжения. Содержит подробную информацию о наименее выгодной для сооружения прокатке транспортных средств.
+    /// </summary>
     public class AnalysisSummaryModel
     {
         /// <summary>
@@ -43,17 +46,27 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         public List<AnalysisDefaultModel>? Default { get; set; }
 
         /// <summary>
-        /// Результат при расчёте по опорам
+        /// Проектная устойчивость структуры. Без учёта собственного веса
         /// </summary>
-        //[JsonPropertyName("pillar")]
-        //public List<AnalysisPillarModel>? Pillar { get; set; }
+        [JsonPropertyName("myStrength")]
+        public decimal MyStrength { get; set; }
 
-        ///// <summary>
-        ///// Результат при расчёте по стжб
-        ///// </summary>
-        //[JsonPropertyName("steelConcrete")]
-        //public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
+        /// <summary>
+        /// Фиксированная нагрузка от собственного веса
+        /// </summary>
+        [JsonPropertyName("constLoad")]
+        public decimal ConstLoad { get; set; }
 
-        
+        /// <summary>
+        /// Нагрузка от пешеходов
+        /// </summary>
+        [JsonPropertyName("pedestrianLoad")]
+        public decimal PedestrianLoad { get; set; }
+
+        /// <summary>
+        /// Другая нагрузка
+        /// </summary>
+        [JsonPropertyName("otherLoad")]
+        public decimal OtherLoad { get; set; }
     }
 }
