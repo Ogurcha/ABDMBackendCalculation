@@ -16,9 +16,9 @@ namespace Abdm.Calculation.BLL.Enums
         Default = 0,
 
         /// <summary>
-        /// По сопоставлению воздействий
+        /// Расчёт опор
         /// </summary>
-        [Description("По сопоставлению воздействий")]
+        [Description("Расчёт опор")]
         Pillar = 1,
 
         /// <summary>
