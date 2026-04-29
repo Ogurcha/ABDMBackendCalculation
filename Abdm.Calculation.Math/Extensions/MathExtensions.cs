@@ -1,5 +1,7 @@
-﻿using Abdm.Calculation.Maths.Helpers;
+﻿using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Abdm.Calculation.Maths.Extensions
 {
@@ -90,24 +92,46 @@ namespace Abdm.Calculation.Maths.Extensions
         /// Находит все строгие локальные экстремумы функции, заданной отсортированным списком точек.
         /// Сложность: O(n), один проход по данным.
         /// </summary>
-        /// <param name="sortedPoints">
+        /// <param name="sortedVectors">
         /// SortedList<double, Vector2d>, где Key — X, Value.Y — f(X).
         /// Список должен быть отсортирован по возрастанию Key.
         /// </param>
         /// <returns>Список всех экстремумов и индексы экстремумов, которые являются максимумами.</returns>
-        public static (List<Vector2D> extremums, List<int> maximums) FindAllExtremums(IEnumerable<Vector2D> vectors)
+        public static (
+            List<Vector2D> extremums, 
+            List<int> maximums, 
+            Dictionary<double, Interval> postivePiecesMap
+            ) FindExtremumsAndPositives(IEnumerable<Vector2D> sortedVectors)
         {
             var extremums = new List<Vector2D>();
             var maximums = new List<int>();
+            var postivePieces = new Dictionary<double, Interval>();
 
-            var array = vectors.ToArray();
+            var array = sortedVectors.ToArray();
 
             if (array.Length < 3)
             {
-                return (extremums, []);
+                return (extremums, maximums, postivePieces);
             }
 
-            for (int i = 1; i < array.Length - 1; i++)
+            bool insidePositiveRegion = false;
+            int intervalStartIndex = -1;
+            var extremumCounter = 0;
+            var interval = new Interval();
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (i > 0 && i < array.Length - 1)
+                {
+                    ExtremumIteration(i);
+                }
+
+                PositivePieceIteration(i);
+            }
+
+            return (extremums, maximums, postivePieces);
+
+            void ExtremumIteration(int i)
             {
                 double yPrev = array[i - 1].Y;
                 double yCurr = array[i].Y;
@@ -116,20 +140,40 @@ namespace Abdm.Calculation.Maths.Extensions
                 bool isMax = yPrev < yCurr && yCurr > yNext;
                 bool isMin = yPrev > yCurr && yCurr < yNext;
 
-                var counter = 0;
                 if (isMax)
                 {
                     extremums.Add(array[i]);
-                    maximums.Add(counter++);
+                    maximums.Add(extremumCounter++);
                 }
                 if (isMin)
                 {
                     extremums.Add(array[i]);
-                    counter++;
+                    extremumCounter++;
                 }
             }
 
-            return (extremums, maximums);
+            void PositivePieceIteration(int i) {
+                if (!insidePositiveRegion && array[i].Y > 0)
+                {
+                    insidePositiveRegion = true;
+                    intervalStartIndex = i;
+                    interval = new Interval();
+                }
+                if (insidePositiveRegion)
+                {
+                    postivePieces.Add(array[i].X, interval);
+                }
+                if (insidePositiveRegion && (i == array.Length - 1 || array[i].Y <= 0))
+                {
+                    insidePositiveRegion = false;
+                    interval.Start = intervalStartIndex > 0
+                       ? GetIntersectionWithY(array[intervalStartIndex - 1], array[intervalStartIndex])!.Value
+                       : array[intervalStartIndex].X;
+                    interval.End = i < array.Length - 1
+                       ? GetIntersectionWithY(array[i - 1], array[i])!.Value
+                       : array[i].X;
+                }
+            }
         }
     }
 }

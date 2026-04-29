@@ -29,5 +29,11 @@ namespace Abdm.Calculation.BLL.Models
         /// Если максимума нет, то это возможно только, если весь график в отрицательной зоне -> тогда график невалидный, его проверять смысла нет.
         /// </summary>
         public required int[] MaximumIndexes { get; set; }
+
+        /// <summary>
+        /// Карта отрезков/частей <see cref="ProfileYZ"/>, на котором профиль имеет положительные значения. 
+        /// Ключ - координата X вектора <see cref="Vector2D.X"/> данного профиля. 
+        /// </summary>
+        public required Dictionary<double, Interval> PositivePieceMap { get; set; }
     }
 }

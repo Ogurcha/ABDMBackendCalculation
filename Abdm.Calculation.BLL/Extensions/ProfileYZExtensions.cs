@@ -4,7 +4,7 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Extensions
 {
-    public static class ProfileYZExtrensions
+    public static class ProfileYZExtensions
     {
         /// <summary>
         /// Рассчет напряжения на профиле
