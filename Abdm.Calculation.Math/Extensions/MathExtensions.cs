@@ -119,15 +119,13 @@ namespace Abdm.Calculation.Maths.Extensions
             var extremumCounter = 0;
             var interval = new Interval();
 
-            for (int i = 0; i < array.Length; i++)
+            PositivePieceIteration(0);
+            for (int i = 1; i < array.Length - 1; i++)
             {
-                if (i > 0 && i < array.Length - 1)
-                {
-                    ExtremumIteration(i);
-                }
-
+                ExtremumIteration(i);
                 PositivePieceIteration(i);
             }
+            PositivePieceIteration(array.Length - 1);
 
             return (extremums, maximums, postivePieces);
 

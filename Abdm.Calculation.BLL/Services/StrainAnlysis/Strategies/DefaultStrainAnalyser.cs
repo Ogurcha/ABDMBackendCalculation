@@ -152,8 +152,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 SumStrain = wheels.Sum(w => w.Strain),
                 TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
                 IntervalProfileVectors = intervalProfileVectors,
-                LambdaSmall = MathExtensions.ToDecimal(33), //TODO: добавить поддержку реального lambdaSmall
-                DynamicCoefficient = MathExtensions.ToDecimal(1.1), //TODO: добавить поддержку реального динамического коэффициента
+                LambdaSmall = MathExtensions.ToDecimal(vehicleStrain.LambdaSmall), 
+                DynamicCoefficient = MathExtensions.ToDecimal(vehicleStrain.Coefficient),
             };
         }
 

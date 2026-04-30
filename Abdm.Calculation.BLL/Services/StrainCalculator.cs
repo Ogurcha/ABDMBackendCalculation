@@ -71,57 +71,42 @@ namespace Abdm.Calculation.BLL.Services
         /// что края высокого пика могут опускаться в ноль слишком резко, 
         /// в то время, как более низкий, 
         /// но более пологий пик выдаст напряжение больше. 
-        /// Пользуясь фактом того, что пики поверхности влияния чередуются с отрицательными зонами, 
-        /// мы можем найти все потенциальные пики вырезая положильные куски графика. 
-        /// Данный метод делит траекторию на положительные отрезки, 
-        /// чтобы проверить все пики и выдать напряжение по каждому из них
+        /// В связи с этим напряжение ищется во всех локальных максимумах профиля.
+        /// Профиль выбирается тот, с какой стороны больше площадь положи
         /// </summary>
         public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, 
             VehicleRollingSmallModel data)
         {
-            var curveLeft = trajectory.Left.Last().Value.GetYZ().ToArray();
-            var curveRight = trajectory.Right.Last().Value.GetYZ().ToArray();
-            var positivePiecesLeft = MathExtensions.GetPositvePieces(curveLeft)
-                .Where(p => data.Load.Length < p.Y - p.X)
-                .ToArray();
-            var positivePiecesRight = MathExtensions.GetPositvePieces(curveRight)
-                .Where(p => data.Load.Length < p.Y - p.X)
-                .ToArray();
+            var profileLeft = trajectory.Left.Last().Value;
+            var profileRight = trajectory.Right.Last().Value;
 
-            ///короче вместо положительных кусков, где просто использовать поло
-
-            if (positivePiecesLeft.Length == 0 && positivePiecesRight.Length == 0)
+            if (profileLeft.MaximumIndexes.Length == 0 && profileRight.MaximumIndexes.Length == 0)
             {
                 yield return null;
             }
 
-            Vector2D[] positivePieces;
-            Vector2D[] curve;
-            if (positivePiecesLeft.Sum(v => v.Y - v.X) > positivePiecesRight.Sum(v => v.Y - v.X))
+            ProfileYZ measuringProfile;
+            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.End - interval.Start) > 
+                profileRight.PositivePieceMap.Values.Sum(interval => interval.End - interval.Start))
             {
-                positivePieces = positivePiecesLeft;
-                curve = curveLeft;
+                measuringProfile = profileLeft;
             }
             else
             {
-                positivePieces = positivePiecesRight;
-                curve = curveRight;
+                measuringProfile = profileRight;
             }
 
-            foreach (var positivePiece in positivePieces)
+            foreach (var maximumIndex in measuringProfile.MaximumIndexes)
             {
-                var start = positivePiece.X;
-                var end = positivePiece.Y;
-
-                var highestZVector = curve.Where(v => v.X >= start && v.X <= end).OrderByDescending(v => v.Y).First();
-
                 var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
-                    highestZVector.X,
+                    measuringProfile.Extremums[maximumIndex].X,
                     data);
+
+                strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.End - interval.Start);
 
                 if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
                 {
-                    strain.Coefficient *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+                    strain.Coefficient *= coefficient.Get(strain.LambdaSmall, data.Load.Type, data.Surface.Material);
                 }
 
                 yield return strain;
