@@ -100,18 +100,20 @@ namespace Abdm.Calculation.Maths.Extensions
         public static (
             List<Vector2D> extremums, 
             List<int> maximums, 
+            List<Interval> postivePieces,
             Dictionary<double, Interval> postivePiecesMap
             ) FindExtremumsAndPositives(IEnumerable<Vector2D> sortedVectors)
         {
             var extremums = new List<Vector2D>();
             var maximums = new List<int>();
-            var postivePieces = new Dictionary<double, Interval>();
+            var positivePiecesMap = new Dictionary<double, Interval>();
+            var positivePieces = new List<Interval>();
 
             var array = sortedVectors.ToArray();
 
             if (array.Length < 3)
             {
-                return (extremums, maximums, postivePieces);
+                return (extremums, maximums, positivePieces, positivePiecesMap);
             }
 
             bool insidePositiveRegion = false;
@@ -127,7 +129,7 @@ namespace Abdm.Calculation.Maths.Extensions
             }
             PositivePieceIteration(array.Length - 1);
 
-            return (extremums, maximums, postivePieces);
+            return (extremums, maximums, positivePieces, positivePiecesMap);
 
             void ExtremumIteration(int i)
             {
@@ -156,10 +158,11 @@ namespace Abdm.Calculation.Maths.Extensions
                     insidePositiveRegion = true;
                     intervalStartIndex = i;
                     interval = new Interval();
+                    positivePieces.Add(interval);
                 }
                 if (insidePositiveRegion)
                 {
-                    postivePieces.Add(array[i].X, interval);
+                    positivePiecesMap.Add(array[i].X, interval);
                 }
                 if (insidePositiveRegion && (i == array.Length - 1 || array[i].Y <= 0))
                 {

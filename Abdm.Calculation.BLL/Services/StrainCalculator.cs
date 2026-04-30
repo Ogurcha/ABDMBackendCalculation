@@ -86,8 +86,8 @@ namespace Abdm.Calculation.BLL.Services
             }
 
             ProfileYZ measuringProfile;
-            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.End - interval.Start) > 
-                profileRight.PositivePieceMap.Values.Sum(interval => interval.End - interval.Start))
+            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.Length) > 
+                profileRight.PositivePieceMap.Values.Sum(interval => interval.Length))
             {
                 measuringProfile = profileLeft;
             }
@@ -102,7 +102,7 @@ namespace Abdm.Calculation.BLL.Services
                     measuringProfile.Extremums[maximumIndex].X,
                     data);
 
-                strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.End - interval.Start);
+                strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.Length);
 
                 if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
                 {
@@ -115,10 +115,8 @@ namespace Abdm.Calculation.BLL.Services
 
         public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
-            var curveLeft = trajectory.Left.Last().Value.GetYZ().ToArray();
-            var curveRight = trajectory.Right.Last().Value.GetYZ().ToArray();
-            var areaLeft = MathExtensions.CalculateAreaUnderCurve(curveLeft);
-            var areaRight = MathExtensions.CalculateAreaUnderCurve(curveRight);
+            var areaLeft = trajectory.Left.Last().Value.PositivePieces.Sum(x => x.Length);
+            var areaRight = trajectory.Right.Last().Value.PositivePieces.Sum(x => x.Length);
 
             var trafficJamStrain = new TrafficJamStrain();
             
@@ -129,7 +127,7 @@ namespace Abdm.Calculation.BLL.Services
 
             if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
             {
-                trafficJamStrain.Coefficient *= coefficient.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
+                trafficJamStrain.Coefficient *= coefficient.Get(Math.Max(areaLeft, areaRight), data.Load.Type, data.Surface.Material);
             }
 
             return trafficJamStrain;

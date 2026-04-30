@@ -33,7 +33,13 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Карта отрезков/частей <see cref="ProfileYZ"/>, на котором профиль имеет положительные значения. 
         /// Ключ - координата X вектора <see cref="Vector2D.X"/> данного профиля. 
+        /// Может не иметь значения по ключу
         /// </summary>
         public required Dictionary<double, Interval> PositivePieceMap { get; set; }
+
+        /// <summary>
+        /// Список всех положительных участков профиля
+        /// </summary>
+        public required Interval[] PositivePieces { get; set; }
     }
 }

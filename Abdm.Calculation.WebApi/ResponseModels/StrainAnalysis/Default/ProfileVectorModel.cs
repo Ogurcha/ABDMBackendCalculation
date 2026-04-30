@@ -2,7 +2,7 @@
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
 {
-    public struct ProfileVectorModel
+    public class ProfileVectorModel
     {
         [JsonPropertyName("x")]
         public decimal X { get; set; }

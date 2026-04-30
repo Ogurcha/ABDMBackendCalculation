@@ -68,7 +68,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 sortedFullList.Select((item) => new KeyValuePair<double, Vector2D>(item.X, (item.X, item.Y)))
                 .ToDictionary());
 
-            var (extremums, maximums, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
+            var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
             return new ProfileYZ
             {
@@ -76,6 +76,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 Vectors = vectors,
                 Extremums = extremums.ToArray(),
                 MaximumIndexes = maximums.ToArray(),
+                PositivePieces = positivePieces.ToArray(),
                 PositivePieceMap = positivePiecesMap
             };
         }

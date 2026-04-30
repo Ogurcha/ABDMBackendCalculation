@@ -14,5 +14,15 @@
         /// Конец интервала
         /// </summary>
         public double End { get; set; }
+
+        private double? _length;
+        public double Length
+        {
+            get
+            {
+                _length ??= End - Start;
+                return _length.Value;
+            }
+        }
     }
 }

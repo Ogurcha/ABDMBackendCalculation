@@ -18,7 +18,7 @@
 
         public List<TrafficJamStrainAnalysis>? Intervals { get; set; }
 
-        public ProfileVector[]? IntervalProfileVectors { get; set; }
+        public required ProfileVector[]? IntervalProfileVectors { get; set; }
 
         public decimal LambdaSmall { get; set; }
 
