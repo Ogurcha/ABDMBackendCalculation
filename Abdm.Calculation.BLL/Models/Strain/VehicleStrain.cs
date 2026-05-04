@@ -57,7 +57,7 @@
         public required Dictionary<ProfileYZ, HashSet<Interval>> PositivePiecesMap { get; set; }
 
         /// <summary>
-        /// Рассчетная лямбда, которая считается как суммарная длина по всем <see cref="Intervals"/>
+        /// Рассчетная лямбда, которая считается как суммарная длина по всем <see cref="PositivePiecesMap"/>
         /// </summary>
         public double LambdaSmall { get; set; }
     }
