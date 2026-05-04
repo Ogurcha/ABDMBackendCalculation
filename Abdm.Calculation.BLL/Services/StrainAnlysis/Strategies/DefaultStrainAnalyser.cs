@@ -27,9 +27,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             foreach (var strain in vehicleRollingResult.StrainResults)
             {
-                defaults.Add(new AnalysisDefault { 
-                    HasSafetyLine = strain.RoadRuleRef.HasSafetyLine, 
-                    Vehicles = GetAnalysisVehicles(strain.Strain, dataModel).ToArray() ,
+                defaults.Add(new AnalysisDefault
+                {
+                    HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
+                    Vehicles = GetAnalysisVehicles(strain.Strain, dataModel).ToArray(),
                     IsForward = strain.Strain.Any(x => x.IsDirectionForward)
                 });
                 if (strain.Strain.Any(x => x.InvertedDirectionStrain != null))
@@ -42,6 +43,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     });
                 }
             }
+            FilterDefaultsForPillar(vehicleRollingResult, defaults);
 
             analysis.Lambda = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.Lambda);
             analysis.MyStrength = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.MyStrength);
@@ -52,6 +54,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             return analysis;
         }
+
+        
 
         private List<AnalysisVehicle> GetAnalysisVehicles(IEnumerable<VehicleStrain> strainResults, VehicleRollingBigModel data)
         {
@@ -201,6 +205,21 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     {
                         counter++;
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Убираем два идентичных результата, которые возникают в случае с <see cref="StrainCalculationGroupTypeEnum.Pillar"/>
+        /// </summary>
+        private static void FilterDefaultsForPillar(VehicleRollingResult vehicleRollingResult, List<AnalysisDefault> defaults)
+        {
+            if (vehicleRollingResult.DataModel.Data.Surface.StrainCalculationGroupType == StrainCalculationGroupTypeEnum.Pillar)
+            {
+                defaults.RemoveAll(x => x.HasSafetyLine == false);
+                foreach (var def in defaults)
+                {
+                    def.HasSafetyLine = null;
                 }
             }
         }
