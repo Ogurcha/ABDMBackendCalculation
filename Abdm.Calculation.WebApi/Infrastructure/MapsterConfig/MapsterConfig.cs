@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
+using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.Maths.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
 using Mapster;
 
 namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
@@ -150,6 +154,20 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
             .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
             .Map(dst => dst.OtherLoad, src => src.OtherLoad);
+
+            TypeAdapterConfig<AnalysisVehicle, AnalysisVehicleModel>
+            .NewConfig()
+            .Map(dst => dst.ColumnNumber, src => src.ColumnNumber)
+            .Map(dst => dst.VehicleNumber, src => src.VehicleNumber)
+            .Map(dst => dst.PositionX, src => src.PositionX)
+            .Map(dst => dst.PositionY, src => src.PositionY)
+            .Map(dst => dst.Wheels, src => src.Wheels)
+            .Map(dst => dst.SumStrain, src => src.SumStrain)
+            .Map(dst => dst.TotalStrain, src => src.TotalStrain)
+            .Map(dst => dst.Intervals, src => src.Intervals)
+            .Map(dst => dst.IntervalProfileVectors, src => src.IntervalProfileVectors)
+            .Map(dst => dst.LambdaSmall, src => src.LambdaSmall)
+            .Map(dst => dst.DynamicCoefficient, src => src.DynamicCoefficient);
         }
     }
 }

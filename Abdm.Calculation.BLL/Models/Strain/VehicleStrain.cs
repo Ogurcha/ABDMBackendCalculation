@@ -50,5 +50,15 @@
         /// Используется только для аналитики и отображения в отчётах.
         /// </summary>
         public VehicleStrain? InvertedDirectionStrain { get; set; }
+
+        /// <summary>
+        /// Промежутки положительных кусков профиля, на которых было обнаружено данное напряжение
+        /// </summary>
+        public required Dictionary<ProfileYZ, HashSet<Interval>> PositivePiecesMap { get; set; }
+
+        /// <summary>
+        /// Рассчетная лямбда, которая считается как суммарная длина по всем <see cref="PositivePiecesMap"/>
+        /// </summary>
+        public double LambdaSmall { get; set; }
     }
 }

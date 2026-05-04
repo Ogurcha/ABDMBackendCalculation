@@ -68,14 +68,16 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 sortedFullList.Select((item) => new KeyValuePair<double, Vector2D>(item.X, (item.X, item.Y)))
                 .ToDictionary());
 
-            var (extremums, maximums) = MathExtensions.FindAllExtremums(sortedFullList);
+            var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
             return new ProfileYZ
             {
                 X = X,
                 Vectors = vectors,
                 Extremums = extremums.ToArray(),
-                MaximumIndexes = maximums.ToArray()
+                MaximumIndexes = maximums.ToArray(),
+                PositivePieces = positivePieces.ToArray(),
+                PositivePieceMap = positivePiecesMap
             };
         }
 
@@ -206,10 +208,20 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             ? (axle) => { return Y - axle.AbsolutePosition; }
             : (axle) => { return Y + axle.AbsolutePosition; };
 
+            var positivePiecesMap = new Dictionary<ProfileYZ, HashSet<Interval>>();
+            foreach (var profile in trajectory.Left)
+            {
+                positivePiecesMap.Add(profile.Value, new HashSet<Interval>());
+            }
+            foreach (var profile in trajectory.Right)
+            {
+                positivePiecesMap.Add(profile.Value, new HashSet<Interval>());
+            }
+
             IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var strain = trajectory.Left[distance].GetStrain(axleFunc(axle), axle.WheelWeight);
+                    var strain = trajectory.Left[distance].GetStrain(axleFunc(axle), axle.WheelWeight, out (Interval? i1, Interval? i2) positivePiecesLeft);
                     var leftWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -218,9 +230,18 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                             Y = axleFunc(axle)
                         },
                         AxleRef = axle,
-                        Strain = strain
+                        Strain = strain,
                     };
-                    strain = trajectory.Right[distance].GetStrain(axleFunc(axle), axle.WheelWeight);
+                    if (positivePiecesLeft.i1 != null)
+                    {
+                        positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i1);
+                    }
+                    if (positivePiecesLeft.i2 != null)
+                    {
+                        positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i2);
+                    }
+
+                    strain = trajectory.Right[distance].GetStrain(axleFunc(axle), axle.WheelWeight, out (Interval? i1, Interval? i2) positivePiecesRight);
                     var rightWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -229,18 +250,29 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                             Y = axleFunc(axle)
                         },
                         AxleRef = axle,
-                        Strain = strain
+                        Strain = strain,
                     };
+                    if (positivePiecesRight.i1 != null)
+                    {
+                        positivePiecesMap[trajectory.Right[distance]].Add(positivePiecesRight.i1);
+                    }
+                    if (positivePiecesRight.i2 != null)
+                    {
+                        positivePiecesMap[trajectory.Right[distance]].Add(positivePiecesRight.i2);
+                    }
+
                     return [leftWheel, rightWheel];
                 })
             );
+
 
             return new VehicleStrain
             {
                 SumStrain = wheelStrains.Sum(x => x.Strain),
                 WheelStrains = wheelStrains.ToArray(),
                 VehicleTrajectoryRef = trajectory,
-                IsDirectionForward = !invertAxles
+                IsDirectionForward = !invertAxles,
+                PositivePiecesMap = positivePiecesMap
             };
         }
 
@@ -291,9 +323,9 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                     {
                         X = x,
                         Y = wheelsValues.Sum(wheelValue =>
-                            vehicleTrajectory.Left[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x))
+                            vehicleTrajectory.Left[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x), out _)
                             * wheelValue.axle.WheelWeight
-                            + vehicleTrajectory.Right[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x))
+                            + vehicleTrajectory.Right[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x), out _)
                             * wheelValue.axle.WheelWeight)
                     }).Select((item) => new KeyValuePair<double, Vector2D>(item.X, item))
                         .ToDictionary()

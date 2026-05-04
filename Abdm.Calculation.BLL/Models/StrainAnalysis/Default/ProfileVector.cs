@@ -1,6 +1,6 @@
 ﻿namespace Abdm.Calculation.BLL.Models.StrainAnalysis.Default
 {
-    public struct ProfileVector
+    public class ProfileVector
     {
         public ProfileVector(decimal x, decimal y)
         {

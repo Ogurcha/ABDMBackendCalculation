@@ -16,7 +16,7 @@ namespace Abdm.Calculation.BLL.Models.Strain
         public required Vector2D Position { get; set; }
 
         /// <summary>
-        /// Нагрузка от колеса
+        /// Напряжение от колеса
         /// </summary>
         public required double Strain { get; set; }
 

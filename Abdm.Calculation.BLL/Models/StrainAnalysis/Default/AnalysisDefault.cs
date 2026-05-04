@@ -2,7 +2,7 @@
 {
     public class AnalysisDefault()
     {
-        public required bool HasSafetyLine { get; set; }
+        public required bool? HasSafetyLine { get; set; }
 
         public required bool IsForward { get; set; }
 
