@@ -98,6 +98,7 @@ namespace Abdm.Calculation.Infrastructure
 
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();
+            services.AddScoped<IStrainResultPopulator, StrainResultPopulator>();
             services.AddScoped<IStrainResultService, StrainResultService>();
             services.AddScoped<IBaseVehicleRollingCalculationCoordinator, BaseVehicleRollingCalculationCoordinator>();
 

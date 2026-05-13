@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainResultService
     {
-        List<StrainResult> GetStrainResults(VehicleRollingBigModel dataModel, IEnumerable<IntervalModel> intervals);
+        StrainResult[] GetStrainResults(VehicleRollingBigModel dataModel, IEnumerable<IntervalModel> intervals);
     }
 }

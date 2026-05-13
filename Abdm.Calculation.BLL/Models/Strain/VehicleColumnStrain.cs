@@ -1,0 +1,30 @@
+﻿namespace Abdm.Calculation.BLL.Models.Strain
+{
+    /// <summary>
+    /// Итоговое напряжение, выдваемое колонной автомобилей
+    /// на определённоой траектории
+    /// </summary>
+    public class VehicleColumnStrain : ComparableStrainBase
+    {
+        /// <summary>
+        /// Итоговое напряжение с учётом коэффициента
+        /// </summary>
+        public override double TotalStrain { get; set; }
+
+        /// <summary>
+        /// Напряжение, которое эмулирует равномерное скопление машин в пробке
+        /// Применяется не на всех нагрузках
+        /// </summary>
+        public TrafficJamStrain? TrafficJamStrain { get; set; }
+
+        /// <summary>
+        /// Траектория, на которой находилось ТС при замере напряжения.
+        /// </summary>
+        public required VehicleTrajectory VehicleTrajectoryRef { get; set; }
+
+        /// <summary>
+        /// массив напряжений индивидуальных ТС
+        /// </summary>
+        public required VehicleStrain[] VehicleStrains { get; set; }
+    }
+}

@@ -10,7 +10,7 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         /// <summary>
         /// Полученные напряжения
         /// </summary>
-        public required List<StrainResult> StrainResults { get; set; }
+        public required StrainResult[] StrainResults { get; set; }
 
         /// <summary>
         /// Замапленные исходные данные

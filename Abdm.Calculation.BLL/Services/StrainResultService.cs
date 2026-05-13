@@ -6,19 +6,20 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainResultService(
         IStrainCalculator strainCalculator,
-        IStrainSelector strainSelector) : IStrainResultService
+        IStrainSelector strainSelector,
+        IStrainResultPopulator strainResultPopulator) : IStrainResultService
     {
-        public List<StrainResult> GetStrainResults(
+        public StrainResult[] GetStrainResults(
             VehicleRollingBigModel data,
             IEnumerable<IntervalModel> intervals)
         {
-            var strainResults = new List<StrainResult>();
+            var strainResults = new List<StrainResultUnpopulated>();
             foreach (var interval in intervals) {
                 var strainsMap = strainCalculator.GetStrainsMap(interval, data);
                 strainResults.AddRange(strainSelector.GetStrainResults(strainsMap, interval, data));
-            }
+            }            
 
-            return strainResults;
+            return strainResults.Select(x => strainResultPopulator.PopulateStrainResult(x, data.Data)).ToArray();
         }
     }
 }

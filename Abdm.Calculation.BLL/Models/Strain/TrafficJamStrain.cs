@@ -18,7 +18,7 @@
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента
         /// </summary>
-        public override double TotalStrain => SumStrain * Coefficient;
+        public override double TotalStrain { get; set; }
 
         /// <summary>
         /// Напряжение от профилей слева от центра ТС

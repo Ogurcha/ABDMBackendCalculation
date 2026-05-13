@@ -8,6 +8,11 @@
     public class VehicleStrain : ComparableStrainBase
     {
         /// <summary>
+        /// Где на траетории находится ТС
+        /// </summary>
+        public double Position { get; set; }
+
+        /// <summary>
         /// Суммарное напряжение по всем осям одного ТС
         /// </summary>
         public double SumStrain { get; set; }
@@ -20,22 +25,12 @@
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента
         /// </summary>
-        public override double TotalStrain => SumStrain * Coefficient + (TrafficJamStrain?.TotalStrain ?? 0d);
+        public override double TotalStrain { get; set; }
 
         /// <summary>
         /// Напряжение по колёсам ТС
         /// </summary>
         public required WheelStrain[] WheelStrains { get; set; }
-
-        /// <summary>
-        /// Напряжение, которое эмулирует равномерное скопление машин в пробке
-        /// </summary>
-        public TrafficJamStrain? TrafficJamStrain { get; set; }
-
-        /// <summary>
-        /// Траектория, на которой находилось ТС при замере напряжения.
-        /// </summary>
-        public required VehicleTrajectory VehicleTrajectoryRef { get; set; }
 
         /// <summary>
         /// Направление движения ТС, которое использовалось для расчёта напряжения

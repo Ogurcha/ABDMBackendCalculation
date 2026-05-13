@@ -258,9 +258,9 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             {
                 SumStrain = wheelStrains.Sum(x => x.Strain),
                 WheelStrains = wheelStrains.ToArray(),
-                VehicleTrajectoryRef = trajectory,
                 IsDirectionForward = !invertAxles,
-                PositivePiecesMap = positivePiecesMap
+                PositivePiecesMap = positivePiecesMap,
+                Position = Y
             };
         }
 

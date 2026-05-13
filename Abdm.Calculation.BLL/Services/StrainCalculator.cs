@@ -1,10 +1,7 @@
-﻿using Abdm.Calculation.BLL.Extensions;
-using Abdm.Calculation.BLL.Helpers;
+﻿using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
-using Abdm.Calculation.Maths.Extensions;
-using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -13,31 +10,27 @@ namespace Abdm.Calculation.BLL.Services
         IEqualityComparer<double> equalityComparer,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainCalculator
     {
-        public Dictionary<RoadRule, (double X, VehicleStrain strain)[]> GetStrainsMap(
+        /// <summary>
+        /// Рассчитывает карту напряжений на каждый <see cref="RoadRule"/> и на куждую <see cref="VehicleTrajectory"/>. 
+        /// Дважды сортирует напряжения: 1) внутри траектории 2) и между траекториями
+        /// </summary>
+        public Dictionary<RoadRule, StrainsInTrajectory[]> GetStrainsMap(
             IntervalModel intervalModel,
             VehicleRollingBigModel bigData)
         {
             var data = bigData.Data;
             var roadRules = bigData.RoadRules;
 
-            var strainMap = new Dictionary<double, VehicleStrain>(equalityComparer);
+            var strainMap = new Dictionary<double, (VehicleTrajectory traj, VehicleStrain[] strains)>(equalityComparer);
             var trafficJamStrainMap = new Dictionary<double, TrafficJamStrain?>(equalityComparer);
             var doTrafficJamStrainCalulation = roadRules.Any(r => r.DoTrafficJamLoadCalulation);
 
             foreach (var trajectory in intervalModel.Trajectories)
             {
-                if (!strainMap.ContainsKey(trajectory.X))
+                if (!strainMap.ContainsKey(trajectory.X) 
+                    && TryGetStrainForEachPositivePiece(trajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
                 {
-                    var vehicleStrains = GetStrainForEachPositivePiece(
-                            trajectory,
-                            data)
-                        .Where(x => x != null)
-                        .Cast<VehicleStrain>()
-                        .ToArray();
-                    if (vehicleStrains.Any())
-                    {
-                        strainMap[trajectory.X] = vehicleStrains.Max()!;
-                    }
+                    strainMap[trajectory.X] = (trajectory, vehicleStrains.OrderDescending().ToArray()!);
                 }
                 if (doTrafficJamStrainCalulation && !trafficJamStrainMap.ContainsKey(trajectory.X))
                 {
@@ -45,24 +38,44 @@ namespace Abdm.Calculation.BLL.Services
                 }
             }
 
-            var trajectoriesMap = new Dictionary<RoadRule, (double X, VehicleStrain strain)[]>();
+            var trajectoriesMap = new Dictionary<RoadRule, StrainsInTrajectory[]>();
             foreach (var roadRule in roadRules)
             {
-                List<(double X, VehicleStrain strain)> strainList = new();
+                List<StrainsInTrajectory> strainList = new();
                 var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
                 foreach (var strains in strainMap.Where(s => trajectoryFilter.Filter(s.Key)))
                 {
-                    var vehicleStrain = strains.Value;
-                    if (roadRule.DoTrafficJamLoadCalulation)
+                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
+                        ? trafficJamStrainMap[strains.Key]
+                        : null;
+                    strainList.Add(new StrainsInTrajectory 
                     {
-                        vehicleStrain.TrafficJamStrain = trafficJamStrainMap[strains.Key];
-                    }
-                    strainList.Add((strains.Key, strains.Value));
+                        VehicleTrajectoryRef = strains.Value.traj, 
+                        Strains = strains.Value.strains, 
+                        TrafficJamStrain = trafficJamStrain,
+                        TotalStrain = strains.Value.strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
+                    });
                 }
-                trajectoriesMap.Add(roadRule, strainList.OrderByDescending(s => s.strain.TotalStrain).ToArray());
+                trajectoriesMap.Add(roadRule, strainList.OrderDescending().ToArray());
             }
             
             return trajectoriesMap;
+        }
+
+        public bool TryGetStrainForEachPositivePiece(
+            VehicleTrajectory trajectory,
+            VehicleRollingSmallModel data,
+            out IEnumerable<VehicleStrain> vehicleStrains)
+        {
+            vehicleStrains = GetStrainForEachPositivePiece(
+                            trajectory,
+                            data)
+                        .Where(x => x != null)!;
+            if (vehicleStrains.Any()) 
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -77,37 +90,15 @@ namespace Abdm.Calculation.BLL.Services
         public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, 
             VehicleRollingSmallModel data)
         {
-            var profileLeft = trajectory.Left.Last().Value;
-            var profileRight = trajectory.Right.Last().Value;
-
-            if (profileLeft.MaximumIndexes.Length == 0 && profileRight.MaximumIndexes.Length == 0)
+            var measuringProfile = GetMeasuringProfile(trajectory);
+            if (measuringProfile == null)
             {
                 yield return null;
             }
 
-            ProfileYZ measuringProfile;
-            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.Length) > 
-                profileRight.PositivePieceMap.Values.Sum(interval => interval.Length))
+            foreach (var maximumIndex in measuringProfile!.MaximumIndexes)
             {
-                measuringProfile = profileLeft;
-            }
-            else
-            {
-                measuringProfile = profileRight;
-            }
-
-            foreach (var maximumIndex in measuringProfile.MaximumIndexes)
-            {
-                var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
-                    measuringProfile.Extremums[maximumIndex].X,
-                    data);
-
-                strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.Length);
-
-                if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
-                {
-                    strain.Coefficient *= coefficient.Get(strain.LambdaSmall, data.Load.Type, data.Surface.Material);
-                }
+                VehicleStrain strain = GetVehicleStrain(trajectory, data, measuringProfile, measuringProfile.Extremums[maximumIndex].X);
 
                 yield return strain;
             }
@@ -129,8 +120,30 @@ namespace Abdm.Calculation.BLL.Services
             {
                 trafficJamStrain.Coefficient *= coefficient.Get(Math.Max(areaLeft, areaRight), data.Load.Type, data.Surface.Material);
             }
+            trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.Coefficient;
 
             return trafficJamStrain;
+        }
+
+        private ProfileYZ? GetMeasuringProfile(VehicleTrajectory trajectory)
+        {
+            var profileLeft = trajectory.Left.Last().Value;
+            var profileRight = trajectory.Right.Last().Value;
+
+            if (profileLeft.MaximumIndexes.Length == 0 && profileRight.MaximumIndexes.Length == 0)
+            {
+                return null;
+            }
+
+            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.Length) > 
+                profileRight.PositivePieceMap.Values.Sum(interval => interval.Length))
+            {
+                return profileLeft;
+            }
+            else
+            {
+                return profileRight;
+            }
         }
 
         /// <summary>
@@ -140,6 +153,23 @@ namespace Abdm.Calculation.BLL.Services
         private double GetTraffciJamStrainForOneSide(double area, double totalAxlesWeight)
         {
             return area * totalAxlesWeight * NormConstants.TrafficJamApproximationParam / 2;
+        }
+
+        private VehicleStrain GetVehicleStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data, ProfileYZ measuringProfile, double position)
+        {
+            var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
+                                position,
+                                data);
+
+            strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.Length);
+
+            if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
+            {
+                strain.Coefficient *= coefficient.Get(strain.LambdaSmall, data.Load.Type, data.Surface.Material);
+            }
+            strain.TotalStrain = strain.SumStrain * strain.Coefficient;
+
+            return strain;
         }
     }
 }

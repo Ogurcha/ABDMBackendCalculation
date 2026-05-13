@@ -27,19 +27,20 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             foreach (var strain in vehicleRollingResult.StrainResults)
             {
+                var isDirectionForward = strain.Strain.First().VehicleStrains.First().IsDirectionForward;
                 defaults.Add(new AnalysisDefault
                 {
                     HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
-                    Vehicles = GetAnalysisVehicles(strain.Strain, dataModel).ToArray(),
-                    IsForward = strain.Strain.Any(x => x.IsDirectionForward)
+                    Vehicles = GetAnalysisColumns(strain.Strain, dataModel, x => x).ToArray(),
+                    IsForward = isDirectionForward,
                 });
-                if (strain.Strain.Any(x => x.InvertedDirectionStrain != null))
+                if (strain.Strain.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
                 {
                     defaults.Add(new AnalysisDefault
                     {
                         HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
-                        Vehicles = GetAnalysisVehicles(strain.Strain.Select(x => x.InvertedDirectionStrain).Where(x => x != null).Cast<VehicleStrain>(), dataModel).ToArray(),
-                        IsForward = strain.Strain.Select(x => x.InvertedDirectionStrain).Any(x => x?.IsDirectionForward == true),
+                        Vehicles = GetAnalysisColumns(strain.Strain, dataModel, x => x.InvertedDirectionStrain).ToArray(),
+                        IsForward = !isDirectionForward,
                     });
                 }
             }
@@ -55,27 +56,56 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return analysis;
         }
 
-        
-
-        private List<AnalysisVehicle> GetAnalysisVehicles(IEnumerable<VehicleStrain> strainResults, VehicleRollingBigModel data)
+        private List<AnalysisVehicle> GetAnalysisColumns(IEnumerable<VehicleColumnStrain> strainResults, 
+            VehicleRollingBigModel data,
+            Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
         {
             var vehicles = new List<AnalysisVehicle>();
             var columnCounter = 1;
-            foreach (var strain in strainResults.OrderBy(x => x.WheelStrains.Min(w => w.Position.X)))
+            foreach (var columnStrains in strainResults.OrderBy(x => x.VehicleTrajectoryRef.X))
             {
-                vehicles.Add(GetAnalysisVehicle(strain, data.Intervals.First().AbsolutePositionLeft, columnCounter));
+                vehicles.AddRange(GetAnalysisColumn(columnStrains, data, columnCounter, vehicleStrainRetrieveFunc));
                 columnCounter++;
             }
 
             return vehicles;
         }
 
-        private AnalysisVehicle GetAnalysisVehicle(VehicleStrain vehicleStrain, 
-            double leftIntervalStart, 
-            int columNumber)
+        private List<AnalysisVehicle> GetAnalysisColumn(VehicleColumnStrain columnStrain, 
+            VehicleRollingBigModel data, 
+            int oneBaseColumNumber,
+            Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
+        {
+            var vehicles = new List<AnalysisVehicle>();
+            for (int vehicleCounter = 0; vehicleCounter < columnStrain.VehicleStrains.Length; vehicleCounter++)
+            {
+                var vehicle = GetAnalysisVehicle(columnStrain,
+                    data.Intervals.First().AbsolutePositionLeft,
+                    oneBaseColumNumber,
+                    vehicleCounter,
+                    vehicleStrainRetrieveFunc);
+                if (vehicle != null)
+                {
+                    vehicles.Add(vehicle);
+                }
+            }
+
+            return vehicles;
+        }
+
+        private AnalysisVehicle? GetAnalysisVehicle(VehicleColumnStrain columnStrain,
+            double leftIntervalStart,
+            int oneBaseColumNumber,
+            int zeroBaseVehicleNumber,
+            Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
         {
             var wheelCounter = 1;
             var wheels = new List<WheelAnalysis>();
+            var vehicleStrain = vehicleStrainRetrieveFunc(columnStrain.VehicleStrains[zeroBaseVehicleNumber]);
+            if (vehicleStrain == null)
+            {
+                return null;
+            }
             foreach (var wheelStrains in vehicleStrain.WheelStrains.OrderBy(x => x.Position.Y).GroupBy(x => x.Position.Y))
             {
                 var wheelSubCounter = 1;
@@ -89,10 +119,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             List<TrafficJamStrainAnalysis>? intervals = null;
             ProfileVector[]? intervalProfileVectors = null; 
-            if (vehicleStrain.TrafficJamStrain != null)
+            if (columnStrain.TrafficJamStrain != null)
             {
                 intervals = new List<TrafficJamStrainAnalysis>();
-                var trajectory = vehicleStrain.VehicleTrajectoryRef;
+                var trajectory = columnStrain.VehicleTrajectoryRef;
 
                 var profileLeft = trajectory.Left.Last().Value;
                 var profileRight = trajectory.Right.Last().Value;
@@ -118,16 +148,16 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
-                        Number = columNumber,
+                        Number = oneBaseColumNumber,
                         LeftIntervalStart = MathExtensions.ToDecimal(left.Start - minusKiller),
                         LeftIntervalEnd = MathExtensions.ToDecimal(left.End - minusKiller),
                         LeftIntervalLength = MathExtensions.ToDecimal(left.Length),
-                        LeftIntervalStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.LeftStrain),
+                        LeftIntervalStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.LeftStrain),
                         RightIntervalStart = MathExtensions.ToDecimal(right.Start - minusKiller),
                         RightIntervalEnd = MathExtensions.ToDecimal(right.End - minusKiller),
                         RightIntervalLength = MathExtensions.ToDecimal(right.Length),
-                        RightIntervalStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.RightStrain),
-                        SumStrain = MathExtensions.ToDecimal(vehicleStrain.TrafficJamStrain.SumStrain),
+                        RightIntervalStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.RightStrain),
+                        SumStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.SumStrain),
                         CenterIntervalStart = MathExtensions.ToDecimal(center.Start - minusKiller),
                         CenterIntervalEnd = MathExtensions.ToDecimal(center.End - minusKiller),
                         CenterIntervalLength = MathExtensions.ToDecimal(center.Length),
@@ -141,8 +171,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             return new AnalysisVehicle
             {
-                ColumnNumber = columNumber,
-                VehicleNumber = 1, //TODO: добавить поддержку нескольких машин в колонне
+                ColumnNumber = oneBaseColumNumber,
+                VehicleNumber = zeroBaseVehicleNumber + 1,
                 Wheels = wheels,
                 Intervals = intervals,
                 PositionX = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Average(x => x.Position.X) - leftIntervalStart),

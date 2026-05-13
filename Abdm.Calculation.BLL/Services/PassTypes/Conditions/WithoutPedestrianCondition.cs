@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
 {
     public class WithoutPedestrianCondition : IPassTypeCondition
     {
-        public bool CanPassCondition(List<StrainResult> strainResults, SurfaceModel surface, double? dynamicCoefficient)
+        public bool CanPassCondition(IList<StrainResult> strainResults, SurfaceModel surface, double? dynamicCoefficient)
         {
             return strainResults.GroupBy(x =>
             x.RoadRuleRef.IsDynamicMovement).Select(x =>

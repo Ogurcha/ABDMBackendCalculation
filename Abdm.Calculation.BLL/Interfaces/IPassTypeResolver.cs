@@ -8,6 +8,6 @@ namespace Abdm.Calculation.BLL.Interfaces
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationTypes { get; }
 
-        PassTypeEnum Resolve(List<StrainResult> strainResults, VehicleRollingSmallModel data);
+        PassTypeEnum Resolve(IList<StrainResult> strainResults, VehicleRollingSmallModel data);
     }
 }

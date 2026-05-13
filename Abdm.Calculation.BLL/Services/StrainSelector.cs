@@ -12,8 +12,8 @@ namespace Abdm.Calculation.BLL.Services
         IEqualityComparer<double> equalityComparer,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainSelector
     {
-        public IEnumerable<StrainResult> GetStrainResults(
-        Dictionary<RoadRule, (double X, VehicleStrain Strain)[]> orderedStrainsMap,
+        public IEnumerable<StrainResultUnpopulated> GetStrainResults(
+        Dictionary<RoadRule, StrainsInTrajectory[]> orderedStrainsMap,
         IntervalModel intervalModel,
         VehicleRollingBigModel bigData)
         {
@@ -32,11 +32,11 @@ namespace Abdm.Calculation.BLL.Services
                 if (actualVehicleCount == 1)
                 {
                     yield return
-                        new StrainResult
+                        new StrainResultUnpopulated
                         {
                             RoadRuleRef = roadRule,
-                            Strain = [orderedStrainsMap[roadRule].First().Strain],
-                            StrainOneAuto = orderedStrainsMap[roadRule].First().Strain
+                            Strain = [orderedStrainsMap[roadRule].First()],
+                            StrainOneAuto = orderedStrainsMap[roadRule].First()
                         };
                 }
                 else
@@ -63,7 +63,7 @@ namespace Abdm.Calculation.BLL.Services
         /// <param name="mesh">Поверхность влияния</param>
         /// <param name="actualVehicleCount">Количество ТС</param>
         /// <returns></returns>
-        private StrainResult? GetStrainResult((double X, VehicleStrain Strain)[] sortedStrains,
+        private StrainResultUnpopulated? GetStrainResult(StrainsInTrajectory[] sortedStrains,
             IntervalModel intervalModel,
             RoadRule roadRule,
             VehicleRollingSmallModel data,
@@ -71,10 +71,10 @@ namespace Abdm.Calculation.BLL.Services
             int actualVehicleCount)
         {
             var strainsCanUse = sortedStrains.Select(x => x.X).ToHashSet(equalityComparer);
-            var sortedAdditionalStrains = new List<(double X, VehicleStrain Strain)>();
+            var sortedAdditionalStrains = new List<StrainsInTrajectory>();
 
-            VehicleStrainList vehicleStrains = new VehicleStrainList();
-            VehicleStrain? vehicleStrain = null;
+            List<StrainsInTrajectory> vehicleStrains = new();
+            StrainsInTrajectory? vehicleStrain = null;
 
             var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
 
@@ -84,12 +84,13 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     break;
                 }
-                (double X, VehicleStrain Strain)? maxStrainOriginal
+                StrainsInTrajectory? maxStrainOriginal
                     = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
-                (double X, VehicleStrain Strain)? maxStrainAdditional
+                StrainsInTrajectory? maxStrainAdditional
                     = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
 
-                if ((maxStrainOriginal?.Strain?.TotalStrain ?? 0d) >= (maxStrainAdditional?.Strain?.TotalStrain ?? 0d))
+                if ((maxStrainOriginal?.TotalStrain ?? 0d) 
+                    >= (maxStrainAdditional?.TotalStrain ?? 0d))
                 {
                     UseStrain(maxStrainOriginal);
                 }
@@ -105,26 +106,26 @@ namespace Abdm.Calculation.BLL.Services
             }
             else
             {
-                var strainResult = new StrainResult
+                var strainResult = new StrainResultUnpopulated
                 {
                     RoadRuleRef = roadRule,
-                    Strain = vehicleStrains,
+                    Strain = vehicleStrains.ToArray(),
                     StrainOneAuto = vehicleStrain
                 };
 
                 return strainResult;
             }
 
-            void UseStrain((double X, VehicleStrain Strain)? trajNullable)
+            void UseStrain(StrainsInTrajectory? trajNullable)
             {
-                if (trajNullable is not (double X, VehicleStrain Strain) traj)
+                if (trajNullable is not StrainsInTrajectory traj)
                 {
                     return;
                 }
-                vehicleStrains.Add(traj.Strain);
+                vehicleStrains.Add(traj);
                 if (vehicleStrain == null)
                 {
-                    vehicleStrain = traj.Strain;
+                    vehicleStrain = traj;
                 }
                 var left = traj.X - Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
                 var right = traj.X + Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
@@ -141,10 +142,22 @@ namespace Abdm.Calculation.BLL.Services
                     && !sortedStrains.Select(s => s.X).Contains(traj, equalityComparer)
                     && !sortedAdditionalStrains.Select(s => s.X).Contains(traj, equalityComparer)
                     && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory
-                    && strainCalculator.GetStrainForEachPositivePiece(additionalTrajectory, data).Max() is VehicleStrain additionalTrajectoryStrain)
+                    && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out IEnumerable<VehicleStrain> vehicleStrains)
+                    )
                 {
-                    additionalTrajectoryStrain.TrafficJamStrain = roadRule.DoTrafficJamLoadCalulation ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data) : null;
-                    sortedAdditionalStrains = sortedAdditionalStrains.Append((traj, additionalTrajectoryStrain)).OrderByDescending(x => x.Item2).ToList();
+                    var strains = vehicleStrains.OrderDescending().ToArray();
+                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
+                        ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data)
+                        : null;
+                    var sortedAdditionalStrain = new StrainsInTrajectory
+                    {
+                        VehicleTrajectoryRef = additionalTrajectory,
+                        Strains = strains,
+                        TrafficJamStrain = trafficJamStrain,
+                        TotalStrain = strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
+                    };
+                    sortedAdditionalStrains.Add(sortedAdditionalStrain);
+                    sortedAdditionalStrains = sortedAdditionalStrains.OrderDescending().ToList();
                     strainsCanUse.Add(traj);
                 }
             }

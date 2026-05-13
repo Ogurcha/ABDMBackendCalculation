@@ -1,10 +1,10 @@
 ﻿namespace Abdm.Calculation.BLL.Models.Strain
 {
-    public class VehicleStrainList : List<VehicleStrain>
+    public class VehicleColumnStrainList : List<VehicleColumnStrain>
     {
-        public VehicleStrainList() : base() { }
+        public VehicleColumnStrainList() : base() { }
 
-        public VehicleStrainList(IEnumerable<VehicleStrain> collection) : base(collection) { }
+        public VehicleColumnStrainList(IEnumerable<VehicleColumnStrain> collection) : base(collection) { }
 
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента
