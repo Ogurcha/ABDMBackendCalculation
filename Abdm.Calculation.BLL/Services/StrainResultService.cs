@@ -13,13 +13,13 @@ namespace Abdm.Calculation.BLL.Services
             VehicleRollingBigModel data,
             IEnumerable<IntervalModel> intervals)
         {
-            var strainResults = new List<StrainResultUnpopulated>();
+            var unpopulated = new List<StrainResultUnpopulated>();
             foreach (var interval in intervals) {
-                var strainsMap = strainCalculator.GetStrainsMap(interval, data);
-                strainResults.AddRange(strainSelector.GetStrainResults(strainsMap, interval, data));
-            }            
+                var strainsMap = strainCalculator.GenerateStrainsMap(interval, data);
+                unpopulated.AddRange(strainSelector.SelectBestStrainResult(strainsMap, interval, data));
+            }
 
-            return strainResults.Select(x => strainResultPopulator.PopulateStrainResult(x, data.Data)).ToArray();
+            return strainResultPopulator.PopulateStrainResults(unpopulated, data.Data).ToArray();
         }
     }
 }

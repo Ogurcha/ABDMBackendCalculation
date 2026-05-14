@@ -5,6 +5,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainResultPopulator
     {
-        StrainResult PopulateStrainResult(StrainResultUnpopulated unpopulated, VehicleRollingSmallModel data);
+        List<StrainResult> PopulateStrainResults(IList<StrainResultUnpopulated> list, VehicleRollingSmallModel data);
     }
 }

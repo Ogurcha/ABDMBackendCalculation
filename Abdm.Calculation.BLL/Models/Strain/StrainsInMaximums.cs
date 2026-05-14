@@ -1,9 +1,9 @@
 ﻿namespace Abdm.Calculation.BLL.Models.Strain
 {
     /// <summary>
-    /// Напряжения от одного ТС на определённой траектории
+    /// Напряжения в локальных максимумах от одного ТС на определённой траектории
     /// </summary>
-    public class StrainsInTrajectory : ComparableStrainBase
+    public class StrainsInMaximums : ComparableStrainBase
     {
         /// <summary>
         /// Координата траектории

@@ -10,7 +10,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
             return strainResults.GroupBy(x =>
             x.RoadRuleRef.IsDynamicMovement).Select(x =>
             {
-                var load = x.Max(c => c.Strain.TotalStrain);
+                var load = x.Max(c => c.TotalStrain);
                 if (x.Key && dynamicCoefficient is double coeff)
                 {
                     load *= coeff;

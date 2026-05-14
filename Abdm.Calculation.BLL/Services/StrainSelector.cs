@@ -12,8 +12,8 @@ namespace Abdm.Calculation.BLL.Services
         IEqualityComparer<double> equalityComparer,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainSelector
     {
-        public IEnumerable<StrainResultUnpopulated> GetStrainResults(
-        Dictionary<RoadRule, StrainsInTrajectory[]> orderedStrainsMap,
+        public IEnumerable<StrainResultUnpopulated> SelectBestStrainResult(
+        Dictionary<RoadRule, StrainsInMaximums[]> strainsMap,
         IntervalModel intervalModel,
         VehicleRollingBigModel bigData)
         {
@@ -22,7 +22,7 @@ namespace Abdm.Calculation.BLL.Services
             var roadRules = bigData.RoadRules;
             foreach (var roadRule in roadRules)
             {
-                if (!orderedStrainsMap[roadRule].Any())
+                if (!strainsMap[roadRule].Any())
                 {
                     continue;
                 }
@@ -35,13 +35,12 @@ namespace Abdm.Calculation.BLL.Services
                         new StrainResultUnpopulated
                         {
                             RoadRuleRef = roadRule,
-                            Strain = [orderedStrainsMap[roadRule].First()],
-                            StrainOneAuto = orderedStrainsMap[roadRule].First()
+                            Strain = [strainsMap[roadRule].First()]
                         };
                 }
                 else
                 {
-                    var strainResult = GetStrainResult(orderedStrainsMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
+                    var strainResult = GetStrainResult(strainsMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
                     if (strainResult == null) 
                     { 
                         continue; 
@@ -56,51 +55,37 @@ namespace Abdm.Calculation.BLL.Services
         /// Траектории выбираются исходя из максимального напряжения, но ТС не должны "налезать" друг на друга. 
         /// Но также проверяется оптимальная траектория рядом с уже установленным ТС 
         /// </summary>
-        /// <param name="sortedStrains">Напряжения отсортированные по убыванию с координатой траектории</param>
+        /// <param name="strains">Напряжения c координатой траектории</param>
         /// <param name="intervalModel">интервал моста, внутри которого происходит движение</param>
         /// <param name="roadRule">Правила движения по мосту</param>
         /// <param name="data">Параметры поверхности и нагрузки</param>
         /// <param name="mesh">Поверхность влияния</param>
         /// <param name="actualVehicleCount">Количество ТС</param>
         /// <returns></returns>
-        private StrainResultUnpopulated? GetStrainResult(StrainsInTrajectory[] sortedStrains,
+        private StrainResultUnpopulated? GetStrainResult(StrainsInMaximums[] strains,
             IntervalModel intervalModel,
             RoadRule roadRule,
             VehicleRollingSmallModel data,
             Mesh mesh,
             int actualVehicleCount)
         {
-            var strainsCanUse = sortedStrains.Select(x => x.X).ToHashSet(equalityComparer);
-            var sortedAdditionalStrains = new List<StrainsInTrajectory>();
-
-            List<StrainsInTrajectory> vehicleStrains = new();
-            StrainsInTrajectory? vehicleStrain = null;
+            var orderedByPosition = new LinkedList<StrainsInMaximums>();
+            var orderedByStrain = new List<LinkedListNode<StrainsInMaximums>>(strains.OrderBy(x => x.X).Select(orderedByPosition.AddLast).OrderBy(x => x.Value.TotalStrain));
 
             var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
+            List<StrainsInMaximums> vehicleStrains = new();
 
-            for (var i = 0; i < actualVehicleCount; i++)
+            while (vehicleStrains.Count >= actualVehicleCount && orderedByPosition.Count > 0 && orderedByStrain.Count > 0)
             {
-                if (strainsCanUse.Count <= 0)
+                var node = orderedByStrain.Last();
+                orderedByStrain.Remove(node);
+                if (node.List == orderedByPosition)
                 {
-                    break;
-                }
-                StrainsInTrajectory? maxStrainOriginal
-                    = sortedStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
-                StrainsInTrajectory? maxStrainAdditional
-                    = sortedAdditionalStrains.FirstOrDefault(x => strainsCanUse.Contains(x.X));
-
-                if ((maxStrainOriginal?.TotalStrain ?? 0d) 
-                    >= (maxStrainAdditional?.TotalStrain ?? 0d))
-                {
-                    UseStrain(maxStrainOriginal);
-                }
-                else
-                {
-                    UseStrain(maxStrainAdditional);
+                    UseStrain(node);
                 }
             }
 
-            if (vehicleStrain == null || vehicleStrains.Count == 0)
+            if (vehicleStrains.Count == 0)
             {
                 return null;
             }
@@ -109,57 +94,117 @@ namespace Abdm.Calculation.BLL.Services
                 var strainResult = new StrainResultUnpopulated
                 {
                     RoadRuleRef = roadRule,
-                    Strain = vehicleStrains.ToArray(),
-                    StrainOneAuto = vehicleStrain
+                    Strain = vehicleStrains.ToArray()
                 };
 
                 return strainResult;
             }
 
-            void UseStrain(StrainsInTrajectory? trajNullable)
+            void UseStrain(LinkedListNode<StrainsInMaximums> node)
             {
-                if (trajNullable is not StrainsInTrajectory traj)
-                {
-                    return;
-                }
-                vehicleStrains.Add(traj);
-                if (vehicleStrain == null)
-                {
-                    vehicleStrain = traj;
-                }
-                var left = traj.X - Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
-                var right = traj.X + Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
-                strainsCanUse.RemoveWhere(t => left < t && t < right && !equalityComparer.Equals(left, t) && !equalityComparer.Equals(t, right));
+                vehicleStrains.Add(node.Value);
+                var center = node.Value.X;
+                var radius = Math.Max(roadRule.MinTrajectoryDistance, data.Load.Interval);
+                var left = center - radius;
+                var right = center + radius;
 
-                TryAddTrajectory(left);
-                TryAddTrajectory(right);
+                RemoveNodesNearCenter(
+                    orderedByPosition, 
+                    node, 
+                    center, 
+                    radius,
+                    out LinkedListNode<StrainsInMaximums>? edgeNode1, 
+                    out LinkedListNode<StrainsInMaximums>? edgeNode2);
+
+                TryAddTrajectory(left, edgeNode1 != null 
+                    ? (StrainsInMaximums x) => orderedByPosition.AddAfter(edgeNode1, x)
+                    : orderedByPosition.AddLast,
+                    edgeNode1);
+                TryAddTrajectory(left, edgeNode2 != null 
+                    ? (StrainsInMaximums x) => orderedByPosition.AddBefore(edgeNode2, x)
+                    : orderedByPosition.AddFirst,
+                    edgeNode2);
             }
 
-            void TryAddTrajectory(double traj)
+            void TryAddTrajectory(double traj, 
+                Func<StrainsInMaximums, LinkedListNode<StrainsInMaximums>> insertFunc,
+                LinkedListNode<StrainsInMaximums>? edgeNode)
             {
-                if (!strainsCanUse.Contains(traj)
+                if (!(edgeNode?.Value?.X == traj)
                     && trajectoryFilter.Filter(traj)
-                    && !sortedStrains.Select(s => s.X).Contains(traj, equalityComparer)
-                    && !sortedAdditionalStrains.Select(s => s.X).Contains(traj, equalityComparer)
+                    && !strains.Select(s => s.X).Contains(traj, equalityComparer)
                     && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory
-                    && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out IEnumerable<VehicleStrain> vehicleStrains)
-                    )
+                    && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
                 {
                     var strains = vehicleStrains.OrderDescending().ToArray();
                     var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
                         ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data)
                         : null;
-                    var sortedAdditionalStrain = new StrainsInTrajectory
+                    var additionalStrain = new StrainsInMaximums
                     {
                         VehicleTrajectoryRef = additionalTrajectory,
                         Strains = strains,
                         TrafficJamStrain = trafficJamStrain,
                         TotalStrain = strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
                     };
-                    sortedAdditionalStrains.Add(sortedAdditionalStrain);
-                    sortedAdditionalStrains = sortedAdditionalStrains.OrderDescending().ToList();
-                    strainsCanUse.Add(traj);
+                    var additionalStrainNode = insertFunc(additionalStrain);
+                    orderedByStrain.Add(additionalStrainNode);
+                    orderedByStrain = orderedByStrain.OrderBy(x => x.Value.TotalStrain).ToList();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Оптимизированное исключение напряжений. При повторном вызове связный список уже не будет содержать исключённые напряжения
+        /// </summary>
+        private void RemoveNodesNearCenter(
+            LinkedList<StrainsInMaximums> list,
+            LinkedListNode<StrainsInMaximums> linkedListNode,
+            double center,
+            double radius,
+            out LinkedListNode<StrainsInMaximums>? edgeNode1,
+            out LinkedListNode<StrainsInMaximums>? edgeNode2)
+        {
+            double minPos = center - radius;
+            double maxPos = center + radius;
+            edgeNode1 = null;
+            edgeNode2 = null;
+
+            var node = linkedListNode.Previous;
+            while (node != null)
+            {
+                var prev = node.Previous;
+                if (node.Value.X > minPos && !equalityComparer.Equals(minPos, node.Value.X))
+                {
+                    list.Remove(node);
+                }
+                else
+                {
+                    edgeNode1 = node;
+                    break;
+                }
+                node = prev;
+            }
+
+            node = linkedListNode.Next;
+            while (node != null)
+            {
+                var next = node.Next;
+                if (node.Value.X < maxPos && !equalityComparer.Equals(maxPos, node.Value.X))
+                {
+                    list.Remove(node);
+                }
+                else
+                {
+                    edgeNode2 = node;
+                    break;
+                }
+                node = next;
+            }
+
+            if (linkedListNode.List == list)
+            {
+                list.Remove(linkedListNode);
             }
         }
     }

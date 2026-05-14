@@ -1,6 +1,4 @@
-﻿using Abdm.Calculation.BLL.Enums;
-
-namespace Abdm.Calculation.BLL.Models.Strain
+﻿namespace Abdm.Calculation.BLL.Models.Strain
 {
     /// <summary>
     /// Результирующее напряжение по заданному интервалу и по задданым правилам движения
@@ -15,12 +13,11 @@ namespace Abdm.Calculation.BLL.Models.Strain
         /// <summary>
         /// Максимальное напряжение по каждой траектории движения в заданном интервале
         /// </summary>
-        public required VehicleColumnStrainList Strain { get; set; }
+        public required VehicleColumnStrain[] Strain { get; set; }
 
         /// <summary>
-        /// Максимальное напряжение по каждой траектории движения в заданном интервале, если проезжает по 1 авто
-        /// Необходимо для случая проверки <see cref="PassTypeEnum.SingleAutoOnly"/>
+        /// Итоговое напряжение с учётом коэффициента
         /// </summary>
-        public required VehicleColumnStrain StrainOneAuto { get; set; }
+        public double TotalStrain => Strain.Sum(x => x.TotalStrain);
     }
 }

@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
 
         public PassTypeEnum Resolve(IList<StrainResult> strainResults, VehicleRollingSmallModel data)
         {
-            var fullStrain = strainResults.Max(x => x.Strain.TotalStrain);
+            var fullStrain = strainResults.Max(x => x.TotalStrain);
 
             if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)
             {

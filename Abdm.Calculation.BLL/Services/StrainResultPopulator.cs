@@ -5,26 +5,67 @@ using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class StrainResultPopulator(IVehiclePositioner vehiclePositioner) : IStrainResultPopulator
+    public class StrainResultPopulator(IVehiclePositioner vehiclePositioner, IEqualityComparer<double> equalityComparer) : IStrainResultPopulator
     {
-        /// <summary>
-        /// Получив напряжения для локальных максимумов <paramref name="unpopulated"/>, а также дополнительные варианты напряжений, полученные в результате смещения этих максимумов на расстояния, кратные расстоянию между ТС в автоколонне, выбираем напряжения по убыванию, но таким образом, чтобы расстояние между позициями выбранных напряжений было не меньше расстояния между ТС в автоколонне, а количество напряжений было не больше максимального количества ТС в автоколонне <paramref name="data.RoadRuleRef.MaxVehicleInTrajectory"/>
-        /// </summary>
-        public StrainResult PopulateStrainResult(StrainResultUnpopulated unpopulated, VehicleRollingSmallModel data)
+        public List<StrainResult> PopulateStrainResults(IList<StrainResultUnpopulated> list, VehicleRollingSmallModel data)
         {
-            var maxVehicle = unpopulated.RoadRuleRef.MaxVehicleInTrajectory;
+            var strainResults = new List<StrainResult>();
+            var strainResultsMap = new Dictionary<int, Dictionary<double, VehicleColumnStrain>>();
+            foreach (var unpopulated in list)
+            {
+                var maxVehicles = unpopulated.RoadRuleRef.MaxVehicleInTrajectory;
+                if (!strainResultsMap.ContainsKey(maxVehicles))
+                {
+                    strainResultsMap.Add(maxVehicles, new Dictionary<double, VehicleColumnStrain>(equalityComparer));
+                }
+                strainResults.Add(PopulateStrainResult(unpopulated, data, maxVehicles, strainResultsMap[maxVehicles]));
+            }
+            return strainResults;
+        }
+
+        /// <summary>
+        /// Получив напряжения для локальных максимумов, а также дополнительные варианты напряжений, полученные в результате смещения этих максимумов на расстояния, кратные расстоянию между ТС в автоколонне, выбираем напряжения по убыванию, но таким образом, чтобы расстояние между позициями выбранных напряжений было не меньше расстояния между ТС в автоколонне, а количество напряжений было не больше максимального количества ТС в автоколонне <paramref name="data.RoadRuleRef.MaxVehicleInTrajectory"/>
+        /// </summary>
+        private StrainResult PopulateStrainResult(
+            StrainResultUnpopulated unpopulated, 
+            VehicleRollingSmallModel data, 
+            int maxVehicle, 
+            Dictionary<double, VehicleColumnStrain> resultsMap)
+        {
+            if (maxVehicle == 1)
+            {
+                return new StrainResult
+                {
+                    RoadRuleRef = unpopulated.RoadRuleRef,
+                    Strain = unpopulated.Strain.Select(GetVehicleColumnStrain).ToArray(),
+                };
+            }
+
             return new StrainResult
             {
                 RoadRuleRef = unpopulated.RoadRuleRef,
-                Strain = new VehicleColumnStrainList(unpopulated.Strain.Select(x => PopulateIndividualColumn(x, data, maxVehicle))),
-                StrainOneAuto = PopulateIndividualColumn(unpopulated.StrainOneAuto, data, maxVehicle)
+                Strain = unpopulated.Strain.Select(x => PopulateIndividualColumnFromMap(x, data, maxVehicle, resultsMap)).ToArray(),
             };
+
+            VehicleColumnStrain PopulateIndividualColumnFromMap(StrainsInMaximums traj,
+                VehicleRollingSmallModel data,
+                int maxVehicleInTrajectory,
+                Dictionary<double, VehicleColumnStrain> resultsMap)
+            {
+                if (!resultsMap.ContainsKey(traj.X))
+                {
+                    resultsMap.Add(traj.X, PopulateIndividualColumn(traj, data, maxVehicleInTrajectory));
+                }
+                return resultsMap[traj.X];
+            }
         }
 
         /// <summary>
         /// Получив напряжения для локальных максимумов <paramref name="traj"/>, а также дополнительные варианты напряжений, полученные в результате смещения этих максимумов на расстояния, кратные <paramref name="effectiveLoadDistance"/>, выбираем напряжения по убыванию, но таким образом, чтобы расстояние между позициями выбранных напряжений было не меньше <paramref name="effectiveLoadDistance"/>, а количество напряжений было не больше максимального количества ТС в автоколонне <paramref name="maxVehiclesInColumn"/>
         /// </summary>
-        private VehicleColumnStrain PopulateIndividualColumn(StrainsInTrajectory traj, VehicleRollingSmallModel data, int maxVehicleInTrajectory)
+        private VehicleColumnStrain PopulateIndividualColumn(StrainsInMaximums traj, 
+            VehicleRollingSmallModel data, 
+            int maxVehicleInTrajectory)
         {
             double effectiveLoadDistance = data.Load.Length + Math.Max(NormConstants.DefaultVehicleDistance, data.Load.Distance);
 
@@ -47,7 +88,7 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Имея локальные максимумы напряжений <paramref name="traj"/>, получаем дополнительные варианты напряжений, в точках, удалённых от них на расстояние, кратное <paramref name="effectiveLoadDistance"/>. Это позволяет учесть эффект от нескольких машин, следующих друг за другом на расстоянии.
         /// </summary>
-        private List<VehicleStrain> GetManyVariants(StrainsInTrajectory traj, VehicleRollingSmallModel data, double effectiveLoadDistance)
+        private List<VehicleStrain> GetManyVariants(StrainsInMaximums traj, VehicleRollingSmallModel data, double effectiveLoadDistance)
         {
             var vehicleStrainList = new List<VehicleStrain>();
             foreach (var vehicleStrain in traj.Strains)
@@ -75,7 +116,7 @@ namespace Abdm.Calculation.BLL.Services
             return vehicleStrainList;
         }
 
-        private bool TryCloneVehicleStrain(StrainsInTrajectory traj, VehicleRollingSmallModel data, VehicleStrain vehicleStrain, double distanceFromExtremum, out VehicleStrain? cloned)
+        private bool TryCloneVehicleStrain(StrainsInMaximums traj, VehicleRollingSmallModel data, VehicleStrain vehicleStrain, double distanceFromExtremum, out VehicleStrain? cloned)
         {
             cloned = CloneVehicleStrain(traj, data, vehicleStrain, distanceFromExtremum);
             if (cloned != null)
@@ -85,7 +126,7 @@ namespace Abdm.Calculation.BLL.Services
             return false;
         }
 
-        private VehicleStrain? CloneVehicleStrain(StrainsInTrajectory traj, VehicleRollingSmallModel data, VehicleStrain vehicleStrain, double distanceFromExtremum)
+        private VehicleStrain? CloneVehicleStrain(StrainsInMaximums traj, VehicleRollingSmallModel data, VehicleStrain vehicleStrain, double distanceFromExtremum)
         {
             var strain = vehiclePositioner.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Position + distanceFromExtremum, data);
             if (strain != null && strain.SumStrain > 0d)
@@ -106,25 +147,24 @@ namespace Abdm.Calculation.BLL.Services
             int maxVehiclesInColumn, 
             double effectiveLoadDistance)
         {
-            var linkedList = new LinkedList<VehicleStrain>();
-            var orderedLinkedList = new SortedList<double, LinkedListNode<VehicleStrain>>(allVehicleStrains.OrderBy(x => x.Position).Select(linkedList.AddLast).ToDictionary(x => -x.Value.TotalStrain));
-            var listKeys = orderedLinkedList.Keys.ToArray();
+            var orderedByPosition = new LinkedList<VehicleStrain>();
+            var orderedByStrain = new List<LinkedListNode<VehicleStrain>>(allVehicleStrains.OrderBy(x => x.Position).Select(orderedByPosition.AddLast).OrderByDescending(x => x.Value.TotalStrain));
 
             var resultStrains = new List<VehicleStrain>();
 
-            foreach (var key in listKeys)
+            foreach (var node in orderedByStrain)
             {
-                if (linkedList.Count == 0 || resultStrains.Count >= maxVehiclesInColumn)
+                if (orderedByPosition.Count == 0 || resultStrains.Count >= maxVehiclesInColumn)
                 {
                     break;
                 }
-                if (orderedLinkedList.ContainsKey(key) && orderedLinkedList[key].List == linkedList)
+                if (node.List == orderedByPosition)
                 {
-                    resultStrains.Add(orderedLinkedList[key].Value);
-                    RemoveNodesRecursively(
-                        linkedList,
-                        orderedLinkedList[key],
-                        orderedLinkedList[key].Value.Position,
+                    resultStrains.Add(node.Value);
+                    RemoveNodesNearCenter(
+                        orderedByPosition,
+                        node,
+                        node.Value.Position,
                         effectiveLoadDistance);
                 }
             }
@@ -133,56 +173,62 @@ namespace Abdm.Calculation.BLL.Services
         }
 
         /// <summary>
-        /// Оптимизированное рекурсивное исключение напряжений. При повторном вызове связный список уже не будет содержать исключённые напряжения
+        /// Оптимизированное исключение напряжений. При повторном вызове связный список уже не будет содержать исключённые напряжения
         /// </summary>
-        private void RemoveNodesRecursively(
+        private void RemoveNodesNearCenter(
             LinkedList<VehicleStrain> list,
             LinkedListNode<VehicleStrain> linkedListNode,
-            double centerPos,
+            double center,
             double radius)
         {
-            bool conditionNext = centerPos + radius >= linkedListNode.Value.Position;
-            bool conditionPrev = centerPos - radius <= linkedListNode.Value.Position;
+            double minPos = center - radius;
+            double maxPos = center + radius;
 
-            if (linkedListNode.Previous != null)
+            var node = linkedListNode.Previous;
+            while (node != null)
             {
-                RemovePrevNode(list, linkedListNode.Previous, centerPos, radius);
-            }
-            if (linkedListNode.Next != null)
-            {
-                RemoveNextNode(list, linkedListNode.Next, centerPos, radius);
-            }
-            list.Remove(linkedListNode.Value);
-
-            void RemovePrevNode(LinkedList<VehicleStrain> list,
-                LinkedListNode<VehicleStrain> node,
-                double position,
-                double effectiveLoadDistance)
-            {
-                if (conditionPrev)
+                var prev = node.Previous;
+                if (node.Value.Position > minPos && !equalityComparer.Equals(minPos, node.Value.Position))
                 {
-                    if (node.Previous != null)
-                    {
-                        RemovePrevNode(list, node.Previous, position, effectiveLoadDistance);
-                    }
-                    list.Remove(node.Value);
+                    list.Remove(node);
                 }
+                else
+                {
+                    break;
+                }
+                node = prev;
             }
 
-            void RemoveNextNode(LinkedList<VehicleStrain> list,
-                LinkedListNode<VehicleStrain> node,
-                double position,
-                double effectiveLoadDistance)
+            node = linkedListNode.Next;
+            while (node != null)
             {
-                if (conditionNext)
+                var next = node.Next;
+                if (node.Value.Position < maxPos && !equalityComparer.Equals(maxPos, node.Value.Position))
                 {
-                    if (node.Next != null)
-                    {
-                        RemoveNextNode(list, node.Next, position, effectiveLoadDistance);
-                    }
-                    list.Remove(node.Value);
+                    list.Remove(node);
                 }
+                else
+                {
+                    break;
+                }
+                node = next;
             }
+
+            if (linkedListNode.List == list)
+            {
+                list.Remove(linkedListNode);
+            }
+        }
+
+        private VehicleColumnStrain GetVehicleColumnStrain(StrainsInMaximums traj)
+        {
+            return new VehicleColumnStrain
+            {
+                VehicleTrajectoryRef = traj.VehicleTrajectoryRef,
+                TrafficJamStrain = traj.TrafficJamStrain,
+                VehicleStrains = [traj.Strains.First()],
+                TotalStrain = traj.TotalStrain
+            };
         }
     }
 }

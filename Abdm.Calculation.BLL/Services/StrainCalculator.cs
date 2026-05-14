@@ -12,9 +12,9 @@ namespace Abdm.Calculation.BLL.Services
     {
         /// <summary>
         /// Рассчитывает карту напряжений на каждый <see cref="RoadRule"/> и на куждую <see cref="VehicleTrajectory"/>. 
-        /// Дважды сортирует напряжения: 1) внутри траектории 2) и между траекториями
+        /// Cортирует напряжения внутри траектории по убыванию
         /// </summary>
-        public Dictionary<RoadRule, StrainsInTrajectory[]> GetStrainsMap(
+        public Dictionary<RoadRule, StrainsInMaximums[]> GenerateStrainsMap(
             IntervalModel intervalModel,
             VehicleRollingBigModel bigData)
         {
@@ -38,17 +38,17 @@ namespace Abdm.Calculation.BLL.Services
                 }
             }
 
-            var trajectoriesMap = new Dictionary<RoadRule, StrainsInTrajectory[]>();
+            var trajectoriesMap = new Dictionary<RoadRule, StrainsInMaximums[]>();
             foreach (var roadRule in roadRules)
             {
-                List<StrainsInTrajectory> strainList = new();
+                List<StrainsInMaximums> strainList = new();
                 var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
                 foreach (var strains in strainMap.Where(s => trajectoryFilter.Filter(s.Key)))
                 {
                     var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
                         ? trafficJamStrainMap[strains.Key]
                         : null;
-                    strainList.Add(new StrainsInTrajectory 
+                    strainList.Add(new StrainsInMaximums 
                     {
                         VehicleTrajectoryRef = strains.Value.traj, 
                         Strains = strains.Value.strains, 
@@ -56,7 +56,7 @@ namespace Abdm.Calculation.BLL.Services
                         TotalStrain = strains.Value.strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
                     });
                 }
-                trajectoriesMap.Add(roadRule, strainList.OrderDescending().ToArray());
+                trajectoriesMap.Add(roadRule, strainList.ToArray());
             }
             
             return trajectoriesMap;
