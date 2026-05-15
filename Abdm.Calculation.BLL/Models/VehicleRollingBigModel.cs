@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.Graphics.Models;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -13,6 +14,8 @@ namespace Abdm.Calculation.BLL.Models
         public required Mesh Mesh { get; set; }
 
         public Mesh? SecondaryMesh { get; set; }
+
+        public Vector3I[]? TrianglesToCache { get; set; }
 
         public void FlipMeshes()
         {

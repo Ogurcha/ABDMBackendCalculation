@@ -3,6 +3,7 @@ using System.Linq;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Coordinators
 {
@@ -19,7 +20,6 @@ namespace Abdm.Calculation.BLL.Coordinators
             [DisallowNull] PassTypeCalculationParameters parameters, 
             CancellationToken cancellationToken)
         {
-
             var isMirroredByZ = parameters.Surface.MyStrength < 0;
             var bigData = await baseCoordinator.PrepareDataModel(parameters, isMirroredByZ, cancellationToken);
             if (!bigData.IsSuccess)
@@ -50,7 +50,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             }
             var resultPassType = ptr.Resolve(strainResults, dataModel.Data);
 
-            var response = ComposeMessage(resultPassType, parameters);
+            var response = ComposeMessage(resultPassType, parameters, bigData.Result!.TrianglesToCache);
 
             return new ResultExceptionContainer<PassTypeCalculationResult>(response);
         }
@@ -102,7 +102,9 @@ namespace Abdm.Calculation.BLL.Coordinators
             return string.Format("Failed PassType calculation for (IssoId = {0}, Check point number = {1})", param.IssoId, param.CheckPointNumber);
         }
 
-        private PassTypeCalculationResult ComposeMessage(PassTypeEnum resultPassType, PassTypeCalculationParameters data)
+        private PassTypeCalculationResult ComposeMessage(PassTypeEnum resultPassType, 
+            PassTypeCalculationParameters data, 
+            Vector3I[]? trianglesToCache)
         {
             AllowedEnum allowed = resultPassType switch
             {
@@ -123,7 +125,8 @@ namespace Abdm.Calculation.BLL.Coordinators
                 Intervals = [],
                 IssoId = data.IssoId,
                 PassType = resultPassType,
-                LoadId = data.LoadId
+                LoadId = data.LoadId,
+                TrianglesToCache = trianglesToCache
             };
         }
     }

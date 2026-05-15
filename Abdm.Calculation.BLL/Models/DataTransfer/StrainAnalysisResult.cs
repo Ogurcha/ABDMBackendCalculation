@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Models.StrainAnalysis;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Models.DataTransfer
 {
@@ -38,5 +39,7 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         /// идентификатор отчёта, для которого будет выполнен расчёт.
         /// </summary>
         public int ReportId { get; set; }
+
+        public Vector3I[]? TrianglesToCache { get; set; }
     }
 }

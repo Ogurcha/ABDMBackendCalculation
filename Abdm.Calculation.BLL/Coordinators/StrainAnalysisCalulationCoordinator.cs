@@ -45,7 +45,7 @@ namespace Abdm.Calculation.BLL.Coordinators
 
             //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
 
-            return new ResultExceptionContainer<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis));
+            return new ResultExceptionContainer<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis, data.TrianglesToCache));
         }
 
         public static void SerializeToJsonFile(object obj, string filename = "output.json")
@@ -93,7 +93,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             };
         }
 
-        private StrainAnalysisResult ComposeMessage(StrainAnalysisParameters param, AnalysisSummary analysisSummary)
+        private StrainAnalysisResult ComposeMessage(StrainAnalysisParameters param, AnalysisSummary analysisSummary, Maths.Models.Vector3I[]? trianglesToCache)
         {
             return new StrainAnalysisResult()
             {
@@ -104,6 +104,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 SnipId = (int)param.Snip,
                 Data = analysisSummary,
                 ReportId = param.ReportId,
+                TrianglesToCache = trianglesToCache
             };
         }
     }

@@ -9,11 +9,12 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
-        Mesh GetMeshFromPoints(Vector3D[] points, Vector3I[] triangleList, bool mirrorZ = false);
+        Mesh GetMeshFromPoints(Vector3D[] points, Vector3I[]? trianglesFromCache, out Vector3I[]? trianglesToCache, bool mirrorZ = false);
 
         /// <summary>
         /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
         /// </summary>
         IEnumerable<Vector3d>? GetIntersectionVectors(Mesh mesh, double X);
+        
     }
 }

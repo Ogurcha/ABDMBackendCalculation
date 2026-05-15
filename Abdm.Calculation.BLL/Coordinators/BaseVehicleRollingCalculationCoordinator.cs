@@ -5,6 +5,7 @@ using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.Graphics;
+using Abdm.Calculation.Maths.Models;
 using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
 
@@ -74,6 +75,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Result.Points,
                 surfaceDataContainer.Result.Triangles,
+                out Vector3I[]? trianglesToCache,
                 IsMirroredByZ == true);
             if (mesh?.Data?.DistinctXs == null)
             {
@@ -83,7 +85,8 @@ namespace Abdm.Calculation.BLL.Coordinators
             var secondaryMesh = IsMirroredByZ == null
                 ? meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Result.Points,
-                surfaceDataContainer.Result.Triangles,
+                trianglesToCache ?? surfaceDataContainer.Result.Triangles,
+                out _,
                 true)
                 : null;
 
@@ -93,7 +96,8 @@ namespace Abdm.Calculation.BLL.Coordinators
                 Intervals = intervals,
                 RoadRules = roadRules,
                 Mesh = mesh,
-                SecondaryMesh = secondaryMesh
+                SecondaryMesh = secondaryMesh,
+                TrianglesToCache = trianglesToCache,
             });
         }
 
