@@ -11,7 +11,10 @@ namespace Abdm.Calculation.Graphics
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
-        public Mesh GetMeshFromPoints(Vector3D[] points, Vector3I[] triangleList, bool mirrorZ = false)
+        public Mesh GetMeshFromPoints(Vector3D[] points, 
+            Vector3I[]? trianglesFromCache,
+            out Vector3I[]? trianglesToCache,
+            bool mirrorZ = false)
         {
             ArgumentNullException.ThrowIfNull(points);
 
@@ -19,8 +22,21 @@ namespace Abdm.Calculation.Graphics
                 ? (Vector3D v) => new Vector3d(v.X, v.Y, -v.Z) 
                 : (Vector3D v) => new Vector3d(v.X, v.Y, v.Z);
 
+            Vector3I[] triangleList;
+            if (trianglesFromCache == null)
+            {
+                trianglesToCache = Triangulator.Triangulate(points);
+                ArgumentNullException.ThrowIfNull(trianglesToCache);
+                triangleList = trianglesToCache;
+            }
+            else
+            {
+                trianglesToCache = null;
+                triangleList = trianglesFromCache;
+            }
+            
             var mesh = DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
-                points.Select(vectorConvertFunc), 
+                points.Select(vectorConvertFunc),
                 triangleList.Select(t => new Index3i(t.X, t.Y, t.Z)));
 
             var data = UpdateMeshData(mesh);

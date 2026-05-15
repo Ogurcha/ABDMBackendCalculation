@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Models.DataTransfer
 {
@@ -50,5 +51,7 @@ namespace Abdm.Calculation.BLL.Models.DataTransfer
         public string? Data { get; set; }
 
         public bool IsValidResponse => IssoId > 0 && CPNumber > 0;
+
+        public Vector3I[]? TrianglesToCache { get; set; }
     }
 }
