@@ -26,7 +26,7 @@
         public const double DefaultVehicleLength = 4.5d;
 
         /// <summary>
-        /// Дефолтная Расстояние между ТС, в большинстве норм именно такое расстояние
+        /// Дефолтное расстояние между ТС, в большинстве норм именно такое расстояние
         /// </summary>
         public const double DefaultVehicleDistance = 3d;
 

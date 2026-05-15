@@ -149,18 +149,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 Right = right
             };
 
-            //if (settings.UseSuperProfiles)
-            //{
-            //    var superProfiles = directions.Select(d =>
-            //    new KeyValuePair<bool, ProfileYZ>(d,
-            //    new ProfileYZ() { 
-            //        Vectors = GetSuperProfileVectors(trajectory, axles, !d), 
-            //        X = center.X }))
-            //        .ToList();
-
-            //    trajectory.SuperProfile = new Dictionary<bool, ProfileYZ>(superProfiles);
-            //}
-
             return trajectory;
         }
 
@@ -270,9 +258,9 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             {
                 SumStrain = wheelStrains.Sum(x => x.Strain),
                 WheelStrains = wheelStrains.ToArray(),
-                VehicleTrajectoryRef = trajectory,
                 IsDirectionForward = !invertAxles,
-                PositivePiecesMap = positivePiecesMap
+                PositivePiecesMap = positivePiecesMap,
+                Position = Y
             };
         }
 
@@ -298,38 +286,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 LeftXPosition = left,
                 RightXPosition = right,
             };
-        }
-
-        /// <summary>
-        /// Экспериментальный метод по поиску супер-профиля, который возникает, если сложить вместе все профили по каждоый оси ТС со сдвигами, соответствующими расстоянию на каждой оси. Получение суперпрофиля позволило бы при каждом просчете напряжения не считать напряжения на каждом колесе и складывать, а сразу считать напряжение от ТС в точке. Также это дает возможность не считать напряжение отдельно на каждом положительном интервале, а брать максимальное значение сразу. Но по прикидкам, поиск суперпрофиля - слишком длительный процесс. Выигрыш по времени если и есть (что не факт), то минимален. Но, возможно, стоит рассмотреть данный вариант, если будет возможность кэшировать суперпрофили (как-нибудь ночью в фоновом режиме).
-        /// </summary>
-        private SortedList<double, Vector2D> GetSuperProfileVectors(VehicleTrajectory vehicleTrajectory, 
-            Axle[] axles, 
-            bool invertAxles)
-        {
-            Func<Axle, double, double> axleFunc = invertAxles
-            ? (axle, x) => { return x - axle.AbsolutePosition; }
-            : (axle, x) => { return x + axle.AbsolutePosition; };
-
-            var wheelsValues = axles.SelectMany(axle => axle.WheelsDistance.Select(wheelDistanceItem => (wheelDistanceItem, axle)));
-
-            var distinctXs = vehicleTrajectory.Center.Vectors.Select(center => center.Value.X)
-            .SelectMany(x => wheelsValues,
-            (x, wheel) => axleFunc(wheel.axle, x)).Distinct(equalityComparer);
-
-            return new SortedList<double, Vector2D>
-                (distinctXs.Select(x =>
-                    new Vector2D
-                    {
-                        X = x,
-                        Y = wheelsValues.Sum(wheelValue =>
-                            vehicleTrajectory.Left[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x), out _)
-                            * wheelValue.axle.WheelWeight
-                            + vehicleTrajectory.Right[wheelValue.wheelDistanceItem].GetZValueByY(axleFunc(wheelValue.axle, x), out _)
-                            * wheelValue.axle.WheelWeight)
-                    }).Select((item) => new KeyValuePair<double, Vector2D>(item.X, item))
-                        .ToDictionary()
-                );
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(cantGetValidStrainResults));
             }
-            if (strainResults.Any(x => x.Strain.TotalStrain == double.NaN))
+            if (strainResults.Any(x => x.TotalStrain == double.NaN))
             {
                 return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
             }

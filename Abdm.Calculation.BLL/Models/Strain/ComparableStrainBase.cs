@@ -2,7 +2,7 @@
 {
     public abstract class ComparableStrainBase : IComparable<ComparableStrainBase>
     {
-        public abstract double TotalStrain { get; }
+        public abstract double TotalStrain { get; set; }
 
         /// <summary>
         /// Используется в статиских функциях сравнений, сумм, Max и т.д.

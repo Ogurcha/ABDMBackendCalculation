@@ -5,13 +5,13 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
 {
     public class NoLimitCondition : IPassTypeCondition
     {
-        public bool CanPassCondition(List<StrainResult> strainResults, SurfaceModel surface, double? dynamicCoefficient)
+        public bool CanPassCondition(IList<StrainResult> strainResults, SurfaceModel surface, double? dynamicCoefficient)
         {
             return strainResults.GroupBy(x =>
             (PedestrianLoad: x.RoadRuleRef.IsPedestrianAllowed ? surface.PedestrianLoad : 0d,
             x.RoadRuleRef.IsDynamicMovement)).Select(x =>
             {
-                var load = x.Max(c => c.Strain.TotalStrain);
+                var load = x.Max(c => c.TotalStrain);
                 if (x.Key.IsDynamicMovement && dynamicCoefficient is double coeff)
                 {
                     load *= coeff;

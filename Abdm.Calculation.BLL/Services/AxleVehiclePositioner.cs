@@ -1,7 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
-using Abdm.Calculation.Maths.Extensions;
 
 namespace Abdm.Calculation.BLL.Services
 {

@@ -1,9 +1,10 @@
 ﻿namespace Abdm.Calculation.BLL.Models.Strain
 {
     /// <summary>
-    /// Результирующее напряжение по заданному интервалу и по задданым правилам движения
+    /// Драфтовое напряжение по заданному интервалу и по задданым правилам движения. 
+    /// Автоколонны в нём содержат только 1 ТС. 
     /// </summary>
-    public class StrainResult 
+    public class StrainResultUnpopulated 
     {
         /// <summary>
         /// Напряжение по каким правилам были посчитаны
@@ -13,11 +14,6 @@
         /// <summary>
         /// Максимальное напряжение по каждой траектории движения в заданном интервале
         /// </summary>
-        public required VehicleColumnStrain[] Strain { get; set; }
-
-        /// <summary>
-        /// Итоговое напряжение с учётом коэффициента
-        /// </summary>
-        public double TotalStrain => Strain.Sum(x => x.TotalStrain);
+        public required StrainsInMaximums[] Strain { get; set; }
     }
 }

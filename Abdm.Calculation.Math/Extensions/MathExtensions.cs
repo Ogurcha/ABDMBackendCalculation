@@ -176,5 +176,40 @@ namespace Abdm.Calculation.Maths.Extensions
                 }
             }
         }
+
+        /// <summary>
+        /// Рассчитывает объем усечённой сверху прямоугольной пирамиды (фруструма),
+        /// у которой угол наклона боковой грани к плоскости основания соответствует
+        /// 45 градусам.
+        /// Параметры:
+        /// - topWidth: ширина (сторона) верхней площадки (усечённая часть);
+        /// - truncationHeight: высота от основания до плоскости усечения (высота усечённой части).
+        /// Метод использует формулу объёма фруструма квадратной пирамиды: V = h/3 * (A1 + A2 + sqrt(A1*A2)).
+        /// </summary>
+        public static double CalculateTruncatedSquarePyramidVolume(double truncationHeight, double topWidth1, double topWidth2)
+        {
+            if (topWidth1 < 0 || topWidth2 < 0 || truncationHeight <= 0)
+                return 0.0;
+
+            // Считаем наклон боковой грани как тангенс угла (s = tan(45°) = 1)
+            double sideSlope = Math.Tan(Math.PI / 4.0); // rise/run = tan(45°)
+
+            // Из соотношения линейного сужения: baseWidth = topWidth + 2 * truncationHeight / sideSlope
+            double baseWidth1 = topWidth1 + 2.0 * truncationHeight / sideSlope;
+            if (baseWidth1 <= 0)
+                return 0.0;
+            double baseWidth2 = topWidth2 + 2.0 * truncationHeight / sideSlope;
+            if (baseWidth1 <= 0)
+                return 0.0;
+
+            double A1 = baseWidth1 * baseWidth2;
+            double A2 = topWidth1 * topWidth2;
+
+            double h = truncationHeight;
+
+            double volume = h / 3.0 * (A1 + A2 + Math.Sqrt(A1 * A2));
+
+            return volume;
+        }
     }
-}
+ }

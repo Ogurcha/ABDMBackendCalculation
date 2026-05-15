@@ -28,8 +28,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             }
             else
             {
-                var defaultMax = defaultRoll.StrainResults.Max(x => x.Strain.TotalStrain);
-                var mirroredMax = mirroredRoll.StrainResults.Max(x => x.Strain.TotalStrain);
+                var defaultMax = defaultRoll.StrainResults.Max(x => x.TotalStrain);
+                var mirroredMax = mirroredRoll.StrainResults.Max(x => x.TotalStrain);
                 maxStrainResult = defaultMax >= mirroredMax ? defaultRoll : mirroredRoll;
             }
 

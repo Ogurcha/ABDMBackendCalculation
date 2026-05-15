@@ -24,7 +24,6 @@ namespace Abdm.Calculation.BLL.Models
 
         /// <summary>
         /// Максимальное количество ТС в колонне.
-        /// TODO: пока неизвестен алгоритм реализации расчётов по нормам при значении больше 1
         /// </summary>
         public int MaxVehicleInTrajectory { get; set; }
 
