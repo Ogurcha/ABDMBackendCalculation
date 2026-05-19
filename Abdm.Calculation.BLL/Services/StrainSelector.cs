@@ -77,7 +77,7 @@ namespace Abdm.Calculation.BLL.Services
             var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
             List<StrainsInMaximums> vehicleStrains = new();
 
-            while (vehicleStrains.Count >= actualVehicleCount && orderedByPosition.Count > 0 && orderedByStrain.Count > 0)
+            while (vehicleStrains.Count < actualVehicleCount && orderedByPosition.Count > 0 && orderedByStrain.Count > 0)
             {
                 var node = orderedByStrain.Last();
                 orderedByStrain.Remove(node);
@@ -147,7 +147,7 @@ namespace Abdm.Calculation.BLL.Services
                         VehicleTrajectoryRef = additionalTrajectory,
                         Strains = strains,
                         TrafficJamStrain = trafficJamStrain,
-                        TotalStrain = strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
+                        TotalStrain = strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d)
                     };
                     var additionalStrainNode = insertFunc(additionalStrain);
                     orderedByStrain.Add(additionalStrainNode);

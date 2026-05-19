@@ -95,20 +95,29 @@ namespace Abdm.Calculation.BLL.Services
             {
                 vehicleStrainList.Add(vehicleStrain);
                 var distanceFromExtremum = effectiveLoadDistance;
-                bool isValidMax = vehicleStrain.Position + distanceFromExtremum
-                    <= data.Surface.MaxY + data.Load.Length;
-                bool isValidMin = vehicleStrain.Position - distanceFromExtremum
-                    >= data.Surface.MinY - data.Load.Length;
-                while (isValidMax || isValidMin)
+                while (true)
                 {
+                    bool isValidMax = vehicleStrain.Position + distanceFromExtremum
+                        <= data.Surface.MaxY + data.Load.Length;
+
+                    bool isValidMin = vehicleStrain.Position - distanceFromExtremum
+                        >= data.Surface.MinY - data.Load.Length;
+
+                    if (!isValidMax && !isValidMin)
+                    {
+                        break;
+                    }
+                        
                     if (isValidMax && TryCloneVehicleStrain(traj, data, vehicleStrain, distanceFromExtremum, out VehicleStrain? clonedMax))
                     {
                         vehicleStrainList.Add(clonedMax!);
                     }
+                        
                     if (isValidMin && TryCloneVehicleStrain(traj, data, vehicleStrain, -distanceFromExtremum, out VehicleStrain? clonedMin))
                     {
                         vehicleStrainList.Add(clonedMin!);
                     }
+                        
                     distanceFromExtremum += effectiveLoadDistance;
                 }
             }
