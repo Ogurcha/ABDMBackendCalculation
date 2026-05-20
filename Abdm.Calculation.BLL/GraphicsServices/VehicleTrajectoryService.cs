@@ -15,6 +15,19 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         IMeshManager meshManager,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
+        /// <summary>
+        /// Значение <see cref="PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles"/> статично внутри скоупа
+        /// </summary>
+        public Dictionary<double, int> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
+        {
+            if (_distanceBetweenTrajectoryCenterAndAxles == null)
+            {
+                _distanceBetweenTrajectoryCenterAndAxles = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(axles);
+            }
+            return _distanceBetweenTrajectoryCenterAndAxles;
+        }
+        Dictionary<double, int>? _distanceBetweenTrajectoryCenterAndAxles;
+
         public IntervalModel GetIntervalModel(
             VehicleRollingBigModel dataModel,
             PassageInterval interval)
@@ -68,7 +81,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
-            if (maximums.Count <= 0)
+            if (maximums.Count == 0)
             {
                 return null;
             }
@@ -166,7 +179,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             RoadRule[] roadRules)
         {
             var result = new List<VehicleXPosition>();
-            var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var wheelOffsetsMap = DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
 
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
             foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
@@ -267,7 +280,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
         {
-            var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var wheelOffsetsMap = DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
             var xPosition = GetXPosition(centerXPosition, wheelOffsetsMap.Keys);
             return GetVehicleTrajectoryBase(xPosition, mesh, loadModel.Axles);
         }
