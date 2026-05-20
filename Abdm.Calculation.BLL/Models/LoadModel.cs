@@ -43,7 +43,7 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// минимальное расстояние между транспортными колоннами
         /// </summary>
-        public double Interval { get; internal set; } = NormConstants.MinimalDistanceBetweenTrajectories;
+        public double Interval { get; set; } = NormConstants.MinimalDistanceBetweenTrajectories;
 
         /// <summary>
         /// Для прицепов, вагонов поезда и т.п.

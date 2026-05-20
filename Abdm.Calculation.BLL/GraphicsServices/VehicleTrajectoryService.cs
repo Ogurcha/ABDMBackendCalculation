@@ -12,7 +12,6 @@ using Abdm.Calculation.Maths.Models;
 namespace Abdm.Calculation.BLL.GraphicsServices
 {
     public class VehicleTrajectoryService(
-        IEqualityComparer<double> equalityComparer,
         IMeshManager meshManager,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
@@ -31,8 +30,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             result.Trajectories = GetVehicleTrajectories(
                 distinctXs,
                 dataModel.Mesh,
-                dataModel.Data.Load.Axles,
-                dataModel.Data.Load.ActualDirection);
+                dataModel.Data.Load.Axles);
 
             return result;
         }
@@ -70,6 +68,11 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
+            if (maximums.Count <= 0)
+            {
+                return null;
+            }
+
             return new ProfileYZ
             {
                 X = X,
@@ -89,19 +92,17 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <returns></returns>
         public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions,
             Mesh mesh,
-            Axle[] axles,
-            bool[] direction)
+            Axle[] axles)
         {
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectoryBase(x, mesh, axles, direction))
+                .Select(x => GetVehicleTrajectoryBase(x, mesh, axles))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }
 
         public VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
             Mesh mesh,
-            Axle[] axles,
-            bool[] directions)
+            Axle[] axles)
         {
             var wheelLengthAvg = axles.Select(x => x.Wx).Average();
 
@@ -170,13 +171,13 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
             foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
             {
-                result.Add(GetXPostition(filteredX, wheelOffsetsMap.Keys));
+                result.Add(GetXPosition(filteredX, wheelOffsetsMap.Keys));
             }
 
             foreach (var edge in trajectoryFilters.Select(filter => (filter.EdgeCaseLeft, filter.EdgeCaseRight)))
             {
-                result.Add(GetXPostition(edge.EdgeCaseLeft, wheelOffsetsMap.Keys));
-                result.Add(GetXPostition(edge.EdgeCaseRight, wheelOffsetsMap.Keys));
+                result.Add(GetXPosition(edge.EdgeCaseLeft, wheelOffsetsMap.Keys));
+                result.Add(GetXPosition(edge.EdgeCaseRight, wheelOffsetsMap.Keys));
             }
 
             return result.OrderBy(x => x.CenterXPosition).ToArray();
@@ -267,11 +268,11 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
         {
             var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
-            var xPosition = GetXPostition(centerXPosition, wheelOffsetsMap.Keys);
-            return GetVehicleTrajectoryBase(xPosition, mesh, loadModel.Axles, loadModel.ActualDirection);
+            var xPosition = GetXPosition(centerXPosition, wheelOffsetsMap.Keys);
+            return GetVehicleTrajectoryBase(xPosition, mesh, loadModel.Axles);
         }
 
-        private VehicleXPosition GetXPostition(double centerXPosition, IEnumerable<double> halfWheelOffsets)
+        private VehicleXPosition GetXPosition(double centerXPosition, IEnumerable<double> halfWheelOffsets)
         {
             var left = new Dictionary<double, double>();
             var right = new Dictionary<double, double>();

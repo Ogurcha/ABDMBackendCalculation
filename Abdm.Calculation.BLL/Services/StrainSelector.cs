@@ -40,6 +40,8 @@ namespace Abdm.Calculation.BLL.Services
                 }
                 else
                 {
+                    //TODO: Минорная проблема, которая пока что не актуальна. В случае, если в метод попадут несколько roadRules,
+                    //то даже если у них будет одинаковый actualVehicleCount+MinTrajectoryDistance, то цикл будет вызываться несколько раз. Чтобы избежать этого, нужно сделать группировку, как в StrainResultPopulator, VehicleTrajectoryFilter, StrainCalculator. Но это пока что не актуально, так как не встретился пока что реальный снип, который содержит пару roadRules с одинаковым actualVehicleCount+MinTrajectoryDistance
                     var strainResult = GetStrainResult(strainsMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
                     if (strainResult == null) 
                     { 
@@ -75,7 +77,7 @@ namespace Abdm.Calculation.BLL.Services
             var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
             List<StrainsInMaximums> vehicleStrains = new();
 
-            while (vehicleStrains.Count >= actualVehicleCount && orderedByPosition.Count > 0 && orderedByStrain.Count > 0)
+            while (vehicleStrains.Count < actualVehicleCount && orderedByPosition.Count > 0 && orderedByStrain.Count > 0)
             {
                 var node = orderedByStrain.Last();
                 orderedByStrain.Remove(node);
@@ -120,7 +122,7 @@ namespace Abdm.Calculation.BLL.Services
                     ? (StrainsInMaximums x) => orderedByPosition.AddAfter(edgeNode1, x)
                     : orderedByPosition.AddLast,
                     edgeNode1);
-                TryAddTrajectory(left, edgeNode2 != null 
+                TryAddTrajectory(right, edgeNode2 != null 
                     ? (StrainsInMaximums x) => orderedByPosition.AddBefore(edgeNode2, x)
                     : orderedByPosition.AddFirst,
                     edgeNode2);
@@ -145,7 +147,7 @@ namespace Abdm.Calculation.BLL.Services
                         VehicleTrajectoryRef = additionalTrajectory,
                         Strains = strains,
                         TrafficJamStrain = trafficJamStrain,
-                        TotalStrain = strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
+                        TotalStrain = strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d)
                     };
                     var additionalStrainNode = insertFunc(additionalStrain);
                     orderedByStrain.Add(additionalStrainNode);

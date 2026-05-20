@@ -199,7 +199,7 @@ namespace Abdm.Calculation.Maths.Extensions
             if (baseWidth1 <= 0)
                 return 0.0;
             double baseWidth2 = topWidth2 + 2.0 * truncationHeight / sideSlope;
-            if (baseWidth1 <= 0)
+            if (baseWidth2 <= 0)
                 return 0.0;
 
             double A1 = baseWidth1 * baseWidth2;

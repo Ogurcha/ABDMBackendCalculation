@@ -4803,7 +4803,9 @@ namespace Abdm.Calculation.Tests
         public static Task<PassageIntervalDto[]> ResultFromPIRepo => Task.FromResult<PassageIntervalDto[]>([new PassageIntervalDto {
             b_pb = 0.15d,
             b_lp = 0.15d,
-            b_gab = 7.8d
+            b_gab = 7.8d,
+            k_polos = 2,
+            w_proezd = (int)Abdm.Calculation.BLL.Enums.PassageIntervalTypeEnum.WholeInterval
         }]);
     }
 }

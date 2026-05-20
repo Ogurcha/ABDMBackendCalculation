@@ -21,7 +21,7 @@ namespace Abdm.Calculation.Maths.Helpers
         /// <returns>возвращает уникальные значения от оси ТС до колеса и количество колёс, проходящих на таком расстоянии</returns>
         public static Dictionary<double, int> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
         {
-            return axles.SelectMany(a => a.WheelsDistance.Length > 0 ? a.WheelsDistance : NormConstants.DefaultAxleDistance)
+            return axles.SelectMany(a => a.WheelsDistance)
                 .GroupBy(w => w).ToDictionary(w => w.Key / 2, w => w.Count());
         }
     }

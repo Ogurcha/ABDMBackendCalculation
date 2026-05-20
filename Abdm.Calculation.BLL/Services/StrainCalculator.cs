@@ -53,7 +53,7 @@ namespace Abdm.Calculation.BLL.Services
                         VehicleTrajectoryRef = strains.Value.traj, 
                         Strains = strains.Value.strains, 
                         TrafficJamStrain = trafficJamStrain,
-                        TotalStrain = strains.Value.strains.First().TotalStrain + trafficJamStrain?.TotalStrain ?? 0d
+                        TotalStrain = strains.Value.strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d)
                     });
                 }
                 trajectoriesMap.Add(roadRule, strainList.ToArray());
@@ -93,7 +93,7 @@ namespace Abdm.Calculation.BLL.Services
             var measuringProfile = GetMeasuringProfile(trajectory);
             if (measuringProfile == null)
             {
-                yield return null;
+                yield break;
             }
 
             foreach (var maximumIndex in measuringProfile!.MaximumIndexes)

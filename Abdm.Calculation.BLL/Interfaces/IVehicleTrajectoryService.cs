@@ -17,13 +17,11 @@ namespace Abdm.Calculation.BLL.Interfaces
 
         VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, 
             Mesh mesh,
-            Axle[] axles,
-            bool[] directions);
+            Axle[] axles);
 
         VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition, 
             Mesh mesh,
-            Axle[] axles,
-            bool[] directions);
+            Axle[] axles);
 
         VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, 
             LoadModel loadModel, 
