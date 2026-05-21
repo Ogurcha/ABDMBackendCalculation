@@ -133,8 +133,8 @@ namespace Abdm.Calculation.BLL.Mappers
             return source switch
             {
                 StrainCalculationTypeEnum.st10 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st12 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st14 => StrainCalculationGroupTypeEnum.Default,
+                StrainCalculationTypeEnum.st12 => StrainCalculationGroupTypeEnum.Slab,
+                StrainCalculationTypeEnum.st14 => StrainCalculationGroupTypeEnum.Slab,
                 StrainCalculationTypeEnum.st20 => StrainCalculationGroupTypeEnum.Default,
                 StrainCalculationTypeEnum.st22 => StrainCalculationGroupTypeEnum.Default,
                 StrainCalculationTypeEnum.st24 => StrainCalculationGroupTypeEnum.Default,

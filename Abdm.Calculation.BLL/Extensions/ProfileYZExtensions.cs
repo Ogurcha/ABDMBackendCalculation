@@ -7,16 +7,16 @@ namespace Abdm.Calculation.BLL.Extensions
     public static class ProfileYZExtensions
     {
         /// <summary>
-        /// Рассчет напряжения на профиле
+        /// Рассчет значения поверхности влияния на профиле
         /// </summary>
         /// <param name="positivePieces">позитивные отрезки профиля, на которых искали напряжение. 
         /// Может вернуть null'ы, если рассчёт происходил в отрицательной зоне профиля></param>
-        public static double GetStrain(this ProfileYZ profile, double Y, double wheelWeight, out (Interval? i1, Interval? i2) positivePieces)
+        public static double GetZValue(this ProfileYZ profile, double Y, out (Interval? i1, Interval? i2) positivePieces)
         {
             var z = profile.GetZValueByY(Y, out (Vector2D v1, Vector2D v2) betweenValues);
             positivePieces = (profile.PositivePieceMap.TryGetValue(betweenValues.v1.X, out Interval? i1) ? i1 : null,
                 profile.PositivePieceMap.TryGetValue(betweenValues.v2.X, out Interval? i2) ? i2 : null);
-            return wheelWeight * z;
+            return z;
         }
 
         public static IEnumerable<Vector2D> GetYZ(this ProfileYZ profile)

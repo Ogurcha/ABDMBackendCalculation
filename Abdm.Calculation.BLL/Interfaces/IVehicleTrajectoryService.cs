@@ -12,16 +12,13 @@ namespace Abdm.Calculation.BLL.Interfaces
             PassageInterval interval);
 
         ProfileYZ? GetProfileYZ(Mesh mesh, 
-            double X,
-            double wheelLength);
+            double X);
 
         VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, 
-            Mesh mesh,
-            Axle[] axles);
+            Mesh mesh);
 
         VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition, 
-            Mesh mesh,
-            Axle[] axles);
+            Mesh mesh);
 
         VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, 
             LoadModel loadModel, 

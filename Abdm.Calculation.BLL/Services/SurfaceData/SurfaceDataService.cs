@@ -27,7 +27,7 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData
         /// <summary>
         /// Расшифровывает байт массив и получает информацию о поверхности влияния
         /// </summary>
-        public async Task<ResultExceptionContainer<SurfaceDataDto>> GetSurfaceData(long issoId,
+        public async Task<ResultMonad<SurfaceDataDto>> GetSurfaceData(long issoId,
             int checkpointNumber,
             PassageInterval[] intervals,
             CancellationToken cancellationToken)
@@ -35,13 +35,13 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData
             var data = await repository.GetSurfaceData(issoId, checkpointNumber, cancellationToken);
             if (data?.data == null|| data?.data.Length <= UsefulDataStartingPosition)
             {
-                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
+                return new ResultMonad<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
             using MemoryStream stream = new MemoryStream(data!.data);
             using BinaryReader reader = new BinaryReader(stream);
             if (reader.ReadInt32() > OldClientFormatCondition)
             {
-                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
+                return new ResultMonad<SurfaceDataDto>(new Exception(UnsupportedBinaryTypeStr));
             }
 
             var surface = data.Adapt<SurfaceDataDto>();
@@ -50,11 +50,11 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData
             var parser = surfaceBinaryParserFactory.GetParser(surface.StrainCalculationType);
             if (parser == null)
             {
-                return new ResultExceptionContainer<SurfaceDataDto>(new Exception(CantFindParserStr));
+                return new ResultMonad<SurfaceDataDto>(new Exception(CantFindParserStr));
             }
             parser.ParseData(surface, reader, intervals);
 
-            return new ResultExceptionContainer<SurfaceDataDto>(surface);
+            return new ResultMonad<SurfaceDataDto>(surface);
         }
     }
 }

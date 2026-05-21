@@ -30,7 +30,7 @@ namespace Abdm.Calculation.BLL.Coordinators
         private const string surfaceDataNotFoundErrorMessage = "Surface data for given isso and checkpoint was not found";
         private const string roadRulesNotFoundErrorMessage = "Road rules for given load were not found";
 
-        public async Task<ResultExceptionContainer<VehicleRollingBigModel>> PrepareDataModel(
+        public async Task<ResultMonad<VehicleRollingBigModel>> PrepareDataModel(
             [DisallowNull] PassTypeCalculationParameters data,
             bool? IsMirroredByZ,
             CancellationToken cancellationToken)
@@ -39,13 +39,13 @@ namespace Abdm.Calculation.BLL.Coordinators
                 data.Roadway.PositionShift, cancellationToken);
             if (intervals?.Any() != true)
             {
-                return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(passageIntervalErrorMessage));
+                return new ResultMonad<VehicleRollingBigModel>(new Exception(passageIntervalErrorMessage));
             }
             var surfaceDataContainer = await surfaceDataService.GetSurfaceData(data.IssoId, data.CheckPointNumber, intervals, cancellationToken);
 
             if (surfaceDataContainer?.Result?.Triangles == null || !surfaceDataContainer.IsSuccess)
             {
-                var surfaceDataException = new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(surfaceDataNotFoundErrorMessage));
+                var surfaceDataException = new ResultMonad<VehicleRollingBigModel>(new Exception(surfaceDataNotFoundErrorMessage));
                 if (surfaceDataContainer?.Exception != null)
                 {
                     surfaceDataException.AddException(surfaceDataContainer.Exception);
@@ -56,7 +56,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id);
             if (roadRulesNullable is not RoadRule[] roadRules)
             {
-                return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(roadRulesNotFoundErrorMessage));
+                return new ResultMonad<VehicleRollingBigModel>(new Exception(roadRulesNotFoundErrorMessage));
             }
 
             var dataModel = data.Adapt<VehicleRollingSmallModel>();
@@ -79,7 +79,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 IsMirroredByZ == true);
             if (mesh?.Data?.DistinctXs == null)
             {
-                return new ResultExceptionContainer<VehicleRollingBigModel>(new Exception(meshErrorMessage));
+                return new ResultMonad<VehicleRollingBigModel>(new Exception(meshErrorMessage));
             }
 
             var secondaryMesh = IsMirroredByZ == null
@@ -90,7 +90,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 true)
                 : null;
 
-            return new ResultExceptionContainer<VehicleRollingBigModel>(new VehicleRollingBigModel
+            return new ResultMonad<VehicleRollingBigModel>(new VehicleRollingBigModel
             {
                 Data = dataModel,
                 Intervals = intervals,
@@ -101,7 +101,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             });
         }
 
-        public ResultExceptionContainer<VehicleRollingResult> RollAndGetStrainResult(
+        public ResultMonad<VehicleRollingResult> RollAndGetStrainResult(
             [DisallowNull] VehicleRollingBigModel dataModel,
             CancellationToken cancellationToken)
         {
@@ -111,14 +111,14 @@ namespace Abdm.Calculation.BLL.Coordinators
                 var intervalModel = vehicleTrajectoryService.GetIntervalModel(dataModel, interval);
                 if (intervalModel.Trajectories?.Any() != true)
                 {
-                    return new ResultExceptionContainer<VehicleRollingResult>(new Exception(noIntersectionsErrorMessage));
+                    return new ResultMonad<VehicleRollingResult>(new Exception(noIntersectionsErrorMessage));
                 }
                 intervalModels.Add(intervalModel);
             }
 
             var strainResults = strainResultService.GetStrainResults(dataModel, intervalModels);
 
-            return new ResultExceptionContainer<VehicleRollingResult>(new VehicleRollingResult() { 
+            return new ResultMonad<VehicleRollingResult>(new VehicleRollingResult() { 
                 DataModel = dataModel, 
                 StrainResults = strainResults
             });

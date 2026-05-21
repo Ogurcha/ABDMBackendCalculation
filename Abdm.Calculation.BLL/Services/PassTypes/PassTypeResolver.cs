@@ -21,6 +21,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
         [
             StrainCalculationGroupTypeEnum.Default,
             StrainCalculationGroupTypeEnum.Pillar,
+            StrainCalculationGroupTypeEnum.Slab,
         ];
 
         public PassTypeEnum Resolve(IList<StrainResult> strainResults, VehicleRollingSmallModel data)

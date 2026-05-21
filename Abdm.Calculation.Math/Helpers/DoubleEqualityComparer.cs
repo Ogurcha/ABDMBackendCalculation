@@ -9,7 +9,7 @@ namespace Abdm.Calculation.BLL.Helpers
         /// Преобразуем double в целое число, умножая на 1024 и округляя.
         /// Это даёт нам разумное распределение, сохраняя при этом относительный порядок.
         /// </summary>
-        private const int Thousand = 2^10;
+        private const int Thousand = 1<<10;
 
         public bool Equals(double x, double y)
         {

@@ -6,12 +6,12 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IBaseVehicleRollingCalculationCoordinator
     {
-        Task<ResultExceptionContainer<VehicleRollingBigModel>> PrepareDataModel(
+        Task<ResultMonad<VehicleRollingBigModel>> PrepareDataModel(
             [DisallowNull] PassTypeCalculationParameters data,
             bool? IsMirroredByZ,
             CancellationToken cancellationToken);
 
-        ResultExceptionContainer<VehicleRollingResult> RollAndGetStrainResult(
+        ResultMonad<VehicleRollingResult> RollAndGetStrainResult(
             [DisallowNull] VehicleRollingBigModel data,
             CancellationToken cancellationToken);
     }

@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -18,6 +19,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.Default,
             StrainCalculationGroupTypeEnum.Pillar,
             StrainCalculationGroupTypeEnum.SteelConcrete,
+            StrainCalculationGroupTypeEnum.Slab,
         ];}
 
         public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
@@ -106,11 +108,16 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             {
                 return null;
             }
+            double? wheelArea = null;
             foreach (var wheelStrains in vehicleStrain.WheelStrains.OrderBy(x => x.Position.Y).GroupBy(x => x.Position.Y))
             {
                 var wheelSubCounter = 1;
                 foreach (var wheelStrain in wheelStrains)
                 {
+                    if (wheelArea == null)
+                    {
+                        wheelArea = wheelStrain.AxleRef.Wx * wheelStrain.AxleRef.Wy;
+                    }
                     wheels.Add(GetAnalysisWheel(wheelStrain, leftIntervalStart, wheelCounter, wheelSubCounter));
                     wheelSubCounter++;
                 }
@@ -128,8 +135,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 var profileRight = trajectory.Right.Last().Value;
                 var profileCenter = trajectory.Center;
                 var leftPieces = profileLeft.PositivePieces;
-                var rightPieces = profileLeft.PositivePieces;
-                var centerPieces = profileLeft.PositivePieces;
+                var rightPieces = profileRight.PositivePieces;
+                var centerPieces = profileCenter.PositivePieces;
 
                 for (var i = 0;
                     i < Math.Min(leftPieces.Length, Math.Min(rightPieces.Length, centerPieces.Length));
@@ -146,6 +153,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         minusKiller = Math.Min(left.Start, right.Start);
                     }
 
+                    var negativeAreaLeft = MathExtensions.CalculateAreaUnderCurve(profileLeft.GetYZ().Select(v => new Vector2D(v.X, v.Y)).ToArray());
+                    var negativeAreaRight = MathExtensions.CalculateAreaUnderCurve(profileRight.GetYZ().Select(v => new Vector2D(v.X, v.Y)).ToArray());
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = oneBaseColumNumber,
@@ -161,8 +170,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         CenterIntervalStart = MathExtensions.ToDecimal(center.Start - minusKiller),
                         CenterIntervalEnd = MathExtensions.ToDecimal(center.End - minusKiller),
                         CenterIntervalLength = MathExtensions.ToDecimal(center.Length),
-                        LeftIntervalVolume = MathExtensions.ToDecimal(leftPieces.Sum(x => x.Length)),
-                        RightIntervalVolume = MathExtensions.ToDecimal(rightPieces.Sum(x => x.Length)),
+                        LeftIntervalVolume = MathExtensions.ToDecimal((leftPieces.Sum(x => x.Length) - negativeAreaLeft) * wheelArea ?? 0d),
+                        RightIntervalVolume = MathExtensions.ToDecimal((rightPieces.Sum(x => x.Length) - negativeAreaRight) * wheelArea ?? 0d),
                     });
                 }
 

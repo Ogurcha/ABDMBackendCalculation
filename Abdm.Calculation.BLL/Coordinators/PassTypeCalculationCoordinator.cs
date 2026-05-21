@@ -16,7 +16,7 @@ namespace Abdm.Calculation.BLL.Coordinators
         private const string strainIsNaNErrorMessage = "Calculation error. Strain equals Double.NaN";
         private const string cantGetValidStrainResults = "Calculation error. Can't get valid Strain results";
 
-        public async Task<ResultExceptionContainer<PassTypeCalculationResult>> Run(
+        public async Task<ResultMonad<PassTypeCalculationResult>> Run(
             [DisallowNull] PassTypeCalculationParameters parameters, 
             CancellationToken cancellationToken)
         {
@@ -24,35 +24,35 @@ namespace Abdm.Calculation.BLL.Coordinators
             var bigData = await baseCoordinator.PrepareDataModel(parameters, isMirroredByZ, cancellationToken);
             if (!bigData.IsSuccess)
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(bigData.Exception!);
+                return new ResultMonad<PassTypeCalculationResult>(bigData.Exception!);
             }
 
             var strainsContainer = baseCoordinator.RollAndGetStrainResult(bigData.Result!, cancellationToken);
             if (!strainsContainer.IsSuccess)
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(strainsContainer.Exception!);
+                return new ResultMonad<PassTypeCalculationResult>(strainsContainer.Exception!);
             }
             var strainResults = strainsContainer.Result!.StrainResults;
             var dataModel = strainsContainer.Result.DataModel;
 
             if (!strainResults.Any())
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(cantGetValidStrainResults));
+                return new ResultMonad<PassTypeCalculationResult>(new Exception(cantGetValidStrainResults));
             }
             if (strainResults.Any(x => x.TotalStrain == double.NaN))
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
+                return new ResultMonad<PassTypeCalculationResult>(new Exception(strainIsNaNErrorMessage));
             }
             var ptr = resolverFactory.GetPassTypeResolver(dataModel.Data.Surface.StrainCalculationGroupType);
             if (ptr == null)
             {
-                return new ResultExceptionContainer<PassTypeCalculationResult>(new Exception(passTypeResolverNotFoundErrorMessage));
+                return new ResultMonad<PassTypeCalculationResult>(new Exception(passTypeResolverNotFoundErrorMessage));
             }
             var resultPassType = ptr.Resolve(strainResults, dataModel.Data);
 
             var response = ComposeMessage(resultPassType, parameters, bigData.Result!.TrianglesToCache);
 
-            return new ResultExceptionContainer<PassTypeCalculationResult>(response);
+            return new ResultMonad<PassTypeCalculationResult>(response);
         }
 
         public PassTypeCalculationResult GetFailedResult(PassTypeCalculationParameters? data)

@@ -1,7 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Abdm.Calculation.Maths.Extensions
 {
