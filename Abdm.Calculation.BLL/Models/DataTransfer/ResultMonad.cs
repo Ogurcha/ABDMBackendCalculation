@@ -1,6 +1,6 @@
 ﻿namespace Abdm.Calculation.BLL.Models.DataTransfer
 {
-    public class ResultExceptionContainer<T> where T : class
+    public class ResultMonad<T> where T : class
     {
         public T? Result { get; set; }
 
@@ -8,17 +8,17 @@
 
         public Exception? Exception { get; protected set; }
 
-        public ResultExceptionContainer(T data)
+        public ResultMonad(T data)
         {
             Result = data;
         }
 
-        public ResultExceptionContainer(Exception exception)
+        public ResultMonad(Exception exception)
         {
             Exception = exception;
         }
 
-        public ResultExceptionContainer(T data, Exception exception)
+        public ResultMonad(T data, Exception exception)
         {
             Result = data;
             Exception = exception;

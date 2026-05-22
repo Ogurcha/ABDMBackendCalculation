@@ -12,40 +12,35 @@ namespace Abdm.Calculation.BLL.Coordinators
         IStrainAnalyser strainAnalyser
         ) : ICoordinator<StrainAnalysisParameters, StrainAnalysisResult>
     {
-        public async Task<ResultExceptionContainer<StrainAnalysisResult>> Run(
+        public async Task<ResultMonad<StrainAnalysisResult>> Run(
             [DisallowNull] StrainAnalysisParameters parameters,
             CancellationToken cancellationToken)
         {
             var bigDataResult = await baseCoordinator.PrepareDataModel(parameters.Adapt<PassTypeCalculationParameters>(), null, cancellationToken);
             if (!bigDataResult.IsSuccess)
             {
-                return new ResultExceptionContainer<StrainAnalysisResult>(bigDataResult.Exception!);
+                return new ResultMonad<StrainAnalysisResult>(bigDataResult.Exception!);
             }
             var data = bigDataResult.Result!;
 
             var defaultRollResult = baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
             if (!defaultRollResult.IsSuccess)
             {
-                return new ResultExceptionContainer<StrainAnalysisResult>(defaultRollResult.Exception!);
+                return new ResultMonad<StrainAnalysisResult>(defaultRollResult.Exception!);
             }
             var defaultRoll = defaultRollResult.Result!;
             data.FlipMeshes();
             var mirroredRollResult = baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
-            if (!mirroredRollResult.IsSuccess)
-            {
-                return new ResultExceptionContainer<StrainAnalysisResult>(mirroredRollResult.Exception!);
-            }
-            var mirroredRoll = mirroredRollResult.Result!;
 
-            var strainAnalysis = strainAnalyser.GetAnalysis(defaultRoll, mirroredRoll);
+            var strainAnalysis = strainAnalyser.GetAnalysis(defaultRoll, mirroredRollResult.Result);
             if (strainAnalysis == null)
             {
-                return new ResultExceptionContainer<StrainAnalysisResult>(GetFailedResult(parameters));
+                return new ResultMonad<StrainAnalysisResult>(GetFailedResult(parameters));
             }
 
             //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
 
-            return new ResultExceptionContainer<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis, data.TrianglesToCache));
+            return new ResultMonad<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis, data.TrianglesToCache));
         }
 
         public static void SerializeToJsonFile(object obj, string filename = "output.json")
@@ -63,17 +58,17 @@ namespace Abdm.Calculation.BLL.Coordinators
 
         public string InfoMsg(StrainAnalysisParameters param)
         {
-            return string.Format("PassType calculation for (IssoId = {0}, Check point number = {1}) started", param.IssoId, param.CheckPointNumber);
+            return string.Format("Strain analysis for (IssoId = {0}, Check point number = {1}) started", param.IssoId, param.CheckPointNumber);
         }
 
         public string ErrorMsg(StrainAnalysisParameters param)
         {
-            return string.Format("Error while calculating PassType for {0}, n = {1}", param.IssoId, param.CheckPointNumber);
+            return string.Format("Error while making strain analysis for {0}, n = {1}", param.IssoId, param.CheckPointNumber);
         }
 
         public string ExceptionMsg(StrainAnalysisParameters param)
         {
-            return string.Format("Failed PassType calculation for (IssoId = {0}, Check point number = {1})", param.IssoId, param.CheckPointNumber);
+            return string.Format("Failed strain analysis for (IssoId = {0}, Check point number = {1})", param.IssoId, param.CheckPointNumber);
         }
 
         public StrainAnalysisResult GetFailedResult(StrainAnalysisParameters param)

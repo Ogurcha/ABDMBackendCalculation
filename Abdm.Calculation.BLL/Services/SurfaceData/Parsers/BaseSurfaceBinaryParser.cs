@@ -9,7 +9,8 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData.Parsers
     {
         public virtual IList<StrainCalculationGroupTypeEnum> StrainCalculationTypes => 
         [
-            StrainCalculationGroupTypeEnum.Default
+            StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.Slab,
         ];
 
         public virtual SurfaceDataDto ParseData(SurfaceDataDto surface, BinaryReader reader, PassageInterval[] intervals)

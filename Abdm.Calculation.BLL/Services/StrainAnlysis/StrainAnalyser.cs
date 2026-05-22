@@ -9,10 +9,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
     {
         public AnalysisSummary? GetAnalysis(
             VehicleRollingResult defaultRoll,
-            VehicleRollingResult mirroredRoll)
+            VehicleRollingResult? mirroredRoll)
         {
-            var hasDefault = defaultRoll.StrainResults.Any();
-            var hasMirrored = mirroredRoll.StrainResults.Any();
+            var hasDefault = defaultRoll.StrainResults.Length > 0;
+            var hasMirrored = mirroredRoll?.StrainResults?.Length > 0;
 
             if (!hasDefault && !hasMirrored)
                 return null;
@@ -20,7 +20,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             VehicleRollingResult maxStrainResult;
             if (!hasDefault)
             {
-                maxStrainResult = mirroredRoll;
+                maxStrainResult = mirroredRoll!;
             }
             else if (!hasMirrored)
             {
@@ -29,7 +29,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             else
             {
                 var defaultMax = defaultRoll.StrainResults.Max(x => x.TotalStrain);
-                var mirroredMax = mirroredRoll.StrainResults.Max(x => x.TotalStrain);
+                var mirroredMax = mirroredRoll!.StrainResults.Max(x => x.TotalStrain);
                 maxStrainResult = defaultMax >= mirroredMax ? defaultRoll : mirroredRoll;
             }
 

@@ -5,7 +5,7 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface ISurfaceDataService
     {
-        Task<ResultExceptionContainer<SurfaceDataDto>> GetSurfaceData(
+        Task<ResultMonad<SurfaceDataDto>> GetSurfaceData(
             long issoId,
             int checkpointNumber,
             PassageInterval[] intervals,

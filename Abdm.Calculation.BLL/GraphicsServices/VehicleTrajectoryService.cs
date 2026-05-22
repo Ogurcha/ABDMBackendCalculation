@@ -15,6 +15,19 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         IMeshManager meshManager,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
+        /// <summary>
+        /// Значение <see cref="PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles"/> статично внутри скоупа
+        /// </summary>
+        public Dictionary<double, int> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
+        {
+            if (_distanceBetweenTrajectoryCenterAndAxles == null)
+            {
+                _distanceBetweenTrajectoryCenterAndAxles = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(axles);
+            }
+            return _distanceBetweenTrajectoryCenterAndAxles;
+        }
+        Dictionary<double, int>? _distanceBetweenTrajectoryCenterAndAxles;
+
         public IntervalModel GetIntervalModel(
             VehicleRollingBigModel dataModel,
             PassageInterval interval)
@@ -29,11 +42,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             result.Trajectories = GetVehicleTrajectories(
                 distinctXs,
-                dataModel.Mesh,
-                dataModel.Data.Load.Axles);
+                dataModel.Mesh);
 
             return result;
         }
+
+        private const double smallValue = 0.5e-10d;
 
         /// <summary>
         /// Возвращает пересечение с поверхностью
@@ -42,8 +56,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// </summary>
         /// <param name="wheelLength">длина колеса нужна для зануления профиля</param>
         public ProfileYZ? GetProfileYZ(Mesh mesh,
-            double X,
-            double wheelLength)
+            double X)
         {
             var profile = meshManager.GetIntersectionVectors(mesh, X);
 
@@ -53,8 +66,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             }
 
             var sorted = profile.OrderBy(v => v.y);
-            var firstIndex = sorted.First().y - wheelLength;
-            var lastIndex = sorted.Last().y + wheelLength;
+            var firstIndex = sorted.First().y - smallValue;
+            var lastIndex = sorted.Last().y + smallValue;
             var firstVector = new Vector2D(firstIndex, 0);
             var lastVector = new Vector2D(lastIndex, 0);
 
@@ -68,7 +81,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
-            if (maximums.Count <= 0)
+            if (maximums.Count == 0)
             {
                 return null;
             }
@@ -91,22 +104,18 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="wheelLength">длина колеса нужна для зануления профиля по краям</param>
         /// <returns></returns>
         public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions,
-            Mesh mesh,
-            Axle[] axles)
+            Mesh mesh)
         {
             return vehicleXPositions
-                .Select(x => GetVehicleTrajectoryBase(x, mesh, axles))
+                .Select(x => GetVehicleTrajectoryBase(x, mesh))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
         }
 
         public VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
-            Mesh mesh,
-            Axle[] axles)
+            Mesh mesh)
         {
-            var wheelLengthAvg = axles.Select(x => x.Wx).Average();
-
-            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x, wheelLengthAvg);
+            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x);
 
             var center = Get(xPosition.CenterXPosition);
             if (center == null)
@@ -166,7 +175,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             RoadRule[] roadRules)
         {
             var result = new List<VehicleXPosition>();
-            var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var wheelOffsetsMap = DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
 
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
             foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
@@ -210,7 +219,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var strain = trajectory.Left[distance].GetStrain(axleFunc(axle), axle.WheelWeight, out (Interval? i1, Interval? i2) positivePiecesLeft);
+                    var strain = axle.WheelWeight * trajectory.Left[distance].GetZValue(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesLeft);
                     var leftWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -230,7 +239,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i2);
                     }
 
-                    strain = trajectory.Right[distance].GetStrain(axleFunc(axle), axle.WheelWeight, out (Interval? i1, Interval? i2) positivePiecesRight);
+                    strain = axle.WheelWeight * trajectory.Right[distance].GetZValue(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesRight);
                     var rightWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -267,9 +276,9 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
         {
-            var wheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
+            var wheelOffsetsMap = DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
             var xPosition = GetXPosition(centerXPosition, wheelOffsetsMap.Keys);
-            return GetVehicleTrajectoryBase(xPosition, mesh, loadModel.Axles);
+            return GetVehicleTrajectoryBase(xPosition, mesh);
         }
 
         private VehicleXPosition GetXPosition(double centerXPosition, IEnumerable<double> halfWheelOffsets)
