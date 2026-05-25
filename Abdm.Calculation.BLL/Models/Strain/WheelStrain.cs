@@ -24,5 +24,10 @@ namespace Abdm.Calculation.BLL.Models.Strain
         /// Ссылка на ось
         /// </summary>
         public required Axle AxleRef { get; set; }
+
+        /// <summary>
+        /// "Нормализованное напряжение" без цчёта веса колеса
+        /// </summary>
+        public double ZValue { get; set; }
     }
 }

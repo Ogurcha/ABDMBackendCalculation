@@ -206,7 +206,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var strain = trajectory.Left[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesLeft);
+                    var zValue = trajectory.Left[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesLeft);
+                    var strain = zValue * axle.WheelWeight; 
                     var leftWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -216,6 +217,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         },
                         AxleRef = axle,
                         Strain = strain,
+                        ZValue = zValue,
                     };
                     if (positivePiecesLeft.i1 != null)
                     {
@@ -226,7 +228,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i2);
                     }
 
-                    strain = trajectory.Right[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesRight);
+                    zValue = trajectory.Right[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesRight);
+                    strain = zValue * axle.WheelWeight;
                     var rightWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -236,6 +239,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         },
                         AxleRef = axle,
                         Strain = strain,
+                        ZValue = zValue,
                     };
                     if (positivePiecesRight.i1 != null)
                     {
