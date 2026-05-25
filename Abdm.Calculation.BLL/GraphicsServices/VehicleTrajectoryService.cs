@@ -6,7 +6,6 @@ using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.Maths.Extensions;
-using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.GraphicsServices
@@ -15,25 +14,11 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         IMeshManager meshManager,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
     {
-        /// <summary>
-        /// Значение <see cref="PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles"/> статично внутри скоупа
-        /// </summary>
-        public Dictionary<double, int> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
-        {
-            if (_distanceBetweenTrajectoryCenterAndAxles == null)
-            {
-                _distanceBetweenTrajectoryCenterAndAxles = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(axles);
-            }
-            return _distanceBetweenTrajectoryCenterAndAxles;
-        }
-        Dictionary<double, int>? _distanceBetweenTrajectoryCenterAndAxles;
-
         public IntervalModel GetIntervalModel(
             VehicleRollingBigModel dataModel,
             PassageInterval interval)
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
-
             var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(
                 dataModel.Mesh.Data.DistinctXs,
                 interval,
@@ -175,18 +160,17 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             RoadRule[] roadRules)
         {
             var result = new List<VehicleXPosition>();
-            var wheelOffsetsMap = DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
 
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
             foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
             {
-                result.Add(GetXPosition(filteredX, wheelOffsetsMap.Keys));
+                result.Add(GetXPosition(filteredX, loadModel.WheelOffsetsMap!.Keys));
             }
 
             foreach (var edge in trajectoryFilters.Select(filter => (filter.EdgeCaseLeft, filter.EdgeCaseRight)))
             {
-                result.Add(GetXPosition(edge.EdgeCaseLeft, wheelOffsetsMap.Keys));
-                result.Add(GetXPosition(edge.EdgeCaseRight, wheelOffsetsMap.Keys));
+                result.Add(GetXPosition(edge.EdgeCaseLeft, loadModel.WheelOffsetsMap!.Keys));
+                result.Add(GetXPosition(edge.EdgeCaseRight, loadModel.WheelOffsetsMap!.Keys));
             }
 
             return result.OrderBy(x => x.CenterXPosition).ToArray();
@@ -200,7 +184,10 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="load">параметры нагрузки</param>
         /// <param name="invertAxles">ТС едет задом наперёд</param>
         /// <returns></returns>
-        public VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles)
+        public VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, 
+            double Y, 
+            LoadModel load, 
+            bool invertAxles)
         {
             Func<Axle, double> axleFunc = invertAxles
             ? (axle) => { return Y - axle.AbsolutePosition; }
@@ -219,7 +206,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var strain = axle.WheelWeight * trajectory.Left[distance].GetZValue(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesLeft);
+                    var strain = trajectory.Left[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesLeft);
                     var leftWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -239,7 +226,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i2);
                     }
 
-                    strain = axle.WheelWeight * trajectory.Right[distance].GetZValue(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesRight);
+                    strain = trajectory.Right[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesRight);
                     var rightWheel = new WheelStrain
                     {
                         Position = new Vector2D
@@ -276,8 +263,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
         {
-            var wheelOffsetsMap = DistanceBetweenTrajectoryCenterAndAxles(loadModel.Axles);
-            var xPosition = GetXPosition(centerXPosition, wheelOffsetsMap.Keys);
+            var xPosition = GetXPosition(centerXPosition, loadModel.WheelOffsetsMap!.Keys);
             return GetVehicleTrajectoryBase(xPosition, mesh);
         }
 

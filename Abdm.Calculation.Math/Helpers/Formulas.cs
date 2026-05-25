@@ -61,6 +61,9 @@ namespace Abdm.Calculation.Maths.Helpers
             return number % 2 != 0;
         }
 
+        /// <summary>
+        /// Возвращает значение на оси ординат по значению на оси абсцисс на линии, определённой двумя точками
+        /// </summary>
         public static double GetOrdinat(Vector2D v1, Vector2D v2, double X)
             => v2.X == v1.X
             ? v1.Y

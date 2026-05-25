@@ -69,7 +69,5 @@ namespace Abdm.Calculation.BLL.Models
         /// Толщина дорожной одежды
         /// </summary>
         public double RoadCoatSize { get; set; }
-
-
     }
 }

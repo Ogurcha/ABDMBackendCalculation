@@ -168,6 +168,12 @@ namespace Abdm.Calculation.BLL.Services
                 strain.Coefficient *= coefficient.Get(strain.LambdaSmall, data.Load.Type, data.Surface.Material);
             }
             strain.TotalStrain = strain.SumStrain * strain.Coefficient;
+            if (strain.InvertedDirectionStrain != null)
+            {
+                strain.InvertedDirectionStrain.LambdaSmall = strain.LambdaSmall;
+                strain.InvertedDirectionStrain.Coefficient = strain.Coefficient;
+                strain.InvertedDirectionStrain.TotalStrain = strain.InvertedDirectionStrain.SumStrain * strain.InvertedDirectionStrain.Coefficient;
+            }
 
             return strain;
         }

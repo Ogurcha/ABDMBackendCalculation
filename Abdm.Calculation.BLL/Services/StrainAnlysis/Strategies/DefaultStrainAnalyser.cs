@@ -19,7 +19,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.Default,
             StrainCalculationGroupTypeEnum.Pillar,
             StrainCalculationGroupTypeEnum.SteelConcrete,
-            StrainCalculationGroupTypeEnum.Slab,
         ];}
 
         public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
@@ -185,7 +184,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Wheels = wheels,
                 Intervals = intervals,
                 PositionX = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Average(x => x.Position.X) - leftIntervalStart),
-                PositionY = MathExtensions.ToDecimal(vehicleStrain.WheelStrains.Min(x => x.Position.Y)),
+                PositionY = MathExtensions.ToDecimal(vehicleStrain.Position),
                 SumStrain = wheels.Sum(w => w.Strain),
                 TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
                 IntervalProfileVectors = intervalProfileVectors,
