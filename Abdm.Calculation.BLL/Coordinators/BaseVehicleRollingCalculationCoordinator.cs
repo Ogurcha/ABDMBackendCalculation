@@ -5,6 +5,7 @@ using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.Graphics;
+using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
 using Abdm.Calculation.SteelConcrete.Models;
 using Mapster;
@@ -63,6 +64,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             DataModelFixer.Fix(dataModel, surfaceDataContainer.Result, data);
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
             dataModel.Load.ActualDirection = symmetryService.CalculateDirection(dataModel.Load.IsSymmetric, data.Direction);
+            dataModel.Load.WheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(dataModel.Load.Axles);
             dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Result.StrainCalculationType.Map();
             dataModel.Surface.StrainCalculationType = surfaceDataContainer.Result.StrainCalculationType;
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Result.StrainTypeSpecificData;

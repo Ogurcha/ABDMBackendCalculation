@@ -30,7 +30,6 @@ namespace Abdm.Calculation.BLL.Interfaces
             LoadModel loadModel,
             RoadRule[] roadRules);
 
-
         VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles);
     }
 }

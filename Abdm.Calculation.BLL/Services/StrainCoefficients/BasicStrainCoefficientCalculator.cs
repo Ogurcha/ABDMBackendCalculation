@@ -13,7 +13,6 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
             StrainCalculationGroupTypeEnum.Default,
             StrainCalculationGroupTypeEnum.Pillar,
             StrainCalculationGroupTypeEnum.SteelConcrete,
-            StrainCalculationGroupTypeEnum.Slab,
         ];
 
         public override double GetCoefficient(double lambda, LoadGroupTypeEnum loadGroupType, IMaterial? material)
