@@ -124,7 +124,7 @@ public class PassTypeResolverTests
     {
         var profile = new ProfileYZ
         {
-            Vectors = [],
+            SortedVectors = [],
             Extremums = [],
             MaximumIndexes = [],
             PositivePieceMap = [],

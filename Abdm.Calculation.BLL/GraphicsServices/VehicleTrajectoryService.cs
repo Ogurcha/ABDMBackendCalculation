@@ -60,10 +60,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 .Prepend(firstVector)
                 .Append(lastVector);
 
-            var vectors = new SortedList<double, Vector2D>(
-                sortedFullList.Select((item) => new KeyValuePair<double, Vector2D>(item.X, (item.X, item.Y)))
-                .ToDictionary());
-
             var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
             if (maximums.Count == 0)
@@ -74,7 +70,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             return new ProfileYZ
             {
                 X = X,
-                Vectors = vectors,
+                SortedVectors = sortedFullList.ToArray(),
                 Extremums = extremums.ToArray(),
                 MaximumIndexes = maximums.ToArray(),
                 PositivePieces = positivePieces.ToArray(),

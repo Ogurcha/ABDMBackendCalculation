@@ -56,6 +56,45 @@ namespace Abdm.Calculation.Maths.Helpers
             return (values[leftIndex], values[rightIndex]);
         }
 
+        /// <summary>
+        /// Поиск двух значений отсортированного списка, между которыми лежит <paramref name="targetKey"/> за log(n)
+        /// </summary>
+        public static (T? Left, T? Right) FindBetweenValues<TKey, T>(this IList<T> sorted, TKey targetKey, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+        {
+            if (sorted.Count == 0) return (default, default);
+
+            const int MinIndex = 0;
+            int MaxIndex = sorted.Count - 1;
+
+            var first = sorted[MinIndex];
+            var last = sorted[MaxIndex];
+
+            if (targetKey <= keyFunc(first))
+                return (first, first);
+
+            if (targetKey >= keyFunc(last))
+                return (last, last);
+
+            int leftIndex = MinIndex;
+            int rightIndex = MaxIndex;
+
+            while (rightIndex - leftIndex > 1)
+            {
+                int midIndex = (leftIndex + rightIndex) / 2;
+                var midKey = keyFunc(sorted[midIndex]);
+
+                if (midKey == targetKey)
+                    return (sorted[midIndex], sorted[midIndex]);
+
+                if (midKey > targetKey)
+                    rightIndex = midIndex;
+                else
+                    leftIndex = midIndex;
+            }
+
+            return (sorted[leftIndex], sorted[rightIndex]);
+        }
+
         public static bool IsOdd(int number)
         {
             return number % 2 != 0;

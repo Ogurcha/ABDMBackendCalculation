@@ -152,8 +152,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         minusKiller = Math.Min(left.Start, right.Start);
                     }
 
-                    var negativeAreaLeft = MathExtensions.CalculateAreaUnderCurve(profileLeft.GetYZ().Select(v => new Vector2D(v.X, v.Y)).ToArray());
-                    var negativeAreaRight = MathExtensions.CalculateAreaUnderCurve(profileRight.GetYZ().Select(v => new Vector2D(v.X, v.Y)).ToArray());
+                    var negativeAreaLeft = MathExtensions.CalculateAreaUnderCurve(profileLeft.SortedVectors);
+                    var negativeAreaRight = MathExtensions.CalculateAreaUnderCurve(profileRight.SortedVectors);
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = oneBaseColumNumber,
@@ -217,14 +217,14 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
         private IEnumerable<ProfileVector>? GetProfileVectors(VehicleTrajectory trajectory)
         {
-            var vectors = trajectory.Center.Vectors.Values;
-            if (vectors.Count == 0)
+            var vectors = trajectory.Center.SortedVectors;
+            if (vectors.Length == 0)
             {
                 return null;
             }
-            if (vectors.Count < ProfileVectorsLimitCount)
+            if (vectors.Length < ProfileVectorsLimitCount)
             {
-                return trajectory.Center.Vectors.Values.Select<Vector2D, ProfileVector>(x => (MathExtensions.ToDecimal(x.X), MathExtensions.ToDecimal(x.Y)));
+                return trajectory.Center.SortedVectors.Select<Vector2D, ProfileVector>(x => (MathExtensions.ToDecimal(x.X), MathExtensions.ToDecimal(x.Y)));
             }
             return VectorsTooMany(vectors);
 

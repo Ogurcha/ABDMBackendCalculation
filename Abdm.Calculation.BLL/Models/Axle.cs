@@ -11,7 +11,7 @@
         public double RelativePosition { get; set; }
 
         /// <summary>
-        /// Абсолютная позиция оси, с учётом ВСЕХ объектов позади
+        /// Абсолютная позиция оси, с учётом всех других <see cref="Axle"/> позади
         /// </summary>
         public double AbsolutePosition { get; set; }
 
