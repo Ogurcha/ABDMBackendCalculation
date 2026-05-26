@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
 
@@ -21,6 +22,65 @@ namespace Abdm.Calculation.BLL.Extensions
             positivePieces = (profile.PositivePieceMap.TryGetValue(betweenValues.Left.X, out Interval? i1) ? i1 : null,
                 profile.PositivePieceMap.TryGetValue(betweenValues.Right.X, out Interval? i2) ? i2 : null);
             return z;
+        }
+
+        /// <summary>
+        /// Рассчет значения поверхности влияния на профиле используя расчёты объёмов поверхности
+        /// </summary>
+        /// <param name="positivePieces">позитивные отрезки профиля, на которых искали напряжение. 
+        /// Может вернуть null'ы, если рассчёт происходил в отрицательной зоне профиля></param>
+        public static double GetZValueByYSlabVersion(
+            this ProfileYZExtended profile,
+            double Y,
+            out (Interval? i1, Interval? i2) positivePieces)
+        {
+            var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.AreaLength / 2, out _);
+            var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.AreaLength / 2, out _);
+            var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.AreaLength / 2, out var indexesCenter);
+
+            var volume1 = MathExtensions.FrustrumVolume(profile.AreaWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
+            var volume2 = MathExtensions.FrustrumVolume(profile.AreaWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
+
+            positivePieces = 
+                (profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexLeft].X, out Interval? i1) ? i1 : null,
+                profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexRight].X, out Interval? i2) ? i2 : null);
+
+            return (volume1 + volume2) / profile.AreaWidth;
+        }
+
+        public static double CalculateZAreaAroundY(Vector2D[] vectors, 
+            double Y, 
+            double radius, 
+            out (int indexLeft, int indexRight) indexes)
+        {
+            var YStart = Y - radius;
+            var YFinish = Y + radius;
+
+            var betweenIndexes1 = Formulas.FindBetweenIndexes(vectors, YStart, (v) => v.X);
+            var betweenIndexes2 = Formulas.FindBetweenIndexes(vectors, YFinish, (v) => v.X);
+
+            var z1 = Formulas.GetOrdinat(vectors[betweenIndexes1.Left],
+                vectors[betweenIndexes1.Right],
+                YStart);
+            var z2 = Formulas.GetOrdinat(vectors[betweenIndexes2.Left],
+                vectors[betweenIndexes2.Right],
+                YFinish);
+
+            var firstVector = new Vector2D(YStart, z1);
+            var lastVector = new Vector2D(YFinish, z2);
+
+            var indexLeft = betweenIndexes1.Left;
+            var indexRight = betweenIndexes2.Right;
+
+            var trapezoidVectors = vectors
+                .Skip(indexLeft)
+                .Take(indexRight - indexLeft)
+                .Prepend(firstVector)
+                .Append(lastVector).ToArray();
+
+            indexes = (indexLeft, indexRight);
+
+            return MathExtensions.CalculateAreaUnderCurve(trapezoidVectors);
         }
     }
 }

@@ -59,10 +59,8 @@ namespace Abdm.Calculation.Maths.Helpers
         /// <summary>
         /// Поиск двух значений отсортированного списка, между которыми лежит <paramref name="targetKey"/> за log(n)
         /// </summary>
-        public static (T? Left, T? Right) FindBetweenValues<TKey, T>(this IList<T> sorted, TKey targetKey, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+        public static (T Left, T Right) FindBetweenValues<TKey, T>(this IList<T> sorted, TKey targetKey, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
         {
-            if (sorted.Count == 0) return (default, default);
-
             const int MinIndex = 0;
             int MaxIndex = sorted.Count - 1;
 
@@ -113,6 +111,43 @@ namespace Abdm.Calculation.Maths.Helpers
         {
             (Vector2D v1, Vector2D v2) = FindBetweenValues(sorted, X);
             return GetOrdinat(v1, v2, X);
+        }
+
+        /// <summary>
+        /// Поиск двух значений отсортированного списка, между которыми лежит <paramref name="targetKey"/> за log(n)
+        /// </summary>
+        public static (int Left, int Right) FindBetweenIndexes<TKey, T>(this IList<T> sorted, TKey targetKey, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+        {
+            const int MinIndex = 0;
+            int MaxIndex = sorted.Count - 1;
+
+            var first = sorted[MinIndex];
+            var last = sorted[MaxIndex];
+
+            if (targetKey <= keyFunc(first))
+                return (MinIndex, MinIndex);
+
+            if (targetKey >= keyFunc(last))
+                return (MaxIndex, MaxIndex);
+
+            int leftIndex = MinIndex;
+            int rightIndex = MaxIndex;
+
+            while (rightIndex - leftIndex > 1)
+            {
+                int midIndex = (leftIndex + rightIndex) / 2;
+                var midKey = keyFunc(sorted[midIndex]);
+
+                if (midKey == targetKey)
+                    return (midIndex, midIndex);
+
+                if (midKey > targetKey)
+                    rightIndex = midIndex;
+                else
+                    leftIndex = midIndex;
+            }
+
+            return (leftIndex, rightIndex);
         }
     }
 }

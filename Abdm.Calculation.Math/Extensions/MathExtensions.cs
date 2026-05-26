@@ -206,9 +206,9 @@ namespace Abdm.Calculation.Maths.Extensions
 
             double h = truncationHeight;
 
-            double volume = h / 3.0 * (A1 + A2 + Math.Sqrt(A1 * A2));
-
-            return volume;
+            return FrustrumVolume(h, A1, A2);
         }
+
+        public static double FrustrumVolume(double h, double A1, double A2) => h / 3.0 * (A1 + A2 + Math.Sqrt(A1 * A2));
     }
  }
