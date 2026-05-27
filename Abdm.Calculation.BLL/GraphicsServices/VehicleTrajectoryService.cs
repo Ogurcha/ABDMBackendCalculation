@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Extensions;
+﻿using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
@@ -8,7 +6,6 @@ using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Models;
-using g4;
 
 namespace Abdm.Calculation.BLL.GraphicsServices
 {

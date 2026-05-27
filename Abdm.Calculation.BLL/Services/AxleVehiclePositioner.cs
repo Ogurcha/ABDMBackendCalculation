@@ -28,20 +28,24 @@ namespace Abdm.Calculation.BLL.Services
             return result;
 
             VehicleStrain GetStrain(bool loadDirectionForward) =>
-                data.Load.Axles.Max(axle => vehicleTrajectoryService.GetStrainOnTrajectory(
+                data.Load.Axles
+                .Select(a => a.AbsolutePosition)
+                .Append(data.Load.Length / 2)
+                .Max(relativePosition => vehicleTrajectoryService.GetStrainOnTrajectory(
                     trajectory,
-                    position - axle.AbsolutePosition,
+                    position - relativePosition,
                     data.Load,
                     !loadDirectionForward, false))!;
-            
+
             VehicleStrain GetStrainSlab(bool loadDirectionForward) =>
-                data.Load.Axles.Max(axle => vehicleTrajectoryService.GetStrainOnTrajectory(
+                data.Load.Axles
+                .Select(a => a.AbsolutePosition)
+                .Append(data.Load.Length / 2)
+                .Max(relativePosition => vehicleTrajectoryService.GetStrainOnTrajectory(
                     trajectory,
-                    position - axle.AbsolutePosition,
+                    position - relativePosition,
                     data.Load,
-                    !loadDirectionForward,
-                    true))!;
-            
+                    !loadDirectionForward, true))!;
         }
     }
 }
