@@ -21,7 +21,7 @@
         public double Weight { get; set; }
 
         /// <summary>
-        /// Расстояние между колёсами. 
+        /// Расстояния от центра оси ТС до колёс
         /// Теоретически, расстояний может быть несколько, 
         /// и, соответветсвенно, колёс в оси больше двух
         /// </summary>
@@ -30,12 +30,12 @@
         /// <summary>
         /// ширина проекции одного колеса
         /// </summary>
-        public double Wx { get; set; }
+        public double WheelWidth { get; set; }
 
         /// <summary>
         /// длина проекции одного колеса
         /// </summary>
-        public double Wy { get; set; }
+        public double WheelLength { get; set; }
 
         public double WheelWeight => Weight / WheelCount;
 

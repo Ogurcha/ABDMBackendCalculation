@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
@@ -7,6 +8,7 @@ using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Models;
+using g4;
 
 namespace Abdm.Calculation.BLL.GraphicsServices
 {
@@ -20,14 +22,27 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
             var distinctXs = CalculateVehiclePositionsIncludingWheelOffsets(
-                dataModel.Mesh.Data.DistinctXs,
-                interval,
-                dataModel.Data.Load,
-                dataModel.RoadRules);
+                dataModel,
+                interval);
 
-            result.Trajectories = GetVehicleTrajectories(
-                distinctXs,
-                dataModel.Mesh);
+            Func<VehicleXPosition, VehicleTrajectory?> trajFunc;
+            if (dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
+                || dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalulation))
+            {
+                trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, 
+                    dataModel.Mesh, 
+                    dataModel.Data.Load.Axles, 
+                    dataModel.Data.Surface.RoadCoatSize);
+            }
+            else
+            {
+                trajFunc = x => GetVehicleTrajectoryBase(x, dataModel.Mesh);
+            }
+
+            result.Trajectories = distinctXs
+                .Select(x => trajFunc)
+                .OfType<VehicleTrajectory>()
+                .ToArray();
 
             return result;
         }
@@ -43,22 +58,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         public ProfileYZ? GetProfileYZ(Mesh mesh,
             double X)
         {
-            var profile = meshManager.GetIntersectionVectors(mesh, X);
+            var sortedFullList = GetIntersectionVectorsSorted(mesh, X);
 
-            if (profile?.Any() != true)
+            if (sortedFullList == null)
             {
                 return null;
             }
-
-            var sorted = profile.OrderBy(v => v.y);
-            var firstIndex = sorted.First().y - smallValue;
-            var lastIndex = sorted.Last().y + smallValue;
-            var firstVector = new Vector2D(firstIndex, 0);
-            var lastVector = new Vector2D(lastIndex, 0);
-
-            var sortedFullList = sorted.Select((item) => new Vector2D(item.y, item.z))
-                .Prepend(firstVector)
-                .Append(lastVector);
 
             var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
@@ -79,20 +84,76 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         }
 
         /// <summary>
+        /// Возвращает расширенный профиль <see cref="ProfileYZ"/> для случаев, 
+        /// когда необходимо считать объёмы поверхности влияния под полосой
+        /// </summary>
+        public ProfileYZExtended? GetProfileYZExtended(Mesh mesh,
+            double X,
+            Axle[] axles,
+            double coatLength)
+        {
+            var profile = GetProfileYZ(mesh, X);
+            if (profile == null)
+            {
+                return null;
+            }
+
+            //TODO: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
+            var axle = axles.First();
+            var distMin = axle.WheelWidth / 2;
+
+            var sortedVectors1 = GetIntersectionVectorsSorted(mesh, X - distMin);
+            if (sortedVectors1 == null)
+            {
+                return null;
+            }
+            var sortedVectors2 = GetIntersectionVectorsSorted(mesh, X + distMin);
+            if (sortedVectors2 == null)
+            {
+                return null;
+            }
+
+            return new ProfileYZExtended
+            {
+                X = profile.X,
+                SortedVectors = profile.SortedVectors,
+                Extremums = profile.Extremums,
+                MaximumIndexes = profile.MaximumIndexes,
+                PositivePieces = profile.PositivePieces,
+                PositivePieceMap = profile.PositivePieceMap,
+                AreaLength = axle.WheelLength + 2 * coatLength,
+                AreaWidth = axle.WheelWidth + 2 * coatLength,
+                SortedVectorsLeft = sortedVectors1.ToArray(),
+                SortedVectorsRight = sortedVectors2.ToArray(),
+            };
+        }
+
+        public IEnumerable<Vector2D>? GetIntersectionVectorsSorted(Mesh mesh, double X)
+        {
+            var profile = meshManager.GetIntersectionVectors(mesh, X);
+
+            if (profile?.Any() != true)
+            {
+                return null;
+            }
+
+            var sorted = profile.OrderBy(v => v.y);
+            var firstIndex = sorted.First().y - smallValue;
+            var lastIndex = sorted.Last().y + smallValue;
+            var firstVector = new Vector2D(firstIndex, 0);
+            var lastVector = new Vector2D(lastIndex, 0);
+
+            return sorted.Select((item) => new Vector2D(item.y, item.z))
+                .Prepend(firstVector)
+                .Append(lastVector);
+        }
+
+        /// <summary>
         /// Получение траекторий движения ТС
         /// По краям сразу зануляем профили, чтобы ТС вышедшее частично за пределы проекций не влияло на результат
         /// </summary>
         /// <param name="wheelLength">длина колеса нужна для зануления профиля по краям</param>
         /// <returns></returns>
-        public VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions,
-            Mesh mesh)
-        {
-            return vehicleXPositions
-                .Select(x => GetVehicleTrajectoryBase(x, mesh))
-                .OfType<VehicleTrajectory>()
-                .ToArray();
-        }
-
         public VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
             Mesh mesh)
         {
@@ -143,6 +204,56 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             return trajectory;
         }
 
+        private VehicleTrajectory? GetVehicleTrajectoryBaseWithExtendedProfiles(VehicleXPosition xPosition, Mesh mesh, Axle[] axles, double roadCoatSize)
+        {
+            ProfileYZ? Get(double x) => GetProfileYZ(mesh, x);
+            ProfileYZ? GetExt(double x) => GetProfileYZExtended(mesh, x, axles, roadCoatSize);
+
+            var center = Get(xPosition.CenterXPosition);
+            if (center == null)
+            {
+                return null;
+            }
+
+            Dictionary<double, ProfileYZ>? Map(Dictionary<double, double> positions)
+            {
+                var resolved = positions
+                    .Select(kv => (kv.Key, Value: GetExt(kv.Value)))
+                    .ToList();
+
+                if (resolved.Any(r => r.Value == null))
+                {
+                    return null;
+                }
+
+                return resolved.ToDictionary(r => r.Key, r => r.Value!);
+            }
+
+            var leftDict = Map(xPosition.LeftXPosition);
+            if (leftDict == null)
+            {
+                return null;
+            }
+
+            var rightDict = Map(xPosition.RightXPosition);
+            if (rightDict == null)
+            {
+                return null;
+            }
+
+            var left = new SortedList<double, ProfileYZ>(leftDict);
+            var right = new SortedList<double, ProfileYZ>(rightDict);
+
+            var trajectory = new VehicleTrajectory
+            {
+                Center = center,
+                Left = left,
+                Right = right
+            };
+
+            return trajectory;
+        }
+
         /// <summary>
         /// Добирает координаты для проверок с учётом ширины тележек
         /// </summary>
@@ -150,17 +261,34 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="passageInterval">Интервал проезда по оси Х, по которому должно проехать ТС</param>
         /// <returns>Массив точек по оси Х внутри данного интервала, и с учётом заездов и с учётом размера колёс</returns>
         public VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
-            double[] distinctXs,
-            PassageInterval passageInterval,
-            LoadModel loadModel,
-            RoadRule[] roadRules)
+            VehicleRollingBigModel dataModel,
+            PassageInterval passageInterval)
         {
             var result = new List<VehicleXPosition>();
+            var distinctXs = dataModel.Mesh.Data.DistinctXs;
+            var loadModel = dataModel.Data.Load;
+            var roadRules = dataModel.RoadRules;
+            var surface = dataModel.Data.Surface;
 
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
-            foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
+
+            if (surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)
             {
-                result.Add(GetXPosition(filteredX, loadModel.WheelOffsetsMap!.Keys));
+                foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
+                {
+                    foreach (var wheelOffset in loadModel.WheelOffsetsMapCentered!)
+                    {
+                        result.Add(GetXPosition(filteredX - wheelOffset.Key, loadModel.WheelOffsetsMap!.Keys));
+                        result.Add(GetXPosition(filteredX + wheelOffset.Key, loadModel.WheelOffsetsMap!.Keys));
+                    }
+                }
+            }
+            else
+            {
+                foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
+                {
+                    result.Add(GetXPosition(filteredX, loadModel.WheelOffsetsMap!.Keys));
+                }
             }
 
             foreach (var edge in trajectoryFilters.Select(filter => (filter.EdgeCaseLeft, filter.EdgeCaseRight)))
@@ -183,7 +311,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         public VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, 
             double Y, 
             LoadModel load, 
-            bool invertAxles)
+            bool invertAxles,
+            bool doSlabCalculation)
         {
             Func<Axle, double> axleFunc = invertAxles
             ? (axle) => { return Y - axle.AbsolutePosition; }
@@ -199,57 +328,27 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 positivePiecesMap.Add(profile.Value, new HashSet<Interval>());
             }
 
-            IEnumerable<WheelStrain> wheelStrains = load.Axles.SelectMany(axle =>
+            IEnumerable<WheelStrain> wheelStrains;
+            if (doSlabCalculation)
+            {
+                wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var zValue = trajectory.Left[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesLeft);
-                    var strain = zValue * axle.WheelWeight; 
-                    var leftWheel = new WheelStrain
-                    {
-                        Position = new Vector2D
-                        {
-                            X = trajectory.Left[distance].X,
-                            Y = axleFunc(axle)
-                        },
-                        AxleRef = axle,
-                        Strain = strain,
-                        ZValue = zValue,
-                    };
-                    if (positivePiecesLeft.i1 != null)
-                    {
-                        positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i1);
-                    }
-                    if (positivePiecesLeft.i2 != null)
-                    {
-                        positivePiecesMap[trajectory.Left[distance]].Add(positivePiecesLeft.i2);
-                    }
-
-                    zValue = trajectory.Right[distance].GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePiecesRight);
-                    strain = zValue * axle.WheelWeight;
-                    var rightWheel = new WheelStrain
-                    {
-                        Position = new Vector2D
-                        {
-                            X = trajectory.Right[distance].X,
-                            Y = axleFunc(axle)
-                        },
-                        AxleRef = axle,
-                        Strain = strain,
-                        ZValue = zValue,
-                    };
-                    if (positivePiecesRight.i1 != null)
-                    {
-                        positivePiecesMap[trajectory.Right[distance]].Add(positivePiecesRight.i1);
-                    }
-                    if (positivePiecesRight.i2 != null)
-                    {
-                        positivePiecesMap[trajectory.Right[distance]].Add(positivePiecesRight.i2);
-                    }
-
+                    var leftWheel = GetWheelStrainSlab(trajectory.Left[distance], positivePiecesMap, axle, axleFunc);
+                    var rightWheel = GetWheelStrainSlab(trajectory.Right[distance], positivePiecesMap, axle, axleFunc);
                     return [leftWheel, rightWheel];
-                })
-            );
-
+                }));
+            }
+            else
+            {
+                wheelStrains = load.Axles.SelectMany(axle =>
+                axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
+                {
+                    var leftWheel = GetWheelStrain(trajectory.Left[distance], positivePiecesMap, axle, axleFunc);
+                    var rightWheel = GetWheelStrain(trajectory.Right[distance], positivePiecesMap, axle, axleFunc);
+                    return [leftWheel, rightWheel];
+                }));
+            }
 
             return new VehicleStrain
             {
@@ -259,6 +358,60 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 PositivePiecesMap = positivePiecesMap,
                 Position = Y
             };
+
+            WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
+            {
+                var zValue = profile.GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
+                var strain = zValue * axle.WheelWeight;
+                var wheel = new WheelStrain
+                {
+                    Position = new Vector2D
+                    {
+                        X = profile.X,
+                        Y = axleFunc(axle)
+                    },
+                    AxleRef = axle,
+                    Strain = strain,
+                    ZValue = zValue,
+                };
+                if (positivePieces.i1 != null)
+                {
+                    positivePiecesMap[profile].Add(positivePieces.i1);
+                }
+                if (positivePieces.i2 != null)
+                {
+                    positivePiecesMap[profile].Add(positivePieces.i2);
+                }
+
+                return wheel;
+            }
+
+            WheelStrain GetWheelStrainSlab(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
+            {
+                var zValue = profile.GetZValueByYSlabVersion(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
+                var strain = zValue * axle.WheelWeight;
+                var wheel = new WheelStrain
+                {
+                    Position = new Vector2D
+                    {
+                        X = profile.X,
+                        Y = axleFunc(axle)
+                    },
+                    AxleRef = axle,
+                    Strain = strain,
+                    ZValue = zValue,
+                };
+                if (positivePieces.i1 != null)
+                {
+                    positivePiecesMap[profile].Add(positivePieces.i1);
+                }
+                if (positivePieces.i2 != null)
+                {
+                    positivePiecesMap[profile].Add(positivePieces.i2);
+                }
+
+                return wheel;
+            }
         }
 
         public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)

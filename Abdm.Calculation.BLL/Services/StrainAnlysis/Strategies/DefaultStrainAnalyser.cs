@@ -17,6 +17,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.Slab,
             StrainCalculationGroupTypeEnum.Pillar,
             StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
@@ -115,7 +116,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 {
                     if (wheelArea == null)
                     {
-                        wheelArea = wheelStrain.AxleRef.Wx * wheelStrain.AxleRef.Wy;
+                        wheelArea = wheelStrain.AxleRef.WheelWidth * wheelStrain.AxleRef.WheelLength;
                     }
                     wheels.Add(GetAnalysisWheel(wheelStrain, leftIntervalStart, wheelCounter, wheelSubCounter));
                     wheelSubCounter++;
@@ -207,7 +208,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
                 Z = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight),
                 Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
-                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx),
+                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelLength / wheelStrain.AxleRef.WheelWidth),
 
                 FootPrintSizeFirst = 0.56m,
                 FootPrintSizeSecond = 0.96m,

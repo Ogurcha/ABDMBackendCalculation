@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Enums;
+﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Helpers;
 
 namespace Abdm.Calculation.BLL.Models
@@ -27,7 +26,6 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Оси ТС
         /// </summary>
-        [NotNull]
         public required Axle[] Axles { get; set; }
 
         /// <summary>
@@ -61,5 +59,10 @@ namespace Abdm.Calculation.BLL.Models
         /// то вернётся словарь <расстояниеОтКолесаДоЦентра, 2>. Вернётся только одно значение, так как переднее и заднее колесо на одинаковом расстоянии. Число два означает, что на таком расстоянии оба значения. 
         /// </summary>
         public Dictionary<double, int>? WheelOffsetsMap { get; set; }
+
+        /// <summary>
+        /// То же самое, что и <see cref="WheelOffsetsMap"/>, только расстояние до ЦЕНТРОВ колес, а не до ближнего края колеса
+        /// </summary>
+        public Dictionary<double, int>? WheelOffsetsMapCentered { get; set; }
     }
 }

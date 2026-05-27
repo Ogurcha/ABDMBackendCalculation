@@ -30,10 +30,14 @@ namespace Abdm.Calculation.BLL.Extensions
         /// <param name="positivePieces">позитивные отрезки профиля, на которых искали напряжение. 
         /// Может вернуть null'ы, если рассчёт происходил в отрицательной зоне профиля></param>
         public static double GetZValueByYSlabVersion(
-            this ProfileYZExtended profile,
+            this ProfileYZ profileBase,
             double Y,
             out (Interval? i1, Interval? i2) positivePieces)
         {
+            if (!(profileBase is ProfileYZExtended profile))
+            {
+                return profileBase.GetZValueByY(Y, out positivePieces);
+            }
             var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.AreaLength / 2, out _);
             var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.AreaLength / 2, out _);
             var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.AreaLength / 2, out var indexesCenter);
@@ -48,6 +52,10 @@ namespace Abdm.Calculation.BLL.Extensions
             return (volume1 + volume2) / profile.AreaWidth;
         }
 
+        /// <summary>
+        /// Предполагая, что на поверхность давит не единичный вектор - а полоска с определённой протяжённостью и центром. 
+        /// Считает площадь под поверхностью, возникающую в результате давления
+        /// </summary>
         public static double CalculateZAreaAroundY(Vector2D[] vectors, 
             double Y, 
             double radius, 

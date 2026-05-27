@@ -14,19 +14,34 @@ namespace Abdm.Calculation.BLL.Services
             VehicleRollingSmallModel data)
         {
             var directions = data.Load.ActualDirection;
-            var vehicleStrains = directions.Select(GetStrain).OrderDescending().ToArray();
+            VehicleStrain[] vehicleStrains;
+            if (data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)
+            {
+                vehicleStrains = directions.Select(GetStrainSlab).OrderDescending().ToArray();
+            }
+            else
+            {
+                vehicleStrains = directions.Select(GetStrain).OrderDescending().ToArray();
+            }
             var result = vehicleStrains.First();
             result.InvertedDirectionStrain = vehicleStrains.ElementAtOrDefault(1);
             return result;
 
-            VehicleStrain GetStrain(bool loadDirectionForward)
-            {
-                return data.Load.Axles.Max(axle => vehicleTrajectoryService.GetStrainOnTrajectory(
+            VehicleStrain GetStrain(bool loadDirectionForward) =>
+                data.Load.Axles.Max(axle => vehicleTrajectoryService.GetStrainOnTrajectory(
                     trajectory,
                     position - axle.AbsolutePosition,
                     data.Load,
-                    !loadDirectionForward))!;
-            }
+                    !loadDirectionForward, false))!;
+            
+            VehicleStrain GetStrainSlab(bool loadDirectionForward) =>
+                data.Load.Axles.Max(axle => vehicleTrajectoryService.GetStrainOnTrajectory(
+                    trajectory,
+                    position - axle.AbsolutePosition,
+                    data.Load,
+                    !loadDirectionForward,
+                    true))!;
+            
         }
     }
 }

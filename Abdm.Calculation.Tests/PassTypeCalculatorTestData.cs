@@ -29,8 +29,8 @@ namespace Abdm.Calculation.Tests
                 {
                     new Axle {
                         RelativePosition = 0.4f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
                         AbsolutePosition = 0.4f,
                         WheelsDistance = [ 
@@ -39,8 +39,8 @@ namespace Abdm.Calculation.Tests
                     },
                     new Axle {
                         RelativePosition = 1.2f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
                         AbsolutePosition = 1.6f,
                         WheelsDistance = [
@@ -49,8 +49,8 @@ namespace Abdm.Calculation.Tests
                     },
                     new Axle {
                         RelativePosition = 1.2f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
                         AbsolutePosition = 2.8f,
                         WheelsDistance = [
@@ -59,8 +59,8 @@ namespace Abdm.Calculation.Tests
                     },
                     new Axle {
                         RelativePosition = 1.2f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
                         AbsolutePosition = 4.0f,
                         WheelsDistance = [
