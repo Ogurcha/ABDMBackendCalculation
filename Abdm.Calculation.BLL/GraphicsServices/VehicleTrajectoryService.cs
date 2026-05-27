@@ -95,7 +95,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 return null;
             }
 
-            //TODO: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
+            //TODO#2: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
             var axle = axles.First();
             var distMin = axle.WheelWidth / 2;
 
@@ -359,7 +359,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
             {
                 var zValue = profile.GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
-                var strain = zValue * axle.WheelWeight;
+                var strain = zValue * axle.wheelWeight;
                 var wheel = new WheelStrain
                 {
                     Position = new Vector2D
@@ -390,7 +390,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                     return GetWheelStrain(profilebase, positivePiecesMap, axle, axleFunc);
                 }
                 var zValue = profile.GetZValueByYSlabVersion(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
-                var strain = zValue * axle.WheelWeight;
+                var strain = zValue * axle.wheelWeight;
                 var wheel = new WheelStrain
                 {
                     Position = new Vector2D

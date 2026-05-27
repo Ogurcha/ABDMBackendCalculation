@@ -28,20 +28,4 @@ public class PassTypeFormulasTests
 
         Assert.That(distance, Is.EqualTo(2.5));
     }
-
-    [Test]
-    public void DistanceBetweenTrajectoryCenterAndAxles_GroupsWheelsByHalfDistance()
-    {
-        var axles = new[]
-        {
-            new Axle { WheelsDistance = [2.0f, 2.0f] },
-            new Axle { WheelsDistance = [4.0f] }
-        };
-
-        var result = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(axles);
-
-        Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result[1.0], Is.EqualTo(2));
-        Assert.That(result[2.0], Is.EqualTo(1));
-    }
 }

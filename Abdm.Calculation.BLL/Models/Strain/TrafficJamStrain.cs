@@ -26,8 +26,18 @@
         public double LeftStrain { get; set; }
 
         /// <summary>
+        /// Объем пов-ти влияния слева от центра ТС
+        /// </summary>
+        public double LeftVolume { get; set; }
+
+        /// <summary>
         /// Напряжение от профилей справа от центра ТС
         /// </summary>
         public double RightStrain { get; set; }
+
+        /// <summary>
+        /// Объем пов-ти влияния справа от центра ТС
+        /// </summary>
+        public double RightVolume { get; set; }
     }
 }

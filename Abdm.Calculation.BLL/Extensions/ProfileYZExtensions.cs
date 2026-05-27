@@ -34,7 +34,7 @@ namespace Abdm.Calculation.BLL.Extensions
             double Y,
             out (Interval? i1, Interval? i2) positivePieces)
         {
-                        var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.FootprintLength / 2, out _);
+            var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.FootprintLength / 2, out _);
             var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.FootprintLength / 2, out _);
             var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.FootprintLength / 2, out var indexesCenter);
 
