@@ -17,7 +17,7 @@ namespace Abdm.Calculation.BLL.Helpers
             MaxTrajectoriesCount = 1,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
-            DoTrafficJamLoadCalulation = false,
+            DoTrafficJamLoadCalculation = false,
         };
 
         [Description("V. \"Специальная АБ\" не движущаяся")]
@@ -29,7 +29,7 @@ namespace Abdm.Calculation.BLL.Helpers
             MaxTrajectoriesCount = int.MaxValue,
             MaxVehicleInTrajectory = 3,
             MinTrajectoryDistance = 3,
-            DoTrafficJamLoadCalulation = false,
+            DoTrafficJamLoadCalculation = false,
         };
     }
 }

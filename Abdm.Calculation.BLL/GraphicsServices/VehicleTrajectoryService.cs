@@ -27,7 +27,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             Func<VehicleXPosition, VehicleTrajectory?> trajFunc;
             if (dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
-                || dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalulation))
+                || dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalculation))
             {
                 trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, 
                     dataModel.Mesh, 

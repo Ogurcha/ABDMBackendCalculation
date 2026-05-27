@@ -139,7 +139,7 @@ namespace Abdm.Calculation.BLL.Services
                     && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
                 {
                     var strains = vehicleStrains.OrderDescending().ToArray();
-                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
+                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalculation
                         ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data)
                         : null;
                     var additionalStrain = new StrainsInMaximums

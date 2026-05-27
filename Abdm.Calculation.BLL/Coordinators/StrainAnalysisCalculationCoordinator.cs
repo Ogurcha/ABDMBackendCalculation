@@ -7,7 +7,7 @@ using Mapster;
 
 namespace Abdm.Calculation.BLL.Coordinators
 {
-    public class StrainAnalysisCalulationCoordinator(
+    public class StrainAnalysisCalculationCoordinator(
         IBaseVehicleRollingCalculationCoordinator baseCoordinator,
         IStrainAnalyser strainAnalyser
         ) : ICoordinator<StrainAnalysisParameters, StrainAnalysisResult>

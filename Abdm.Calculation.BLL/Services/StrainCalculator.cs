@@ -23,7 +23,7 @@ namespace Abdm.Calculation.BLL.Services
 
             var strainMap = new Dictionary<double, (VehicleTrajectory traj, VehicleStrain[] strains)>(equalityComparer);
             var trafficJamStrainMap = new Dictionary<double, TrafficJamStrain?>(equalityComparer);
-            var doTrafficJamStrainCalulation = roadRules.Any(r => r.DoTrafficJamLoadCalulation);
+            var doTrafficJamStrainCalculation = roadRules.Any(r => r.DoTrafficJamLoadCalculation);
 
             foreach (var trajectory in intervalModel.Trajectories)
             {
@@ -32,7 +32,7 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     strainMap[trajectory.X] = (trajectory, vehicleStrains.OrderDescending().ToArray()!);
                 }
-                if (doTrafficJamStrainCalulation && !trafficJamStrainMap.ContainsKey(trajectory.X))
+                if (doTrafficJamStrainCalculation && !trafficJamStrainMap.ContainsKey(trajectory.X))
                 {
                     trafficJamStrainMap[trajectory.X] = GetTrafficJamStrain(trajectory, data);
                 }
@@ -45,7 +45,7 @@ namespace Abdm.Calculation.BLL.Services
                 var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
                 foreach (var strains in strainMap.Where(s => trajectoryFilter.Filter(s.Key)))
                 {
-                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
+                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalculation
                         ? trafficJamStrainMap[strains.Key]
                         : null;
                     strainList.Add(new StrainsInMaximums 

@@ -104,7 +104,7 @@ namespace Abdm.Calculation.Infrastructure
 
            
             services.AddWorker<PassTypeCalculationCoordinator, PassTypeCalculationParameters, PassTypeCalculationResult>();
-            services.AddWorker<StrainAnalysisCalulationCoordinator, StrainAnalysisParameters, StrainAnalysisResult>();
+            services.AddWorker<StrainAnalysisCalculationCoordinator, StrainAnalysisParameters, StrainAnalysisResult>();
             
         }
 
