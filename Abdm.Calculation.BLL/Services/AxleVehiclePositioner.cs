@@ -29,7 +29,7 @@ namespace Abdm.Calculation.BLL.Services
 
             VehicleStrain GetStrain(bool loadDirectionForward) =>
                 data.Load.Axles
-                .Select(a => a.AbsolutePosition)
+                .Select(a => a.Position)
                 .Append(data.Load.Length / 2)
                 .Max(relativePosition => vehicleTrajectoryService.GetStrainOnTrajectory(
                     trajectory,
@@ -39,7 +39,7 @@ namespace Abdm.Calculation.BLL.Services
 
             VehicleStrain GetStrainSlab(bool loadDirectionForward) =>
                 data.Load.Axles
-                .Select(a => a.AbsolutePosition)
+                .Select(a => a.Position)
                 .Append(data.Load.Length / 2)
                 .Max(relativePosition => vehicleTrajectoryService.GetStrainOnTrajectory(
                     trajectory,

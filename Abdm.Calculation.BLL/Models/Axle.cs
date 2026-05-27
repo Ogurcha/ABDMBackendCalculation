@@ -6,14 +6,14 @@
     public class Axle
     {
         /// <summary>
-        /// Расстояние от оси и предыдущим объекта
+        /// Расстояние относительной предыдущей тележки ТС
         /// </summary>
         public double RelativePosition { get; set; }
 
         /// <summary>
-        /// Абсолютная позиция оси, с учётом всех других <see cref="Axle"/> позади
+        /// Расстояние относительно начала ТС
         /// </summary>
-        public double AbsolutePosition { get; set; }
+        public double Position { get; set; }
 
         /// <summary>
         /// Вес оси

@@ -32,7 +32,7 @@ namespace Abdm.Calculation.Tests
                         WheelWidth = 0.8f,
                         WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 0.4f,
+                        Position = 0.4f,
                         WheelsDistance = [ 
                             2.7f
                         ]
@@ -42,7 +42,7 @@ namespace Abdm.Calculation.Tests
                         WheelWidth = 0.8f,
                         WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 1.6f,
+                        Position = 1.6f,
                         WheelsDistance = [
                             2.7f
                         ]
@@ -52,7 +52,7 @@ namespace Abdm.Calculation.Tests
                         WheelWidth = 0.8f,
                         WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 2.8f,
+                        Position = 2.8f,
                         WheelsDistance = [
                             2.7f
                         ]
@@ -62,7 +62,7 @@ namespace Abdm.Calculation.Tests
                         WheelWidth = 0.8f,
                         WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 4.0f,
+                        Position = 4.0f,
                         WheelsDistance = [
                             2.7f
                         ]
