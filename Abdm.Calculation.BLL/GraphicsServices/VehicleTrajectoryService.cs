@@ -40,7 +40,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             }
 
             result.Trajectories = distinctXs
-                .Select(x => trajFunc)
+                .Select(x => trajFunc(x))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
 
