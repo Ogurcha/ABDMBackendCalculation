@@ -30,26 +30,22 @@ namespace Abdm.Calculation.BLL.Extensions
         /// <param name="positivePieces">позитивные отрезки профиля, на которых искали напряжение. 
         /// Может вернуть null'ы, если рассчёт происходил в отрицательной зоне профиля></param>
         public static double GetZValueByYSlabVersion(
-            this ProfileYZ profileBase,
+            this ProfileYZExtended profile,
             double Y,
             out (Interval? i1, Interval? i2) positivePieces)
         {
-            if (!(profileBase is ProfileYZExtended profile))
-            {
-                return profileBase.GetZValueByY(Y, out positivePieces);
-            }
-            var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.AreaLength / 2, out _);
-            var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.AreaLength / 2, out _);
-            var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.AreaLength / 2, out var indexesCenter);
+                        var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.FootprintLength / 2, out _);
+            var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.FootprintLength / 2, out _);
+            var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.FootprintLength / 2, out var indexesCenter);
 
-            var volume1 = MathExtensions.FrustrumVolume(profile.AreaWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
-            var volume2 = MathExtensions.FrustrumVolume(profile.AreaWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
+            var volume1 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
+            var volume2 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
 
             positivePieces = 
                 (profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexLeft].X, out Interval? i1) ? i1 : null,
                 profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexRight].X, out Interval? i2) ? i2 : null);
 
-            return (volume1 + volume2) / profile.AreaWidth;
+            return (volume1 + volume2) / profile.FootprintWidth;
         }
 
         /// <summary>

@@ -29,5 +29,17 @@ namespace Abdm.Calculation.BLL.Models.Strain
         /// "Нормализованное напряжение" без учёта веса колеса
         /// </summary>
         public double ZValue { get; set; }
+
+        /// <summary>
+        /// длина отпечатка, который осуществляет давление на поверхность
+        /// не null только при объемном расчёте
+        /// </summary>
+        public double? FootprintLength { get; set; }
+
+        /// <summary>
+        /// ширина отпечатка, который осуществляет давление на поверхность
+        /// не null только при объемном расчёте
+        /// </summary>
+        public double? FootprintWidth { get; set; }
     }
 }

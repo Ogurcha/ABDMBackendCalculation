@@ -20,11 +20,11 @@ namespace Abdm.Calculation.BLL.Models
         /// <summary>
         /// Длина отпечатка колеса
         /// </summary>
-        public required double AreaLength { get; set; }
+        public required double FootprintLength { get; set; }
 
         /// <summary>
         /// Ширина отпечатка колеса
         /// </summary>
-        public required double AreaWidth { get; set; }
+        public required double FootprintWidth { get; set; }
     }
 }

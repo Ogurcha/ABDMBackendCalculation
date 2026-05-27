@@ -108,16 +108,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             {
                 return null;
             }
-            double? wheelArea = null;
+
             foreach (var wheelStrains in vehicleStrain.WheelStrains.OrderBy(x => x.Position.Y).GroupBy(x => x.Position.Y))
             {
                 var wheelSubCounter = 1;
                 foreach (var wheelStrain in wheelStrains)
                 {
-                    if (wheelArea == null)
-                    {
-                        wheelArea = wheelStrain.AxleRef.WheelWidth * wheelStrain.AxleRef.WheelLength;
-                    }
                     wheels.Add(GetAnalysisWheel(wheelStrain, leftIntervalStart, wheelCounter, wheelSubCounter));
                     wheelSubCounter++;
                 }
@@ -153,8 +149,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         minusKiller = Math.Min(left.Start, right.Start);
                     }
 
-                    var negativeAreaLeft = MathExtensions.CalculateAreaUnderCurve(profileLeft.SortedVectors);
-                    var negativeAreaRight = MathExtensions.CalculateAreaUnderCurve(profileRight.SortedVectors);
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = oneBaseColumNumber,
@@ -170,8 +164,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         CenterIntervalStart = MathExtensions.ToDecimal(center.Start - minusKiller),
                         CenterIntervalEnd = MathExtensions.ToDecimal(center.End - minusKiller),
                         CenterIntervalLength = MathExtensions.ToDecimal(center.Length),
-                        LeftIntervalVolume = MathExtensions.ToDecimal((leftPieces.Sum(x => x.Length) - negativeAreaLeft) * wheelArea ?? 0d),
-                        RightIntervalVolume = MathExtensions.ToDecimal((rightPieces.Sum(x => x.Length) - negativeAreaRight) * wheelArea ?? 0d),
                     });
                 }
 
@@ -206,13 +198,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Strain = MathExtensions.ToDecimal(wheelStrain.Strain),
                 PositionX = MathExtensions.ToDecimal(wheelStrain.Position.X - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
-                Z = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight),
+                Z = MathExtensions.ToDecimal(wheelStrain.ZValue),
+                ZVolume = MathExtensions.ToDecimal(wheelStrain.ZValue),
                 Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
                 Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelLength / wheelStrain.AxleRef.WheelWidth),
-
-                FootPrintSizeFirst = 0.56m,
-                FootPrintSizeSecond = 0.96m,
-                ZVolume = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight / 0.56 / 0.96),
+                FootPrintSizeFirst = MathExtensions.ToDecimal(wheelStrain.FootprintLength ?? 0d),
+                FootPrintSizeSecond = MathExtensions.ToDecimal(wheelStrain.FootprintWidth ?? 0d),
             };
         }
 
