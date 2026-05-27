@@ -14,9 +14,6 @@ namespace Abdm.Calculation.BLL.Interfaces
         ProfileYZ? GetProfileYZ(Mesh mesh, 
             double X);
 
-        VehicleTrajectory[] GetVehicleTrajectories([DisallowNull] VehicleXPosition[] vehicleXPositions, 
-            Mesh mesh);
-
         VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition, 
             Mesh mesh);
 
@@ -25,11 +22,13 @@ namespace Abdm.Calculation.BLL.Interfaces
             double centerXPosition);
 
         VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
-            double[] distinctXs,
-            PassageInterval passageInterval,
-            LoadModel loadModel,
-            RoadRule[] roadRules);
+            VehicleRollingBigModel data,
+            PassageInterval passageInterval);
 
-        VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, double Y, LoadModel load, bool invertAxles);
+        VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory, 
+            double Y, 
+            LoadModel load, 
+            bool invertAxles, 
+            bool doSlabVersion);
     }
 }

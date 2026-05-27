@@ -10,6 +10,7 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
         public StrainCalculationGroupTypeEnum[] StrainCalculationTypes =>
         [
             StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.Slab,
             StrainCalculationGroupTypeEnum.SteelConcrete,
             StrainCalculationGroupTypeEnum.Pillar,
         ];

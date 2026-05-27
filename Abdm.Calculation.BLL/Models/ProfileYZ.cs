@@ -16,7 +16,7 @@ namespace Abdm.Calculation.BLL.Models
         /// точки, через которые проходит кривая, отсортированные по первому значению вектора. 
         /// По краям зануляется точками, значение которых равно нулю. 
         /// </summary>
-        public required SortedList<double, Vector2D> Vectors { get; set; }
+        public required Vector2D[] SortedVectors { get; set; }
 
         /// <summary>
         /// Экстремумы кривой. У валидных профилей не бывает пустым. 

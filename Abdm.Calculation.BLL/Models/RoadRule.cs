@@ -41,6 +41,6 @@ namespace Abdm.Calculation.BLL.Models
         /// Рассчитывать ли доп нагрузку от пробки.
         /// Которая считается, как равномерно распределенная доп нагрузка по всей длине профиля
         /// </summary>
-        public bool DoTrafficJamLoadCalulation { get; set; }
+        public bool DoTrafficJamLoadCalculation { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
+using Abdm.Calculation.Maths.Extensions;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -23,7 +24,7 @@ namespace Abdm.Calculation.BLL.Services
 
             var strainMap = new Dictionary<double, (VehicleTrajectory traj, VehicleStrain[] strains)>(equalityComparer);
             var trafficJamStrainMap = new Dictionary<double, TrafficJamStrain?>(equalityComparer);
-            var doTrafficJamStrainCalulation = roadRules.Any(r => r.DoTrafficJamLoadCalulation);
+            var doTrafficJamStrainCalculation = roadRules.Any(r => r.DoTrafficJamLoadCalculation);
 
             foreach (var trajectory in intervalModel.Trajectories)
             {
@@ -32,7 +33,7 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     strainMap[trajectory.X] = (trajectory, vehicleStrains.OrderDescending().ToArray()!);
                 }
-                if (doTrafficJamStrainCalulation && !trafficJamStrainMap.ContainsKey(trajectory.X))
+                if (doTrafficJamStrainCalculation && !trafficJamStrainMap.ContainsKey(trajectory.X))
                 {
                     trafficJamStrainMap[trajectory.X] = GetTrafficJamStrain(trajectory, data);
                 }
@@ -45,7 +46,7 @@ namespace Abdm.Calculation.BLL.Services
                 var trajectoryFilter = trajectoryFilterProvider.GetFilter(intervalModel.PassageIntervalRef, data.Load, roadRule);
                 foreach (var strains in strainMap.Where(s => trajectoryFilter.Filter(s.Key)))
                 {
-                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
+                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalculation
                         ? trafficJamStrainMap[strains.Key]
                         : null;
                     strainList.Add(new StrainsInMaximums 
@@ -106,19 +107,40 @@ namespace Abdm.Calculation.BLL.Services
 
         public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
-            var areaLeft = trajectory.Left.Last().Value.PositivePieces.Sum(x => x.Length);
-            var areaRight = trajectory.Right.Last().Value.PositivePieces.Sum(x => x.Length);
+            //TODO#2: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
+            //Пока что берём только первый слой
+            if (trajectory.Left.First().Value is not ProfileYZExtended profileLeft || trajectory.Right.First().Value is not ProfileYZExtended profileRight)
+            {
+                return new TrafficJamStrain
+                {
+                    LeftStrain = 0d,
+                    RightStrain = 0d,
+                    SumStrain = 0d,
+                    TotalStrain = 0d,
+                };
+            }
+
+            //TODO#2:
+            var wheelOffset = data.Load.WheelOffsetsMap!.First();
+
+            var distanceFromCenter = wheelOffset.Key;
+            var (wheelCount, wheelsWeight) = wheelOffset.Value;
+
+            var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft);
+            var volumeRight = GetTraffciJamVolumeForOneSide(profileRight);
 
             var trafficJamStrain = new TrafficJamStrain();
             
-            var totalWeight = data.Load.Axles.Sum(a => a.Weight);
-            trafficJamStrain.LeftStrain = GetTraffciJamStrainForOneSide(areaLeft, totalWeight);
-            trafficJamStrain.RightStrain = GetTraffciJamStrainForOneSide(areaRight, totalWeight);
+            var totalWeight = wheelsWeight;
+            trafficJamStrain.LeftVolume = volumeLeft;
+            trafficJamStrain.LeftStrain = volumeLeft * wheelsWeight;
+            trafficJamStrain.RightVolume = volumeRight;
+            trafficJamStrain.RightStrain = volumeRight * wheelsWeight;
             trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
 
             if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
             {
-                trafficJamStrain.Coefficient *= coefficient.Get(Math.Max(areaLeft, areaRight), data.Load.Type, data.Surface.Material);
+                trafficJamStrain.Coefficient *= coefficient.Get(trajectory.Center.PositivePieces.Sum(x => x.Length), data.Load.Type, data.Surface.Material);
             }
             trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.Coefficient;
 
@@ -153,6 +175,18 @@ namespace Abdm.Calculation.BLL.Services
         private double GetTraffciJamStrainForOneSide(double area, double totalAxlesWeight)
         {
             return area * totalAxlesWeight * NormConstants.TrafficJamApproximationParam / 2;
+        }
+
+        private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile)
+        {
+            var trapezoidAreaLeft = MathExtensions.CalculateAreaUnderCurve(profile.SortedVectorsLeft);
+            var trapezoidAreaRight = MathExtensions.CalculateAreaUnderCurve(profile.SortedVectorsRight);
+            var trapezoidAreaCenter = MathExtensions.CalculateAreaUnderCurve(profile.SortedVectors);
+
+            var volume1 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
+            var volume2 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
+
+            return (volume1 + volume2) * NormConstants.TrafficJamApproximationParam / profile.FootprintWidth;
         }
 
         private VehicleStrain GetVehicleStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data, ProfileYZ measuringProfile, double position)

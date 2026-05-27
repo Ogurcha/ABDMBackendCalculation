@@ -17,6 +17,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.Slab,
             StrainCalculationGroupTypeEnum.Pillar,
             StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
@@ -107,16 +108,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             {
                 return null;
             }
-            double? wheelArea = null;
+
             foreach (var wheelStrains in vehicleStrain.WheelStrains.OrderBy(x => x.Position.Y).GroupBy(x => x.Position.Y))
             {
                 var wheelSubCounter = 1;
                 foreach (var wheelStrain in wheelStrains)
                 {
-                    if (wheelArea == null)
-                    {
-                        wheelArea = wheelStrain.AxleRef.Wx * wheelStrain.AxleRef.Wy;
-                    }
                     wheels.Add(GetAnalysisWheel(wheelStrain, leftIntervalStart, wheelCounter, wheelSubCounter));
                     wheelSubCounter++;
                 }
@@ -152,25 +149,23 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         minusKiller = Math.Min(left.Start, right.Start);
                     }
 
-                    var negativeAreaLeft = MathExtensions.CalculateAreaUnderCurve(profileLeft.GetYZ().Select(v => new Vector2D(v.X, v.Y)).ToArray());
-                    var negativeAreaRight = MathExtensions.CalculateAreaUnderCurve(profileRight.GetYZ().Select(v => new Vector2D(v.X, v.Y)).ToArray());
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = oneBaseColumNumber,
                         LeftIntervalStart = MathExtensions.ToDecimal(left.Start - minusKiller),
                         LeftIntervalEnd = MathExtensions.ToDecimal(left.End - minusKiller),
                         LeftIntervalLength = MathExtensions.ToDecimal(left.Length),
+                        LeftIntervalVolume = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.LeftVolume),
                         LeftIntervalStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.LeftStrain),
                         RightIntervalStart = MathExtensions.ToDecimal(right.Start - minusKiller),
                         RightIntervalEnd = MathExtensions.ToDecimal(right.End - minusKiller),
                         RightIntervalLength = MathExtensions.ToDecimal(right.Length),
+                        RightIntervalVolume = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.RightVolume),
                         RightIntervalStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.RightStrain),
                         SumStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.SumStrain),
                         CenterIntervalStart = MathExtensions.ToDecimal(center.Start - minusKiller),
                         CenterIntervalEnd = MathExtensions.ToDecimal(center.End - minusKiller),
                         CenterIntervalLength = MathExtensions.ToDecimal(center.Length),
-                        LeftIntervalVolume = MathExtensions.ToDecimal((leftPieces.Sum(x => x.Length) - negativeAreaLeft) * wheelArea ?? 0d),
-                        RightIntervalVolume = MathExtensions.ToDecimal((rightPieces.Sum(x => x.Length) - negativeAreaRight) * wheelArea ?? 0d),
                     });
                 }
 
@@ -205,26 +200,25 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Strain = MathExtensions.ToDecimal(wheelStrain.Strain),
                 PositionX = MathExtensions.ToDecimal(wheelStrain.Position.X - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
-                Z = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight),
-                Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
-                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.Wy / wheelStrain.AxleRef.Wx),
-
-                FootPrintSizeFirst = 0.56m,
-                FootPrintSizeSecond = 0.96m,
-                ZVolume = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelWeight / 0.56 / 0.96),
+                Z = MathExtensions.ToDecimal(wheelStrain.ZValue),
+                ZVolume = MathExtensions.ToDecimal(wheelStrain.ZValue),
+                Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.wheelWeight),
+                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelLength / wheelStrain.AxleRef.WheelWidth),
+                FootPrintSizeFirst = MathExtensions.ToDecimal(wheelStrain.FootprintLength ?? 0d),
+                FootPrintSizeSecond = MathExtensions.ToDecimal(wheelStrain.FootprintWidth ?? 0d),
             };
         }
 
         private IEnumerable<ProfileVector>? GetProfileVectors(VehicleTrajectory trajectory)
         {
-            var vectors = trajectory.Center.Vectors.Values;
-            if (vectors.Count == 0)
+            var vectors = trajectory.Center.SortedVectors;
+            if (vectors.Length == 0)
             {
                 return null;
             }
-            if (vectors.Count < ProfileVectorsLimitCount)
+            if (vectors.Length < ProfileVectorsLimitCount)
             {
-                return trajectory.Center.Vectors.Values.Select<Vector2D, ProfileVector>(x => (MathExtensions.ToDecimal(x.X), MathExtensions.ToDecimal(x.Y)));
+                return trajectory.Center.SortedVectors.Select<Vector2D, ProfileVector>(x => (MathExtensions.ToDecimal(x.X), MathExtensions.ToDecimal(x.Y)));
             }
             return VectorsTooMany(vectors);
 

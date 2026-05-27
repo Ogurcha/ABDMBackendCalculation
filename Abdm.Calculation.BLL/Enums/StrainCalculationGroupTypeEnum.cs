@@ -25,6 +25,12 @@ namespace Abdm.Calculation.BLL.Enums
         /// Сталежелезобетонный элемент. Прочность при плоском изгибе
         /// </summary>
         [Description("Сталежелезобетонный элемент. Прочность при плоском изгибе")]
-        SteelConcrete = 2
+        SteelConcrete = 2,
+
+        /// <summary>
+        /// Плита
+        /// </summary>
+        [Description("Плита")]
+        Slab = 3,
     }
 }

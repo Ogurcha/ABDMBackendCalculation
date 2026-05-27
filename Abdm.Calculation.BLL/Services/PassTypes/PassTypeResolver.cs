@@ -20,6 +20,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
         public StrainCalculationGroupTypeEnum[] StrainCalculationTypes =>
         [
             StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationGroupTypeEnum.Slab,
             StrainCalculationGroupTypeEnum.Pillar,
         ];
 

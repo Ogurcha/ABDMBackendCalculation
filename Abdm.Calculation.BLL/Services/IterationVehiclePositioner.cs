@@ -47,14 +47,28 @@ namespace Abdm.Calculation.BLL.Services
                 var maxSteps = (int)Math.Round(data.Load.Length / NormConstants.StrainMeasuringStepSize);
                 var stepSize = loadDirectionForward ? NormConstants.StrainMeasuringStepSize : -NormConstants.StrainMeasuringStepSize;
 
+                VehicleStrain strain;
                 while (maxSteps > 0)
                 {
                     maxSteps--;
-                    var strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
-                        position,
-                        data.Load,
-                        !loadDirectionForward);
-
+                    
+                    if (data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)
+                    {
+                        strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
+                            position,
+                            data.Load,
+                            !loadDirectionForward,
+                            true);
+                    }
+                    else
+                    {
+                        strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
+                            position,
+                            data.Load,
+                            !loadDirectionForward,
+                            false);
+                    }
+                    
                     if (strain.SumStrain <= oldStrain?.SumStrain)
                     {
                         if (goForward)

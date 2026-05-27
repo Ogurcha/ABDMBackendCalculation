@@ -28,10 +28,10 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             TypeAdapterConfig<AxleRequestModel, Axle>
             .NewConfig()
             .Map(dst => dst.RelativePosition, src => src.Y)
-            .Map(dst => dst.Wx, src => src.Wx)
-            .Map(dst => dst.Wy, src => src.Wy)
+            .Map(dst => dst.WheelWidth, src => src.Wx)
+            .Map(dst => dst.WheelLength, src => src.Wy)
             .Map(dst => dst.Weight, src => src.Weight)
-            .Map(dst => dst.AbsolutePosition, src => src.AbsY)
+            .Map(dst => dst.Position, src => src.AbsY)
             .Map(dst => dst.WheelsDistance, src => src.Wheels);
 
             TypeAdapterConfig<LoadSchemaRequestModel, LoadSchema>

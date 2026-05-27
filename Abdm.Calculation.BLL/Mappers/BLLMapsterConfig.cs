@@ -128,44 +128,41 @@ namespace Abdm.Calculation.BLL.Mappers
             .Map(dst => dst.Mp, src => src.Mp);
         }
 
-        public static StrainCalculationGroupTypeEnum Map(this StrainCalculationTypeEnum source)
+        public static StrainCalculationGroupTypeEnum Map(this StrainCalculationTypeEnum source) => source switch
         {
-            return source switch
-            {
-                StrainCalculationTypeEnum.st10 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st12 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st14 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st20 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st22 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st24 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st30 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st50 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st60 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st80 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st90 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st510=> StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st520 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st530 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st553 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st556 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st558 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st540 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st560 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st610 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st630 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st632 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st710 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st720 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st730 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st740 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st760 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st770 => StrainCalculationGroupTypeEnum.Default,
-                StrainCalculationTypeEnum.st790 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st10 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st12 => StrainCalculationGroupTypeEnum.Slab,
+            StrainCalculationTypeEnum.st14 => StrainCalculationGroupTypeEnum.Slab,
+            StrainCalculationTypeEnum.st20 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st22 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st24 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st30 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st50 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st60 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st80 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st90 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st510 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st520 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st530 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st553 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st556 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st558 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st540 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st560 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st610 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st630 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st632 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st710 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st720 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st730 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st740 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st760 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st770 => StrainCalculationGroupTypeEnum.Default,
+            StrainCalculationTypeEnum.st790 => StrainCalculationGroupTypeEnum.Default,
 
-                StrainCalculationTypeEnum.st40 => StrainCalculationGroupTypeEnum.SteelConcrete,
-                StrainCalculationTypeEnum.st70 => StrainCalculationGroupTypeEnum.Pillar,
-                _ => StrainCalculationGroupTypeEnum.Unknown
-            };
-        }
+            StrainCalculationTypeEnum.st40 => StrainCalculationGroupTypeEnum.SteelConcrete,
+            StrainCalculationTypeEnum.st70 => StrainCalculationGroupTypeEnum.Pillar,
+            _ => StrainCalculationGroupTypeEnum.Unknown
+        };
     }
 }

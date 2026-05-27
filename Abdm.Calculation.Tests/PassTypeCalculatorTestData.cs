@@ -29,40 +29,40 @@ namespace Abdm.Calculation.Tests
                 {
                     new Axle {
                         RelativePosition = 0.4f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 0.4f,
+                        Position = 0.4f,
                         WheelsDistance = [ 
                             2.7f
                         ]
                     },
                     new Axle {
                         RelativePosition = 1.2f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 1.6f,
+                        Position = 1.6f,
                         WheelsDistance = [
                             2.7f
                         ]
                     },
                     new Axle {
                         RelativePosition = 1.2f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 2.8f,
+                        Position = 2.8f,
                         WheelsDistance = [
                             2.7f
                         ]
                     },
                     new Axle {
                         RelativePosition = 1.2f,
-                        Wx = 0.8f,
-                        Wy = 0.2f,
+                        WheelWidth = 0.8f,
+                        WheelLength = 0.2f,
                         Weight = 20.0f,
-                        AbsolutePosition = 4.0f,
+                        Position = 4.0f,
                         WheelsDistance = [
                             2.7f
                         ]

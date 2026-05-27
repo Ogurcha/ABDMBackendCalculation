@@ -40,7 +40,7 @@ namespace Abdm.Calculation.BLL.Services
                 }
                 else
                 {
-                    //TODO: Минорная проблема, которая пока что не актуальна. В случае, если в метод попадут несколько roadRules,
+                    //TODO#1: Минорная проблема, которая пока что не актуальна. В случае, если в метод попадут несколько roadRules,
                     //то даже если у них будет одинаковый actualVehicleCount+MinTrajectoryDistance, то цикл будет вызываться несколько раз. Чтобы избежать этого, нужно сделать группировку, как в StrainResultPopulator, VehicleTrajectoryFilter, StrainCalculator. Но это пока что не актуально, так как не встретился пока что реальный снип, который содержит пару roadRules с одинаковым actualVehicleCount+MinTrajectoryDistance
                     var strainResult = GetStrainResult(strainsMap[roadRule], intervalModel, roadRule, data, mesh, actualVehicleCount);
                     if (strainResult == null) 
@@ -139,7 +139,7 @@ namespace Abdm.Calculation.BLL.Services
                     && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
                 {
                     var strains = vehicleStrains.OrderDescending().ToArray();
-                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalulation
+                    var trafficJamStrain = roadRule.DoTrafficJamLoadCalculation
                         ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data)
                         : null;
                     var additionalStrain = new StrainsInMaximums

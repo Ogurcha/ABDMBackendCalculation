@@ -21,7 +21,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             IsDynamicMovement = true,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
-            DoTrafficJamLoadCalulation = true,
+            DoTrafficJamLoadCalculation = true,
 
             IsPedestrianAllowed = true,
             HasSafetyLine = false,
@@ -34,7 +34,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             IsDynamicMovement = true,
             MaxVehicleInTrajectory = 1,
             MinTrajectoryDistance = 3,
-            DoTrafficJamLoadCalulation = true,
+            DoTrafficJamLoadCalculation = true,
 
             IsPedestrianAllowed = false,
             HasSafetyLine = true,
