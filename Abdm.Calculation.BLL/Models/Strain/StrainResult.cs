@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Результирующее напряжение по заданному интервалу и по задданым правилам движения
+    /// Уникально для каждой пары <see cref="RoadRule"/> и <see cref="IntervalModel"/>
     /// </summary>
     public class StrainResult 
     {
@@ -19,5 +20,7 @@
         /// Итоговое напряжение с учётом коэффициента
         /// </summary>
         public double TotalStrain => Strain.Sum(x => x.TotalStrain);
+
+        public required IntervalModel IntervalModelRef { get; set; }
     }
 }

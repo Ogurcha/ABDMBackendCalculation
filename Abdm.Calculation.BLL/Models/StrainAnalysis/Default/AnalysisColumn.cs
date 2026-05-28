@@ -1,6 +1,6 @@
 ﻿namespace Abdm.Calculation.BLL.Models.StrainAnalysis.Default
 {
-    public class AnalysisVehicle
+    public class AnalysisColumn
     {
         public int ColumnNumber { get; set; }
 

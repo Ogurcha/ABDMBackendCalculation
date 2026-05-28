@@ -10,7 +10,13 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("forward")]
         public bool IsForward { get; set; }
 
-        [JsonPropertyName("vehicles")]
-        public required AnalysisVehicleModel[] Vehicles { get; set; }
+        [JsonPropertyName("columns")]
+        public required AnalysisColumnModel[] Columns { get; set; }
+
+        [JsonPropertyName("barrierPositionLeft")]
+        public decimal BarrierPositionLeft { get; set; }
+
+        [JsonPropertyName("barrierPositionRight")]
+        public decimal BarrierPositionRight { get; set; }
     }
 }

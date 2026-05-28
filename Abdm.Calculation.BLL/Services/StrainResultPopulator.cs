@@ -38,6 +38,7 @@ namespace Abdm.Calculation.BLL.Services
                 {
                     RoadRuleRef = unpopulated.RoadRuleRef,
                     Strain = unpopulated.Strain.Select(GetVehicleColumnStrain).ToArray(),
+                    IntervalModelRef = unpopulated.IntervalModelRef
                 };
             }
 
@@ -45,6 +46,7 @@ namespace Abdm.Calculation.BLL.Services
             {
                 RoadRuleRef = unpopulated.RoadRuleRef,
                 Strain = unpopulated.Strain.Select(x => PopulateIndividualColumnFromMap(x, data, maxVehicle, resultsMap)).ToArray(),
+                IntervalModelRef = unpopulated.IntervalModelRef
             };
 
             VehicleColumnStrain PopulateIndividualColumnFromMap(StrainsInMaximums traj,
