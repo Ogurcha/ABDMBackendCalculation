@@ -64,11 +64,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             var (extremums, maximums, positivePieces, positivePiecesMap) = MathExtensions.FindExtremumsAndPositives(sortedFullList);
 
-            if (maximums.Count == 0)
-            {
-                return null;
-            }
-
             return new ProfileYZ
             {
                 X = X,
@@ -76,7 +71,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 Extremums = extremums.ToArray(),
                 MaximumIndexes = maximums.ToArray(),
                 PositivePieces = positivePieces.ToArray(),
-                PositivePieceMap = positivePiecesMap
+                PositivePieceMap = positivePiecesMap,
             };
         }
 
@@ -187,7 +182,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             {
                 return null;
             }
-
             var left = new SortedList<double, ProfileYZ>(leftDict);
             var right = new SortedList<double, ProfileYZ>(rightDict);
 
@@ -358,6 +352,20 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
             {
+                if (profile.MaximumIndexes.Length == 0 || profile.PositivePieceMap.Count() == 0)
+                {
+                    return new WheelStrain
+                    {
+                        Position = new Vector2D
+                        {
+                            X = profile.X,
+                            Y = axleFunc(axle)
+                        },
+                        AxleRef = axle,
+                        Strain = 0d,
+                        ZValue = 0d,
+                    };
+                };
                 var zValue = profile.GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
                 var strain = zValue * axle.wheelWeight;
                 var wheel = new WheelStrain
@@ -385,6 +393,20 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             WheelStrain GetWheelStrainSlab(ProfileYZ profilebase, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
             {
+                if (profilebase.MaximumIndexes.Length == 0 || profilebase.PositivePieceMap.Count() == 0)
+                {
+                    return new WheelStrain
+                    {
+                        Position = new Vector2D
+                        {
+                            X = profilebase.X,
+                            Y = axleFunc(axle)
+                        },
+                        AxleRef = axle,
+                        Strain = 0d,
+                        ZValue = 0d,
+                    };
+                };
                 if (profilebase is not ProfileYZExtended profile)
                 {
                     return GetWheelStrain(profilebase, positivePiecesMap, axle, axleFunc);

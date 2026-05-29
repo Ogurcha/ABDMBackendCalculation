@@ -117,7 +117,8 @@ public class PassTypeResolverTests
                     VehicleTrajectoryRef = CreateTrajectory(),
                     VehicleStrains = []
                 }
-            ]
+            ],
+            IntervalModelRef = new IntervalModel { PassageIntervalRef = new PassageInterval(), Trajectories = [] }
         };
 
     private static VehicleTrajectory CreateTrajectory()
