@@ -92,7 +92,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             //TODO#2: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
             var axle = axles.First();
-            var distMin = axle.WheelWidth / 2;
+            var distMin = axle.WheelWidth / 2 + coatLength;
 
             var sortedVectors1 = GetIntersectionVectorsSorted(mesh, X - distMin);
             if (sortedVectors1 == null)
