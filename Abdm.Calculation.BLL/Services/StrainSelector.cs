@@ -138,16 +138,15 @@ namespace Abdm.Calculation.BLL.Services
                     && trajectoryFilter.Filter(traj)
                     && !strains.Select(s => s.X).Contains(traj, equalityComparer)
                     && vehicleTrajectoryService.GetVehicleTrajectory(mesh, data.Load, traj) is VehicleTrajectory additionalTrajectory
-                    && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
+                    && strainCalculator.TryGetStrainForEachPositivePiece(additionalTrajectory, data, out VehicleStrain[] vehicleStrains))
                 {
-                    var strains = vehicleStrains.OrderDescending().ToArray();
                     var trafficJamStrain = roadRule.DoTrafficJamLoadCalculation
                         ? strainCalculator.GetTrafficJamStrain(additionalTrajectory, data)
                         : null;
                     var additionalStrain = new StrainsInMaximums
                     {
                         VehicleTrajectoryRef = additionalTrajectory,
-                        Strains = strains,
+                        Strains = vehicleStrains,
                         TrafficJamStrain = trafficJamStrain,
                         TotalStrain = strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d)
                     };

@@ -29,9 +29,9 @@ namespace Abdm.Calculation.BLL.Services
             foreach (var trajectory in intervalModel.Trajectories)
             {
                 if (!strainMap.ContainsKey(trajectory.X) 
-                    && TryGetStrainForEachPositivePiece(trajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
+                    && TryGetStrainForEachPositivePiece(trajectory, data, out VehicleStrain[] vehicleStrains))
                 {
-                    strainMap[trajectory.X] = (trajectory, vehicleStrains.OrderDescending().ToArray()!);
+                    strainMap[trajectory.X] = (trajectory, vehicleStrains);
                 }
                 if (doTrafficJamStrainCalculation && !trafficJamStrainMap.ContainsKey(trajectory.X))
                 {
@@ -66,12 +66,14 @@ namespace Abdm.Calculation.BLL.Services
         public bool TryGetStrainForEachPositivePiece(
             VehicleTrajectory trajectory,
             VehicleRollingSmallModel data,
-            out IEnumerable<VehicleStrain> vehicleStrains)
+            out VehicleStrain[] vehicleStrains)
         {
             vehicleStrains = GetStrainForEachPositivePiece(
                             trajectory,
                             data)
-                        .Where(x => x != null)!;
+                        .Where(x => x != null)
+                        .OrderDescending()
+                        .ToArray()!;
             if (vehicleStrains.Any()) 
             {
                 return true;
@@ -157,8 +159,8 @@ namespace Abdm.Calculation.BLL.Services
                 return null;
             }
 
-            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.Length) > 
-                profileRight.PositivePieceMap.Values.Sum(interval => interval.Length))
+            if (profileLeft.PositivePieces.Sum(interval => interval.Length) * profileLeft.Extremums.Max(v => v.Y) > 
+                profileRight.PositivePieces.Sum(interval => interval.Length) * profileRight.Extremums.Max(v => v.Y))
             {
                 return profileLeft;
             }

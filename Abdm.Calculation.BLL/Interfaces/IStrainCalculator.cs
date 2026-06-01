@@ -11,6 +11,9 @@ namespace Abdm.Calculation.BLL.Interfaces
 
         TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data);
 
-        bool TryGetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, out IEnumerable<VehicleStrain> vehicleStrains);
+        bool TryGetStrainForEachPositivePiece(
+            VehicleTrajectory trajectory,
+            VehicleRollingSmallModel data,
+            out VehicleStrain[] vehicleStrains);
     }
 }
