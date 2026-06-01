@@ -38,22 +38,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 return new ResultMonad<StrainAnalysisResult>(GetFailedResult(parameters));
             }
 
-            //SerializeToJsonFile(strainAnalysis, $"Isso{parameters.IssoId}N{parameters.CheckPointNumber}Load{parameters.LoadSchema.NameShort}.json" );
-
             return new ResultMonad<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis, data.TrianglesToCache));
-        }
-
-        public static void SerializeToJsonFile(object obj, string filename = "output.json")
-        {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,  // Pretty-print with indentation
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase  // Optional: camelCase keys
-            };
-
-            string json = JsonSerializer.Serialize(obj, options);
-            File.WriteAllText(filename, json);
-            Console.WriteLine($"JSON serialized to {Path.GetFullPath(filename)}");
         }
 
         public string InfoMsg(StrainAnalysisParameters param)
