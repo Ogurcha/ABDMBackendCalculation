@@ -68,5 +68,11 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// </summary>
         [JsonPropertyName("otherLoad")]
         public decimal OtherLoad { get; set; }
+
+        /// <summary>
+        /// Другая нагрузка
+        /// </summary>
+        [JsonPropertyName("hasBarrierInTheMiddle")]
+        public decimal HasBarrierInTheMiddle { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     /// <summary>
     /// Итоговое напряжение, выдваемое колонной автомобилей
     /// на определённоой траектории
+    /// Уникально для каждой пары <see cref="RoadRule"/> и <see cref="VehicleTrajectory"/>
     /// </summary>
     public class VehicleColumnStrain : ComparableStrainBase
     {

@@ -1,5 +1,4 @@
 ﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Extensions;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -33,16 +32,22 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 defaults.Add(new AnalysisDefault
                 {
                     HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
-                    Vehicles = GetAnalysisColumns(strain.Strain, dataModel, x => x).ToArray(),
+                    Columns = GetAnalysisColumns(strain.Strain, dataModel, x => x).ToArray(),
                     IsForward = isDirectionForward,
+                    IntervalType = strain.IntervalModelRef.PassageIntervalRef.Type,
+                    BarrierPositionLeft = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionLeft),
+                    BarrierPositionRight = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionRight),
                 });
                 if (strain.Strain.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
                 {
                     defaults.Add(new AnalysisDefault
                     {
                         HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
-                        Vehicles = GetAnalysisColumns(strain.Strain, dataModel, x => x.InvertedDirectionStrain).ToArray(),
+                        Columns = GetAnalysisColumns(strain.Strain, dataModel, x => x.InvertedDirectionStrain).ToArray(),
                         IsForward = !isDirectionForward,
+                        IntervalType = strain.IntervalModelRef.PassageIntervalRef.Type,
+                        BarrierPositionLeft = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionLeft),
+                        BarrierPositionRight = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionRight),
                     });
                 }
             }
@@ -53,16 +58,16 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             analysis.ConstLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.ConstLoad);
             analysis.PedestrianLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.PedestrianLoad);
             analysis.OtherLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.OtherLoad);
-            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).OrderByDescending(x => x.IsForward).ToList();
+            analysis.Default = defaults.OrderByDescending(x => (x.HasSafetyLine == true ? 100 : 0) - x.IntervalType).OrderByDescending(x => x.IsForward).ToList();
 
             return analysis;
         }
 
-        private List<AnalysisVehicle> GetAnalysisColumns(IEnumerable<VehicleColumnStrain> strainResults, 
+        private List<AnalysisColumn> GetAnalysisColumns(IEnumerable<VehicleColumnStrain> strainResults, 
             VehicleRollingBigModel data,
             Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
         {
-            var vehicles = new List<AnalysisVehicle>();
+            var vehicles = new List<AnalysisColumn>();
             var columnCounter = 1;
             foreach (var columnStrains in strainResults.OrderBy(x => x.VehicleTrajectoryRef.X))
             {
@@ -73,12 +78,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return vehicles;
         }
 
-        private List<AnalysisVehicle> GetAnalysisColumn(VehicleColumnStrain columnStrain, 
+        private List<AnalysisColumn> GetAnalysisColumn(VehicleColumnStrain columnStrain, 
             VehicleRollingBigModel data, 
             int oneBaseColumNumber,
             Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
         {
-            var vehicles = new List<AnalysisVehicle>();
+            var vehicles = new List<AnalysisColumn>();
             for (int vehicleCounter = 0; vehicleCounter < columnStrain.VehicleStrains.Length; vehicleCounter++)
             {
                 var vehicle = GetAnalysisVehicle(columnStrain,
@@ -95,7 +100,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return vehicles;
         }
 
-        private AnalysisVehicle? GetAnalysisVehicle(VehicleColumnStrain columnStrain,
+        private AnalysisColumn? GetAnalysisVehicle(VehicleColumnStrain columnStrain,
             double leftIntervalStart,
             int oneBaseColumNumber,
             int zeroBaseVehicleNumber,
@@ -172,7 +177,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 intervalProfileVectors = GetProfileVectors(trajectory)?.ToArray();
             }
 
-            return new AnalysisVehicle
+            return new AnalysisColumn
             {
                 ColumnNumber = oneBaseColumNumber,
                 VehicleNumber = zeroBaseVehicleNumber + 1,

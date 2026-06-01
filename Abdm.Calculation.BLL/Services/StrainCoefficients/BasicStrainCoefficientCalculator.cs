@@ -29,9 +29,10 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
                             : 1.2 + 0.01 * (30 - lambda)
                           ;
                 case LoadGroupTypeEnum.Single:
-                case LoadGroupTypeEnum.NClass:
                 case LoadGroupTypeEnum.Track:
                     return 1d;
+                case LoadGroupTypeEnum.NClass:
+                    return 1.1d;
                 case LoadGroupTypeEnum.AB:
                     return 1.2d;
                 default:

@@ -2,7 +2,7 @@
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
 {
-    public class AnalysisVehicleModel
+    public class AnalysisColumnModel
     {
         [JsonPropertyName("columnNumber")]
         public int ColumnNumber { get; set; }

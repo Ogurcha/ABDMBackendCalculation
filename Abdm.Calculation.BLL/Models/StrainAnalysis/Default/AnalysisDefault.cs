@@ -1,4 +1,6 @@
-﻿namespace Abdm.Calculation.BLL.Models.StrainAnalysis.Default
+﻿using Abdm.Calculation.BLL.Enums;
+
+namespace Abdm.Calculation.BLL.Models.StrainAnalysis.Default
 {
     public class AnalysisDefault()
     {
@@ -6,6 +8,18 @@
 
         public required bool IsForward { get; set; }
 
-        public required AnalysisVehicle[] Vehicles { get; set; }
+        public required AnalysisColumn[] Columns { get; set; }
+
+        public PassageIntervalTypeEnum IntervalType { get; set; }
+
+        /// <summary>
+        /// Положение ограждения слева
+        /// </summary>
+        public decimal BarrierPositionLeft { get; set; }
+
+        /// <summary>
+        /// Положение ограждения справа
+        /// </summary>
+        public decimal BarrierPositionRight { get; set; }
     }
 }

@@ -35,7 +35,8 @@ namespace Abdm.Calculation.BLL.Services
                         new StrainResultUnpopulated
                         {
                             RoadRuleRef = roadRule,
-                            Strain = [strainsMap[roadRule].First()]
+                            Strain = [strainsMap[roadRule].First()],
+                            IntervalModelRef = intervalModel
                         };
                 }
                 else
@@ -96,7 +97,8 @@ namespace Abdm.Calculation.BLL.Services
                 var strainResult = new StrainResultUnpopulated
                 {
                     RoadRuleRef = roadRule,
-                    Strain = vehicleStrains.ToArray()
+                    Strain = vehicleStrains.ToArray(),
+                    IntervalModelRef = intervalModel,
                 };
 
                 return strainResult;

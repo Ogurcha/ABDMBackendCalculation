@@ -148,6 +148,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.StrainCalculationType, src => (int)src.StrainCalculationType)
             .Map(dst => dst.AbsolutePositionLeft, src => src.AbsolutePositionLeft)
             .Map(dst => dst.AbsolutePositionRight, src => src.AbsolutePositionRight)
+            .Map(dst => dst.HasBarrierInTheMiddle, src => src.HasBarrierInTheMiddle)
             .Map(dst => dst.Lambda, src => src.Lambda)
             .Map(dst => dst.Default, src => src.Default)
             .Map(dst => dst.MyStrength, src => src.MyStrength)
@@ -155,7 +156,15 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
             .Map(dst => dst.OtherLoad, src => src.OtherLoad);
 
-            TypeAdapterConfig<AnalysisVehicle, AnalysisVehicleModel>
+            TypeAdapterConfig<AnalysisDefault, AnalysisDefaultModel>
+           .NewConfig()
+           .Map(dst => dst.HasSafetyLine, src => src.HasSafetyLine)
+           .Map(dst => dst.IsForward, src => src.IsForward)
+           .Map(dst => dst.Columns, src => src.Columns)
+           .Map(dst => dst.BarrierPositionLeft, src => src.BarrierPositionLeft)
+           .Map(dst => dst.BarrierPositionRight, src => src.BarrierPositionRight);
+
+            TypeAdapterConfig<AnalysisColumn, AnalysisColumnModel>
             .NewConfig()
             .Map(dst => dst.ColumnNumber, src => src.ColumnNumber)
             .Map(dst => dst.VehicleNumber, src => src.VehicleNumber)

@@ -30,6 +30,11 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         public decimal AbsolutePositionRight { get; set; }
 
         /// <summary>
+        /// Есть ли ограждение на мосту посередине
+        /// </summary>
+        public bool HasBarrierInTheMiddle { get; set; }
+
+        /// <summary>
         /// лямбда - используется для расчета коеффициентов напряжения
         /// </summary>
         public decimal Lambda { get; set; }

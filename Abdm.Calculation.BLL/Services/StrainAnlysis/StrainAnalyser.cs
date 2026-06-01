@@ -40,7 +40,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
                 StrainCalculationGroupType = dataModel.Data.Surface.StrainCalculationGroupType,
                 AbsolutePositionLeft = MathExtensions.ToDecimal(dataModel.Intervals.First().AbsolutePositionLeft),
                 AbsolutePositionRight = MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionRight),
-                StrainCalculationType = dataModel.Data.Surface.StrainCalculationType
+                StrainCalculationType = dataModel.Data.Surface.StrainCalculationType,
+                HasBarrierInTheMiddle = dataModel.Intervals.Any(x => x.Type != Enums.PassageIntervalTypeEnum.WholeInterval)
             };
             
             var analyser = analyserFactory.GetStrainAnalyser(summary.StrainCalculationGroupType);
