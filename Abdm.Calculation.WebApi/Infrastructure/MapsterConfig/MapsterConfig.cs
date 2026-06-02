@@ -177,6 +177,11 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.IntervalProfileVectors, src => src.IntervalProfileVectors)
             .Map(dst => dst.LambdaSmall, src => src.LambdaSmall)
             .Map(dst => dst.DynamicCoefficient, src => src.DynamicCoefficient);
+
+            TypeAdapterConfig<ProfileVector, ProfileVectorModel>
+            .NewConfig()
+            .Map(dst => dst.X, src => src.X)
+            .Map(dst => dst.Y, src => src.Y);
         }
     }
 }

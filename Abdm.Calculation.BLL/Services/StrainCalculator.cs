@@ -29,9 +29,9 @@ namespace Abdm.Calculation.BLL.Services
             foreach (var trajectory in intervalModel.Trajectories)
             {
                 if (!strainMap.ContainsKey(trajectory.X) 
-                    && TryGetStrainForEachPositivePiece(trajectory, data, out IEnumerable<VehicleStrain> vehicleStrains))
+                    && TryGetStrainForEachPositivePiece(trajectory, data, out VehicleStrain[] vehicleStrains))
                 {
-                    strainMap[trajectory.X] = (trajectory, vehicleStrains.OrderDescending().ToArray()!);
+                    strainMap[trajectory.X] = (trajectory, vehicleStrains);
                 }
                 if (doTrafficJamStrainCalculation && !trafficJamStrainMap.ContainsKey(trajectory.X))
                 {
@@ -66,12 +66,14 @@ namespace Abdm.Calculation.BLL.Services
         public bool TryGetStrainForEachPositivePiece(
             VehicleTrajectory trajectory,
             VehicleRollingSmallModel data,
-            out IEnumerable<VehicleStrain> vehicleStrains)
+            out VehicleStrain[] vehicleStrains)
         {
             vehicleStrains = GetStrainForEachPositivePiece(
                             trajectory,
                             data)
-                        .Where(x => x != null)!;
+                        .Where(x => x != null)
+                        .OrderDescending()
+                        .ToArray()!;
             if (vehicleStrains.Any()) 
             {
                 return true;
@@ -119,23 +121,22 @@ namespace Abdm.Calculation.BLL.Services
                     TotalStrain = 0d,
                 };
             }
-
             //TODO#2:
             var wheelOffset = data.Load.WheelOffsetsMap!.First();
 
             var distanceFromCenter = wheelOffset.Key;
-            var (wheelCount, wheelsWeight) = wheelOffset.Value;
+            var (wheelCount, profileWeight) = wheelOffset.Value;
 
             var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft);
             var volumeRight = GetTraffciJamVolumeForOneSide(profileRight);
 
             var trafficJamStrain = new TrafficJamStrain();
             
-            var totalWeight = wheelsWeight;
+            var profileCoefficient = profileWeight * NormConstants.TrafficJamApproximationParam;
             trafficJamStrain.LeftVolume = volumeLeft;
-            trafficJamStrain.LeftStrain = volumeLeft * wheelsWeight;
+            trafficJamStrain.LeftStrain = volumeLeft * profileCoefficient / profileLeft.FootprintWidth;
             trafficJamStrain.RightVolume = volumeRight;
-            trafficJamStrain.RightStrain = volumeRight * wheelsWeight;
+            trafficJamStrain.RightStrain = volumeRight * profileCoefficient / profileRight.FootprintWidth;
             trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
 
             if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
@@ -157,8 +158,11 @@ namespace Abdm.Calculation.BLL.Services
                 return null;
             }
 
-            if (profileLeft.PositivePieceMap.Values.Sum(interval => interval.Length) > 
-                profileRight.PositivePieceMap.Values.Sum(interval => interval.Length))
+            if (profileLeft.PositivePieces.Sum(interval => interval.Length) 
+                * profileLeft.Extremums.DefaultIfEmpty().Max(v => v.Y) 
+                > 
+                profileRight.PositivePieces.Sum(interval => interval.Length) 
+                * profileRight.Extremums.DefaultIfEmpty().Max(v => v.Y))
             {
                 return profileLeft;
             }
@@ -186,7 +190,7 @@ namespace Abdm.Calculation.BLL.Services
             var volume1 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
             var volume2 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
 
-            return (volume1 + volume2) * NormConstants.TrafficJamApproximationParam / profile.FootprintWidth;
+            return volume1 + volume2;
         }
 
         private VehicleStrain GetVehicleStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data, ProfileYZ measuringProfile, double position)
