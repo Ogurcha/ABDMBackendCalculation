@@ -28,8 +28,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             {
                 trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, 
                     dataModel.Mesh, 
-                    dataModel.Data.Load.Axles, 
-                    dataModel.Data.Surface.RoadCoatSize);
+                    dataModel.Data.Load.Axles,
+                    dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? dataModel.Data.Surface.RoadCoatSize : 0);
             }
             else
             {
@@ -92,14 +92,15 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             //TODO#2: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
             var axle = axles.First();
-            var distMin = axle.WheelWidth / 2 + coatLength;
+            var footprintWidth = axle.WheelWidth + coatLength * 2;
+            var footprintLength = axle.WheelLength + coatLength * 2;
 
-            var sortedVectors1 = GetIntersectionVectorsSorted(mesh, X - distMin);
+            var sortedVectors1 = GetIntersectionVectorsSorted(mesh, X - footprintWidth / 2);
             if (sortedVectors1 == null)
             {
                 return null;
             }
-            var sortedVectors2 = GetIntersectionVectorsSorted(mesh, X + distMin);
+            var sortedVectors2 = GetIntersectionVectorsSorted(mesh, X + footprintWidth / 2);
             if (sortedVectors2 == null)
             {
                 return null;
@@ -113,8 +114,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 MaximumIndexes = profile.MaximumIndexes,
                 PositivePieces = profile.PositivePieces,
                 PositivePieceMap = profile.PositivePieceMap,
-                FootprintLength = axle.WheelLength + 2 * coatLength,
-                FootprintWidth = axle.WheelWidth + 2 * coatLength,
+                FootprintLength = footprintLength,
+                FootprintWidth = footprintWidth,
                 SortedVectorsLeft = sortedVectors1.ToArray(),
                 SortedVectorsRight = sortedVectors2.ToArray(),
             };
@@ -439,10 +440,22 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             }
         }
 
-        public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, LoadModel loadModel, double centerXPosition)
+        public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, VehicleRollingSmallModel data, double centerXPosition, RoadRule roadRule)
         {
-            var xPosition = GetXPosition(centerXPosition, loadModel.WheelOffsetsMap!.Keys);
-            return GetVehicleTrajectoryBase(xPosition, mesh);
+            var xPosition = GetXPosition(centerXPosition, data.Load.WheelOffsetsMap!.Keys);
+
+            if (data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
+                || roadRule.DoTrafficJamLoadCalculation)
+            {
+                return GetVehicleTrajectoryBaseWithExtendedProfiles(xPosition,
+                    mesh,
+                    data.Load.Axles,
+                    data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? data.Surface.RoadCoatSize : 0);
+            }
+            else
+            {
+                return GetVehicleTrajectoryBase(xPosition, mesh);
+            }
         }
 
         private VehicleXPosition GetXPosition(double centerXPosition, IEnumerable<double> halfWheelOffsets)
