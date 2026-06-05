@@ -21,7 +21,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
+        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers)
         {
             var defaults = new List<AnalysisDefault>();
             var dataModel = vehicleRollingResult.DataModel;
@@ -60,7 +60,46 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             analysis.OtherLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.OtherLoad);
             analysis.Default = defaults.OrderByDescending(x => (x.HasSafetyLine == true ? 100 : 0) - x.IntervalType).OrderByDescending(x => x.IsForward).ToList();
 
+            if (doNegativeNumbers)
+            {
+                InvertSummary(analysis);
+            }
+
             return analysis;
+        }
+
+
+        private void InvertSummary(AnalysisSummary summary)
+        {
+            foreach (var analysis in summary.Default!)
+            {
+                foreach (var column in analysis.Columns)
+                {
+                    column.SumStrain = -column.SumStrain;
+                    column.TotalStrain = -column.TotalStrain;
+                    foreach (var v in column.IntervalProfileVectors)
+                    {
+                        v.Y = -v.Y;
+                    }
+                    foreach (var w in column.Wheels)
+                    {
+                        w.Strain = -w.Strain;
+                        w.Pressure = -w.Pressure;
+                        w.Z = -w.Z;
+                        w.ZVolume = -w.ZVolume;
+                    }
+                    if (column.Intervals != null)
+                    {
+                        foreach (var i in column.Intervals)
+                        {
+                            i.LeftIntervalVolume = -i.LeftIntervalVolume;
+                            i.RightIntervalVolume = -i.RightIntervalVolume;
+                            i.RightIntervalStrain = -i.RightIntervalStrain;
+                            i.LeftIntervalStrain = -i.LeftIntervalStrain;
+                        }
+                    }
+                }
+            }
         }
 
         private List<AnalysisColumn> GetAnalysisColumns(IEnumerable<VehicleColumnStrain> strainResults, 
@@ -109,6 +148,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             var wheelCounter = 1;
             var wheels = new List<WheelAnalysis>();
             var vehicleStrain = vehicleStrainRetrieveFunc(columnStrain.VehicleStrains[zeroBaseVehicleNumber]);
+            var trajectory = columnStrain.VehicleTrajectoryRef;
             if (vehicleStrain == null)
             {
                 return null;
@@ -126,11 +166,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             }
 
             List<TrafficJamStrainAnalysis>? intervals = null;
-            ProfileVector[]? intervalProfileVectors = null; 
             if (columnStrain.TrafficJamStrain != null)
             {
                 intervals = new List<TrafficJamStrainAnalysis>();
-                var trajectory = columnStrain.VehicleTrajectoryRef;
 
                 var profileLeft = trajectory.Left.Last().Value;
                 var profileRight = trajectory.Right.Last().Value;
@@ -173,9 +211,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         CenterIntervalLength = MathExtensions.ToDecimal(center.Length),
                     });
                 }
-
-                intervalProfileVectors = GetProfileVectors(trajectory)?.ToArray();
             }
+
+            var intervalProfileVectors = GetProfileVectors(trajectory)?.ToArray() ?? [];
 
             return new AnalysisColumn
             {
