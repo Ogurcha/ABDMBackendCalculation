@@ -263,33 +263,56 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             var surface = dataModel.Data.Surface;
 
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
+            var actualVehicleCount = Math.Min(dataModel.RoadRules.Max(x => x.MaxTrajectoriesCount), passageInterval.LaneCount);
+            var radiuses = dataModel.RoadRules.Select(x => x.MinTrajectoryDistance).Distinct().ToArray();
 
             if (surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)
             {
-                foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
+                foreach (var filteredX in distinctXs)
                 {
-                    foreach (var wheelOffset in loadModel.WheelOffsetsMapCentered!)
+                    foreach (var wheelOffset in loadModel.WheelOffsetsMap!.Keys)
                     {
-                        result.Add(GetXPosition(filteredX - wheelOffset.Key, loadModel.WheelOffsetsMap!.Keys));
-                        result.Add(GetXPosition(filteredX + wheelOffset.Key, loadModel.WheelOffsetsMap!.Keys));
+                        AddPositions(filteredX - wheelOffset);
+                        AddPositions(filteredX + wheelOffset);
                     }
                 }
             }
             else
             {
-                foreach (var filteredX in distinctXs.Where(x => trajectoryFilters.Any(filter => filter.Filter(x))))
+                foreach (var filteredX in distinctXs)
                 {
-                    result.Add(GetXPosition(filteredX, loadModel.WheelOffsetsMap!.Keys));
+                    AddPositions(filteredX);
                 }
             }
 
             foreach (var edge in trajectoryFilters.Select(filter => (filter.EdgeCaseLeft, filter.EdgeCaseRight)))
             {
-                result.Add(GetXPosition(edge.EdgeCaseLeft, loadModel.WheelOffsetsMap!.Keys));
-                result.Add(GetXPosition(edge.EdgeCaseRight, loadModel.WheelOffsetsMap!.Keys));
+                AddPositions(edge.EdgeCaseLeft); 
+                AddPositions(edge.EdgeCaseRight);
             }
 
-            return result.OrderBy(x => x.CenterXPosition).ToArray();
+            return result.DistinctBy(x => x.CenterXPosition).OrderBy(x => x.CenterXPosition).ToArray();
+
+            void AddPositions(double x)
+            {
+                AddPosition(x);
+                for (var i = 1; i < actualVehicleCount; i++)
+                {
+                    foreach (var delta in radiuses.Select(r => i * r))
+                    {
+                        AddPosition(x + delta);
+                        AddPosition(x - delta);
+                    }
+                }
+            }
+
+            void AddPosition(double x)
+            {
+                if (trajectoryFilters.Any(filter => filter.Filter(x)))
+                {
+                    result.Add(GetXPosition(x, loadModel.WheelOffsetsMap!.Keys));
+                }
+            }
         }
 
         /// <summary>
@@ -348,7 +371,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 WheelStrains = wheelStrains.ToArray(),
                 IsDirectionForward = !invertAxles,
                 PositivePiecesMap = positivePiecesMap,
-                Position = Y
+                Y = Y,
+                X = trajectory.X
             };
 
             WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)

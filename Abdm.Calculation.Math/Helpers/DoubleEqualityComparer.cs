@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.Maths.Extensions;
 
-namespace Abdm.Calculation.BLL.Helpers
+namespace Abdm.Calculation.Maths.Helpers
 {
     public class DoubleEqualityComparer : IEqualityComparer<double>
     {
