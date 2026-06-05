@@ -11,7 +11,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             
         ];}
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult)
+        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers)
         {
             throw new NotImplementedException();
         }

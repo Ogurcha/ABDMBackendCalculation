@@ -8,7 +8,7 @@ namespace Abdm.Calculation.BLL.Interfaces
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get; }
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult);
+        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers);
     }
 }
   

@@ -13,6 +13,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
         {
             var hasDefault = defaultRoll.StrainResults.Length > 0;
             var hasMirrored = mirroredRoll?.StrainResults?.Length > 0;
+            var doNegativeNumbers = false;
 
             if (!hasDefault && !hasMirrored)
                 return null;
@@ -31,6 +32,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
                 var defaultMax = defaultRoll.StrainResults.Max(x => x.TotalStrain);
                 var mirroredMax = mirroredRoll!.StrainResults.Max(x => x.TotalStrain);
                 maxStrainResult = defaultMax >= mirroredMax ? defaultRoll : mirroredRoll;
+                if (maxStrainResult == mirroredRoll)
+                {
+                    doNegativeNumbers = true;
+                }
             }
 
             var dataModel = defaultRoll.DataModel;
@@ -45,7 +50,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             };
             
             var analyser = analyserFactory.GetStrainAnalyser(summary.StrainCalculationGroupType);
-            analyser.Analyse(summary, maxStrainResult);
+            analyser.Analyse(summary, maxStrainResult, doNegativeNumbers);
+
 
             return summary;
         }
