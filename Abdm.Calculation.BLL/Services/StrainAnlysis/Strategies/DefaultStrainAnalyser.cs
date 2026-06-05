@@ -221,7 +221,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 VehicleNumber = zeroBaseVehicleNumber + 1,
                 Wheels = wheels,
                 Intervals = intervals,
-                PositionX = MathExtensions.ToDecimal(vehicleStrain.X),
+                PositionX = MathExtensions.ToDecimal(vehicleStrain.X - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(vehicleStrain.Y),
                 SumStrain = wheels.Sum(w => w.Strain),
                 TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
