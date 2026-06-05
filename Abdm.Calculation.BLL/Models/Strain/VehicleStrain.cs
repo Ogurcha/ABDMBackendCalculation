@@ -10,7 +10,12 @@
         /// <summary>
         /// Где на траетории находится ТС
         /// </summary>
-        public double Position { get; set; }
+        public double X { get; set; }
+
+        /// <summary>
+        /// Где на траетории находится ТС
+        /// </summary>
+        public double Y { get; set; }
 
         /// <summary>
         /// Суммарное напряжение по всем осям одного ТС

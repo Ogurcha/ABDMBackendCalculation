@@ -99,10 +99,10 @@ namespace Abdm.Calculation.BLL.Services
                 var distanceFromExtremum = effectiveLoadDistance;
                 while (true)
                 {
-                    bool isValidMax = vehicleStrain.Position + distanceFromExtremum
+                    bool isValidMax = vehicleStrain.Y + distanceFromExtremum
                         <= data.Surface.MaxY + data.Load.Length;
 
-                    bool isValidMin = vehicleStrain.Position - distanceFromExtremum
+                    bool isValidMin = vehicleStrain.Y - distanceFromExtremum
                         >= data.Surface.MinY - data.Load.Length;
 
                     if (!isValidMax && !isValidMin)
@@ -139,7 +139,7 @@ namespace Abdm.Calculation.BLL.Services
 
         private VehicleStrain? CloneVehicleStrain(StrainsInMaximums traj, VehicleRollingSmallModel data, VehicleStrain vehicleStrain, double distanceFromExtremum)
         {
-            var strain = vehiclePositioner.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Position + distanceFromExtremum, data);
+            var strain = vehiclePositioner.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Y + distanceFromExtremum, data);
             if (strain != null && strain.SumStrain > 0d)
             {
                 strain.Coefficient = vehicleStrain.Coefficient;
@@ -159,7 +159,7 @@ namespace Abdm.Calculation.BLL.Services
             double effectiveLoadDistance)
         {
             var orderedByPosition = new LinkedList<VehicleStrain>();
-            var orderedByStrain = new List<LinkedListNode<VehicleStrain>>(allVehicleStrains.OrderBy(x => x.Position).Select(orderedByPosition.AddLast).OrderByDescending(x => x.Value.TotalStrain));
+            var orderedByStrain = new List<LinkedListNode<VehicleStrain>>(allVehicleStrains.OrderBy(x => x.Y).Select(orderedByPosition.AddLast).OrderByDescending(x => x.Value.TotalStrain));
 
             var resultStrains = new List<VehicleStrain>();
 
@@ -175,7 +175,7 @@ namespace Abdm.Calculation.BLL.Services
                     RemoveNodesNearCenter(
                         orderedByPosition,
                         node,
-                        node.Value.Position,
+                        node.Value.Y,
                         effectiveLoadDistance);
                 }
             }
@@ -199,7 +199,7 @@ namespace Abdm.Calculation.BLL.Services
             while (node != null)
             {
                 var prev = node.Previous;
-                if (node.Value.Position > minPos && !equalityComparer.Equals(minPos, node.Value.Position))
+                if (node.Value.Y > minPos && !equalityComparer.Equals(minPos, node.Value.Y))
                 {
                     list.Remove(node);
                 }
@@ -214,7 +214,7 @@ namespace Abdm.Calculation.BLL.Services
             while (node != null)
             {
                 var next = node.Next;
-                if (node.Value.Position < maxPos && !equalityComparer.Equals(maxPos, node.Value.Position))
+                if (node.Value.Y < maxPos && !equalityComparer.Equals(maxPos, node.Value.Y))
                 {
                     list.Remove(node);
                 }

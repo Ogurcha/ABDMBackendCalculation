@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Abdm.Calculation.BLL.Coordinators;
 using Abdm.Calculation.BLL.GraphicsServices;
-using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
@@ -19,6 +18,7 @@ using Abdm.Calculation.DAL;
 using Abdm.Calculation.DAL.Interfaces;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Infrastructure.Settings;
+using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.SteelConcrete;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;

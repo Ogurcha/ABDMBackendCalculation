@@ -63,28 +63,33 @@ namespace Abdm.Calculation.BLL.Extensions
             var betweenIndexes1 = Formulas.FindBetweenIndexes(vectors, YStart, (v) => v.X);
             var betweenIndexes2 = Formulas.FindBetweenIndexes(vectors, YFinish, (v) => v.X);
 
-            var z1 = Formulas.GetOrdinat(vectors[betweenIndexes1.Left],
-                vectors[betweenIndexes1.Right],
-                YStart);
-            var z2 = Formulas.GetOrdinat(vectors[betweenIndexes2.Left],
-                vectors[betweenIndexes2.Right],
-                YFinish);
-
-            var firstVector = new Vector2D(YStart, z1);
-            var lastVector = new Vector2D(YFinish, z2);
-
-            var indexLeft = betweenIndexes1.Left;
-            var indexRight = betweenIndexes2.Right;
+            var indexStart = betweenIndexes1.Left + 1 ?? 0;
+            var indexFinish = betweenIndexes2.Right + 1 ?? vectors.Length;
 
             var trapezoidVectors = vectors
-                .Skip(indexLeft)
-                .Take(indexRight - indexLeft)
-                .Prepend(firstVector)
-                .Append(lastVector).ToArray();
+                .Skip(indexStart)
+                .Take(indexFinish - indexStart);
 
-            indexes = (indexLeft, indexRight);
+            if (betweenIndexes1.Left != null && betweenIndexes1.Right != null)
+            {
+                var z1 = Formulas.GetOrdinat(vectors[betweenIndexes1.Left!.Value],
+                vectors[betweenIndexes1.Right!.Value],
+                YStart);
+                var firstVector = new Vector2D(YStart, z1);
+                trapezoidVectors = trapezoidVectors.Prepend(firstVector);
+            }
 
-            return MathExtensions.CalculateAreaUnderCurve(trapezoidVectors);
+            if (betweenIndexes2.Left != null && betweenIndexes2.Right != null) {
+                var z2 = Formulas.GetOrdinat(vectors[betweenIndexes2.Left!.Value],
+                    vectors[betweenIndexes2.Right!.Value],
+                    YFinish);
+                var lastVector = new Vector2D(YFinish, z2);
+                trapezoidVectors = trapezoidVectors.Append(lastVector);
+            }
+
+            indexes = (indexStart, indexFinish);
+
+            return MathExtensions.CalculateAreaUnderCurve(trapezoidVectors.ToArray());
         }
     }
 }

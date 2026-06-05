@@ -116,7 +116,10 @@ namespace Abdm.Calculation.Maths.Helpers
         /// <summary>
         /// Поиск двух значений отсортированного списка, между которыми лежит <paramref name="targetKey"/> за log(n)
         /// </summary>
-        public static (int Left, int Right) FindBetweenIndexes<TKey, T>(this IList<T> sorted, TKey targetKey, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+        public static (int? Left, int? Right) FindBetweenIndexes<TKey, T>(this IList<T> sorted, 
+            TKey targetKey, 
+            Func<T, TKey> keyFunc, 
+            IEqualityComparer<TKey>? equalityComparer = null) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
         {
             const int MinIndex = 0;
             int MaxIndex = sorted.Count - 1;
@@ -124,11 +127,11 @@ namespace Abdm.Calculation.Maths.Helpers
             var first = sorted[MinIndex];
             var last = sorted[MaxIndex];
 
-            if (targetKey <= keyFunc(first))
-                return (MinIndex, MinIndex);
+            if (targetKey <= keyFunc(first) || (equalityComparer?.Equals(targetKey, keyFunc(first)) ?? false))
+                return (null, MinIndex);
 
-            if (targetKey >= keyFunc(last))
-                return (MaxIndex, MaxIndex);
+            if (targetKey >= keyFunc(last) || (equalityComparer?.Equals(targetKey, keyFunc(last)) ?? false))
+                return (MaxIndex, null);
 
             int leftIndex = MinIndex;
             int rightIndex = MaxIndex;
@@ -138,7 +141,7 @@ namespace Abdm.Calculation.Maths.Helpers
                 int midIndex = (leftIndex + rightIndex) / 2;
                 var midKey = keyFunc(sorted[midIndex]);
 
-                if (midKey == targetKey)
+                if ((equalityComparer?.Equals(midKey, targetKey) ?? false) || midKey == targetKey)
                     return (midIndex, midIndex);
 
                 if (midKey > targetKey)
@@ -149,5 +152,12 @@ namespace Abdm.Calculation.Maths.Helpers
 
             return (leftIndex, rightIndex);
         }
+
+        //public static (int? Left, int? Right) FindBetweenIndexesWithRadius<TKey, T>(this IList<T> sorted, TKey targetKey, TKey radius, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>, ISubtractionOperators<TKey, TKey, TKey>, IAdditionOperators<TKey, TKey, TKey>
+        //{
+        //    var leftEdge = sorted.FindBetweenIndexes(targetKey - radius, keyFunc);
+        //    var rightEdge = sorted.FindBetweenIndexes(targetKey + radius, keyFunc);
+        //    return (leftEdge.Left, rightEdge.Right);
+        //}
     }
 }

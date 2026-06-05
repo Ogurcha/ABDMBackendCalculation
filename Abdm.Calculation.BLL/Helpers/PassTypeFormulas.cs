@@ -23,11 +23,5 @@ namespace Abdm.Calculation.Maths.Helpers
             return axles.SelectMany(a => a.WheelsDistance.Select(wheelsDistance => (wheelsDistance, a.wheelWeight)))
                 .GroupBy(w => w.wheelsDistance).ToDictionary(w => w.Key / 2, w => (w.Count(), w.Sum(w => w.wheelWeight)));
         }
-
-        public static Dictionary<double, int> DistanceBetweenTrajectoryCenterAndAxleCentres(Axle[] axles)
-        {
-            return axles.SelectMany(a => a.WheelsDistance.Select(wd => wd + a.WheelWidth / 2))
-                .GroupBy(w => w).ToDictionary(w => w.Key / 2, w => w.Count());
-        }
     }
 }
