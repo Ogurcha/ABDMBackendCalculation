@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
