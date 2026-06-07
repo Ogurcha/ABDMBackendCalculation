@@ -330,7 +330,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             bool doSlabCalculation)
         {
             Func<Axle, double> axleFunc = invertAxles
-            ? (axle) => { return Y - axle.Position; }
+            ? (axle) => { return Y + load.Length - axle.Position; }
             : (axle) => { return Y + axle.Position; };
 
             var positivePiecesMap = new Dictionary<ProfileYZ, HashSet<Interval>>();
