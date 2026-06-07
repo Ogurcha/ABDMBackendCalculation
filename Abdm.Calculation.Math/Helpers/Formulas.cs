@@ -119,7 +119,7 @@ namespace Abdm.Calculation.Maths.Helpers
         public static (int? Left, int? Right) FindBetweenIndexes<TKey, T>(this IList<T> sorted, 
             TKey targetKey, 
             Func<T, TKey> keyFunc, 
-            IEqualityComparer<TKey>? equalityComparer = null) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
+            IEqualityComparer<TKey> equalityComparer) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
         {
             const int MinIndex = 0;
             int MaxIndex = sorted.Count - 1;
@@ -127,10 +127,10 @@ namespace Abdm.Calculation.Maths.Helpers
             var first = sorted[MinIndex];
             var last = sorted[MaxIndex];
 
-            if (targetKey <= keyFunc(first) || (equalityComparer?.Equals(targetKey, keyFunc(first)) ?? false))
+            if (targetKey <= keyFunc(first) || equalityComparer.Equals(targetKey, keyFunc(first)))
                 return (null, MinIndex);
 
-            if (targetKey >= keyFunc(last) || (equalityComparer?.Equals(targetKey, keyFunc(last)) ?? false))
+            if (targetKey >= keyFunc(last) || equalityComparer.Equals(targetKey, keyFunc(last)))
                 return (MaxIndex, null);
 
             int leftIndex = MinIndex;
@@ -141,7 +141,7 @@ namespace Abdm.Calculation.Maths.Helpers
                 int midIndex = (leftIndex + rightIndex) / 2;
                 var midKey = keyFunc(sorted[midIndex]);
 
-                if ((equalityComparer?.Equals(midKey, targetKey) ?? false) || midKey == targetKey)
+                if (equalityComparer.Equals(midKey, targetKey) || midKey == targetKey)
                     return (midIndex, midIndex);
 
                 if (midKey > targetKey)

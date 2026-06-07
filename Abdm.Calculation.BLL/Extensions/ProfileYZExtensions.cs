@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using System.Collections.Generic;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
@@ -32,19 +33,20 @@ namespace Abdm.Calculation.BLL.Extensions
         public static double GetZValueByYSlabVersion(
             this ProfileYZExtended profile,
             double Y,
+            IEqualityComparer<double> equalityComparer,
             out (Interval? i1, Interval? i2) positivePieces)
         {
-            var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.FootprintLength / 2, out _);
-            var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.FootprintLength / 2, out _);
-            var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.FootprintLength / 2, out var indexesCenter);
+            var trapezoidAreaLeft = CalculateZAreaAroundY(profile.SortedVectorsLeft, Y, profile.FootprintLength / 2, equalityComparer, out _);
+            var trapezoidAreaRight = CalculateZAreaAroundY(profile.SortedVectorsRight, Y, profile.FootprintLength / 2, equalityComparer, out _);
+            var trapezoidAreaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, profile.FootprintLength / 2, equalityComparer, out var indexesCenter);
 
             var volume1 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
             var volume2 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
 
-            positivePieces = 
+            positivePieces =
                 (profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexLeft].X, out Interval? i1) ? i1 : null,
                 profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexRight].X, out Interval? i2) ? i2 : null);
-
+            
             return (volume1 + volume2) / profile.FootprintWidth;
         }
 
@@ -54,40 +56,41 @@ namespace Abdm.Calculation.BLL.Extensions
         /// </summary>
         public static double CalculateZAreaAroundY(Vector2D[] vectors, 
             double Y, 
-            double radius, 
+            double radius,
+            IEqualityComparer<double> equalityComparer,
             out (int indexLeft, int indexRight) indexes)
         {
             var YStart = Y - radius;
             var YFinish = Y + radius;
 
-            var betweenIndexes1 = Formulas.FindBetweenIndexes(vectors, YStart, (v) => v.X);
-            var betweenIndexes2 = Formulas.FindBetweenIndexes(vectors, YFinish, (v) => v.X);
+            var edgeLeft = Formulas.FindBetweenIndexes(vectors, YStart, (v) => v.X, equalityComparer);
+            var edgeRight = Formulas.FindBetweenIndexes(vectors, YFinish, (v) => v.X, equalityComparer);
 
-            var indexStart = betweenIndexes1.Left + 1 ?? 0;
-            var indexFinish = betweenIndexes2.Right + 1 ?? vectors.Length;
+            var indexStart = (edgeLeft.Left + 1 ?? 0);
+            var indexFinish = (edgeRight.Right ?? vectors.Length);
 
             var trapezoidVectors = vectors
                 .Skip(indexStart)
                 .Take(indexFinish - indexStart);
 
-            if (betweenIndexes1.Left != null && betweenIndexes1.Right != null)
+            if (edgeLeft.Left != edgeLeft.Right && edgeLeft.Left != null && edgeLeft.Right!= null)
             {
-                var z1 = Formulas.GetOrdinat(vectors[betweenIndexes1.Left!.Value],
-                vectors[betweenIndexes1.Right!.Value],
+                var z1 = Formulas.GetOrdinat(vectors[edgeLeft.Left.Value],
+                vectors[edgeLeft.Right.Value],
                 YStart);
                 var firstVector = new Vector2D(YStart, z1);
                 trapezoidVectors = trapezoidVectors.Prepend(firstVector);
             }
 
-            if (betweenIndexes2.Left != null && betweenIndexes2.Right != null) {
-                var z2 = Formulas.GetOrdinat(vectors[betweenIndexes2.Left!.Value],
-                    vectors[betweenIndexes2.Right!.Value],
+            if (edgeRight.Left != edgeRight.Right && edgeRight.Left != null && edgeRight.Right != null) {
+                var z2 = Formulas.GetOrdinat(vectors[edgeRight.Left.Value],
+                    vectors[edgeRight.Right.Value],
                     YFinish);
                 var lastVector = new Vector2D(YFinish, z2);
                 trapezoidVectors = trapezoidVectors.Append(lastVector);
             }
 
-            indexes = (indexStart, indexFinish);
+            indexes = (edgeLeft.Left ?? 0, edgeRight.Right ?? vectors.Length - 1);
 
             return MathExtensions.CalculateAreaUnderCurve(trapezoidVectors.ToArray());
         }

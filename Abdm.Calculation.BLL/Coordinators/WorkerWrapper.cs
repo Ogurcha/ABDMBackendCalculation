@@ -33,6 +33,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             catch (Exception e)
             {
                 logger.LogError(coordinator.ExceptionMsg(param));
+                logger.LogError(e.Message);
                 logger.LogError(e.StackTrace);
                 return coordinator.GetFailedResult(param);
             }
