@@ -39,14 +39,14 @@ namespace Abdm.Calculation.Infrastructure
                 producer.UseJsonMessageSerializer();
             });
 
-            services.AddKafkaConsumer<string, StrainAnalysisCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
+            services.AddKafkaConsumer<string, StrainCompareCalculationRequest, StrainCompareMessageHandler>(consumer =>
             {
                 consumer.Configuration.LoadFromConfiguration("StrainCompareMessageConsumer");
                 consumer.UseJsonMessageDeserializer();
                 consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
             });
 
-            services.AddKafkaProducer<string, AnalyseStrainCalculationResponse>(producer =>
+            services.AddKafkaProducer<string, CompareStrainCalculationResponse>(producer =>
             {
                 producer.Configuration.LoadFromConfiguration("StrainCompareMessageProducer");
                 producer.UseJsonMessageSerializer();
