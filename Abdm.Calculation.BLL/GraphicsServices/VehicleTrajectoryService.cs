@@ -27,14 +27,11 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             if (dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
                 || dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalculation))
             {
-                trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, 
-                    dataModel.Mesh, 
-                    dataModel.Data.Load.Axles,
-                    dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? dataModel.Data.Surface.RoadCoatSize : 0);
+                trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, dataModel);
             }
             else
             {
-                trajFunc = x => GetVehicleTrajectoryBase(x, dataModel.Mesh);
+                trajFunc = x => GetVehicleTrajectoryBase(x, dataModel);
             }
 
             result.Trajectories = distinctXs
@@ -149,8 +146,9 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="wheelLength">длина колеса нужна для зануления профиля по краям</param>
         /// <returns></returns>
         public VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
-            Mesh mesh)
+            VehicleRollingBigModel data)
         {
+            var mesh = data.Mesh;
             ProfileYZ? Get(double x) => GetProfileYZ(mesh, x);
 
             var center = Get(xPosition.CenterXPosition);
@@ -197,8 +195,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             return trajectory;
         }
 
-        private VehicleTrajectory? GetVehicleTrajectoryBaseWithExtendedProfiles(VehicleXPosition xPosition, Mesh mesh, Axle[] axles, double roadCoatSize)
+        private VehicleTrajectory? GetVehicleTrajectoryBaseWithExtendedProfiles(VehicleXPosition xPosition, VehicleRollingBigModel dataModel)
         {
+            var mesh = dataModel.Mesh;
+            var axles = dataModel.Data.Load.Axles;
+            var roadCoatSize = dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? dataModel.Data.Surface.RoadCoatSize : 0;
+
             ProfileYZ? Get(double x) => GetProfileYZ(mesh, x);
             ProfileYZ? GetExt(double x) => GetProfileYZExtended(mesh, x, axles, roadCoatSize);
 
@@ -464,24 +466,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 }
 
                 return wheel;
-            }
-        }
-
-        public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, VehicleRollingSmallModel data, double centerXPosition, RoadRule roadRule)
-        {
-            var xPosition = GetXPosition(centerXPosition, data.Load.WheelOffsetsMap!.Keys);
-
-            if (data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
-                || roadRule.DoTrafficJamLoadCalculation)
-            {
-                return GetVehicleTrajectoryBaseWithExtendedProfiles(xPosition,
-                    mesh,
-                    data.Load.Axles,
-                    data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? data.Surface.RoadCoatSize : 0);
-            }
-            else
-            {
-                return GetVehicleTrajectoryBase(xPosition, mesh);
             }
         }
 
