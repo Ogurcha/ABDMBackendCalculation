@@ -36,7 +36,7 @@ namespace Abdm.Calculation.WebApi.Handlers
             try
             {
                 var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<AnalyseStrainCalculationResponse>());
+                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>());
             }
             catch (Exception ex)
             {
