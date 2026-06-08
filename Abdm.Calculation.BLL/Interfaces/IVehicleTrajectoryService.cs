@@ -14,8 +14,8 @@ namespace Abdm.Calculation.BLL.Interfaces
         ProfileYZ? GetProfileYZ(Mesh mesh, 
             double X);
 
-        VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition, 
-            Mesh mesh);
+        VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
+            VehicleRollingBigModel data);
 
         VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
             VehicleRollingBigModel data,

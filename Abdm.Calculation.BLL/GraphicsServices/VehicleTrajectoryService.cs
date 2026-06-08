@@ -27,12 +27,11 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             if (dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
                 || dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalculation))
             {
-                trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, 
-                    dataModel);
+                trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, dataModel);
             }
             else
             {
-                trajFunc = x => GetVehicleTrajectoryBase(x, dataModel.Mesh);
+                trajFunc = x => GetVehicleTrajectoryBase(x, dataModel);
             }
 
             result.Trajectories = distinctXs
@@ -147,8 +146,9 @@ namespace Abdm.Calculation.BLL.GraphicsServices
         /// <param name="wheelLength">длина колеса нужна для зануления профиля по краям</param>
         /// <returns></returns>
         public VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition,
-            Mesh mesh)
+            VehicleRollingBigModel data)
         {
+            var mesh = data.Mesh;
             ProfileYZ? Get(double x) => GetProfileYZ(mesh, x);
 
             var center = Get(xPosition.CenterXPosition);
