@@ -19,7 +19,7 @@ namespace Abdm.Calculation.BLL.Services
                 unpopulated.AddRange(strainSelector.SelectBestStrainResult(strainsMap, interval, data));
             }
 
-            return strainResultPopulator.PopulateStrainResults(unpopulated, data.Data).ToArray();
+            return strainResultPopulator.PopulateStrainResults(unpopulated, data.Data).Where(s => s.TotalStrain >= 0).ToArray();
         }
     }
 }

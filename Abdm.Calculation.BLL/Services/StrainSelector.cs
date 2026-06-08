@@ -116,7 +116,7 @@ namespace Abdm.Calculation.BLL.Services
                 }
             }
 
-            if (strainScore == null)
+            if (strainScore == null || strainScore.Score < 0)
             {
                 strainScore = new StrainScore { Score = 0, StrainsPicked = new List<StrainsInMaximums>() };
             }
