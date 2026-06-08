@@ -17,11 +17,6 @@ namespace Abdm.Calculation.BLL.Interfaces
         VehicleTrajectory? GetVehicleTrajectoryBase(VehicleXPosition xPosition, 
             Mesh mesh);
 
-        VehicleTrajectory? GetVehicleTrajectory(Mesh mesh,
-            VehicleRollingSmallModel data, 
-            double centerXPosition,
-            RoadRule roadRule);
-
         VehicleXPosition[] CalculateVehiclePositionsIncludingWheelOffsets(
             VehicleRollingBigModel data,
             PassageInterval passageInterval);

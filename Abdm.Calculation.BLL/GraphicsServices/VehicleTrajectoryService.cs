@@ -28,9 +28,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 || dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalculation))
             {
                 trajFunc = x => GetVehicleTrajectoryBaseWithExtendedProfiles(x, 
-                    dataModel.Mesh, 
-                    dataModel.Data.Load.Axles,
-                    dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? dataModel.Data.Surface.RoadCoatSize : 0);
+                    dataModel);
             }
             else
             {
@@ -197,8 +195,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             return trajectory;
         }
 
-        private VehicleTrajectory? GetVehicleTrajectoryBaseWithExtendedProfiles(VehicleXPosition xPosition, Mesh mesh, Axle[] axles, double roadCoatSize)
+        private VehicleTrajectory? GetVehicleTrajectoryBaseWithExtendedProfiles(VehicleXPosition xPosition, VehicleRollingBigModel dataModel)
         {
+            var mesh = dataModel.Mesh;
+            var axles = dataModel.Data.Load.Axles;
+            var roadCoatSize = dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? dataModel.Data.Surface.RoadCoatSize : 0;
+
             ProfileYZ? Get(double x) => GetProfileYZ(mesh, x);
             ProfileYZ? GetExt(double x) => GetProfileYZExtended(mesh, x, axles, roadCoatSize);
 
@@ -464,24 +466,6 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 }
 
                 return wheel;
-            }
-        }
-
-        public VehicleTrajectory? GetVehicleTrajectory(Mesh mesh, VehicleRollingSmallModel data, double centerXPosition, RoadRule roadRule)
-        {
-            var xPosition = GetXPosition(centerXPosition, data.Load.WheelOffsetsMap!.Keys);
-
-            if (data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab
-                || roadRule.DoTrafficJamLoadCalculation)
-            {
-                return GetVehicleTrajectoryBaseWithExtendedProfiles(xPosition,
-                    mesh,
-                    data.Load.Axles,
-                    data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab ? data.Surface.RoadCoatSize : 0);
-            }
-            else
-            {
-                return GetVehicleTrajectoryBase(xPosition, mesh);
             }
         }
 
