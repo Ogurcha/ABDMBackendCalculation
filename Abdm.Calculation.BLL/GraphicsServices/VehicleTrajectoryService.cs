@@ -269,20 +269,20 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 
             if (surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)
             {
-                foreach (var filteredX in distinctXs)
+                foreach (var X in distinctXs)
                 {
                     foreach (var wheelOffset in loadModel.WheelOffsetsMap!.Keys)
                     {
-                        AddPositions(filteredX - wheelOffset);
-                        AddPositions(filteredX + wheelOffset);
+                        AddPositions(X - wheelOffset);
+                        AddPositions(X + wheelOffset);
                     }
                 }
             }
             else
             {
-                foreach (var filteredX in distinctXs)
+                foreach (var X in distinctXs)
                 {
-                    AddPositions(filteredX);
+                    AddPositions(X);
                 }
             }
 
