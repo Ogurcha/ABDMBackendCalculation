@@ -11,7 +11,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
 {
     public class VehicleTrajectoryService(
         IMeshManager meshManager,
-        ITrajectoryFilterProvider trajectoryFilterProvider) : IVehicleTrajectoryService
+        ITrajectoryFilterProvider trajectoryFilterProvider,
+        IEqualityComparer<double> equalityComparer) : IVehicleTrajectoryService
     {
         public IntervalModel GetIntervalModel(
             VehicleRollingBigModel dataModel,
@@ -330,7 +331,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             bool doSlabCalculation)
         {
             Func<Axle, double> axleFunc = invertAxles
-            ? (axle) => { return Y - axle.Position; }
+            ? (axle) => { return Y + load.Length - axle.Position; }
             : (axle) => { return Y + axle.Position; };
 
             var positivePiecesMap = new Dictionary<ProfileYZ, HashSet<Interval>>();
@@ -364,15 +365,17 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                     return [leftWheel, rightWheel];
                 }));
             }
+            var sumStrain = wheelStrains.Sum(x => x.Strain);
 
             return new VehicleStrain
             {
-                SumStrain = wheelStrains.Sum(x => x.Strain),
+                SumStrain = sumStrain,
+                TotalStrain = sumStrain,
                 WheelStrains = wheelStrains.ToArray(),
                 IsDirectionForward = !invertAxles,
                 PositivePiecesMap = positivePiecesMap,
                 Y = Y,
-                X = trajectory.X
+                X = trajectory.X,
             };
 
             WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
@@ -392,7 +395,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                     };
                 };
                 var zValue = profile.GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
-                var strain = zValue * axle.wheelWeight;
+                var strain = zValue * axle.WheelWeight;
                 var wheel = new WheelStrain
                 {
                     Position = new Vector2D
@@ -436,8 +439,8 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 {
                     return GetWheelStrain(profilebase, positivePiecesMap, axle, axleFunc);
                 }
-                var zValue = profile.GetZValueByYSlabVersion(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
-                var strain = zValue * axle.wheelWeight;
+                var zValue = profile.GetZValueByYSlabVersion(axleFunc(axle), equalityComparer, out (Interval? i1, Interval? i2) positivePieces);
+                var strain = zValue * axle.WheelWeight;
                 var wheel = new WheelStrain
                 {
                     Position = new Vector2D

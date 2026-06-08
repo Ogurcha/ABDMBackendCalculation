@@ -20,8 +20,8 @@ namespace Abdm.Calculation.Maths.Helpers
         /// <returns>возвращает уникальные значения от оси ТС до колеса, количество колёс, проходящих на таком расстоянии и их суммарный вес проходящий на таком расстоянии</returns>
         public static Dictionary<double, (int, double)> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
         {
-            return axles.SelectMany(a => a.WheelsDistance.Select(wheelsDistance => (wheelsDistance, a.wheelWeight)))
-                .GroupBy(w => w.wheelsDistance).ToDictionary(w => w.Key / 2, w => (w.Count(), w.Sum(w => w.wheelWeight)));
+            return axles.SelectMany(a => a.WheelsDistance.Select(wheelsDistance => (wheelsDistance, a.WheelWeight)))
+                .GroupBy(w => w.wheelsDistance).ToDictionary(w => w.Key / 2, w => (w.Count(), w.Sum(w => w.WheelWeight)));
         }
     }
 }

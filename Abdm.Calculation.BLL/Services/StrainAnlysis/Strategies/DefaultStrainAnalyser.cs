@@ -245,7 +245,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
                 Z = MathExtensions.ToDecimal(wheelStrain.ZValue),
                 ZVolume = MathExtensions.ToDecimal(wheelStrain.ZValue),
-                Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.wheelWeight),
+                Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
                 Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelLength / wheelStrain.AxleRef.WheelWidth),
                 FootPrintSizeFirst = MathExtensions.ToDecimal(wheelStrain.FootprintLength ?? 0d),
                 FootPrintSizeSecond = MathExtensions.ToDecimal(wheelStrain.FootprintWidth ?? 0d),

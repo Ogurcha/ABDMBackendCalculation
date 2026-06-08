@@ -37,7 +37,7 @@
         /// </summary>
         public double WheelLength { get; set; }
 
-        public double wheelWeight => Weight / WheelCount;
+        public double WheelWeight => Weight / WheelCount;
 
         public int WheelCount => WheelsDistance.Length * 2;
     }

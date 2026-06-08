@@ -38,6 +38,19 @@ namespace Abdm.Calculation.Infrastructure
                 producer.Configuration.LoadFromConfiguration("StrainAnalysisMessageProducer");
                 producer.UseJsonMessageSerializer();
             });
+
+            services.AddKafkaConsumer<string, StrainCompareCalculationRequest, StrainCompareMessageHandler>(consumer =>
+            {
+                consumer.Configuration.LoadFromConfiguration("StrainCompareMessageConsumer");
+                consumer.UseJsonMessageDeserializer();
+                consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
+            });
+
+            services.AddKafkaProducer<string, CompareStrainCalculationResponse>(producer =>
+            {
+                producer.Configuration.LoadFromConfiguration("StrainCompareMessageProducer");
+                producer.UseJsonMessageSerializer();
+            });
         }
     }
 }
