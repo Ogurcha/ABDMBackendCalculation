@@ -346,26 +346,26 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 positivePiecesMap.Add(profile.Value, new HashSet<Interval>());
             }
 
-            IEnumerable<WheelStrain> wheelStrains;
+            WheelStrain[] wheelStrains;
             if (doSlabCalculation)
             {
                 wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var leftWheel = GetWheelStrainSlab(trajectory.Left[distance], positivePiecesMap, axle, axleFunc);
-                    var rightWheel = GetWheelStrainSlab(trajectory.Right[distance], positivePiecesMap, axle, axleFunc);
+                    var leftWheel = GetWheelStrainSlab(trajectory.Left[distance], positivePiecesMap, axle, axleFunc(axle));
+                    var rightWheel = GetWheelStrainSlab(trajectory.Right[distance], positivePiecesMap, axle, axleFunc(axle));
                     return [leftWheel, rightWheel];
-                }));
+                })).ToArray();
             }
             else
             {
                 wheelStrains = load.Axles.SelectMany(axle =>
                 axle.WheelsDistance.SelectMany<double, WheelStrain>(distance =>
                 {
-                    var leftWheel = GetWheelStrain(trajectory.Left[distance], positivePiecesMap, axle, axleFunc);
-                    var rightWheel = GetWheelStrain(trajectory.Right[distance], positivePiecesMap, axle, axleFunc);
+                    var leftWheel = GetWheelStrain(trajectory.Left[distance], positivePiecesMap, axle, axleFunc(axle));
+                    var rightWheel = GetWheelStrain(trajectory.Right[distance], positivePiecesMap, axle, axleFunc(axle));
                     return [leftWheel, rightWheel];
-                }));
+                })).ToArray();
             }
             var sumStrain = wheelStrains.Sum(x => x.Strain);
 
@@ -373,14 +373,14 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             {
                 SumStrain = sumStrain,
                 TotalStrain = sumStrain,
-                WheelStrains = wheelStrains.ToArray(),
+                WheelStrains = wheelStrains,
                 IsDirectionForward = !invertAxles,
                 PositivePiecesMap = positivePiecesMap,
                 Y = Y,
                 X = trajectory.X,
             };
 
-            WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
+            WheelStrain GetWheelStrain(ProfileYZ profile, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, double Y)
             {
                 if (profile.MaximumIndexes.Length == 0 || profile.PositivePieceMap.Count() == 0)
                 {
@@ -389,21 +389,21 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         Position = new Vector2D
                         {
                             X = profile.X,
-                            Y = axleFunc(axle)
+                            Y = Y
                         },
                         AxleRef = axle,
                         Strain = 0d,
                         ZValue = 0d,
                     };
                 };
-                var zValue = profile.GetZValueByY(axleFunc(axle), out (Interval? i1, Interval? i2) positivePieces);
+                var zValue = profile.GetZValueByY(Y, out (Interval? i1, Interval? i2) positivePieces);
                 var strain = zValue * axle.WheelWeight;
                 var wheel = new WheelStrain
                 {
                     Position = new Vector2D
                     {
                         X = profile.X,
-                        Y = axleFunc(axle)
+                        Y = Y
                     },
                     AxleRef = axle,
                     Strain = strain,
@@ -421,8 +421,12 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                 return wheel;
             }
 
-            WheelStrain GetWheelStrainSlab(ProfileYZ profilebase, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, Func<Axle, double> axleFunc)
+            WheelStrain GetWheelStrainSlab(ProfileYZ profilebase, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, double Y)
             {
+                if (profilebase is not ProfileYZExtended profile)
+                {
+                    return GetWheelStrain(profilebase, positivePiecesMap, axle, Y);
+                }
                 if (profilebase.MaximumIndexes.Length == 0 || profilebase.PositivePieceMap.Count() == 0)
                 {
                     return new WheelStrain
@@ -430,25 +434,21 @@ namespace Abdm.Calculation.BLL.GraphicsServices
                         Position = new Vector2D
                         {
                             X = profilebase.X,
-                            Y = axleFunc(axle)
+                            Y = Y
                         },
                         AxleRef = axle,
                         Strain = 0d,
                         ZValue = 0d,
                     };
                 };
-                if (profilebase is not ProfileYZExtended profile)
-                {
-                    return GetWheelStrain(profilebase, positivePiecesMap, axle, axleFunc);
-                }
-                var zValue = profile.GetZValueByYSlabVersion(axleFunc(axle), equalityComparer, out (Interval? i1, Interval? i2) positivePieces);
+                var zValue = profile.GetZValueByYSlabVersion(Y, equalityComparer, out (Interval? i1, Interval? i2) positivePieces);
                 var strain = zValue * axle.WheelWeight;
                 var wheel = new WheelStrain
                 {
                     Position = new Vector2D
                     {
                         X = profile.X,
-                        Y = axleFunc(axle)
+                        Y = Y
                     },
                     AxleRef = axle,
                     Strain = strain,
