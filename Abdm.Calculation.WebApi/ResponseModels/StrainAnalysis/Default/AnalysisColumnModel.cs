@@ -16,6 +16,9 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("positionY")]
         public decimal PositionY { get; set; }
 
+        [JsonPropertyName("positionYForImage")]
+        public decimal PositionYForImage { get; internal set; }
+
         [JsonPropertyName("wheels")]
         public required WheelAnalysisModel[] Wheels { get; set; }
 
