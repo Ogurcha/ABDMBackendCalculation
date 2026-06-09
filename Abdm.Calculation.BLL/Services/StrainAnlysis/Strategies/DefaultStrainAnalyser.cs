@@ -213,6 +213,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 }
             }
 
+            var yShift = vehicleStrain.WheelStrains.Min(w => w.AxleRef.Position);
             var intervalProfileVectors = GetProfileVectors(trajectory)?.ToArray() ?? [];
 
             return new AnalysisColumn
@@ -222,7 +223,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Wheels = wheels,
                 Intervals = intervals,
                 PositionX = MathExtensions.ToDecimal(vehicleStrain.X - leftIntervalStart),
-                PositionY = MathExtensions.ToDecimal(vehicleStrain.Y),
+                PositionY = MathExtensions.ToDecimal(vehicleStrain.Y + yShift),
                 SumStrain = wheels.Sum(w => w.Strain),
                 TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
                 IntervalProfileVectors = intervalProfileVectors,
