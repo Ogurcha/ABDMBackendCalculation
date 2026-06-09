@@ -84,7 +84,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     foreach (var w in column.Wheels)
                     {
                         w.Strain = -w.Strain;
-                        w.Pressure = -w.Pressure;
                         w.Z = -w.Z;
                         w.ZVolume = -w.ZVolume;
                     }
@@ -96,6 +95,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                             i.RightIntervalVolume = -i.RightIntervalVolume;
                             i.RightIntervalStrain = -i.RightIntervalStrain;
                             i.LeftIntervalStrain = -i.LeftIntervalStrain;
+                            i.SumStrain = -i.SumStrain;
                         }
                     }
                 }
@@ -244,9 +244,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 PositionX = MathExtensions.ToDecimal(wheelStrain.Position.X - leftIntervalStart),
                 PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
                 Z = MathExtensions.ToDecimal(wheelStrain.ZValue),
-                ZVolume = MathExtensions.ToDecimal(wheelStrain.ZValue),
+                ZVolume = MathExtensions.ToDecimal(wheelStrain.ZValue * wheelStrain.FootprintLength * wheelStrain.FootprintWidth ?? 0),
                 Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
-                Pressure = MathExtensions.ToDecimal(wheelStrain.Strain / wheelStrain.AxleRef.WheelLength / wheelStrain.AxleRef.WheelWidth),
+                Pressure = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight / wheelStrain.FootprintLength / wheelStrain.FootprintWidth ?? 0),
                 FootPrintSizeFirst = MathExtensions.ToDecimal(wheelStrain.FootprintLength ?? 0d),
                 FootPrintSizeSecond = MathExtensions.ToDecimal(wheelStrain.FootprintWidth ?? 0d),
             };
