@@ -65,14 +65,14 @@ namespace Abdm.Calculation.BLL.Extensions
             var edgeLeft = Formulas.FindBetweenIndexes(vectors, YStart, (v) => v.X, equalityComparer);
             var edgeRight = Formulas.FindBetweenIndexes(vectors, YFinish, (v) => v.X, equalityComparer);
 
-            var indexStart = (edgeLeft.Left + 1 ?? 0);
-            var indexFinish = (edgeRight.Right ?? vectors.Length);
+            var indexStart = (edgeLeft.Left ?? -1) + 1;
+            var indexFinish = edgeRight.Right ?? vectors.Length;
 
             var trapezoidVectors = vectors
                 .Skip(indexStart)
                 .Take(indexFinish - indexStart);
 
-            if (edgeLeft.Left != edgeLeft.Right && edgeLeft.Left != null && edgeLeft.Right!= null)
+            if (edgeLeft.Left != edgeLeft.Right && edgeLeft.Left != null && edgeLeft.Right != null)
             {
                 var z1 = Formulas.GetOrdinat(vectors[edgeLeft.Left.Value],
                 vectors[edgeLeft.Right.Value],

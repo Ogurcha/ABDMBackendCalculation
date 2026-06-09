@@ -107,8 +107,8 @@ namespace Abdm.Calculation.BLL.Services
                 }
                 else if (leftEdge.Left != null || rightEdge.Right != null)
                 {
-                    var indexLeft = (leftEdge.Left + 1 ?? 0);
-                    var indexRight = (rightEdge.Right ?? orderedByPosition.Length);
+                    var indexLeft = (leftEdge.Left ?? -1) + 1;
+                    var indexRight = rightEdge.Right ?? orderedByPosition.Length;
 
                     newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
 
