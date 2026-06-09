@@ -170,6 +170,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.VehicleNumber, src => src.VehicleNumber)
             .Map(dst => dst.PositionX, src => src.PositionX)
             .Map(dst => dst.PositionY, src => src.PositionY)
+            .Map(dst => dst.PositionYForImage, src => src.PositionYForImage)
             .Map(dst => dst.Wheels, src => src.Wheels)
             .Map(dst => dst.SumStrain, src => src.SumStrain)
             .Map(dst => dst.TotalStrain, src => src.TotalStrain)
