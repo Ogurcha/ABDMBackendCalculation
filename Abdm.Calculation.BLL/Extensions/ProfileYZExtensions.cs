@@ -46,7 +46,7 @@ namespace Abdm.Calculation.BLL.Extensions
                 (profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexLeft].X, out Interval? i1) ? i1 : null,
                 profile.PositivePieceMap.TryGetValue(profile.SortedVectors[indexesCenter.indexRight].X, out Interval? i2) ? i2 : null);
             
-            return (volume1 + volume2) / profile.FootprintWidth;
+            return (volume1 + volume2) / profile.FootprintWidth / profile.FootprintLength;
         }
 
         /// <summary>
