@@ -37,7 +37,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("lambdaSmall")]
         public decimal LambdaSmall { get; set; }
 
-        [JsonPropertyName("dynamicCoefficient")]
-        public decimal DynamicCoefficient { get; set; }
+        [JsonPropertyName("coefficients")]
+        public CoefficientsModel Coefficients { get; set; }
     }
 }

@@ -22,8 +22,8 @@
 
         public decimal LambdaSmall { get; set; }
 
-        public decimal DynamicCoefficient { get; set; }
-
         public decimal PositionYForImage { get; set; }
+
+        public required Coefficients Coefficients { get; set; }
     }
 }

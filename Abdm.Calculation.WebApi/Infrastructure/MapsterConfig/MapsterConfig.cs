@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -177,12 +175,21 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.Intervals, src => src.Intervals)
             .Map(dst => dst.IntervalProfileVectors, src => src.IntervalProfileVectors)
             .Map(dst => dst.LambdaSmall, src => src.LambdaSmall)
-            .Map(dst => dst.DynamicCoefficient, src => src.DynamicCoefficient);
+            .Map(dst => dst.Coefficients, src => src.Coefficients);
 
             TypeAdapterConfig<ProfileVector, ProfileVectorModel>
             .NewConfig()
             .Map(dst => dst.X, src => src.X)
             .Map(dst => dst.Y, src => src.Y);
+
+            TypeAdapterConfig<Coefficients, CoefficientsModel>
+            .NewConfig()
+            .Map(dst => dst.Stripe, src => src.Stripe)
+            .Map(dst => dst.Dynamic, src => src.Dynamic)
+            .Map(dst => dst.Reliability, src => src.Reliability)
+            .Map(dst => dst.StripeInterval, src => src.StripeInterval)
+            .Map(dst => dst.DynamicInterval, src => src.DynamicInterval)
+            .Map(dst => dst.ReliabilityInterval, src => src.ReliabilityInterval);
         }
     }
 }
