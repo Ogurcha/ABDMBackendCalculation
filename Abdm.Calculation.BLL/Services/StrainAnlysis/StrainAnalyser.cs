@@ -52,7 +52,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             var analyser = analyserFactory.GetStrainAnalyser(summary.StrainCalculationGroupType);
             analyser.Analyse(summary, maxStrainResult, doNegativeNumbers);
 
-
             return summary;
         }
     }

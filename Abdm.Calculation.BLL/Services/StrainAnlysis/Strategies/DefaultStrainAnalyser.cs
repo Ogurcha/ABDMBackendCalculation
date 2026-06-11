@@ -10,7 +10,7 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class DefaultStrainAnalyser : ISAStrategy
+    public class DefaultStrainAnalyser(IStrainCoefficientFactory strainCoefficientFactory) : ISAStrategy
     {
         private const int ProfileVectorsLimitCount = 50;
 
@@ -63,6 +63,19 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             if (doNegativeNumbers)
             {
                 InvertSummary(analysis);
+            }
+
+            if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, vehicleRollingResult.DataModel.Data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficientCalculator
+                && strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.TrafficJam, vehicleRollingResult.DataModel.Data.Surface.StrainCalculationGroupType) is ICoefficientCalculator tjCoefficientCalculator)
+            {
+                foreach (var column in analysis.Default.SelectMany(x => x.Columns))
+                {
+                    column.Coefficients.Dynamic = MathExtensions.ToDecimal(coefficientCalculator.Get((double)column.LambdaSmall, vehicleRollingResult.DataModel.Data.Load.Type, vehicleRollingResult.DataModel.Data.Surface.Material));
+                    if (column.Intervals != null)
+                    {
+                        column.Coefficients.DynamicInterval = MathExtensions.ToDecimal(tjCoefficientCalculator.Get((double)column.LambdaSmall, vehicleRollingResult.DataModel.Data.Load.Type, vehicleRollingResult.DataModel.Data.Surface.Material));
+                    }
+                }
             }
 
             return analysis;
@@ -216,6 +229,17 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             var yShift = vehicleStrain.WheelStrains.Min(w => w.AxleRef.Position);
             var intervalProfileVectors = GetProfileVectors(trajectory)?.ToArray() ?? [];
 
+            var coefficients = new Coefficients
+            {
+                Stripe = 1, //TODO
+                Reliability = MathExtensions.ToDecimal(vehicleStrain.Coefficient),
+            };
+            if (columnStrain.TrafficJamStrain != null)
+            {
+                coefficients.StripeInterval = 1; //TODO
+                coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.Coefficient);
+            }
+
             return new AnalysisColumn
             {
                 ColumnNumber = oneBaseColumNumber,
@@ -228,8 +252,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 SumStrain = wheels.Sum(w => w.Strain),
                 TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
                 IntervalProfileVectors = intervalProfileVectors,
-                LambdaSmall = MathExtensions.ToDecimal(vehicleStrain.LambdaSmall), 
-                DynamicCoefficient = MathExtensions.ToDecimal(vehicleStrain.Coefficient),
+                LambdaSmall = MathExtensions.ToDecimal(vehicleStrain.LambdaSmall),
+                Coefficients = coefficients,
             };
         }
 

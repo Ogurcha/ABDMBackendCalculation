@@ -81,7 +81,7 @@ namespace Abdm.Calculation.Infrastructure
             }));
             services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<ISAStrategy>
             {
-                new DefaultStrainAnalyser(),
+                new DefaultStrainAnalyser(x.GetRequiredService<IStrainCoefficientFactory>()),
                 new SteelConcreteAnalyser(),
             }));
 
