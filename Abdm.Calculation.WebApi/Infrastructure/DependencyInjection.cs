@@ -12,6 +12,13 @@ using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.Services.StrainAnlysis;
 using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
 using Abdm.Calculation.BLL.Services.StrainCoefficients;
+using odm16 = Abdm.Calculation.BLL.Services.StrainCoefficients.odm16;
+using snip1938 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1938;
+using snip1943 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1943;
+using snip1948 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1948;
+using snip1953 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1953;
+using snip1962 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1962;
+using snip1984 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1984;
 using Abdm.Calculation.BLL.Services.SurfaceData;
 using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
 using Abdm.Calculation.DAL;
@@ -23,7 +30,6 @@ using Abdm.Calculation.SteelConcrete;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 
 namespace Abdm.Calculation.Infrastructure
 {
@@ -67,13 +73,8 @@ namespace Abdm.Calculation.Infrastructure
                 new PillarSurfaceBinaryParser(new PillarDataService()),
                 new SteelConcreteSurfaceBinaryParser()
             }));
-            services.AddSingleton<IStrainCoefficientFactory, StrainCoefficientFactory>(x => new StrainCoefficientFactory(new List<ICoefficientCalculator>
-            {
-                new BasicStrainCoefficientCalculator(),
-                new DynamicMovementCoefficientCalculator(),
-                new DynamicMovementPillarCoefficientCalculator(),
-                new TrafficJamStrainCoefficientCalculator(),
-            }));
+            services.AddSingleton<ICoefficientProviderFactory, CoefficientProviderFactory>(x 
+                => new CoefficientProviderFactory(DependencyInjection.CoefficientProviderList()));
             services.AddSingleton<IPassTypeResolverFactory, PassTypeResolverFactory>(x => new PassTypeResolverFactory(new List<IPassTypeResolver>
             {
                 new PassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>()),
@@ -102,10 +103,10 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IStrainResultService, StrainResultService>();
             services.AddScoped<IBaseVehicleRollingCalculationCoordinator, BaseVehicleRollingCalculationCoordinator>();
 
-           
+
             services.AddWorker<PassTypeCalculationCoordinator, PassTypeCalculationParameters, PassTypeCalculationResult>();
             services.AddWorker<StrainAnalysisCalculationCoordinator, StrainAnalysisParameters, StrainAnalysisResult>();
-            
+
         }
 
         public static void AddWorker<T, Param, Result>(this IServiceCollection services) where T : class, ICoordinator<Param, Result> where Result : class where Param : class
@@ -113,5 +114,26 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<T>();
             services.AddScoped<ICanWork<Param, Result>, WorkerWrapper<T, Param, Result>>();
         }
+
+        public static ICoefficientProvider[] CoefficientProviderList() => new ICoefficientProvider[]
+        {
+            new odm16.ABCoefficientProvider(),
+            new odm16.AutoColumnCoefficientProvider(),
+            new odm16.NClassCoefficientProvider(),
+            new odm16.SingleCoefficientProvider(),
+            new snip1938.SimpleCoefficientProvider(),
+            new snip1938.TankCoefficientProvider(),
+            new snip1943.SimpleCoefficientProvider(),
+            new snip1943.TankCoefficientProvider(),
+            new snip1948.SimpleCoefficientProvider(),
+            new snip1948.TankCoefficientProvider(),
+            new snip1953.SimpleCoefficientProvider(),
+            new snip1962.MediumCoefficientProvider(),
+            new snip1962.TankCoefficientProvider(),
+            new snip1984.ABCoefficientProvider(),
+            new snip1984.MediumCoefficientProvider(),
+            new snip1984.TankCoefficientProvider(),
+        };
+           
     }
 }
