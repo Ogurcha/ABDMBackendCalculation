@@ -7,7 +7,6 @@ using Abdm.Calculation.Maths.Extensions;
 namespace Abdm.Calculation.BLL.Services
 {
     public class StrainCalculator(IVehiclePositioner vehiclePositioner,
-        IStrainCoefficientFactory strainCoefficientFactory,
         IEqualityComparer<double> equalityComparer,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainCalculator
     {
@@ -139,9 +138,9 @@ namespace Abdm.Calculation.BLL.Services
             trafficJamStrain.RightStrain = volumeRight * profileCoefficient / profileRight.FootprintWidth;
             trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
 
-            if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.TrafficJam, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
+            if (data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
             {
-                trafficJamStrain.Coefficient *= coefficient.Get(trajectory.Center.PositivePieces.Sum(x => x.Length), data.Load.Type, data.Surface.Material);
+                trafficJamStrain.Coefficient = data.CoefficientProvider.TrafficJamStrainCoefficientProvider.GetBasicCoefficent(trajectory.Center.PositivePieces.Sum(x => x.Length));
             }
             trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.Coefficient;
 
@@ -201,10 +200,7 @@ namespace Abdm.Calculation.BLL.Services
 
             strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.Length);
 
-            if (strainCoefficientFactory.GetStrainCalculator(Enums.StrainCoefficientTypeEnum.BasicStrain, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficient)
-            {
-                strain.Coefficient *= coefficient.Get(strain.LambdaSmall, data.Load.Type, data.Surface.Material);
-            }
+            strain.Coefficient = data.CoefficientProvider.GetBasicCoefficent(strain.LambdaSmall);
             strain.TotalStrain = strain.SumStrain * strain.Coefficient;
             if (strain.InvertedDirectionStrain != null)
             {

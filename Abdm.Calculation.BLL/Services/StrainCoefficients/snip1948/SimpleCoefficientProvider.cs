@@ -15,7 +15,7 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.snip1948
             ];
             WorksForLoads = [
                 LoadGroupTypeEnum.AClass,
-                LoadGroupTypeEnum.AB,
+                LoadGroupTypeEnum.Common,
             ];
         }
 

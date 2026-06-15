@@ -6,7 +6,7 @@ using Abdm.Calculation.BLL.Services.PassTypes.Conditions;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
 {
-    public class PassTypeResolver(IStrainCoefficientFactory strainCoefficientFactory) : IPassTypeResolver
+    public class PassTypeResolver() : IPassTypeResolver
     {
         public List<(IPassTypeCondition condition, PassTypeEnum passType)> PassTypeConditions =
             new()
@@ -26,11 +26,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes
 
         public PassTypeEnum Resolve(IList<StrainResult> strainResults, VehicleRollingSmallModel data)
         {
-            double? dynamicCoefficient = null;
-            if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)
-            {
-                dynamicCoefficient = calculator.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
-            }
+            var dynamicCoefficient = data.DynamicCoefficient();
 
             foreach (var c in PassTypeConditions)
             {

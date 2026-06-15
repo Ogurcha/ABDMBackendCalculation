@@ -1,16 +1,18 @@
 ﻿using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
+using Abdm.Calculation.BLL.Services.StrainCoefficients;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class DefaultStrainAnalyser(IStrainCoefficientFactory strainCoefficientFactory) : ISAStrategy
+    public class DefaultStrainAnalyser() : ISAStrategy
     {
         private const int ProfileVectorsLimitCount = 50;
 
@@ -65,16 +67,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 InvertSummary(analysis);
             }
 
-            if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, vehicleRollingResult.DataModel.Data.Surface.StrainCalculationGroupType) is ICoefficientCalculator coefficientCalculator
-                && strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.TrafficJam, vehicleRollingResult.DataModel.Data.Surface.StrainCalculationGroupType) is ICoefficientCalculator tjCoefficientCalculator)
+            var dynamicCoefficient = dataModel.Data.DynamicCoefficient();
+            foreach (var column in analysis.Default.SelectMany(x => x.Columns))
             {
-                foreach (var column in analysis.Default.SelectMany(x => x.Columns))
+                column.Coefficients.Dynamic = MathExtensions.ToDecimal(dynamicCoefficient);
+                if (column.Intervals != null)
                 {
-                    column.Coefficients.Dynamic = MathExtensions.ToDecimal(coefficientCalculator.Get((double)column.LambdaSmall, vehicleRollingResult.DataModel.Data.Load.Type, vehicleRollingResult.DataModel.Data.Surface.Material));
-                    if (column.Intervals != null)
-                    {
-                        column.Coefficients.DynamicInterval = MathExtensions.ToDecimal(tjCoefficientCalculator.Get((double)column.LambdaSmall, vehicleRollingResult.DataModel.Data.Load.Type, vehicleRollingResult.DataModel.Data.Surface.Material));
-                    }
+                    column.Coefficients.DynamicInterval = column.Coefficients.Dynamic;
                 }
             }
 

@@ -22,7 +22,8 @@ namespace Abdm.Calculation.BLL.Coordinators
         IStrainResultService strainResultService,
         IVehicleTrajectoryService vehicleTrajectoryService,
         ISymmetryService symmetryService,
-        IMaterialService materialService
+        IMaterialService materialService,
+        ICoefficientProviderFactory coefficientProviderFactory
         ) : IBaseVehicleRollingCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -68,6 +69,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Result.StrainCalculationType.Map();
             dataModel.Surface.StrainCalculationType = surfaceDataContainer.Result.StrainCalculationType;
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Result.StrainTypeSpecificData;
+            dataModel.CoefficientProvider = coefficientProviderFactory.GetStrainProvider(data.Snip, dataModel.Load.Type);
             if (dataModel.Surface.StrainTypeSpecificData is SteelConcreteData steelConcreteData)
             {
                 steelConcreteData.SteelConcreteParameters = data.Surface.Adapt<IssoSteelConcreteParameters>();

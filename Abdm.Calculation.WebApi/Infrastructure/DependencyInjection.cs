@@ -77,12 +77,12 @@ namespace Abdm.Calculation.Infrastructure
                 => new CoefficientProviderFactory(DependencyInjection.CoefficientProviderList()));
             services.AddSingleton<IPassTypeResolverFactory, PassTypeResolverFactory>(x => new PassTypeResolverFactory(new List<IPassTypeResolver>
             {
-                new PassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>()),
-                new SteelConcretePassTypeResolver(x.GetRequiredService<IStrainCoefficientFactory>(), new SteelConcretePassChecker())
+                new PassTypeResolver(),
+                new SteelConcretePassTypeResolver(new SteelConcretePassChecker())
             }));
             services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<ISAStrategy>
             {
-                new DefaultStrainAnalyser(x.GetRequiredService<IStrainCoefficientFactory>()),
+                new DefaultStrainAnalyser(),
                 new SteelConcreteAnalyser(),
             }));
 
