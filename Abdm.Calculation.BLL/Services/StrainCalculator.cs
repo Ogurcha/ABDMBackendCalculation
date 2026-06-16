@@ -14,7 +14,7 @@ namespace Abdm.Calculation.BLL.Services
         /// Рассчитывает карту напряжений на каждый <see cref="RoadRule"/> и на куждую <see cref="VehicleTrajectory"/>. 
         /// Cортирует напряжения внутри траектории по убыванию
         /// </summary>
-        public Dictionary<RoadRule, StrainsInMaximums[]> GenerateStrainsMap(
+        public List<StrainMap> GenerateStrainsMap(
             IntervalModel intervalModel,
             VehicleRollingBigModel bigData)
         {
@@ -38,7 +38,7 @@ namespace Abdm.Calculation.BLL.Services
                 }
             }
 
-            var trajectoriesMap = new Dictionary<RoadRule, StrainsInMaximums[]>();
+            var result = new List<StrainMap>();
             foreach (var roadRule in roadRules)
             {
                 List<StrainsInMaximums> strainList = new();
@@ -56,10 +56,14 @@ namespace Abdm.Calculation.BLL.Services
                         TotalStrain = strains.Value.strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d)
                     });
                 }
-                trajectoriesMap.Add(roadRule, strainList.ToArray());
+                result.Add(new StrainMap() {
+                    RoadRuleRef = roadRule,
+                    IntervalModelRef = intervalModel,
+                    StrainsInMaximums = strainList.ToArray()
+                });
             }
             
-            return trajectoriesMap;
+            return result;
         }
 
         public bool TryGetStrainForEachPositivePiece(
@@ -140,9 +144,9 @@ namespace Abdm.Calculation.BLL.Services
 
             if (data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
             {
-                trafficJamStrain.Coefficient = data.CoefficientProvider.TrafficJamStrainCoefficientProvider.GetBasicCoefficent(trajectory.Center.PositivePieces.Sum(x => x.Length));
+                trafficJamStrain.BasicCoefficient = data.CoefficientProvider.TrafficJamStrainCoefficientProvider.GetBasicCoefficent(trajectory.Center.PositivePieces.Sum(x => x.Length));
             }
-            trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.Coefficient;
+            trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.BasicCoefficient;
 
             return trafficJamStrain;
         }
@@ -200,13 +204,13 @@ namespace Abdm.Calculation.BLL.Services
 
             strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.Length);
 
-            strain.Coefficient = data.CoefficientProvider.GetBasicCoefficent(strain.LambdaSmall);
-            strain.TotalStrain = strain.SumStrain * strain.Coefficient;
+            strain.BasicCoefficient = data.CoefficientProvider.GetBasicCoefficent(strain.LambdaSmall);
+            strain.TotalStrain = strain.SumStrain * strain.BasicCoefficient;
             if (strain.InvertedDirectionStrain != null)
             {
                 strain.InvertedDirectionStrain.LambdaSmall = strain.LambdaSmall;
-                strain.InvertedDirectionStrain.Coefficient = strain.Coefficient;
-                strain.InvertedDirectionStrain.TotalStrain = strain.InvertedDirectionStrain.SumStrain * strain.InvertedDirectionStrain.Coefficient;
+                strain.InvertedDirectionStrain.BasicCoefficient = strain.BasicCoefficient;
+                strain.InvertedDirectionStrain.TotalStrain = strain.InvertedDirectionStrain.SumStrain * strain.InvertedDirectionStrain.BasicCoefficient;
             }
 
             return strain;

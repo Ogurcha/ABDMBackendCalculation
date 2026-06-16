@@ -29,7 +29,8 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 
             IsPedestrianAllowed = false,
             HasSafetyLine = true,
-            MaxTrajectoriesCount = 2,
+            MaxTrajectoriesInInterval = 2,
+            MaxTrajectoriesTotal = int.MaxValue,
         };
 
         [Description("II. \"Общего назначения\" с заездом на полосу безопасности")]
@@ -42,7 +43,8 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 
             IsPedestrianAllowed = true,
             HasSafetyLine = false,
-            MaxTrajectoriesCount = int.MaxValue,
+            MaxTrajectoriesInInterval = int.MaxValue,
+            MaxTrajectoriesTotal = int.MaxValue,
         };
 
         [Description("I(1). Вариант – не более 2-х грузовиков в колонне")]

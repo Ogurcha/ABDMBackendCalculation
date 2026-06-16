@@ -28,29 +28,39 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             var defaults = new List<AnalysisDefault>();
             var dataModel = vehicleRollingResult.DataModel;
 
-            foreach (var strain in vehicleRollingResult.StrainResults)
+            foreach (var strainResults in vehicleRollingResult.StrainResults)
             {
-                var isDirectionForward = strain.Strain.First().VehicleStrains.First().IsDirectionForward;
-                defaults.Add(new AnalysisDefault
+                foreach (var intervalInfo in vehicleRollingResult.DataModel.Intervals)
                 {
-                    HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
-                    Columns = GetAnalysisColumns(strain.Strain, dataModel, x => x).ToArray(),
-                    IsForward = isDirectionForward,
-                    IntervalType = strain.IntervalModelRef.PassageIntervalRef.Type,
-                    BarrierPositionLeft = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionLeft),
-                    BarrierPositionRight = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionRight),
-                });
-                if (strain.Strain.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
-                {
+                    var intervalType = intervalInfo.Type;
+                    var barrierPositionLeft = MathExtensions.ToDecimal(intervalInfo.AbsolutePositionLeft);
+                    var barrierPositionRight = MathExtensions.ToDecimal(intervalInfo.AbsolutePositionRight);
+
+                    var strains = strainResults.Strain.Where(x => intervalInfo.AbsolutePositionLeft < x.VehicleTrajectoryRef.X && x.VehicleTrajectoryRef.X < intervalInfo.AbsolutePositionRight);
+
+                    var isDirectionForward = strains.First().VehicleStrains.First().IsDirectionForward;
+
                     defaults.Add(new AnalysisDefault
                     {
-                        HasSafetyLine = strain.RoadRuleRef.HasSafetyLine,
-                        Columns = GetAnalysisColumns(strain.Strain, dataModel, x => x.InvertedDirectionStrain).ToArray(),
-                        IsForward = !isDirectionForward,
-                        IntervalType = strain.IntervalModelRef.PassageIntervalRef.Type,
-                        BarrierPositionLeft = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionLeft),
-                        BarrierPositionRight = MathExtensions.ToDecimal(strain.IntervalModelRef.PassageIntervalRef.AbsolutePositionRight),
+                        HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
+                        Columns = GetAnalysisColumns(strains, dataModel, x => x).ToArray(),
+                        IsForward = isDirectionForward,
+                        IntervalType = intervalType,
+                        BarrierPositionLeft = barrierPositionLeft,
+                        BarrierPositionRight = barrierPositionRight,
                     });
+                    if (strains.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
+                    {
+                        defaults.Add(new AnalysisDefault
+                        {
+                            HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
+                            Columns = GetAnalysisColumns(strains, dataModel, x => x.InvertedDirectionStrain).ToArray(),
+                            IsForward = !isDirectionForward,
+                            IntervalType = intervalType,
+                            BarrierPositionLeft = barrierPositionLeft,
+                            BarrierPositionRight = barrierPositionRight,
+                        });
+                    }
                 }
             }
             FilterDefaultsForPillar(vehicleRollingResult, defaults);
@@ -231,12 +241,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             var coefficients = new Coefficients
             {
                 Stripe = 1, //TODO
-                Reliability = MathExtensions.ToDecimal(vehicleStrain.Coefficient),
+                Reliability = MathExtensions.ToDecimal(vehicleStrain.BasicCoefficient),
             };
             if (columnStrain.TrafficJamStrain != null)
             {
                 coefficients.StripeInterval = 1; //TODO
-                coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.Coefficient);
+                coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.BasicCoefficient);
             }
 
             return new AnalysisColumn
@@ -249,7 +259,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 PositionY = MathExtensions.ToDecimal(vehicleStrain.Y),
                 PositionYForImage = MathExtensions.ToDecimal(vehicleStrain.Y + yShift),
                 SumStrain = wheels.Sum(w => w.Strain),
-                TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.Coefficient),
+                TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.BasicCoefficient),
                 IntervalProfileVectors = intervalProfileVectors,
                 LambdaSmall = MathExtensions.ToDecimal(vehicleStrain.LambdaSmall),
                 Coefficients = coefficients,

@@ -20,8 +20,8 @@ public class PassTypeFormulasTests
         };
         var roadRules = new[]
         {
-            new RoadRule { MinTrajectoryDistance = 3 },
-            new RoadRule { MinTrajectoryDistance = 5 }
+            new RoadRule { MinTrajectoryDistance = 3, MaxTrajectoriesTotal = 6 },
+            new RoadRule { MinTrajectoryDistance = 5, MaxTrajectoriesTotal = 6 }
         };
 
         var distance = PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(loadModel, roadRules);

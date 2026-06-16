@@ -5,9 +5,8 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainSelector
     {
-        IEnumerable<StrainResultUnpopulated> SelectBestStrainResult(
-            Dictionary<RoadRule, StrainsInMaximums[]> orderedTrajectoriesMap, 
-            IntervalModel intervalModel, 
+        IList<StrainResultUnpopulated> SelectBestStrainResult(
+            StrainMap[] strainMaps,
             VehicleRollingBigModel data);
     }
 }

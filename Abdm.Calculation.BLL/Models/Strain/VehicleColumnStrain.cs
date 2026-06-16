@@ -27,5 +27,15 @@
         /// массив напряжений индивидуальных ТС
         /// </summary>
         public required VehicleStrain[] VehicleStrains { get; set; }
+
+        /// <summary>
+        /// Понижающий коэффициент полосности. Применяется при задействовании многих полос движения одновременно
+        /// </summary>
+        public double StripeCoefficient { get; set; } = 1d;
+
+        /// <summary>
+        /// Понижающий коэффициент полосности. Применяется при задействовании многих полос движения одновременно
+        /// </summary>
+        public double? TrafficJamStripeCoefficient { get; set; }
     }
 }

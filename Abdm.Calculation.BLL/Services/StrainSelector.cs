@@ -8,47 +8,53 @@ namespace Abdm.Calculation.BLL.Services
 {
     public class StrainSelector(IEqualityComparer<double> equalityComparer) : IStrainSelector
     {
-        public IEnumerable<StrainResultUnpopulated> SelectBestStrainResult(
-        Dictionary<RoadRule, StrainsInMaximums[]> strainsMap,
-        IntervalModel intervalModel,
+        public IList<StrainResultUnpopulated> SelectBestStrainResult(
+        StrainMap[] strainMaps,
         VehicleRollingBigModel bigData)
         {
             var data = bigData.Data;
             var roadRules = bigData.RoadRules;
+            var stripeCoefficientProvider = bigData.Data.CoefficientProvider;
+            var result = new List<StrainResultUnpopulated>();
             foreach (var roadRule in roadRules)
             {
-                var strains = strainsMap[roadRule];
+                var strains = strainMaps.Where(m => m.RoadRuleRef == roadRule).ToArray();
                 if (strains.Length == 0)
                 {
                     continue;
                 }
 
-                var actualVehicleCount = Math.Min(roadRule.MaxTrajectoriesCount, intervalModel.PassageIntervalRef.LaneCount);
-                
-                if (actualVehicleCount == 1)
+                var actualTrajectoryDistance = Math.Max(roadRule.MinTrajectoryDistance, data.Load.Width + data.Load.Interval);
+
+                var groupedByIntervals = strains
+                    .GroupBy(x => x.IntervalModelRef)
+                    .Select(x => (x.Single().StrainsInMaximums, Math.Min(roadRule.MaxTrajectoriesInInterval, x.Key.PassageIntervalRef.LaneCount)))
+                    .ToArray();
+
+                var globalDepth = roadRule.MaxTrajectoriesTotal;
+
+                if (groupedByIntervals.All(x => x.Item2 <= 1))
                 {
-                    yield return
-                        new StrainResultUnpopulated
-                        {
-                            RoadRuleRef = roadRule,
-                            Strain = [strains.OrderDescending().First()],
-                            IntervalModelRef = intervalModel
-                        };
+                    result.Add(new StrainResultUnpopulated
+                    {
+                        RoadRuleRef = roadRule,
+                        Strain = groupedByIntervals
+                        .Select(x => x.Item1.OrderDescending().First())
+                        .OrderDescending()
+                        .Take(globalDepth)
+                        .ToArray()
+                    });
                 }
                 else
                 {
-                    //TODO#1: Минорная проблема, которая пока что не актуальна. В случае, если в метод попадут несколько roadRules,
-                    //то даже если у них будет одинаковый actualVehicleCount+MinTrajectoryDistance, то цикл будет вызываться несколько раз. Чтобы избежать этого, нужно сделать группировку, как в StrainResultPopulator, VehicleTrajectoryFilter, StrainCalculator. Но это пока что не актуально, так как не встретился пока что реальный снип, который содержит пару roadRules с одинаковым actualVehicleCount+MinTrajectoryDistance
-                    var strainResult = GetStrainResult(strains, intervalModel, roadRule, actualVehicleCount);
-
-                    if (strainResult == null) 
-                    { 
-                        continue; 
-                    }
-
-                    yield return strainResult!;
+                    result.Add(new StrainResultUnpopulated() { 
+                        RoadRuleRef = roadRule, 
+                        Strain = PickStrains(groupedByIntervals, actualTrajectoryDistance, globalDepth, stripeCoefficientProvider) 
+                    });
                 }
             }
+
+            return result;
         }
 
         /// <summary>
@@ -57,71 +63,79 @@ namespace Abdm.Calculation.BLL.Services
         /// Но также проверяется оптимальная траектория рядом с уже установленным ТС 
         /// </summary>
         /// <param name="strains">Напряжения c координатой траектории</param>
-        /// <param name="intervalModel">интервал моста, внутри которого происходит движение</param>
-        /// <param name="roadRule">Правила движения по мосту</param>
         /// <param name="actualVehicleCount">Количество ТС</param>
         /// <returns></returns>
-        private StrainResultUnpopulated? GetStrainResult(StrainsInMaximums[] strains,
-            IntervalModel intervalModel,
-            RoadRule roadRule,
-            int actualVehicleCount)
+        private StrainsInMaximums[] PickStrains(
+            (StrainsInMaximums[] strains, int maxDepth)[] intervals,
+            double actualTrajectoryDistance,
+            int globalDepth,
+            ICoefficientProvider stripeCoefficientProvider)
         {
-            var orderedByPosition = strains.OrderBy(x => x.X).ToArray();
+            var orderedByPosition = intervals.Select(i => (i.strains.OrderBy(x => x.X).ToArray(), i.maxDepth)).ToArray();
 
             var scores = new List<StrainScore>();
-            var depth = actualVehicleCount;
-            foreach (var strain in strains)
+            foreach (var strain in orderedByPosition.SelectMany(x => x.Item1))
             {
-                var strainScore = MeasureScore(orderedByPosition, strain, depth, roadRule);
+                var strainScore = MeasureScore(orderedByPosition, strain, actualTrajectoryDistance, globalDepth, stripeCoefficientProvider);
                 scores.Add(strainScore);
             }
 
-            var finalScore = scores.OrderBy(x => x.Score).Last();
+            var finalScore = scores.OrderBy(x => x.TotalScore).Last();
 
-            var strainResult = new StrainResultUnpopulated
-            {
-                RoadRuleRef = roadRule,
-                Strain = finalScore.StrainsPicked.ToArray(),
-                IntervalModelRef = intervalModel,
-            };
-
-            return strainResult;
+            return finalScore.StrainsPicked.ToArray();
         }
 
         private StrainScore MeasureScore(
-            StrainsInMaximums[] orderedByPosition,
-            StrainsInMaximums strainPicked, 
-            int depthParent,
-            RoadRule roadRule)
+            (StrainsInMaximums[] orderedByPosition, int depthParent)[] intervals, 
+            StrainsInMaximums strainPicked,
+            double actualTrajectoryDistance,
+            int globalDepth,
+            ICoefficientProvider stripeCoefficientProvider)
         {
             StrainScore? strainScore = null;
-            if (orderedByPosition.Length > 0 && depthParent >= 2)
+            var validIntervals = intervals.Where(x => x.orderedByPosition.Length > 0 && x.depthParent >= 2).ToArray();
+            if (globalDepth >= 2)
             {
-                var leftEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X - roadRule.MinTrajectoryDistance, (x) => x.X, equalityComparer);
-                var rightEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X + roadRule.MinTrajectoryDistance, (x) => x.X, equalityComparer);
-
-                StrainsInMaximums[] newOrdered;
-                if (leftEdge.Left == rightEdge.Right)
+                for (int i = 0; i < validIntervals.Length; i++)
                 {
-                    newOrdered = orderedByPosition;
-                }
-                else if (leftEdge.Left != null || rightEdge.Right != null)
-                {
-                    var indexLeft = (leftEdge.Left ?? -1) + 1;
-                    var indexRight = rightEdge.Right ?? orderedByPosition.Length;
+                    var orderedByPosition = validIntervals[i].orderedByPosition;
 
-                    newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
+                    var leftEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X - actualTrajectoryDistance, (x) => x.X, equalityComparer);
+                    var rightEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X + actualTrajectoryDistance, (x) => x.X, equalityComparer);
 
-                    strainScore = newOrdered.Select(strain => MeasureScore(newOrdered, strain, depthParent - 1, roadRule)).OrderBy(score => score.Score).LastOrDefault();
+                    StrainsInMaximums[]? newOrdered = null;
+                    if (leftEdge.Left == rightEdge.Right)
+                    {
+                        newOrdered = orderedByPosition;
+                    }
+                    else if (leftEdge.Left != null || rightEdge.Right != null)
+                    {
+                        var indexLeft = (leftEdge.Left ?? -1) + 1;
+                        var indexRight = rightEdge.Right ?? orderedByPosition.Length;
+
+                        newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
+                    }
+
+                    if (newOrdered != null)
+                    {
+                        var newIntervals = validIntervals.Except([validIntervals.ElementAt(i)]).Append((newOrdered, validIntervals[i].depthParent - 1)).ToArray();
+
+                        strainScore = newOrdered.Select(strain => MeasureScore(newIntervals, strain, actualTrajectoryDistance, globalDepth - 1, stripeCoefficientProvider)).OrderBy(score => score.TotalScore).LastOrDefault();
+                    }
                 }
             }
+            
 
             if (strainScore == null || strainScore.Score < 0)
             {
                 strainScore = new StrainScore { Score = 0, StrainsPicked = new List<StrainsInMaximums>() };
             }
 
+            var coefficients = stripeCoefficientProvider.GetStripeCoefficient(strainPicked.Strains.First().LambdaSmall);
+            var coefficientToPick = Math.Min(4, strainScore.StrainsPicked.Count);
+
             strainScore.Score += strainPicked.TotalStrain;
+            strainScore.TotalScore = strainPicked.TotalStrain * coefficients[coefficientToPick];
             strainScore.StrainsPicked.Add(strainPicked);
 
             return strainScore;
