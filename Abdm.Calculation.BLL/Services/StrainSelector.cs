@@ -27,6 +27,7 @@ namespace Abdm.Calculation.BLL.Services
                 var actualTrajectoryDistance = Math.Max(roadRule.MinTrajectoryDistance, data.Load.Width + data.Load.Interval);
 
                 var groupedByIntervals = strains
+                    .Where(s => s.StrainsInMaximums.Length > 0)
                     .GroupBy(x => x.IntervalModelRef)
                     .Select(x => (x.Single().StrainsInMaximums, Math.Min(roadRule.MaxTrajectoriesInInterval, x.Key.PassageIntervalRef.LaneCount)))
                     .ToArray();
