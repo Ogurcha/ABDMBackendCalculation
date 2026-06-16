@@ -7,7 +7,7 @@ namespace Abdm.Calculation.BLL.Interfaces
     {
         IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data);
 
-        Dictionary<RoadRule, StrainsInMaximums[]> GenerateStrainsMap(IntervalModel intervalModel, VehicleRollingBigModel data);
+        List<StrainMap> GenerateStrainsMap(IntervalModel intervalModel, VehicleRollingBigModel data);
 
         TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data);
 

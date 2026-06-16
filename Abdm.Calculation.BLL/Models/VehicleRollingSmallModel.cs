@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Abdm.Calculation.BLL.Enums;
+using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Interfaces;
 
 namespace Abdm.Calculation.BLL.Models
 {
@@ -19,5 +20,13 @@ namespace Abdm.Calculation.BLL.Models
         /// </summary>
         [NotNull]
         public required LoadModel Load { get; set; }
+
+        /// <summary>
+        /// Генератор коеффициентов напряжения
+        /// </summary>
+        public required ICoefficientProvider CoefficientProvider { get; set; }
+
+        public double DynamicCoefficient() => Surface.Material == null ? NormConstants.MinStrainCoefficient
+            : CoefficientProvider.GetDynamicCoefficient(Surface.Lambda, Surface.Material, Surface.StrainCalculationGroupType);
     }
 }

@@ -37,16 +37,14 @@ namespace Abdm.Calculation.BLL.Services
                 return new StrainResult
                 {
                     RoadRuleRef = unpopulated.RoadRuleRef,
-                    Strain = unpopulated.Strain.Select(GetVehicleColumnStrain).ToArray(),
-                    IntervalModelRef = unpopulated.IntervalModelRef
+                    Strain = unpopulated.Strain.Select(GetVehicleColumnStrain).ToArray()
                 };
             }
 
             return new StrainResult
             {
                 RoadRuleRef = unpopulated.RoadRuleRef,
-                Strain = unpopulated.Strain.Select(x => PopulateIndividualColumnFromMap(x, data, maxVehicle, resultsMap)).ToArray(),
-                IntervalModelRef = unpopulated.IntervalModelRef
+                Strain = unpopulated.Strain.Select(x => PopulateIndividualColumnFromMap(x, data, maxVehicle, resultsMap)).ToArray()
             };
 
             VehicleColumnStrain PopulateIndividualColumnFromMap(StrainsInMaximums traj,
@@ -142,9 +140,9 @@ namespace Abdm.Calculation.BLL.Services
             var strain = vehiclePositioner.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Y + distanceFromExtremum, data);
             if (strain != null && strain.SumStrain > 0d)
             {
-                strain.Coefficient = vehicleStrain.Coefficient;
+                strain.BasicCoefficient = vehicleStrain.BasicCoefficient;
                 strain.LambdaSmall = vehicleStrain.LambdaSmall;
-                strain.TotalStrain = strain.SumStrain * strain.Coefficient;
+                strain.TotalStrain = strain.SumStrain * strain.BasicCoefficient;
                 return strain;
             }
             return null;

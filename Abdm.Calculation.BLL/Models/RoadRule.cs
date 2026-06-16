@@ -28,9 +28,14 @@ namespace Abdm.Calculation.BLL.Models
         public int MaxVehicleInTrajectory { get; set; }
 
         /// <summary>
-        /// Максимальное количество траекторий движения
+        /// Максимальное количество траекторий движения на одном интервале
         /// </summary>
-        public int MaxTrajectoriesCount { get; set; }
+        public int MaxTrajectoriesInInterval { get; set; }
+
+        /// <summary>
+        /// Максимальное количество траекторий движения суммарно на всех интервалах
+        /// </summary>
+        public required int MaxTrajectoriesTotal { get; set; }
 
         /// <summary>
         /// Минимальное расстояние между центров траекторий движения. 

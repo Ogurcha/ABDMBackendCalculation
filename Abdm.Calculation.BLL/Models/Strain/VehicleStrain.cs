@@ -23,9 +23,9 @@
         public double SumStrain { get; set; }
 
         /// <summary>
-        /// Повышающий коэффициент напряжения
+        /// Повышающий коэффициент напряжения надёжности
         /// </summary>
-        public double Coefficient { get; set; } = 1d;
+        public double BasicCoefficient { get; set; } = 1d;
 
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента

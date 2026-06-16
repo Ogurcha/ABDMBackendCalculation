@@ -266,7 +266,7 @@ namespace Abdm.Calculation.BLL.GraphicsServices
             var surface = dataModel.Data.Surface;
 
             var trajectoryFilters = trajectoryFilterProvider.GetFilters(passageInterval, loadModel, roadRules);
-            var actualVehicleCount = Math.Min(dataModel.RoadRules.Max(x => x.MaxTrajectoriesCount), passageInterval.LaneCount);
+            var actualVehicleCount = Math.Min(dataModel.RoadRules.Max(x => x.MaxTrajectoriesInInterval), passageInterval.LaneCount);
             var radiuses = dataModel.RoadRules.Select(x => x.MinTrajectoryDistance).Distinct().ToArray();
 
             if (surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)

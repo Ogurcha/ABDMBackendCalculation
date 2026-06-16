@@ -7,19 +7,13 @@ using Mapster;
 
 namespace Abdm.Calculation.BLL.Services.PassTypes
 {
-    public class SteelConcretePassTypeResolver(IStrainCoefficientFactory strainCoefficientFactory,
-        ISteelConcretePassChecker steelConcretePassChecker) : IPassTypeResolver
+    public class SteelConcretePassTypeResolver(ISteelConcretePassChecker steelConcretePassChecker) : IPassTypeResolver
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationTypes => [StrainCalculationGroupTypeEnum.SteelConcrete];
 
         public PassTypeEnum Resolve(IList<StrainResult> strainResults, VehicleRollingSmallModel data)
         {
-            var fullStrain = strainResults.Max(x => x.TotalStrain);
-
-            if (strainCoefficientFactory.GetStrainCalculator(StrainCoefficientTypeEnum.DynamicMovement, data.Surface.StrainCalculationGroupType) is ICoefficientCalculator calculator)
-            {
-                fullStrain *= calculator.Get(data.Surface.Lambda, data.Load.Type, data.Surface.Material);
-            }
+            var fullStrain = strainResults.Max(x => x.TotalStrain) * data.DynamicCoefficient();
 
             if (data.Surface.StrainTypeSpecificData is not SteelConcreteData steelConcreteData)
             {

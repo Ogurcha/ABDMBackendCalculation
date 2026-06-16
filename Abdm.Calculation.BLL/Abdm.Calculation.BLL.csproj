@@ -17,4 +17,9 @@
     <ProjectReference Include="..\Abdm.Calculation.SteelConcrete\Abdm.Calculation.SteelConcrete.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\StrainCoefficients\gost2014\" />
+    <Folder Include="Services\StrainCoefficients\sp35\" />
+  </ItemGroup>
+
 </Project>

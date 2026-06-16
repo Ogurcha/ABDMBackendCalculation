@@ -1,6 +1,7 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
+using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -13,13 +14,40 @@ namespace Abdm.Calculation.BLL.Services
             VehicleRollingBigModel data,
             IEnumerable<IntervalModel> intervals)
         {
-            var unpopulated = new List<StrainResultUnpopulated>();
-            foreach (var interval in intervals) {
-                var strainsMap = strainCalculator.GenerateStrainsMap(interval, data);
-                unpopulated.AddRange(strainSelector.SelectBestStrainResult(strainsMap, interval, data));
+            var strainMaps = intervals.SelectMany(i => strainCalculator.GenerateStrainsMap(i, data)).ToArray();
+
+            var unpopulated = strainSelector.SelectBestStrainResult(strainMaps, data).ToArray();
+
+            var populated = strainResultPopulator.PopulateStrainResults(unpopulated, data.Data);
+
+            return ApplyStripedCoefficient(populated, data.Data);
+        }
+
+        private StrainResult[] ApplyStripedCoefficient(List<StrainResult> populated, VehicleRollingSmallModel data)
+        {
+            var strainResults = populated.Where(s => s.TotalStrain >= 0).ToArray();
+
+            foreach (var strainResult in strainResults)
+            {
+                strainResult.Strain = strainResult.Strain.OrderDescending().ToArray();
+                for (int i = 0; i < strainResult.Strain.Length; i++)
+                {
+                    var column = strainResult.Strain[i];
+                    var lambda = column.VehicleStrains.First().LambdaSmall;
+                    var coefficients = data.CoefficientProvider.GetStripeCoefficient(lambda);
+                    var coefficientToPick = Math.Min(4, i);
+                    column.StripeCoefficient = coefficients[coefficientToPick];
+                    if (column.TrafficJamStrain != null && data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
+                    {
+                        var trafficjamCoefficients = data.CoefficientProvider.TrafficJamStrainCoefficientProvider.GetStripeCoefficient(lambda);
+                        column.TrafficJamStripeCoefficient = trafficjamCoefficients[coefficientToPick];
+                    }
+
+                    column.TotalStrain = column.VehicleStrains.Sum(x => x.TotalStrain) * column.StripeCoefficient + (column.TrafficJamStrain?.TotalStrain * column.TrafficJamStripeCoefficient ?? 0d);
+                }
             }
 
-            return strainResultPopulator.PopulateStrainResults(unpopulated, data.Data).Where(s => s.TotalStrain >= 0).ToArray();
+            return strainResults;
         }
     }
 }

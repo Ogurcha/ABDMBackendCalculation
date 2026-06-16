@@ -20,7 +20,5 @@
         /// Итоговое напряжение с учётом коэффициента
         /// </summary>
         public double TotalStrain => Strain.Sum(x => x.TotalStrain);
-
-        public required IntervalModel IntervalModelRef { get; set; }
     }
 }

@@ -15,7 +15,5 @@
         /// Максимальное напряжение по каждой траектории движения в заданном интервале
         /// </summary>
         public required StrainsInMaximums[] Strain { get; set; }
-
-        public required IntervalModel IntervalModelRef { get;  set; }
     }
 }

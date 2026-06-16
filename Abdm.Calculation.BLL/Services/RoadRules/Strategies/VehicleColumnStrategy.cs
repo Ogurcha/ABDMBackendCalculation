@@ -25,7 +25,8 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 
             IsPedestrianAllowed = true,
             HasSafetyLine = false,
-            MaxTrajectoriesCount = int.MaxValue,
+            MaxTrajectoriesInInterval = 1,
+            MaxTrajectoriesTotal = int.MaxValue,
         };
 
         [Description("II. \"АК\" с заездом на полосу безопасности")]
@@ -38,7 +39,8 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 
             IsPedestrianAllowed = false,
             HasSafetyLine = true,
-            MaxTrajectoriesCount = 2,
+            MaxTrajectoriesInInterval = 1,
+            MaxTrajectoriesTotal = int.MaxValue,
         };
     }
 }
