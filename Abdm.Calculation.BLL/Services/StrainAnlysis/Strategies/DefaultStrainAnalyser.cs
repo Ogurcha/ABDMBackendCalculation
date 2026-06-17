@@ -84,6 +84,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 if (column.Intervals != null)
                 {
                     column.Coefficients.DynamicInterval = column.Coefficients.Dynamic;
+                    
                 }
             }
 
@@ -240,12 +241,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             var coefficients = new Coefficients
             {
-                Stripe = 1, //TODO
+                Stripe = MathExtensions.ToDecimal(columnStrain.StripeCoefficient),
                 Reliability = MathExtensions.ToDecimal(vehicleStrain.BasicCoefficient),
             };
             if (columnStrain.TrafficJamStrain != null)
             {
-                coefficients.StripeInterval = 1; //TODO
+                coefficients.StripeInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStripeCoefficient!.Value);
                 coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.BasicCoefficient);
             }
 
