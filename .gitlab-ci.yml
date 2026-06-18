@@ -9,9 +9,6 @@ variables:
   DOTNET_CLI_UI_LANGUAGE: "en"
   IMAGE_NAME: $CI_REGISTRY/abdm/abdm_backend_calculation:latest
   TARGET_BRANCH: "test-branch"
-  DEBIAN_FRONTEND: "noninteractive"
-  DEBIAN_MIRROR: "http://mirror.docker.ru/debian"
-  DEBIAN_SECURITY_MIRROR: "http://mirror.docker.ru/debian-security"
 
 default:
   tags: &global_tags
@@ -24,49 +21,25 @@ build_back:mr:
   variables:
     PROJ_NAME: "ABDM-calculation"
   before_script:
-    - |
-      printf '%s\n' \
-        'Types: deb' \
-        "URIs: ${DEBIAN_MIRROR}" \
-        'Suites: bookworm bookworm-updates' \
-        'Components: main' \
-        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg' \
-        '' \
-        'Types: deb' \
-        "URIs: ${DEBIAN_SECURITY_MIRROR}" \
-        'Suites: bookworm-security' \
-        'Components: main' \
-        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg' \
-        > /etc/apt/sources.list.d/debian.sources
-
-      apt-get update \
-        -o Acquire::Retries=5 \
-        -o Acquire::http::Timeout=30 \
-        -o APT::Update::Error-Mode=any
-
-      apt-get install -y --no-install-recommends libxml2 openjdk-17-jdk locales
+    - apt update && apt install -y libxml2 openjdk-17-jdk locales
     - dotnet tool install --global dotnet-sonarscanner --version 6.2.0
     - dotnet tool install --global dotnet-coverage --version 17.10.4
     - dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.2.5
     - dotnet nuget add source "https://gitlab.norddig.ru/api/v4/projects/72/packages/nuget/index.json" --name CommonKafkaIntegrationMessageBroker --username $REGISTRY_LOGIN --password $REGISTRY_TOKEN --store-password-in-clear-text
     - dotnet restore Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj
   script:
-    - |
-      sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen
-      dpkg-reconfigure --frontend=noninteractive locales
+    - sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen &&
+      dpkg-reconfigure --frontend=noninteractive locales &&
       update-locale LANG=ru_RU.UTF-8
-
-      export LANG=ru_RU.UTF-8
-      export PATH="$PATH:$HOME/.dotnet/tools"
-
-      dotnet sonarscanner begin \
-        /d:sonar.host.url=$SONAR_URL \
-        /d:sonar.token=$SONAR_TOKEN \
-        /k:$PROJ_NAME \
-        /version:$CI_MERGE_REQUEST_IID.$CI_PIPELINE_IID \
-        /d:sonar.coverageReportPaths=CoverageReports/SonarQube.xml
-
-      dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+    - export LANG=ru_RU.UTF-8
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - dotnet sonarscanner begin
+      /d:sonar.host.url=$SONAR_URL
+      /d:sonar.token=$SONAR_TOKEN
+      /k:$PROJ_NAME
+      /version:$CI_MERGE_REQUEST_IID.$CI_PIPELINE_IID
+      /d:sonar.coverageReportPaths=CoverageReports/SonarQube.xml
+    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
   artifacts:
     when: always
     paths:
@@ -85,41 +58,18 @@ build_back:master:
   stage: build_and_test
   image: mcr.microsoft.com/dotnet/sdk:8.0
   before_script:
-    - |
-      printf '%s\n' \
-        'Types: deb' \
-        "URIs: ${DEBIAN_MIRROR}" \
-        'Suites: bookworm bookworm-updates' \
-        'Components: main' \
-        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg' \
-        '' \
-        'Types: deb' \
-        "URIs: ${DEBIAN_SECURITY_MIRROR}" \
-        'Suites: bookworm-security' \
-        'Components: main' \
-        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg' \
-        > /etc/apt/sources.list.d/debian.sources
-
-      apt-get update \
-        -o Acquire::Retries=5 \
-        -o Acquire::http::Timeout=30 \
-        -o APT::Update::Error-Mode=any
-
-      apt-get install -y --no-install-recommends libxml2 locales fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
+    - apt update && apt install -y libxml2 locales fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
     - dotnet tool install --global dotnet-coverage --version 17.10.4
     - dotnet nuget add source "https://gitlab.norddig.ru/api/v4/projects/72/packages/nuget/index.json" --name CommonKafkaIntegrationMessageBroker --username $REGISTRY_LOGIN --password $REGISTRY_TOKEN --store-password-in-clear-text
     - dotnet restore Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj
   script:
-    - |
-      sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen
-      dpkg-reconfigure --frontend=noninteractive locales
+    - sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen &&
+      dpkg-reconfigure --frontend=noninteractive locales &&
       update-locale LANG=ru_RU.UTF-8
-
-      export LANG=ru_RU.UTF-8
-      export PATH="$PATH:$HOME/.dotnet/tools"
-
-      dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
-      dotnet publish Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-build -c Release --output ./WebAPI
+    - export LANG=ru_RU.UTF-8
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+    - dotnet publish Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-build -c Release --output ./WebAPI
   artifacts:
     paths:
       - ./**/*test-result.xml
@@ -139,41 +89,18 @@ build_back:branch:
   stage: build_and_test
   image: mcr.microsoft.com/dotnet/sdk:8.0
   before_script:
-    - |
-      printf '%s\n' \
-        'Types: deb' \
-        "URIs: ${DEBIAN_MIRROR}" \
-        'Suites: bookworm bookworm-updates' \
-        'Components: main' \
-        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg' \
-        '' \
-        'Types: deb' \
-        "URIs: ${DEBIAN_SECURITY_MIRROR}" \
-        'Suites: bookworm-security' \
-        'Components: main' \
-        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg' \
-        > /etc/apt/sources.list.d/debian.sources
-
-      apt-get update \
-        -o Acquire::Retries=5 \
-        -o Acquire::http::Timeout=30 \
-        -o APT::Update::Error-Mode=any
-
-      apt-get install -y --no-install-recommends libxml2 locales fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
+    - apt update && apt install -y libxml2 locales fontconfig libharfbuzz0b libfreetype6 libgdiplus libc6-dev
     - dotnet tool install --global dotnet-coverage --version 17.10.4
     - dotnet nuget add source "https://gitlab.norddig.ru/api/v4/projects/72/packages/nuget/index.json" --name CommonKafkaIntegrationMessageBroker --username $REGISTRY_LOGIN --password $REGISTRY_TOKEN --store-password-in-clear-text
     - dotnet restore Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj
   script:
-    - |
-      sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen
-      dpkg-reconfigure --frontend=noninteractive locales
+    - sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen &&
+      dpkg-reconfigure --frontend=noninteractive locales &&
       update-locale LANG=ru_RU.UTF-8
-
-      export LANG=ru_RU.UTF-8
-      export PATH="$PATH:$HOME/.dotnet/tools"
-
-      dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
-      dotnet publish Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-build -c Release --output ./WebAPI
+    - export LANG=ru_RU.UTF-8
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - dotnet build Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-restore -c Release
+    - dotnet publish Abdm.Calculation.WebApi/Abdm.Calculation.WebApi.csproj --no-build -c Release --output ./WebAPI
   artifacts:
     paths:
       - ./**/*test-result.xml
