@@ -9,7 +9,8 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.odm16
         public ABCoefficientProvider()
         {
             WorksInSnips = [
-                SnipEnum.odm16
+                SnipEnum.odm16,
+                SnipEnum.gost2014
             ];
             WorksForLoads = [
                 LoadGroupTypeEnum.AB,

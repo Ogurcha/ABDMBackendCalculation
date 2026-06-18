@@ -8,7 +8,8 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.odm16
         public SingleCoefficientProvider()
         {
             WorksInSnips = [
-                SnipEnum.odm16
+                SnipEnum.odm16,
+                SnipEnum.gost2014
             ];
             WorksForLoads = [
                 LoadGroupTypeEnum.Single,

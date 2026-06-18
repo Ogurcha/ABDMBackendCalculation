@@ -1,12 +1,10 @@
 ﻿using Abdm.Calculation.BLL.Enums;
-using Abdm.Calculation.BLL.Helpers;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
-using Abdm.Calculation.BLL.Services.StrainCoefficients;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Models;
 
@@ -36,7 +34,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     var barrierPositionLeft = MathExtensions.ToDecimal(intervalInfo.AbsolutePositionLeft);
                     var barrierPositionRight = MathExtensions.ToDecimal(intervalInfo.AbsolutePositionRight);
 
-                    var strains = strainResults.Strain.Where(x => intervalInfo.AbsolutePositionLeft < x.VehicleTrajectoryRef.X && x.VehicleTrajectoryRef.X < intervalInfo.AbsolutePositionRight);
+                    var strains = strainResults.Strain.Where(x => intervalInfo.AbsolutePositionLeft < x.VehicleTrajectoryRef.X && x.VehicleTrajectoryRef.X < intervalInfo.AbsolutePositionRight).ToArray();
+
+                    if (strains.Length == 0)
+                    {
+                        continue;
+                    }
 
                     var isDirectionForward = strains.First().VehicleStrains.First().IsDirectionForward;
 
