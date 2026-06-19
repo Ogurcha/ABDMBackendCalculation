@@ -1,24 +1,17 @@
 ﻿using System.Collections.Generic;
 using Abdm.Calculation.BLL.Coordinators;
-using Abdm.Calculation.BLL.GraphicsServices;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Services;
+using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
 using Abdm.Calculation.BLL.Services.StrainAnlysis;
 using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
 using Abdm.Calculation.BLL.Services.StrainCoefficients;
-using odm16 = Abdm.Calculation.BLL.Services.StrainCoefficients.odm16;
-using snip1938 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1938;
-using snip1943 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1943;
-using snip1948 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1948;
-using snip1953 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1953;
-using snip1962 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1962;
-using snip1984 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1984;
 using Abdm.Calculation.BLL.Services.SurfaceData;
 using Abdm.Calculation.BLL.Services.SurfaceData.Parsers;
 using Abdm.Calculation.DAL;
@@ -30,6 +23,13 @@ using Abdm.Calculation.SteelConcrete;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using odm16 = Abdm.Calculation.BLL.Services.StrainCoefficients.odm16;
+using snip1938 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1938;
+using snip1943 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1943;
+using snip1948 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1948;
+using snip1953 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1953;
+using snip1962 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1962;
+using snip1984 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1984;
 
 namespace Abdm.Calculation.Infrastructure
 {
@@ -56,7 +56,15 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<ISurfaceDataService, SurfaceDataService>();
             services.AddScoped<IMeshManager, MeshManager>();
             services.AddScoped<ISymmetryService, SymmetryService>();
-            services.AddScoped<IVehicleTrajectoryService, VehicleTrajectoryService>();
+
+            services.AddScoped<IVehicleStrainProvider, VehicleStrainProvider>();
+            services.AddScoped<IVehicleStrainProvider, VehicleStrainProviderVolumetric>();
+            services.AddScoped<IProfileYZService, ProfileYZService>();
+            services.AddScoped<IProfileYZService, ProfileYZServiceVolumetric>();
+            services.AddScoped<IProfileYZServiceVolumetric, ProfileYZServiceVolumetric>();
+            services.AddScoped<IVehicleTrajectoryManager, VehicleTrajectoryManager>();
+            services.AddScoped<IVehicleTrajectoryManager, VehicleTrajectoryManagerVolumetric>();
+
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
             services.AddScoped<IStrainAnalyser, StrainAnalyser>();
 

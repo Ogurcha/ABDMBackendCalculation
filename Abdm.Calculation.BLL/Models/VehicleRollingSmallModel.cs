@@ -26,6 +26,8 @@ namespace Abdm.Calculation.BLL.Models
         /// </summary>
         public required ICoefficientProvider CoefficientProvider { get; set; }
 
+        public IVehicleStrainProvider? VehicleStrainProvider { get; set; }
+
         public double DynamicCoefficient() => Surface.Material == null ? NormConstants.MinStrainCoefficient
             : CoefficientProvider.GetDynamicCoefficient(Surface.Lambda, Surface.Material, Surface.StrainCalculationGroupType);
     }

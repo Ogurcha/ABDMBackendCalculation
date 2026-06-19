@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
@@ -6,8 +7,7 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
-    public class VehicleStrainProviderVolumetric(
-    IEqualityComparer<double> equalityComparer) : VehicleStrainProvider()
+    public class VehicleStrainProviderVolumetric(IEqualityComparer<double> equalityComparer) : VehicleStrainProvider(), IVehicleStrainProvider
     {
         protected override WheelStrain GetWheelStrain(ProfileYZ profilebase, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, double Y)
         {

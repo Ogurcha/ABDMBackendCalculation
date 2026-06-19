@@ -1,11 +1,12 @@
-﻿using Abdm.Calculation.BLL.Models;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
-    public class VehicleStrainProvider
+    public class VehicleStrainProvider : IVehicleStrainProvider
     {
         /// <summary>
         /// Расчёт напряжения от ТС
@@ -18,8 +19,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
         public virtual VehicleStrain GetStrainOnTrajectory(VehicleTrajectory trajectory,
             double Y,
             LoadModel load,
-            bool invertAxles,
-            bool doSlabCalculation)
+            bool invertAxles)
         {
             Func<Axle, double> axleFunc = invertAxles
             ? (axle) => { return Y + load.Length - axle.Position; }

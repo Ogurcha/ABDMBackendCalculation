@@ -6,10 +6,12 @@ namespace Abdm.Calculation.BLL.Interfaces
     {
         IntervalModel GetIntervalModel(VehicleRollingBigModel dataModel, 
             PassageInterval interval, 
-            bool doTrajectoriesUnderWheels);
+            bool doTrajectoriesUnderWheels,
+            IProfileYZService profileYZService);
 
         VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, 
             Dictionary<double, ProfileYZ> profileMap, 
-            VehicleRollingBigModel dataModel);
+            VehicleRollingBigModel dataModel,
+            IProfileYZService profileYZService);
     }
 }

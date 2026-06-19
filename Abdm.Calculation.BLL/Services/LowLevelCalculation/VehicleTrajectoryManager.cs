@@ -3,14 +3,13 @@ using Abdm.Calculation.BLL.Models;
 
 namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
-    public class VehicleTrajectoryManager(
-        IProfileYZService profileYZService
-        ) : IVehicleTrajectoryManager
+    public class VehicleTrajectoryManager : IVehicleTrajectoryManager
     {
         public virtual IntervalModel GetIntervalModel(
             VehicleRollingBigModel dataModel,
             PassageInterval interval,
-            bool doTrajectoriesUnderWheels)
+            bool doTrajectoriesUnderWheels,
+            IProfileYZService profileYZService)
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
             var distinctXs = profileYZService.CalculateRequiredTrajectoryPositions(
@@ -21,7 +20,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             var profileMap = profileYZService.CreateProfileMap(distinctXs, dataModel);
 
             result.Trajectories = distinctXs
-                .Select(x => GetVehicleTrajectory(x, profileMap, dataModel))
+                .Select(x => GetVehicleTrajectory(x, profileMap, dataModel, profileYZService))
                 .OfType<VehicleTrajectory>()
                 .ToArray();
 
@@ -31,7 +30,8 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
         public virtual VehicleTrajectory? GetVehicleTrajectory(
             VehicleXPosition xPosition,
             Dictionary<double, ProfileYZ> profileMap,
-            VehicleRollingBigModel dataModel)
+            VehicleRollingBigModel dataModel,
+            IProfileYZService profileYZService)
         {
             var left = new Dictionary<double, ProfileYZ>();
             foreach (var item in xPosition.LeftXPosition)

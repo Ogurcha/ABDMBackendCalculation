@@ -2,15 +2,13 @@
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 
-public class VehicleTrajectoryManagerVolumetric(
-    IProfileYZServiceVolumetric profileYZService
-    ) : VehicleTrajectoryManager(profileYZService), IVehicleTrajectoryManager
+public class VehicleTrajectoryManagerVolumetric : VehicleTrajectoryManager, IVehicleTrajectoryManager
 {
-    public override VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, Dictionary<double, ProfileYZ> profileMap, VehicleRollingBigModel dataModel)
+    public override VehicleTrajectory? GetVehicleTrajectory(VehicleXPosition xPosition, Dictionary<double, ProfileYZ> profileMap, VehicleRollingBigModel dataModel, IProfileYZService profileYZService)
     {
-        var baseTrajectory = base.GetVehicleTrajectory(xPosition, profileMap, dataModel);
+        var baseTrajectory = base.GetVehicleTrajectory(xPosition, profileMap, dataModel, profileYZService);
 
-        if (baseTrajectory == null)
+        if (baseTrajectory == null || profileYZService is not IProfileYZServiceVolumetric profileYZServiceVolumetric)
         {
             return null;
         }
@@ -20,7 +18,7 @@ public class VehicleTrajectoryManagerVolumetric(
             var axles = dataModel.Data.Load.Axles.Where(a => a.WheelsDistance.Contains(distance));
 
             var leftProfile = baseTrajectory.Left[distance];
-            var leftVolumetricProfile = profileYZService.GetProfileYZVolumetric(dataModel.Mesh, leftProfile, axles, dataModel.Data.Surface.RoadCoatSize, profileMap);
+            var leftVolumetricProfile = profileYZServiceVolumetric.GetProfileYZVolumetric(dataModel.Mesh, leftProfile, axles, dataModel.Data.Surface.RoadCoatSize, profileMap);
             if (leftVolumetricProfile == null)
             {
                 return null;
@@ -28,7 +26,7 @@ public class VehicleTrajectoryManagerVolumetric(
             baseTrajectory.Left[distance] = leftVolumetricProfile;
 
             var rightProfile = baseTrajectory.Right[distance];
-            var rightVolumetricProfile = profileYZService.GetProfileYZVolumetric(dataModel.Mesh, rightProfile, axles, dataModel.Data.Surface.RoadCoatSize, profileMap);
+            var rightVolumetricProfile = profileYZServiceVolumetric.GetProfileYZVolumetric(dataModel.Mesh, rightProfile, axles, dataModel.Data.Surface.RoadCoatSize, profileMap);
             if (rightVolumetricProfile == null)
             {
                 return null;
