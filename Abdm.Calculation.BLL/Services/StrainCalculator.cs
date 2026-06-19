@@ -126,7 +126,7 @@ namespace Abdm.Calculation.BLL.Services
 
             foreach (var wheelOffset in data.Load.WheelOffsetsMap!)
             {
-                var axle = data.Load.Axles.Where(a => a.WheelsDistance.Contains(wheelOffset.Key)).OrderByDescending(x => x.WheelWidth).First();
+                var axle = data.Load.Axles.Where(a => a.WheelsDistance.Contains(wheelOffset.Key * 2)).OrderByDescending(x => x.WheelWidth).First();
                 var profileWeight = wheelOffset.Value.Item2 * NormConstants.TrafficJamApproximationParam;
 
                 var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft, axle);
@@ -179,16 +179,18 @@ namespace Abdm.Calculation.BLL.Services
         private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile, Axle axle)
         {
             double totalVolume = 0d;
-            double? previousArea = null;
-            double currentArea;
+            double? previousArea = null; double? previousPosition = null;
+            double currentArea; double currentPosition;
             for (int i = 0; i < profile.VolumetricProfiles.Count; i++)
             {
                 currentArea = MathExtensions.CalculateAreaUnderCurve(profile.VolumetricProfiles[axle][i].SortedVectors);
+                currentPosition = profile.VolumetricProfiles[axle][i].X;
                 if (previousArea != null)
                 {
-                    totalVolume += MathExtensions.FrustrumVolume(profile.FootprintWidth[axle] / 2, previousArea.Value, currentArea);
+                    totalVolume += MathExtensions.FrustrumVolume(currentPosition - previousPosition!.Value, previousArea.Value, currentArea);
                 }
                 previousArea = currentArea;
+                previousPosition = currentPosition;
             }
 
             return totalVolume;

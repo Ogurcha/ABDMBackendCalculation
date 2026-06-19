@@ -13,7 +13,7 @@ public class VehicleTrajectoryManagerVolumetric : VehicleTrajectoryManager, IVeh
             return null;
         }
 
-        foreach (var distance in dataModel.Data.Load.WheelOffsetsMap!.Keys)
+        foreach (var distance in dataModel.Data.Load.WheelOffsetsMap!.Keys.Select(x => x * 2))
         {
             var axles = dataModel.Data.Load.Axles.Where(a => a.WheelsDistance.Contains(distance));
 

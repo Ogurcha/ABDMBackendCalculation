@@ -72,23 +72,26 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             var areaCenter = CalculateZAreaAroundY(profile.SortedVectors, Y, radius, out var indexesCenter);
 
             double totalVolume = 0d;
-            double? previousArea = null;
-            double currentArea;
+            double? previousArea = null; double? previousPosition = null;
+            double currentArea; double curentPosition;
             for (int i = 0; i < profile.VolumetricProfiles.Count; i++)
             {
                 if (profile.VolumetricProfiles[axle][i].X.Equals(profile.X))
                 {
                     currentArea = areaCenter;
+                    curentPosition = profile.X;
                 }
                 else
                 {
                     currentArea = CalculateZAreaAroundY(profile.VolumetricProfiles[axle][i].SortedVectors, Y, radius, out _);
+                    curentPosition = profile.VolumetricProfiles[axle][i].X;
                 }
                 if (previousArea != null)
                 {
-                    totalVolume += MathExtensions.FrustrumVolume(profile.FootprintWidth[axle] / 2, previousArea.Value, currentArea);
+                    totalVolume += MathExtensions.FrustrumVolume(curentPosition - previousPosition!.Value, previousArea.Value, currentArea);
                 }
                 previousArea = currentArea;
+                previousPosition = curentPosition;
             }
 
             positivePieces =

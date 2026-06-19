@@ -127,6 +127,10 @@ namespace Abdm.Calculation.BLL.Coordinators
                 ? vehicleStrainProviders.Where(x => x is VehicleStrainProviderVolumetric).First()
                 : vehicleStrainProviders.Where(x => x is VehicleStrainProvider).First();
             dataModel.Data.VehicleStrainProvider = vehicleStrainProvider;
+            if (!doSlabCalculation)
+            {
+                dataModel.Data.Surface.RoadCoatSize = 0;
+            }
 
             foreach (var interval in dataModel.Intervals)
             {
