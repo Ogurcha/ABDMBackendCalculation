@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Abdm.Calculation.BLL.Models
+﻿namespace Abdm.Calculation.BLL.Models
 {
     /// <summary>
-    /// Абсолютное положение ТС по оси X
+    /// Абсолютное положение ТС по оси X. Прекурсор объекта <see cref="VehicleTrajectory"/>
     /// </summary>
     public class VehicleXPosition
     {

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Extensions\" />
     <Folder Include="Services\StrainCoefficients\gost2014\" />
     <Folder Include="Services\StrainCoefficients\sp35\" />
   </ItemGroup>
