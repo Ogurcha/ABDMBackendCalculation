@@ -87,7 +87,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 if (column.Intervals != null)
                 {
                     column.Coefficients.DynamicInterval = column.Coefficients.Dynamic;
-                    
                 }
             }
 

@@ -112,35 +112,33 @@ namespace Abdm.Calculation.BLL.Services
 
         public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
-            //TODO#2: Доделать ProfileYZExtended для случая, если в нагрузке много и РАЗНЫХ Axle
-            //Пока что берём только первый слой
+            var trafficJamStrain = new TrafficJamStrain()
+            {
+                LeftStrain = 0d,
+                RightStrain = 0d,
+                SumStrain = 0d,
+                TotalStrain = 0d,
+            };
             if (trajectory.Left.First().Value is not ProfileYZExtended profileLeft || trajectory.Right.First().Value is not ProfileYZExtended profileRight)
             {
-                return new TrafficJamStrain
-                {
-                    LeftStrain = 0d,
-                    RightStrain = 0d,
-                    SumStrain = 0d,
-                    TotalStrain = 0d,
-                };
+                return trafficJamStrain;
             }
-            //TODO#2:
-            var wheelOffset = data.Load.WheelOffsetsMap!.First();
 
-            var distanceFromCenter = wheelOffset.Key;
-            var (wheelCount, profileWeight) = wheelOffset.Value;
+            foreach (var wheelOffset in data.Load.WheelOffsetsMap!)
+            {
+                var axle = data.Load.Axles.Where(a => a.WheelsDistance.Contains(wheelOffset.Key * 2)).OrderByDescending(x => x.WheelWidth).First();
+                var profileWeight = wheelOffset.Value.Item2 * NormConstants.TrafficJamApproximationParam;
 
-            var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft);
-            var volumeRight = GetTraffciJamVolumeForOneSide(profileRight);
+                var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft, axle);
+                var volumeRight = GetTraffciJamVolumeForOneSide(profileRight, axle);
 
-            var trafficJamStrain = new TrafficJamStrain();
-            
-            var profileCoefficient = profileWeight * NormConstants.TrafficJamApproximationParam;
-            trafficJamStrain.LeftVolume = volumeLeft;
-            trafficJamStrain.LeftStrain = volumeLeft * profileCoefficient / profileLeft.FootprintWidth;
-            trafficJamStrain.RightVolume = volumeRight;
-            trafficJamStrain.RightStrain = volumeRight * profileCoefficient / profileRight.FootprintWidth;
-            trafficJamStrain.SumStrain = trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
+                
+                trafficJamStrain.LeftVolume += volumeLeft;
+                trafficJamStrain.LeftStrain += volumeLeft * profileWeight / profileLeft.FootprintWidth[axle];
+                trafficJamStrain.RightVolume += volumeRight;
+                trafficJamStrain.RightStrain += volumeRight * profileWeight / profileRight.FootprintWidth[axle];
+                trafficJamStrain.SumStrain += trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
+            }
 
             if (data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
             {
@@ -177,23 +175,25 @@ namespace Abdm.Calculation.BLL.Services
 
         /// <summary>
         /// Расчёт равномерного напряжения для одной стороны ТС (левой или правой). 
-        /// Делим на 2, так как вес сюда передается по сумме ВСЕХ, а нас интересуют лишь колёса слева (справа)
         /// </summary>
-        private double GetTraffciJamStrainForOneSide(double area, double totalAxlesWeight)
+        private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile, Axle axle)
         {
-            return area * totalAxlesWeight * NormConstants.TrafficJamApproximationParam / 2;
-        }
+            double totalVolume = 0d;
+            double? previousArea = null; double? previousPosition = null;
+            double currentArea; double currentPosition;
+            for (int i = 0; i < profile.VolumetricProfiles[axle].Length; i++)
+            {
+                currentArea = MathExtensions.CalculateAreaUnderCurve(profile.VolumetricProfiles[axle][i].SortedVectors);
+                currentPosition = profile.VolumetricProfiles[axle][i].X;
+                if (previousArea != null)
+                {
+                    totalVolume += MathExtensions.FrustrumVolume(currentPosition - previousPosition!.Value, previousArea.Value, currentArea);
+                }
+                previousArea = currentArea;
+                previousPosition = currentPosition;
+            }
 
-        private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile)
-        {
-            var trapezoidAreaLeft = MathExtensions.CalculateAreaUnderCurve(profile.SortedVectorsLeft);
-            var trapezoidAreaRight = MathExtensions.CalculateAreaUnderCurve(profile.SortedVectorsRight);
-            var trapezoidAreaCenter = MathExtensions.CalculateAreaUnderCurve(profile.SortedVectors);
-
-            var volume1 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaLeft, trapezoidAreaCenter);
-            var volume2 = MathExtensions.FrustrumVolume(profile.FootprintWidth / 2, trapezoidAreaRight, trapezoidAreaCenter);
-
-            return volume1 + volume2;
+            return totalVolume;
         }
 
         private VehicleStrain GetVehicleStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data, ProfileYZ measuringProfile, double position)

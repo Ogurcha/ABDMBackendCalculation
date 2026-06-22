@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.Graphics.Models;
+﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.Graphics.Models;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Models

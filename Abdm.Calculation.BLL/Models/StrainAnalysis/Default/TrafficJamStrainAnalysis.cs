@@ -10,6 +10,8 @@
 
         public decimal LeftIntervalLength { get; set; }
 
+        public decimal LeftIntervalVolume { get; set; }
+
         public decimal LeftIntervalStrain { get; set; }
 
         public decimal RightIntervalStart { get; set; }
@@ -18,9 +20,9 @@
 
         public decimal RightIntervalLength { get; set; }
 
-        public decimal RightIntervalStrain { get; set; }
+        public decimal RightIntervalVolume { get; set; }
 
-        public decimal SumStrain { get; set; }
+        public decimal RightIntervalStrain { get; set; }
 
         public decimal CenterIntervalStart { get; set; }
 
@@ -28,8 +30,6 @@
 
         public decimal CenterIntervalLength { get; set; }
 
-        public decimal LeftIntervalVolume { get; set; }
-
-        public decimal RightIntervalVolume { get; set; }
+        public decimal SumStrain { get; set; }
     }
 }

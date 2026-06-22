@@ -16,6 +16,9 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("leftIntervalLength")]
         public decimal LeftIntervalLength { get; set; }
 
+        [JsonPropertyName("leftIntervalVolume")]
+        public decimal LeftIntervalVolume { get; set; }
+
         [JsonPropertyName("leftIntervalStrain")]
         public decimal LeftIntervalStrain { get; set; }
 
@@ -28,11 +31,11 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("rightIntervalLength")]
         public decimal RightIntervalLength { get; set; }
 
+        [JsonPropertyName("rightIntervalVolume")]
+        public decimal RightIntervalVolume { get; set; }
+
         [JsonPropertyName("rightIntervalStrain")]
         public decimal RightIntervalStrain { get; set; }
-
-        [JsonPropertyName("sumStrain")]
-        public decimal SumStrain { get; set; }
 
         [JsonPropertyName("centerIntervalStart")]
         public decimal CenterIntervalStart { get; set; }
@@ -43,10 +46,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("centerIntervalLength")]
         public decimal CenterIntervalLength { get; set; }
 
-        [JsonPropertyName("leftIntervalVolume")]
-        public decimal LeftIntervalVolume { get; set; }
-
-        [JsonPropertyName("rightIntervalVolume")]
-        public decimal RightIntervalVolume { get; set; }
+        [JsonPropertyName("sumStrain")]
+        public decimal SumStrain { get; set; }
     }
 }

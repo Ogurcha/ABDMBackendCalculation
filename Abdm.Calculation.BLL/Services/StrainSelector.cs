@@ -29,18 +29,18 @@ namespace Abdm.Calculation.BLL.Services
                 var groupedByIntervals = strains
                     .Where(s => s.StrainsInMaximums.Length > 0)
                     .GroupBy(x => x.IntervalModelRef)
-                    .Select(x => (x.Single().StrainsInMaximums, Math.Min(roadRule.MaxTrajectoriesInInterval, x.Key.PassageIntervalRef.LaneCount)))
+                    .Select(x => (x.Single().StrainsInMaximums, Depth: Math.Min(roadRule.MaxTrajectoriesInInterval, x.Key.PassageIntervalRef.LaneCount)))
                     .ToArray();
 
                 var globalDepth = roadRule.MaxTrajectoriesTotal;
 
-                if (groupedByIntervals.All(x => x.Item2 <= 1))
+                if (groupedByIntervals.All(x => x.Depth <= 1))
                 {
                     result.Add(new StrainResultUnpopulated
                     {
                         RoadRuleRef = roadRule,
                         Strain = groupedByIntervals
-                        .Select(x => x.Item1.OrderDescending().First())
+                        .Select(x => x.StrainsInMaximums.OrderDescending().First())
                         .OrderDescending()
                         .Take(globalDepth)
                         .ToArray()
@@ -121,12 +121,14 @@ namespace Abdm.Calculation.BLL.Services
                     {
                         var newIntervals = validIntervals.Except([validIntervals.ElementAt(i)]).Append((newOrdered, validIntervals[i].depthParent - 1)).ToArray();
 
-                        strainScore = newOrdered.Select(strain => MeasureScore(newIntervals, strain, actualTrajectoryDistance, globalDepth - 1, stripeCoefficientProvider)).OrderBy(score => score.TotalScore).LastOrDefault();
+                        strainScore = newOrdered
+                            .Select(strain => MeasureScore(newIntervals, strain, actualTrajectoryDistance, globalDepth - 1, stripeCoefficientProvider))
+                            .OrderBy(score => score.TotalScore)
+                            .LastOrDefault();
                     }
                 }
             }
             
-
             if (strainScore == null || strainScore.Score < 0)
             {
                 strainScore = new StrainScore { Score = 0, StrainsPicked = new List<StrainsInMaximums>() };

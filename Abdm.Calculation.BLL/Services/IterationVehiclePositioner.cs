@@ -15,7 +15,7 @@ namespace Abdm.Calculation.BLL.Services
     /// И в таком случае нам надо расположить ТС только с одной стороны от максимума 
     /// Чтобы хоть как то оптимизировать процесс, я кэширую удачную дельту, чтобы в следующем цикле считать уже от удачной позиции
     /// </summary>
-    public class IterationVehiclePositioner(IVehicleTrajectoryService vehicleTrajectoryService) : IVehiclePositioner
+    public class IterationVehiclePositioner() : IVehiclePositioner
     {
         private double CachedDelta = double.NaN;
 
@@ -54,19 +54,17 @@ namespace Abdm.Calculation.BLL.Services
                     
                     if (data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab)
                     {
-                        strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
+                        strain = data.VehicleStrainProvider!.GetStrainOnTrajectory(trajectory,
                             position,
                             data.Load,
-                            !loadDirectionForward,
-                            true);
+                            !loadDirectionForward);
                     }
                     else
                     {
-                        strain = vehicleTrajectoryService.GetStrainOnTrajectory(trajectory,
+                        strain = data.VehicleStrainProvider!.GetStrainOnTrajectory(trajectory,
                             position,
                             data.Load,
-                            !loadDirectionForward,
-                            false);
+                            !loadDirectionForward);
                     }
                     
                     if (strain.SumStrain <= oldStrain?.SumStrain)

@@ -4,6 +4,7 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Mappers;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 using Abdm.Calculation.Graphics;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
@@ -20,10 +21,12 @@ namespace Abdm.Calculation.BLL.Coordinators
         IMeshManager meshManager,
         IRoadRulesFactory roadRulesFactory,
         IStrainResultService strainResultService,
-        IVehicleTrajectoryService vehicleTrajectoryService,
         ISymmetryService symmetryService,
         IMaterialService materialService,
-        ICoefficientProviderFactory coefficientProviderFactory
+        ICoefficientProviderFactory coefficientProviderFactory,
+        IEnumerable<IProfileYZService> profileYZServices,
+        IEnumerable<IVehicleStrainProvider> vehicleStrainProviders,
+        IEnumerable<IVehicleTrajectoryManager> vehicleTrajectoryManagers
         ) : IBaseVehicleRollingCalculationCoordinator
     {
         private const string meshErrorMessage = "Mesh construction failed";
@@ -110,9 +113,28 @@ namespace Abdm.Calculation.BLL.Coordinators
             CancellationToken cancellationToken)
         {
             var intervalModels = new List<IntervalModel>();
+
+            var doSlabCalculation = dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab;
+            var requiredTrafficJamStrainCalculaton = dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalculation);
+
+            var profileYZService = doSlabCalculation || requiredTrafficJamStrainCalculaton
+                ? profileYZServices.Where(x => x is ProfileYZServiceVolumetric).First() 
+                : profileYZServices.Where(x => x is ProfileYZService).First();
+            var vehicleTrajectoryManager = doSlabCalculation || requiredTrafficJamStrainCalculaton
+                ? vehicleTrajectoryManagers.Where(x => x is VehicleTrajectoryManagerVolumetric).First()
+                : vehicleTrajectoryManagers.Where(x => x is VehicleTrajectoryManager).First();
+            var vehicleStrainProvider = doSlabCalculation
+                ? vehicleStrainProviders.Where(x => x is VehicleStrainProviderVolumetric).First()
+                : vehicleStrainProviders.Where(x => x is VehicleStrainProvider).First();
+            dataModel.Data.VehicleStrainProvider = vehicleStrainProvider;
+            if (!doSlabCalculation)
+            {
+                dataModel.Data.Surface.RoadCoatSize = 0;
+            }
+
             foreach (var interval in dataModel.Intervals)
             {
-                var intervalModel = vehicleTrajectoryService.GetIntervalModel(dataModel, interval);
+                var intervalModel = vehicleTrajectoryManager.GetIntervalModel(dataModel, interval, doSlabCalculation, profileYZService);
                 if (intervalModel.Trajectories?.Any() != true)
                 {
                     return new ResultMonad<VehicleRollingResult>(new Exception(noIntersectionsErrorMessage));

@@ -5,19 +5,8 @@ namespace Abdm.Calculation.BLL.Models
     /// <summary>
     /// Кривая в плоскости YZ, обозначающая поверхность влияния в этой плоскости
     /// </summary>
-    public class ProfileYZ
+    public class ProfileYZ : ProfileYZBase
     {
-        /// <summary>
-        /// значение по оси X - индентификатор профиля
-        /// </summary>
-        public double X { get; set; }
-
-        /// <summary>
-        /// точки, через которые проходит кривая, отсортированные по первому значению вектора. 
-        /// По краям зануляется точками, значение которых равно нулю. 
-        /// </summary>
-        public required Vector2D[] SortedVectors { get; set; }
-
         /// <summary>
         /// Экстремумы кривой. У валидных профилей не бывает пустым. 
         /// </summary>
@@ -41,5 +30,22 @@ namespace Abdm.Calculation.BLL.Models
         /// Список всех положительных участков профиля
         /// </summary>
         public required Interval[] PositivePieces { get; set; }
+    }
+
+    /// <summary>
+    /// Кривая в плоскости YZ, обозначающая поверхность влияния в этой плоскости
+    /// </summary>
+    public class ProfileYZBase
+    {
+        /// <summary>
+        /// точки, через которые проходит кривая, отсортированные по первому значению вектора. 
+        /// По краям зануляется точками, значение которых равно нулю. 
+        /// </summary>
+        public required Vector2D[] SortedVectors { get; set; }
+
+        /// <summary>
+        /// значение по оси X - индентификатор профиля
+        /// </summary>
+        public double X { get; set; }
     }
 }
