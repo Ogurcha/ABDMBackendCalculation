@@ -81,9 +81,9 @@ namespace Abdm.Calculation.BLL.Services
                 scores.Add(strainScore);
             }
 
-            var finalScore = scores.OrderBy(x => x.TotalScore).Last();
+            var finalScore = scores.MaxBy(x => x.TotalScore);
 
-            return finalScore.StrainsPicked.ToArray();
+            return finalScore!.StrainsPicked.ToArray();
         }
 
         private StrainScore MeasureScore(
@@ -117,15 +117,26 @@ namespace Abdm.Calculation.BLL.Services
                         newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
                     }
 
-                    if (newOrdered != null)
-                    {
-                        var newIntervals = validIntervals.Except([validIntervals.ElementAt(i)]).Append((newOrdered, validIntervals[i].depthParent - 1)).ToArray();
+                    var intervalsForChild = validIntervals.Except([validIntervals.ElementAt(i)]);
 
-                        strainScore = newOrdered
-                            .Select(strain => MeasureScore(newIntervals, strain, actualTrajectoryDistance, globalDepth - 1, stripeCoefficientProvider))
-                            .OrderBy(score => score.TotalScore)
-                            .LastOrDefault();
+                    if (newOrdered != null && newOrdered.Length > 0)
+                    {
+                        var newLocalDepth = validIntervals[i].depthParent - 1;
+
+                        intervalsForChild = intervalsForChild.Append((newLocalDepth == 1 ? [newOrdered.MaxBy(x => x.TotalStrain)!] : newOrdered, newLocalDepth));
                     }
+
+                    var intervalsForChildArray = intervalsForChild.ToArray();
+
+                    strainScore = intervalsForChildArray
+                        .SelectMany(x => x.Item1)
+                        .Select(strain => MeasureScore(
+                            intervalsForChildArray, 
+                            strain, 
+                            actualTrajectoryDistance, 
+                            globalDepth - 1, 
+                            stripeCoefficientProvider))
+                        .MaxBy(score => score.TotalScore);
                 }
             }
             
