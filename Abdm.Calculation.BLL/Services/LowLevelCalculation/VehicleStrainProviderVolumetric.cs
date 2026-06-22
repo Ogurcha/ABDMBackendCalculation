@@ -74,7 +74,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             double totalVolume = 0d;
             double? previousArea = null; double? previousPosition = null;
             double currentArea; double curentPosition;
-            for (int i = 0; i < profile.VolumetricProfiles.Count; i++)
+            for (int i = 0; i < profile.VolumetricProfiles[axle].Length; i++)
             {
                 if (profile.VolumetricProfiles[axle][i].X.Equals(profile.X))
                 {

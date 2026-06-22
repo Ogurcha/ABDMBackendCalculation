@@ -181,7 +181,7 @@ namespace Abdm.Calculation.BLL.Services
             double totalVolume = 0d;
             double? previousArea = null; double? previousPosition = null;
             double currentArea; double currentPosition;
-            for (int i = 0; i < profile.VolumetricProfiles.Count; i++)
+            for (int i = 0; i < profile.VolumetricProfiles[axle].Length; i++)
             {
                 currentArea = MathExtensions.CalculateAreaUnderCurve(profile.VolumetricProfiles[axle][i].SortedVectors);
                 currentPosition = profile.VolumetricProfiles[axle][i].X;
