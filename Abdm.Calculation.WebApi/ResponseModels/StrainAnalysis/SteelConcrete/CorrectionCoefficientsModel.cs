@@ -13,7 +13,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete
         [JsonPropertyName("m1")]
         public string M1 { get; set; }
 
-        [JsonPropertyName("theta")]
+        [JsonPropertyName("ash4")]
         public string Ash4 { get; set; }
     }
 }
