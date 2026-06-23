@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
 {
@@ -44,6 +45,12 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// </summary>
         [JsonPropertyName("default")]
         public List<AnalysisDefaultModel>? Default { get; set; }
+
+        /// <summary>
+        /// Дополнительные результаты при расчете для ЖБ конструкций
+        /// </summary>
+        [JsonPropertyName("steelConcrete")]
+        public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
 
         /// <summary>
         /// Проектная устойчивость структуры. Без учёта собственного веса
