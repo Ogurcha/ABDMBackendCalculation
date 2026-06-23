@@ -174,7 +174,7 @@ namespace Abdm.Calculation.BLL.Services
         }
 
         /// <summary>
-        /// Расчёт равномерного напряжения для одной стороны ТС (левой или правой). 
+        /// Расчёт равномерного напряжения для одной стороны ТС (левой или правой) для одной оси/тележки
         /// </summary>
         private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile, Axle axle)
         {
