@@ -2,7 +2,7 @@
 
 namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete
 {
-    public class PermissibleLoadClasses
+    public class PermissibleLoadClassesModel
     {
         /// <summary>
         /// Допустимые классы эталонных временных нагрузок

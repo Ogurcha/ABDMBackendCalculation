@@ -4,11 +4,13 @@ using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
+using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
 using Abdm.Calculation.Maths.Models;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
+using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 using Mapster;
 
 namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
@@ -149,6 +151,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.HasBarrierInTheMiddle, src => src.HasBarrierInTheMiddle)
             .Map(dst => dst.Lambda, src => src.Lambda)
             .Map(dst => dst.Default, src => src.Default)
+            .Map(dst => dst.SteelConcrete, src => src.SteelConcrete)
             .Map(dst => dst.MyStrength, src => src.MyStrength)
             .Map(dst => dst.ConstLoad, src => src.ConstLoad)
             .Map(dst => dst.PedestrianLoad, src => src.PedestrianLoad)
@@ -190,6 +193,173 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.StripeInterval, src => src.StripeInterval)
             .Map(dst => dst.DynamicInterval, src => src.DynamicInterval)
             .Map(dst => dst.ReliabilityInterval, src => src.ReliabilityInterval);
+
+            TypeAdapterConfig<AdditionalSectionCharacteristics, AdditionalSectionCharacteristicsModel>
+            .NewConfig()
+            .Map(dst => dst.DistanceCombined, src => src.DistanceCombined)
+            .Map(dst => dst.DistanceSteel, src => src.DistanceSteel)
+            .Map(dst => dst.CombinedSectionStaticMoment, src => src.CombinedSectionStaticMoment)
+            .Map(dst => dst.VerticalPlateAreaSteelBeam, src => src.VerticalPlateAreaSteelBeam)
+            .Map(dst => dst.HorizontalPlateAreaBottomFlange, src => src.HorizontalPlateAreaBottomFlange)
+            .Map(dst => dst.Zb1, src => src.Zb1)
+            .Map(dst => dst.S, src => src.S);
+
+            TypeAdapterConfig<AnalysisSteelConcrete, AnalysisSteelConcreteModel>
+            .NewConfig()
+            .Map(dst => dst.InputParameters, src => src.InputParameters)
+            .Map(dst => dst.Materials, src => src.Materials)
+            .Map(dst => dst.LoadsAtCheckPoint, src => src.LoadsAtCheckPoint)
+            .Map(dst => dst.SectionGeometric, src => src.SectionGeometric)
+            .Map(dst => dst.CreepAccounting, src => src.CreepAccounting)
+            .Map(dst => dst.LoadClasses, src => src.LoadClasses)
+            .Map(dst => dst.StressesAtSlab, src => src.StressesAtSlab)
+            .Map(dst => dst.Coefficients, src => src.Coefficients)
+            .Map(dst => dst.SteelBeamBelts, src => src.SteelBeamBelts)
+            .Map(dst => dst.SectionGeometric13, src => src.SectionGeometric13)
+            .Map(dst => dst.AdditionalCharacteristics, src => src.AdditionalCharacteristics)
+            .Map(dst => dst.CreepAccounting15, src => src.CreepAccounting15)
+            .Map(dst => dst.ShrinkageStress, src => src.ShrinkageStress)
+            .Map(dst => dst.TemperatureStress, src => src.TemperatureStress)
+            .Map(dst => dst.LoadClasses18, src => src.LoadClasses18)
+            .Map(dst => dst.StressesAtSlab19, src => src.StressesAtSlab19)
+            .Map(dst => dst.Coefficients21, src => src.Coefficients21)
+            .Map(dst => dst.SteelBeamBelts22, src => src.SteelBeamBelts22);
+
+            TypeAdapterConfig<ConcreteStress, ConcreteStressModel>
+            .NewConfig()
+            .Map(dst => dst.StressInConcrete, src => src.StressInConcrete)
+            .Map(dst => dst.StressInArmature, src => src.StressInArmature);
+
+            TypeAdapterConfig<CorrectionCoefficients, CorrectionCoefficientsModel>
+            .NewConfig()
+            .Map(dst => dst.Theta, src => src.Theta)
+            .Map(dst => dst.Ash3, src => src.Ash3)
+            .Map(dst => dst.M1, src => src.M1)
+            .Map(dst => dst.Ash4, src => src.Ash4);
+
+            TypeAdapterConfig<CreepAccounting, CreepAccountingModel>
+            .NewConfig()
+            .Map(dst => dst.StressesAtSlab, src => src.StressesAtSlab)
+            .Map(dst => dst.ControlValue, src => src.ControlValue)
+            .Map(dst => dst.CreepAccountingNotRequired, src => src.CreepAccountingNotRequired)
+            .Map(dst => dst.StressesFromConcreteCreepInSlab, src => src.StressesFromConcreteCreepInSlab)
+            .Map(dst => dst.StressesFromConcreteCreepInReinforcement, src => src.StressesFromConcreteCreepInReinforcement);
+
+            TypeAdapterConfig<PermissibleLoadClasses, PermissibleLoadClassesModel>
+            .NewConfig()
+            .Map(dst => dst.PermissibleReferenceTemporaryLoadClasses, src => src.PermissibleReferenceTemporaryLoadClasses)
+            .Map(dst => dst.TemporaryLoadsMoments, src => src.TemporaryLoadsMoments)
+            .Map(dst => dst.FullBendingMomentSecondStage, src => src.FullBendingMomentSecondStage)
+            .Map(dst => dst.FullBendingMoment, src => src.FullBendingMoment);
+
+            TypeAdapterConfig<SectionGeometricCharacteristics, SectionGeometricCharacteristicsModel>
+            .NewConfig()
+            .Map(dst => dst.SlabAreaReducedToSteelExcludingReinforcement, src => src.SlabAreaReducedToSteelExcludingReinforcement)
+            .Map(dst => dst.SlabAreaReducedToSteelWithReinforcement, src => src.SlabAreaReducedToSteelWithReinforcement)
+            .Map(dst => dst.SlabStaticMomentReducedToSteelWithReinforcement, src => src.SlabStaticMomentReducedToSteelWithReinforcement)
+            .Map(dst => dst.SlabMomentOfInertiaReducedToSteelWithReinforcement, src => src.SlabMomentOfInertiaReducedToSteelWithReinforcement)
+            .Map(dst => dst.SlabMomentOfInertiaReducedToSteelAboutCentroidExcludingRebar, src => src.SlabMomentOfInertiaReducedToSteelAboutCentroidExcludingRebar)
+            .Map(dst => dst.CompositeBeamSectionArea, src => src.CompositeBeamSectionArea)
+            .Map(dst => dst.CompositeBeamStaticMoment, src => src.CompositeBeamStaticMoment)
+            .Map(dst => dst.CompositeBeamMomentOfInertia, src => src.CompositeBeamMomentOfInertia)
+            .Map(dst => dst.CompositeBeamMomentOfInertiaAboutCentroid, src => src.CompositeBeamMomentOfInertiaAboutCentroid)
+            .Map(dst => dst.ConcreteSlabCentroidPosition, src => src.ConcreteSlabCentroidPosition)
+            .Map(dst => dst.CompositeSectionCentroidPosition, src => src.CompositeSectionCentroidPosition)
+            .Map(dst => dst.DistanceBetweenCompositeAndSlabCentroids, src => src.DistanceBetweenCompositeAndSlabCentroids)
+            .Map(dst => dst.DistanceBetweenSteelCentroidAndSlabCentroid, src => src.DistanceBetweenSteelCentroidAndSlabCentroid)
+            .Map(dst => dst.DistanceFromCompositeCentroidToTopFiberOfConcreteSlab, src => src.DistanceFromCompositeCentroidToTopFiberOfConcreteSlab)
+            .Map(dst => dst.DistanceFromConcreteSlabCentroidToTopFiber, src => src.DistanceFromConcreteSlabCentroidToTopFiber)
+            .Map(dst => dst.CombinedSectionMomentOfInertia, src => src.CombinedSectionMomentOfInertia)
+            .Map(dst => dst.SectionModulusTop, src => src.SectionModulusTop)
+            .Map(dst => dst.SectionModulusBottom, src => src.SectionModulusBottom);
+
+            TypeAdapterConfig<SteelBeamBelt, SteelBeamBeltModel>
+            .NewConfig()
+            .Map(dst => dst.AK, src => src.AK)
+            .Map(dst => dst.StrainAK, src => src.StrainAK)
+            .Map(dst => dst.LimitsAK, src => src.LimitsAK)
+            .Map(dst => dst.ReserveAK, src => src.ReserveAK)
+            .Map(dst => dst.NK, src => src.NK)
+            .Map(dst => dst.StrainNK, src => src.StrainNK)
+            .Map(dst => dst.LimitsNK, src => src.LimitsNK)
+            .Map(dst => dst.ReserveNK, src => src.ReserveNK)
+            .Map(dst => dst.N3, src => src.N3)
+            .Map(dst => dst.StrainN3, src => src.StrainN3)
+            .Map(dst => dst.LimitsN3, src => src.LimitsN3)
+            .Map(dst => dst.ReserveN3, src => src.ReserveN3);
+
+            TypeAdapterConfig<SteelBeamBelts, SteelBeamBeltsModel>
+            .NewConfig()
+            .Map(dst => dst.UpperBelt, src => src.UpperBelt)
+            .Map(dst => dst.LowerBelt, src => src.LowerBelt);
+
+            TypeAdapterConfig<SteelConcreteInputParameters, SteelConcreteInputParametersModel>
+            .NewConfig()
+            .Map(dst => dst.DesignSlabWidth, src => src.DesignSlabWidth)
+            .Map(dst => dst.DesignSlabThickness, src => src.DesignSlabThickness)
+            .Map(dst => dst.GapTopFlangeToSlabBottom, src => src.GapTopFlangeToSlabBottom)
+            .Map(dst => dst.TopFlangePlateThickness, src => src.TopFlangePlateThickness)
+            .Map(dst => dst.TopFlangePlateWidth, src => src.TopFlangePlateWidth)
+            .Map(dst => dst.WebPlateThickness, src => src.WebPlateThickness)
+            .Map(dst => dst.WebPlateWidth, src => src.WebPlateWidth)
+            .Map(dst => dst.BottomFlangePlateThickness, src => src.BottomFlangePlateThickness)
+            .Map(dst => dst.BottomFlangePlateWidth, src => src.BottomFlangePlateWidth)
+            .Map(dst => dst.SteelBeamHeight, src => src.SteelBeamHeight)
+            .Map(dst => dst.CompositeSectionHeight, src => src.CompositeSectionHeight)
+            .Map(dst => dst.LongitudinalReinforcementArea, src => src.LongitudinalReinforcementArea)
+            .Map(dst => dst.LimitedPlasticDeformationFactor, src => src.LimitedPlasticDeformationFactor)
+            .Map(dst => dst.SteelSectionArea, src => src.SteelSectionArea)
+            .Map(dst => dst.StaticMomentSteelSection, src => src.StaticMomentSteelSection)
+            .Map(dst => dst.SteelSectionAreaWithReinforcement, src => src.SteelSectionAreaWithReinforcement)
+            .Map(dst => dst.StaticMomentSteelSectionWithReinforcement, src => src.StaticMomentSteelSectionWithReinforcement)
+            .Map(dst => dst.MomentOfInertiaSteelSection, src => src.MomentOfInertiaSteelSection)
+            .Map(dst => dst.MomentOfInertiaSteelSectionAboutCentroid, src => src.MomentOfInertiaSteelSectionAboutCentroid)
+            .Map(dst => dst.SteelSectionCentroidPosition, src => src.SteelSectionCentroidPosition)
+            .Map(dst => dst.DistanceFromSteelCentroidToTopFiber, src => src.DistanceFromSteelCentroidToTopFiber)
+            .Map(dst => dst.MomentOfInertiaSteelPart, src => src.MomentOfInertiaSteelPart)
+            .Map(dst => dst.MomentOfInertiaSteelSectionWithReinforcement, src => src.MomentOfInertiaSteelSectionWithReinforcement)
+            .Map(dst => dst.SteelSectionCentroidWithReinforcementPosition, src => src.SteelSectionCentroidWithReinforcementPosition)
+            .Map(dst => dst.SectionModulusTopFlangeSteelPart, src => src.SectionModulusTopFlangeSteelPart)
+            .Map(dst => dst.SectionModulusBottomFlangeSteelPart, src => src.SectionModulusBottomFlangeSteelPart);
+
+            TypeAdapterConfig<SteelConcreteLoads, SteelConcreteLoadsModel>
+            .NewConfig()
+            .Map(dst => dst.PermanentLoadsFirstStageMoments, src => src.PermanentLoadsFirstStageMoments)
+            .Map(dst => dst.PermanentLoadsSecondStageMoments, src => src.PermanentLoadsSecondStageMoments)
+            .Map(dst => dst.PedestrianLoadMoments, src => src.PedestrianLoadMoments);
+
+            TypeAdapterConfig<SteelConcreteMaterials, SteelConcreteMaterialsModel>
+            .NewConfig()
+            .Map(dst => dst.SteelElasticModulus, src => src.SteelElasticModulus)
+            .Map(dst => dst.ReinforcementElasticModulus, src => src.ReinforcementElasticModulus)
+            .Map(dst => dst.ConcreteElasticModulus, src => src.ConcreteElasticModulus)
+            .Map(dst => dst.ConversionCoefficientFirst, src => src.ConversionCoefficientFirst)
+            .Map(dst => dst.ConversionCoefficientSecond, src => src.ConversionCoefficientSecond)
+            .Map(dst => dst.ConcreteUltimateCompressiveStrain, src => src.ConcreteUltimateCompressiveStrain)
+            .Map(dst => dst.ConcreteElasticModulusForShrinkage, src => src.ConcreteElasticModulusForShrinkage)
+            .Map(dst => dst.NbConversionCoefficientFirst, src => src.NbConversionCoefficientFirst)
+            .Map(dst => dst.NbConversionCoefficientSecond, src => src.NbConversionCoefficientSecond)
+            .Map(dst => dst.ConcreteUltimateStrainForShrinkage, src => src.ConcreteUltimateStrainForShrinkage)
+            .Map(dst => dst.UpperSteelDesignStrength, src => src.UpperSteelDesignStrength)
+            .Map(dst => dst.LowerSteelDesignStrength, src => src.LowerSteelDesignStrength)
+            .Map(dst => dst.SlabReinforcementDesignStrength, src => src.SlabReinforcementDesignStrength)
+            .Map(dst => dst.ConcreteDesignStrength, src => src.ConcreteDesignStrength)
+            .Map(dst => dst.MaximumTemperatureDifference, src => src.MaximumTemperatureDifference)
+            .Map(dst => dst.ConcreteSlabMomentOfInertia, src => src.ConcreteSlabMomentOfInertia)
+            .Map(dst => dst.ThinPlateMethodApplicable, src => src.ThinPlateMethodApplicable);
+
+            TypeAdapterConfig<StressesAtSlabCentroid, StressesAtSlabCentroidModel>
+            .NewConfig()
+            .Map(dst => dst.ConcreteStresses, src => src.ConcreteStresses)
+            .Map(dst => dst.ConcreteControlValue, src => src.ConcreteControlValue)
+            .Map(dst => dst.ReinforcementStresses, src => src.ReinforcementStresses)
+            .Map(dst => dst.ReinforcementControlValue, src => src.ReinforcementControlValue)
+            .Map(dst => dst.CalculationCase, src => src.CalculationCase)
+            .Map(dst => dst.UnloadingForce, src => src.UnloadingForce)
+            .Map(dst => dst.UpperFlangeStresses, src => src.UpperFlangeStresses)
+            .Map(dst => dst.UpperFlangeStresses2, src => src.UpperFlangeStresses2)
+            .Map(dst => dst.LowerFlangeStresses, src => src.LowerFlangeStresses)
+            .Map(dst => dst.LowerFlangeStresses2, src => src.LowerFlangeStresses2);
         }
     }
 }

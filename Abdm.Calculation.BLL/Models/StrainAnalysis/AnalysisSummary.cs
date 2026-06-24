@@ -1,5 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
+using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
 using Abdm.Calculation.DAL.Enums;
 
 namespace Abdm.Calculation.BLL.Models.StrainAnalysis
@@ -63,5 +64,7 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// Результат анализа при обычном расчёте
         /// </summary>
         public List<AnalysisDefault>? Default { get; set; }
+
+        public List<AnalysisSteelConcrete>? SteelConcrete { get; set; }
     }
 }

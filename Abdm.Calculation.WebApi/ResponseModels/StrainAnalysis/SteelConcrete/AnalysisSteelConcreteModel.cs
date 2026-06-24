@@ -25,7 +25,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete
         //TODO: 7
 
         [JsonPropertyName("loadClasses8")]
-        public PermissibleLoadClasses LoadClasses { get; set; }
+        public PermissibleLoadClassesModel LoadClasses { get; set; }
 
         [JsonPropertyName("stressesAtSlab9")]
         public StressesAtSlabCentroidModel StressesAtSlab { get; set; }
@@ -54,7 +54,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete
         public ConcreteStressModel TemperatureStress { get; set; }
 
         [JsonPropertyName("loadClasses18")]
-        public PermissibleLoadClasses LoadClasses18 { get; set; }
+        public PermissibleLoadClassesModel LoadClasses18 { get; set; }
 
         [JsonPropertyName("stressesAtSlab19")]
         public StressesAtSlabCentroidModel StressesAtSlab19 { get; set; }
