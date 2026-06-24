@@ -30,7 +30,7 @@
         /// Расчетный случай (А/Б/В)
         /// Calculation case (A/B/C) — represented as string (e.g. "A", "B", "C").
         /// </summary>
-        public string CalculationCase { get; set; }
+        public required string CalculationCase { get; set; }
 
         /// <summary>
         /// Разгружающая сила, МН
