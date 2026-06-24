@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AisPcCore.CheckPoint
 {
-    public class aisReportValues_StGb
+    internal class aisReportValues_StGb
     {
         public Table01 Tb01 { get; set; } = new Table01 ();
         public Table02 Tb02 { get; set; } = new Table02 ();
@@ -38,27 +38,27 @@ namespace AisPcCore.CheckPoint
             Tb21,Tb22
         };
 
-        public class TableBase
+        internal class TableBase
         {
             public Dictionary<string, double> DebugValues { get; set; } = new Dictionary<string, double>();
         }
 
-        public class Table01 : TableBase { }
-        public class Table02 : TableBase
+        internal class Table01 : TableBase { }
+        internal class Table02 : TableBase
         {
             public bool Применимость_метода_тонкой_плиты;
             public double ε_shr;
         }
-        public class Table03 : TableBase { }
-        public class Table04 : TableBase { }  
-        public class Table05 : TableBase
+        internal class Table03 : TableBase { }
+        internal class Table04 : TableBase { }
+        internal class Table05 : TableBase
         {
             public double σb1;
             public bool Учет_ползучести;
             public double σb_cr;
             public double σr_cr;
         }
-        public class Table06 : TableBase
+        internal class Table06 : TableBase
         {
             public bool Учет_ползучести;
             public double v;
@@ -74,15 +74,15 @@ namespace AisPcCore.CheckPoint
             public double ksi4;
 
         }
-        public class Table07 : TableBase { }
-        public class Table08 : TableBase
+        internal class Table07 : TableBase { }
+        internal class Table08 : TableBase
         {
             public double K; 
             public double Mv;
             public double M2;
             public double M;
         }
-        public class Table09 : TableBase
+        internal class Table09 : TableBase
         {
             public double σb;
             public double mbRb;
@@ -98,8 +98,8 @@ namespace AisPcCore.CheckPoint
             public double σs1_IIv;
 
         }
-        public class Table10 : TableBase { }
-        public class Table11 : TableBase
+        internal class Table10 : TableBase { }
+        internal class Table11 : TableBase
         {
             public double η;
             public double æ3;
@@ -107,7 +107,7 @@ namespace AisPcCore.CheckPoint
             public double æ4;
 
         }
-        public class Table12 : TableBase
+        internal class Table12 : TableBase
         {
             public double σs2;
             public double m1Rs2;
@@ -118,8 +118,8 @@ namespace AisPcCore.CheckPoint
             public double value;
 
         }
-        public class Table13 : Table04 { }
-        public class Table14 : TableBase
+        internal class Table13 : Table04 { }
+        internal class Table14 : TableBase
         {
             public double Z;
             public double Zst_stb;
@@ -129,21 +129,21 @@ namespace AisPcCore.CheckPoint
             public double Zb1_stb;
             public double St;
         }
-        public class Table15 : Table05 { }
-        public class Table16 : TableBase
+        internal class Table15 : Table05 { }
+        internal class Table16 : TableBase
         {
             public double σb_shr;
             public double σr_shr;
         }
-        public class Table17 : TableBase
+        internal class Table17 : TableBase
         {
             public double σb_t;
             public double σr_t;
         }
-        public class Table18 : Table08 { }
-        public class Table19 : Table09 { }
-        public class Table20 : Table10 { }
-        public class Table21 : Table11 { }
-        public class Table22 : Table12 { }
+        internal class Table18 : Table08 { }
+        internal class Table19 : Table09 { }
+        internal class Table20 : Table10 { }
+        internal class Table21 : Table11 { }
+        internal class Table22 : Table12 { }
     }
 }

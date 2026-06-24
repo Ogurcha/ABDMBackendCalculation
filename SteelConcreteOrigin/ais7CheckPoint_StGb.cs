@@ -7,7 +7,7 @@ using AisPcCore.SfData;
 
 namespace AisPcCore.CheckPoint
 {
-    public class ais7CheckPoint_StGb
+    internal class ais7CheckPoint_StGb
     {
         public ais7StGbCrossSection CS;
 
@@ -154,7 +154,7 @@ namespace AisPcCore.CheckPoint
 
 
 
-        public class CnValueStGb : CnValue
+        internal class CnValueStGb : CnValue
         {
             public String name { get; protected set; }
             public Double σ_I { get; internal set; }
@@ -538,9 +538,9 @@ namespace AisPcCore.CheckPoint
 
 
         #region Таблица 2 и все, что с ней связано
-        private class table2 : List<ais7CheckPoint_StGb.table2.table2Record>
+        internal class table2 : List<ais7CheckPoint_StGb.table2.table2Record>
         {
-            public class t2item
+            internal class t2item
             {
                 public Double v1 { get; set; }
                 public Double v2 { get; set; }
@@ -550,7 +550,7 @@ namespace AisPcCore.CheckPoint
                 public Double η(WorkSign sign) { return sign == WorkSign.Plus ? v2 : v1; }
             }
 
-            public class table2Record
+            internal class table2Record
             {
 
 
@@ -646,7 +646,7 @@ namespace AisPcCore.CheckPoint
 
         #endregion
 
-        public class CnValue
+        internal class CnValue
         {
             public Double Value { get; protected set; }
 

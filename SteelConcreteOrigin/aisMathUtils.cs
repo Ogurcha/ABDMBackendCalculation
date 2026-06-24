@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AisMaths
 {
-    public static class aisMathUtils
+    internal static class aisMathUtils
     {
         public static double GetRectangleIkr(double Width, double Height)
         {

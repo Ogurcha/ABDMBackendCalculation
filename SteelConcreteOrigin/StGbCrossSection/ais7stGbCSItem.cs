@@ -9,7 +9,7 @@ using AisSysUtils;
 namespace AisPcCore.CheckPoint.StGbCrossSection
 {
 
-    public enum ais7stGbCSItemMaterial
+    internal enum ais7stGbCSItemMaterial
     { 
         [Description("Сталь")]
         Steel = 0,
@@ -18,7 +18,7 @@ namespace AisPcCore.CheckPoint.StGbCrossSection
     }
 
 
-    public class ais7stGbCSItemRect
+    internal class ais7stGbCSItemRect
     {
 
         public ais7StGbCrossSection CrossSection { get; protected set; }
@@ -121,7 +121,7 @@ namespace AisPcCore.CheckPoint.StGbCrossSection
         }
     }
 
-    public class ais7stGbCSItemCorner : ais7stGbCSItemRect
+    internal class ais7stGbCSItemCorner : ais7stGbCSItemRect
     {
 
         public override bool CanDelete { get { return true; } }

@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 namespace AisSysUtils
 {
     [XmlRoot("Dictionary")]
-    public class XmlSerializableDictionary<TKey, TValue>
+    internal class XmlSerializableDictionary<TKey, TValue>
     : Dictionary<TKey, TValue>, IXmlSerializable
     {
         public System.Xml.Schema.XmlSchema GetSchema()

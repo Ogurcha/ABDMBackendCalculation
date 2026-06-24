@@ -7,7 +7,7 @@ using System.Text;
 namespace AisMaths
 {
     [DataContract]
-    public class aisVector3D
+    internal class aisVector3D
     {
         public Boolean IsEmpty { get { return Double.IsNaN(X) || Double.IsNaN(Y) || Double.IsNaN(Z); } }
 

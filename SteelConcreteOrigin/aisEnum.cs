@@ -10,7 +10,7 @@ namespace AisSysUtils
 {
 
 
-    public class aisEnum
+    internal class aisEnum
     {
         public static Type GetTypeConverter(Enum value)
         {

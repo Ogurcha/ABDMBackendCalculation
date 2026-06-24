@@ -12,7 +12,7 @@ namespace AisPcCore
 
 
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-    class AllowNKAttribute : Attribute
+    internal class AllowNKAttribute : Attribute
     {
         public ais7EnumS_TYPNK[] NK { get; set; }
         public AllowNKAttribute(ais7EnumS_TYPNK nk) { NK = new ais7EnumS_TYPNK[] { nk }; }

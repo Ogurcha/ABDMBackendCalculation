@@ -8,7 +8,7 @@ namespace AisMaths
 {
     [Serializable]
     [DataContract]
-    public class aisVector2D : aisPoint
+    internal class aisVector2D : aisPoint
     {
 
 
@@ -199,7 +199,7 @@ namespace AisMaths
 
     [Serializable]
     [DataContract]
-    public class aisPoint
+    internal class aisPoint
     {
         public Boolean IsEmpty { get { return Double.IsNaN(X) || Double.IsNaN(Y); } }
 

@@ -2,7 +2,7 @@
 
 namespace AisPcCore.CheckPoint.StGbCrossSection
 {
-    public class ais7StGbCrossSection  
+    internal class ais7StGbCrossSection  
     {
         public List<ais7stGbCSItemRect> Items = new List<ais7stGbCSItemRect>();
 
