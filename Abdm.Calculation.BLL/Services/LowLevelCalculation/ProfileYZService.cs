@@ -12,6 +12,8 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
         ITrajectoryFilterProvider trajectoryFilterProvider
         ) : IProfileYZService
     {
+        protected ITrajectoryFilterProvider TrajectoryFilterProvider => trajectoryFilterProvider;
+
         public virtual VehicleXPosition[] CalculateRequiredTrajectoryPositions(VehicleRollingBigModel dataModel, PassageInterval passageInterval, bool doTrajectoriesUnderWheels)
         {
             var result = new List<VehicleXPosition>();
