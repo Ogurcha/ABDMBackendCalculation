@@ -25,7 +25,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 
             IsPedestrianAllowed = true,
             HasSafetyLine = false,
-            MaxTrajectoriesInInterval = 1,
+            MaxTrajectoriesInInterval = 2,
             MaxTrajectoriesTotal = int.MaxValue,
         };
 
@@ -39,8 +39,8 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
 
             IsPedestrianAllowed = false,
             HasSafetyLine = true,
-            MaxTrajectoriesInInterval = 1,
-            MaxTrajectoriesTotal = int.MaxValue,
+            MaxTrajectoriesInInterval = 2,
+            MaxTrajectoriesTotal = 2,
         };
     }
 }

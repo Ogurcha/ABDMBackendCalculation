@@ -209,6 +209,9 @@ namespace Abdm.Calculation.Maths.Extensions
             return FrustrumVolume(h, A1, A2);
         }
 
+        /// <summary>
+        /// Формула объёма фруструмы
+        /// </summary>
         public static double FrustrumVolume(double h, double A1, double A2) => h / 3.0 * (A1 + A2 + Math.Sqrt(A1 * A2));
     }
  }
