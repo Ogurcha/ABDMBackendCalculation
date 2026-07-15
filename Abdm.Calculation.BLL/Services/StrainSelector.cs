@@ -1,10 +1,8 @@
 ﻿using System.Data;
-using System.Linq;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Helpers;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -100,7 +98,6 @@ namespace Abdm.Calculation.BLL.Services
             ICoefficientProvider stripeCoefficientProvider)
         {
             StrainScore? strainScore = null;
-            //var validIntervals = intervals.Where(x => x.orderedByPosition.Length > 0 && x.depthParent >= 1).ToArray();
             if (globalDepth >= 2)
             {
                 (StrainsInMaximums[] orderedByPosition, int depthParent)[] intervalsForChildArray;
