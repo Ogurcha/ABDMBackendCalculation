@@ -1,8 +1,10 @@
 ﻿using System.Data;
+using System.Linq;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Helpers;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -75,10 +77,13 @@ namespace Abdm.Calculation.BLL.Services
             var orderedByPosition = intervals.Select(i => (i.strains.OrderBy(x => x.X).ToArray(), i.maxDepth)).ToArray();
 
             var scores = new List<StrainScore>();
-            foreach (var strain in orderedByPosition.SelectMany(x => x.Item1))
+            foreach (var interval in orderedByPosition)
             {
-                var strainScore = MeasureScore(orderedByPosition, strain, actualTrajectoryDistance, globalDepth, stripeCoefficientProvider);
-                scores.Add(strainScore);
+                foreach (var strain in interval.Item1)
+                {
+                    var strainScore = MeasureScore(orderedByPosition, strain, interval, actualTrajectoryDistance, globalDepth, stripeCoefficientProvider);
+                    scores.Add(strainScore);
+                }
             }
 
             var finalScore = scores.MaxBy(x => x.TotalScore);
@@ -89,67 +94,65 @@ namespace Abdm.Calculation.BLL.Services
         private StrainScore MeasureScore(
             (StrainsInMaximums[] orderedByPosition, int depthParent)[] intervals, 
             StrainsInMaximums strainPicked,
+            (StrainsInMaximums[], int maxDepth) intervalPicked,
             double actualTrajectoryDistance,
             int globalDepth,
             ICoefficientProvider stripeCoefficientProvider)
         {
             StrainScore? strainScore = null;
-            var validIntervals = intervals.Where(x => x.orderedByPosition.Length > 0 && x.depthParent >= 1).ToArray();
+            //var validIntervals = intervals.Where(x => x.orderedByPosition.Length > 0 && x.depthParent >= 1).ToArray();
             if (globalDepth >= 2)
             {
-                for (int i = 0; i < validIntervals.Length; i++)
+                (StrainsInMaximums[] orderedByPosition, int depthParent)[] intervalsForChildArray;
+                if (intervalPicked.maxDepth == 1)
                 {
-                    (StrainsInMaximums[] orderedByPosition, int depthParent)[] intervalsForChildArray;
-                    var orderedByPosition = validIntervals[i].orderedByPosition;
+                    intervalsForChildArray = intervals.Except([intervalPicked]).ToArray();
+                }
+                else
+                {
+                    var interval = intervalPicked.Item1;
+                    var leftEdge = Formulas.FindBetweenIndexes(interval, strainPicked.X - actualTrajectoryDistance, (x) => x.X, equalityComparer);
+                    var rightEdge = Formulas.FindBetweenIndexes(interval, strainPicked.X + actualTrajectoryDistance, (x) => x.X, equalityComparer);
 
-                    if (validIntervals[i].depthParent == 1)
+                    StrainsInMaximums[]? newOrdered = null;
+                    if (leftEdge.Left == rightEdge.Right)
                     {
-                        intervalsForChildArray = validIntervals.Except([validIntervals.ElementAt(i)]).ToArray();
+                        newOrdered = interval;
                     }
-                    else
+                    else if (leftEdge.Left != null || rightEdge.Right != null)
                     {
-                        var leftEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X - actualTrajectoryDistance, (x) => x.X, equalityComparer);
-                        var rightEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X + actualTrajectoryDistance, (x) => x.X, equalityComparer);
+                        var indexLeft = (leftEdge.Left ?? -1) + 1;
+                        var indexRight = rightEdge.Right ?? interval.Length;
 
-                        StrainsInMaximums[]? newOrdered = null;
-                        if (leftEdge.Left == rightEdge.Right)
-                        {
-                            newOrdered = orderedByPosition;
-                        }
-                        else if (leftEdge.Left != null || rightEdge.Right != null)
-                        {
-                            var indexLeft = (leftEdge.Left ?? -1) + 1;
-                            var indexRight = rightEdge.Right ?? orderedByPosition.Length;
-
-                            newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
-                        }
-
-                        var intervalsForChild = validIntervals.Except([validIntervals.ElementAt(i)]);
-
-                        if (newOrdered != null && newOrdered.Length > 0)
-                        {
-                            var newLocalDepth = validIntervals[i].depthParent - 1;
-
-                            intervalsForChild = intervalsForChild.Append((newLocalDepth == 1 ? [newOrdered.MaxBy(x => x.TotalStrain)!] : newOrdered, newLocalDepth));
-                        }
-
-                        intervalsForChildArray = intervalsForChild.ToArray();
+                        newOrdered = interval.Take(indexLeft).Concat(interval.Skip(indexRight)).ToArray();
                     }
 
-                    var strainScoreFromChild = intervalsForChildArray
-                        .SelectMany(x => x.Item1)
-                        .Select(strain => MeasureScore(
-                            intervalsForChildArray, 
-                            strain, 
-                            actualTrajectoryDistance, 
-                            globalDepth - 1, 
-                            stripeCoefficientProvider))
-                        .MaxBy(score => score.TotalScore);
+                    var intervalsForChild = intervals.Except([intervalPicked]);
 
-                    if (strainScoreFromChild != null && !(strainScore?.TotalScore < strainScoreFromChild.TotalScore))
+                    if (newOrdered != null && newOrdered.Length > 0)
                     {
-                        strainScore = strainScoreFromChild;
+                        var newLocalDepth = intervalPicked.maxDepth - 1;
+
+                        intervalsForChild = intervalsForChild.Append((newLocalDepth == 1 ? [newOrdered.MaxBy(x => x.TotalStrain)!] : newOrdered, newLocalDepth));
                     }
+
+                    intervalsForChildArray = intervalsForChild.ToArray();
+                }
+
+                var childStrains = new List<StrainScore>();
+                foreach (var interval in intervalsForChildArray)
+                {
+                    foreach (var strain in interval.Item1)
+                    {
+                        childStrains.Add(MeasureScore(intervalsForChildArray, strain, interval, actualTrajectoryDistance, globalDepth - 1, stripeCoefficientProvider));
+                    }
+                }
+
+                var strainScoreFromChild = childStrains.MaxBy(score => score.TotalScore);
+
+                if (strainScoreFromChild != null && !(strainScore?.TotalScore > strainScoreFromChild.TotalScore))
+                {
+                    strainScore = strainScoreFromChild;
                 }
             }
             
