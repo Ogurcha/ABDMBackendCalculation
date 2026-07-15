@@ -24,7 +24,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             DoTrafficJamLoadCalculation = true,
 
             IsPedestrianAllowed = true,
-            HasSafetyLine = false,
+            HasSafetyLine = true,
             MaxTrajectoriesInInterval = 2,
             MaxTrajectoriesTotal = int.MaxValue,
         };
@@ -38,7 +38,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             DoTrafficJamLoadCalculation = true,
 
             IsPedestrianAllowed = false,
-            HasSafetyLine = true,
+            HasSafetyLine = false,
             MaxTrajectoriesInInterval = 2,
             MaxTrajectoriesTotal = 2,
         };
