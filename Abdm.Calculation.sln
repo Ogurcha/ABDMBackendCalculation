@@ -3,31 +3,34 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.WebApi", "Abdm.Calculation.WebApi\Abdm.Calculation.WebApi.csproj", "{0393320B-E784-4103-B8CE-27DB715A1D4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.WebApi", "Abdm.Calculation.WebApi\Abdm.Calculation.WebApi.csproj", "{0393320B-E784-4103-B8CE-27DB715A1D4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Tests", "Abdm.Calculation.Tests\Abdm.Calculation.Tests.csproj", "{D6AE7C12-1DA0-497F-8269-96BDB7B5BFC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.Tests", "Abdm.Calculation.Tests\Abdm.Calculation.Tests.csproj", "{D6AE7C12-1DA0-497F-8269-96BDB7B5BFC6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.DAL", "Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj", "{8BB60979-A04A-4353-AC33-9B96073374B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.DAL", "Abdm.Calculation.DAL\Abdm.Calculation.DAL.csproj", "{8BB60979-A04A-4353-AC33-9B96073374B0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Graphics", "Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj", "{91FF09D5-A7AE-40A1-86D6-A769E145D6F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.Graphics", "Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj", "{91FF09D5-A7AE-40A1-86D6-A769E145D6F3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.BLL", "Abdm.Calculation.BLL\Abdm.Calculation.BLL.csproj", "{C60E4D1A-3D20-443B-AB11-A8E47C740BF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.BLL", "Abdm.Calculation.BLL\Abdm.Calculation.BLL.csproj", "{C60E4D1A-3D20-443B-AB11-A8E47C740BF9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F41426D2-D721-46AF-BF19-37D0D11B3840} = {F41426D2-D721-46AF-BF19-37D0D11B3840}
+		{FA94D1EC-915A-4524-8749-896DA80973DC} = {FA94D1EC-915A-4524-8749-896DA80973DC}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.Maths", "Abdm.Calculation.Math\Abdm.Calculation.Maths.csproj", "{F41426D2-D721-46AF-BF19-37D0D11B3840}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.Maths", "Abdm.Calculation.Math\Abdm.Calculation.Maths.csproj", "{F41426D2-D721-46AF-BF19-37D0D11B3840}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdm.Calculation.SteelConcrete", "Abdm.Calculation.SteelConcrete\Abdm.Calculation.SteelConcrete.csproj", "{CAE7B081-937D-4B43-884C-3D8BECBBE3F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.SteelConcrete", "Abdm.Calculation.SteelConcrete\Abdm.Calculation.SteelConcrete.csproj", "{CAE7B081-937D-4B43-884C-3D8BECBBE3F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdm.Calculation.SteelConcreteOrigin", "SteelConcreteOrigin\Abdm.Calculation.SteelConcreteOrigin.csproj", "{FA94D1EC-915A-4524-8749-896DA80973DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +66,10 @@ Global
 		{CAE7B081-937D-4B43-884C-3D8BECBBE3F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAE7B081-937D-4B43-884C-3D8BECBBE3F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAE7B081-937D-4B43-884C-3D8BECBBE3F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA94D1EC-915A-4524-8749-896DA80973DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA94D1EC-915A-4524-8749-896DA80973DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA94D1EC-915A-4524-8749-896DA80973DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA94D1EC-915A-4524-8749-896DA80973DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
