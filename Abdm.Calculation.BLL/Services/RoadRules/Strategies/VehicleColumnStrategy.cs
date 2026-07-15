@@ -23,7 +23,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalculation = true,
 
-            IsPedestrianAllowed = true,
+            IsPedestrianAllowed = false,
             HasSafetyLine = true,
             MaxTrajectoriesInInterval = 2,
             MaxTrajectoriesTotal = int.MaxValue,
@@ -37,7 +37,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
             MinTrajectoryDistance = 3,
             DoTrafficJamLoadCalculation = true,
 
-            IsPedestrianAllowed = false,
+            IsPedestrianAllowed = true,
             HasSafetyLine = false,
             MaxTrajectoriesInInterval = 2,
             MaxTrajectoriesTotal = 2,
