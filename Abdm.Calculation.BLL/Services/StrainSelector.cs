@@ -94,41 +94,49 @@ namespace Abdm.Calculation.BLL.Services
             ICoefficientProvider stripeCoefficientProvider)
         {
             StrainScore? strainScore = null;
-            var validIntervals = intervals.Where(x => x.orderedByPosition.Length > 0 && x.depthParent >= 2).ToArray();
+            var validIntervals = intervals.Where(x => x.orderedByPosition.Length > 0 && x.depthParent >= 1).ToArray();
             if (globalDepth >= 2)
             {
                 for (int i = 0; i < validIntervals.Length; i++)
                 {
+                    (StrainsInMaximums[] orderedByPosition, int depthParent)[] intervalsForChildArray;
                     var orderedByPosition = validIntervals[i].orderedByPosition;
 
-                    var leftEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X - actualTrajectoryDistance, (x) => x.X, equalityComparer);
-                    var rightEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X + actualTrajectoryDistance, (x) => x.X, equalityComparer);
-
-                    StrainsInMaximums[]? newOrdered = null;
-                    if (leftEdge.Left == rightEdge.Right)
+                    if (validIntervals[i].depthParent == 1)
                     {
-                        newOrdered = orderedByPosition;
+                        intervalsForChildArray = validIntervals.Except([validIntervals.ElementAt(i)]).ToArray();
                     }
-                    else if (leftEdge.Left != null || rightEdge.Right != null)
+                    else
                     {
-                        var indexLeft = (leftEdge.Left ?? -1) + 1;
-                        var indexRight = rightEdge.Right ?? orderedByPosition.Length;
+                        var leftEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X - actualTrajectoryDistance, (x) => x.X, equalityComparer);
+                        var rightEdge = Formulas.FindBetweenIndexes(orderedByPosition, strainPicked.X + actualTrajectoryDistance, (x) => x.X, equalityComparer);
 
-                        newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
+                        StrainsInMaximums[]? newOrdered = null;
+                        if (leftEdge.Left == rightEdge.Right)
+                        {
+                            newOrdered = orderedByPosition;
+                        }
+                        else if (leftEdge.Left != null || rightEdge.Right != null)
+                        {
+                            var indexLeft = (leftEdge.Left ?? -1) + 1;
+                            var indexRight = rightEdge.Right ?? orderedByPosition.Length;
+
+                            newOrdered = orderedByPosition.Take(indexLeft).Concat(orderedByPosition.Skip(indexRight)).ToArray();
+                        }
+
+                        var intervalsForChild = validIntervals.Except([validIntervals.ElementAt(i)]);
+
+                        if (newOrdered != null && newOrdered.Length > 0)
+                        {
+                            var newLocalDepth = validIntervals[i].depthParent - 1;
+
+                            intervalsForChild = intervalsForChild.Append((newLocalDepth == 1 ? [newOrdered.MaxBy(x => x.TotalStrain)!] : newOrdered, newLocalDepth));
+                        }
+
+                        intervalsForChildArray = intervalsForChild.ToArray();
                     }
 
-                    var intervalsForChild = validIntervals.Except([validIntervals.ElementAt(i)]);
-
-                    if (newOrdered != null && newOrdered.Length > 0)
-                    {
-                        var newLocalDepth = validIntervals[i].depthParent - 1;
-
-                        intervalsForChild = intervalsForChild.Append((newLocalDepth == 1 ? [newOrdered.MaxBy(x => x.TotalStrain)!] : newOrdered, newLocalDepth));
-                    }
-
-                    var intervalsForChildArray = intervalsForChild.ToArray();
-
-                    strainScore = intervalsForChildArray
+                    var strainScoreFromChild = intervalsForChildArray
                         .SelectMany(x => x.Item1)
                         .Select(strain => MeasureScore(
                             intervalsForChildArray, 
@@ -137,6 +145,11 @@ namespace Abdm.Calculation.BLL.Services
                             globalDepth - 1, 
                             stripeCoefficientProvider))
                         .MaxBy(score => score.TotalScore);
+
+                    if (strainScoreFromChild != null && !(strainScore?.TotalScore < strainScoreFromChild.TotalScore))
+                    {
+                        strainScore = strainScoreFromChild;
+                    }
                 }
             }
             
