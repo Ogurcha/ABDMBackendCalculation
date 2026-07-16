@@ -5,7 +5,6 @@ using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
-using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
@@ -13,6 +12,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
     public class DefaultStrainAnalyser() : ISAStrategy
     {
         private const int ProfileVectorsLimitCount = 50;
+        private const int DecimalPrecision = 2;
 
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
@@ -31,8 +31,8 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 foreach (var intervalInfo in vehicleRollingResult.DataModel.Intervals)
                 {
                     var intervalType = intervalInfo.Type;
-                    var barrierPositionLeft = MathExtensions.ToDecimal(intervalInfo.AbsolutePositionLeft);
-                    var barrierPositionRight = MathExtensions.ToDecimal(intervalInfo.AbsolutePositionRight);
+                    var barrierPositionLeft = ToDecimal(intervalInfo.AbsolutePositionLeft);
+                    var barrierPositionRight = ToDecimal(intervalInfo.AbsolutePositionRight);
 
                     var strains = strainResults.Strain.Where(x => intervalInfo.AbsolutePositionLeft < x.VehicleTrajectoryRef.X && x.VehicleTrajectoryRef.X < intervalInfo.AbsolutePositionRight).ToArray();
 
@@ -68,11 +68,11 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             }
             FilterDefaultsForPillar(vehicleRollingResult, defaults);
 
-            analysis.Lambda = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.Lambda);
-            analysis.MyStrength = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.MyStrength);
-            analysis.ConstLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.ConstLoad);
-            analysis.PedestrianLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.PedestrianLoad);
-            analysis.OtherLoad = MathExtensions.ToDecimal(vehicleRollingResult.DataModel.Data.Surface.OtherLoad);
+            analysis.Lambda = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.Lambda);
+            analysis.MyStrength = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.MyStrength);
+            analysis.ConstLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.ConstLoad);
+            analysis.PedestrianLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.PedestrianLoad);
+            analysis.OtherLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.OtherLoad);
             analysis.Default = defaults.OrderByDescending(x => (x.HasSafetyLine == true ? 100 : 0) - x.IntervalType).OrderByDescending(x => x.IsForward).ToList();
 
             if (doNegativeNumbers)
@@ -83,7 +83,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             var dynamicCoefficient = dataModel.Data.DynamicCoefficient();
             foreach (var column in analysis.Default.SelectMany(x => x.Columns))
             {
-                column.Coefficients.Dynamic = MathExtensions.ToDecimal(dynamicCoefficient);
+                column.Coefficients.Dynamic = ToDecimal(dynamicCoefficient);
                 column.TotalStrain = decimal.Round(column.SumStrain * column.Coefficients.Dynamic, 2);
                 if (column.Intervals != null)
                 {
@@ -93,7 +93,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             return analysis;
         }
-
 
         private void InvertSummary(AnalysisSummary summary)
         {
@@ -134,7 +133,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
         {
             var vehicles = new List<AnalysisColumn>();
             var columnCounter = 1;
-            foreach (var columnStrains in strainResults.OrderBy(x => x.VehicleTrajectoryRef.X))
+            foreach (var columnStrains in strainResults.Where(x => x.TotalStrain > Math.Pow(10, -DecimalPrecision)).OrderBy(x => x.VehicleTrajectoryRef.X))
             {
                 vehicles.AddRange(GetAnalysisColumn(columnStrains, data, columnCounter, vehicleStrainRetrieveFunc));
                 columnCounter++;
@@ -221,22 +220,22 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = oneBaseColumNumber,
-                        LeftIntervalStart = MathExtensions.ToDecimal(left.Start - minusKiller),
-                        LeftIntervalEnd = MathExtensions.ToDecimal(left.End - minusKiller),
-                        LeftIntervalLength = MathExtensions.ToDecimal(left.Length),
-                        LeftIntervalVolume = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.LeftStrain / 1.1),
+                        LeftIntervalStart = ToDecimal(left.Start - minusKiller),
+                        LeftIntervalEnd = ToDecimal(left.End - minusKiller),
+                        LeftIntervalLength = ToDecimal(left.Length),
+                        LeftIntervalVolume = ToDecimal(columnStrain.TrafficJamStrain.LeftStrain / 1.1),
                         LeftIntervalIntensity = 1.1m,
-                        LeftIntervalStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.LeftStrain),
-                        RightIntervalStart = MathExtensions.ToDecimal(right.Start - minusKiller),
-                        RightIntervalEnd = MathExtensions.ToDecimal(right.End - minusKiller),
-                        RightIntervalLength = MathExtensions.ToDecimal(right.Length),
-                        RightIntervalVolume = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.RightStrain / 1.1),
+                        LeftIntervalStrain = ToDecimal(columnStrain.TrafficJamStrain.LeftStrain),
+                        RightIntervalStart = ToDecimal(right.Start - minusKiller),
+                        RightIntervalEnd = ToDecimal(right.End - minusKiller),
+                        RightIntervalLength = ToDecimal(right.Length),
+                        RightIntervalVolume = ToDecimal(columnStrain.TrafficJamStrain.RightStrain / 1.1),
                         RightIntervalIntensity = 1.1m,
-                        RightIntervalStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.RightStrain),
-                        SumStrain = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.SumStrain),
-                        CenterIntervalStart = MathExtensions.ToDecimal(center.Start - minusKiller),
-                        CenterIntervalEnd = MathExtensions.ToDecimal(center.End - minusKiller),
-                        CenterIntervalLength = MathExtensions.ToDecimal(center.Length),
+                        RightIntervalStrain = ToDecimal(columnStrain.TrafficJamStrain.RightStrain),
+                        SumStrain = ToDecimal(columnStrain.TrafficJamStrain.SumStrain),
+                        CenterIntervalStart = ToDecimal(center.Start - minusKiller),
+                        CenterIntervalEnd = ToDecimal(center.End - minusKiller),
+                        CenterIntervalLength = ToDecimal(center.Length),
                     });
                 }
             }
@@ -246,13 +245,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             var coefficients = new Coefficients
             {
-                Stripe = MathExtensions.ToDecimal(columnStrain.StripeCoefficient),
-                Reliability = MathExtensions.ToDecimal(vehicleStrain.ReliabilityCoefficient),
+                Stripe = ToDecimal(columnStrain.StripeCoefficient),
+                Reliability = ToDecimal(vehicleStrain.ReliabilityCoefficient),
             };
             if (columnStrain.TrafficJamStrain != null)
             {
-                coefficients.StripeInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStripeCoefficient!.Value);
-                coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.ReliabilityCoefficient);
+                coefficients.StripeInterval = ToDecimal(columnStrain.TrafficJamStripeCoefficient!.Value);
+                coefficients.ReliabilityInterval = ToDecimal(columnStrain.TrafficJamStrain.ReliabilityCoefficient);
             }
 
             return new AnalysisColumn
@@ -261,12 +260,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 VehicleNumber = zeroBaseVehicleNumber + 1,
                 Wheels = wheels,
                 Intervals = intervals,
-                PositionX = MathExtensions.ToDecimal(vehicleStrain.X - leftIntervalStart),
-                PositionY = MathExtensions.ToDecimal(vehicleStrain.Y),
-                PositionYForImage = MathExtensions.ToDecimal(vehicleStrain.Y + yShift),
+                PositionX = ToDecimal(vehicleStrain.X - leftIntervalStart),
+                PositionY = ToDecimal(vehicleStrain.Y),
+                PositionYForImage = ToDecimal(vehicleStrain.Y + yShift),
                 SumStrain = wheels.Sum(w => w.Strain),
                 IntervalProfileVectors = intervalProfileVectors,
-                LambdaSmall = MathExtensions.ToDecimal(vehicleStrain.LambdaSmall),
+                LambdaSmall = ToDecimal(vehicleStrain.LambdaSmall),
                 Coefficients = coefficients,
             };
         }
@@ -280,15 +279,15 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             {
                 Number = number,
                 SubNumber = subNumber,
-                Strain = MathExtensions.ToDecimal(wheelStrain.Strain),
-                PositionX = MathExtensions.ToDecimal(wheelStrain.Position.X - leftIntervalStart),
-                PositionY = MathExtensions.ToDecimal(wheelStrain.Position.Y),
-                Z = MathExtensions.ToDecimal(wheelStrain.ZValue),
-                ZVolume = MathExtensions.ToDecimal(wheelStrain.ZValue * wheelStrain.FootprintLength * wheelStrain.FootprintWidth ?? 0),
-                Weight = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight),
-                Pressure = MathExtensions.ToDecimal(wheelStrain.AxleRef.WheelWeight / wheelStrain.FootprintLength / wheelStrain.FootprintWidth ?? 0),
-                FootPrintSizeFirst = MathExtensions.ToDecimal(wheelStrain.FootprintLength ?? 0d),
-                FootPrintSizeSecond = MathExtensions.ToDecimal(wheelStrain.FootprintWidth ?? 0d),
+                Strain = ToDecimal(wheelStrain.Strain),
+                PositionX = ToDecimal(wheelStrain.Position.X - leftIntervalStart),
+                PositionY = ToDecimal(wheelStrain.Position.Y),
+                Z = ToDecimal(wheelStrain.ZValue),
+                ZVolume = ToDecimal(wheelStrain.ZValue * wheelStrain.FootprintLength * wheelStrain.FootprintWidth ?? 0),
+                Weight = ToDecimal(wheelStrain.AxleRef.WheelWeight),
+                Pressure = ToDecimal(wheelStrain.AxleRef.WheelWeight / wheelStrain.FootprintLength / wheelStrain.FootprintWidth ?? 0),
+                FootPrintSizeFirst = ToDecimal(wheelStrain.FootprintLength ?? 0d),
+                FootPrintSizeSecond = ToDecimal(wheelStrain.FootprintWidth ?? 0d),
             };
         }
 
@@ -301,7 +300,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             }
             if (vectors.Length < ProfileVectorsLimitCount)
             {
-                return trajectory.Center.SortedVectors.Select<Vector2D, ProfileVector>(x => (MathExtensions.ToDecimal(x.X), MathExtensions.ToDecimal(x.Y)));
+                return trajectory.Center.SortedVectors.Select<Vector2D, ProfileVector>(x => (ToDecimal(x.X), ToDecimal(x.Y)));
             }
             return VectorsTooMany(vectors);
 
@@ -314,7 +313,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     if (counter == limit)
                     {
                         counter = 0;
-                        yield return (MathExtensions.ToDecimal(vector.X), MathExtensions.ToDecimal(vector.Y));
+                        yield return (ToDecimal(vector.X), ToDecimal(vector.Y));
                     }
                     else
                     {
@@ -338,5 +337,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 }
             }
         }
+
+        private decimal ToDecimal(double value) => decimal.Round((decimal)value, DecimalPrecision);
     }
 }

@@ -112,7 +112,7 @@ namespace Abdm.Calculation.BLL.Services
                     var rightEdge = Formulas.FindBetweenIndexes(interval, strainPicked.X + actualTrajectoryDistance, (x) => x.X, equalityComparer);
 
                     StrainsInMaximums[]? newOrdered = null;
-                    if (leftEdge.Left == rightEdge.Right)
+                    if (leftEdge.Left == rightEdge.Right && leftEdge.Left != null)
                     {
                         newOrdered = interval;
                     }
