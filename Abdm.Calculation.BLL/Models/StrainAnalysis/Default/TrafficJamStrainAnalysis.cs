@@ -11,6 +11,8 @@
         public decimal LeftIntervalLength { get; set; }
 
         public decimal LeftIntervalVolume { get; set; }
+        
+        public decimal LeftIntervalIntensity { get; set; }
 
         public decimal LeftIntervalStrain { get; set; }
 
@@ -21,6 +23,8 @@
         public decimal RightIntervalLength { get; set; }
 
         public decimal RightIntervalVolume { get; set; }
+
+        public decimal RightIntervalIntensity { get; set; }
 
         public decimal RightIntervalStrain { get; set; }
 

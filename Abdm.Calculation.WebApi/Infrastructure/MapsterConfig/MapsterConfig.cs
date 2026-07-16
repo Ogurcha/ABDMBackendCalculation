@@ -180,6 +180,26 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .Map(dst => dst.LambdaSmall, src => src.LambdaSmall)
             .Map(dst => dst.Coefficients, src => src.Coefficients);
 
+            TypeAdapterConfig<TrafficJamStrainAnalysis, TrafficJamStrainAnalysisModel>
+            .NewConfig()
+            .Map(dst => dst.Number, src => src.Number)
+            .Map(dst => dst.LeftIntervalStart, src => src.LeftIntervalStart)
+            .Map(dst => dst.LeftIntervalEnd, src => src.LeftIntervalEnd)
+            .Map(dst => dst.LeftIntervalLength, src => src.LeftIntervalLength)
+            .Map(dst => dst.LeftIntervalVolume, src => src.LeftIntervalVolume)
+            .Map(dst => dst.LeftIntervalIntensity, src => src.LeftIntervalIntensity)
+            .Map(dst => dst.LeftIntervalStrain, src => src.LeftIntervalStrain)
+            .Map(dst => dst.RightIntervalStart, src => src.RightIntervalStart)
+            .Map(dst => dst.RightIntervalEnd, src => src.RightIntervalEnd)
+            .Map(dst => dst.RightIntervalLength, src => src.RightIntervalLength)
+            .Map(dst => dst.RightIntervalVolume, src => src.RightIntervalVolume)
+            .Map(dst => dst.RightIntervalIntensity, src => src.RightIntervalIntensity)
+            .Map(dst => dst.RightIntervalStrain, src => src.RightIntervalStrain)
+            .Map(dst => dst.CenterIntervalStart, src => src.CenterIntervalStart)
+            .Map(dst => dst.CenterIntervalEnd, src => src.CenterIntervalEnd)
+            .Map(dst => dst.CenterIntervalLength, src => src.CenterIntervalLength)
+            .Map(dst => dst.SumStrain, src => src.SumStrain);
+
             TypeAdapterConfig<ProfileVector, ProfileVectorModel>
             .NewConfig()
             .Map(dst => dst.X, src => src.X)

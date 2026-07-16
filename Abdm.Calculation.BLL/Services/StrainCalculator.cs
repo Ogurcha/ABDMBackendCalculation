@@ -142,9 +142,9 @@ namespace Abdm.Calculation.BLL.Services
 
             if (data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
             {
-                trafficJamStrain.BasicCoefficient = data.CoefficientProvider.TrafficJamStrainCoefficientProvider.GetBasicCoefficent(trajectory.Center.PositivePieces.Sum(x => x.Length));
+                trafficJamStrain.ReliabilityCoefficient = data.CoefficientProvider.TrafficJamStrainCoefficientProvider.GetBasicCoefficent(trajectory.Center.PositivePieces.Sum(x => x.Length));
             }
-            trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.BasicCoefficient;
+            trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.ReliabilityCoefficient;
 
             return trafficJamStrain;
         }
@@ -204,13 +204,13 @@ namespace Abdm.Calculation.BLL.Services
 
             strain.LambdaSmall = strain.PositivePiecesMap[measuringProfile].Sum(interval => interval.Length);
 
-            strain.BasicCoefficient = data.CoefficientProvider.GetBasicCoefficent(strain.LambdaSmall);
-            strain.TotalStrain = strain.SumStrain * strain.BasicCoefficient;
+            strain.ReliabilityCoefficient = data.CoefficientProvider.GetBasicCoefficent(strain.LambdaSmall);
+            strain.TotalStrain = strain.SumStrain * strain.ReliabilityCoefficient;
             if (strain.InvertedDirectionStrain != null)
             {
                 strain.InvertedDirectionStrain.LambdaSmall = strain.LambdaSmall;
-                strain.InvertedDirectionStrain.BasicCoefficient = strain.BasicCoefficient;
-                strain.InvertedDirectionStrain.TotalStrain = strain.InvertedDirectionStrain.SumStrain * strain.InvertedDirectionStrain.BasicCoefficient;
+                strain.InvertedDirectionStrain.ReliabilityCoefficient = strain.ReliabilityCoefficient;
+                strain.InvertedDirectionStrain.TotalStrain = strain.InvertedDirectionStrain.SumStrain * strain.InvertedDirectionStrain.ReliabilityCoefficient;
             }
 
             return strain;

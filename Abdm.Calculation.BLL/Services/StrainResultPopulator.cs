@@ -140,9 +140,9 @@ namespace Abdm.Calculation.BLL.Services
             var strain = vehiclePositioner.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Y + distanceFromExtremum, data);
             if (strain != null && strain.SumStrain > 0d)
             {
-                strain.BasicCoefficient = vehicleStrain.BasicCoefficient;
+                strain.ReliabilityCoefficient = vehicleStrain.ReliabilityCoefficient;
                 strain.LambdaSmall = vehicleStrain.LambdaSmall;
-                strain.TotalStrain = strain.SumStrain * strain.BasicCoefficient;
+                strain.TotalStrain = strain.SumStrain * strain.ReliabilityCoefficient;
                 return strain;
             }
             return null;
