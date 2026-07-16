@@ -21,21 +21,6 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         public StrainCalculationTypeEnum StrainCalculationType { get; set; }
 
         /// <summary>
-        /// Положение ограждения слева
-        /// </summary>
-        public decimal AbsolutePositionLeft { get; set; }
-
-        /// <summary>
-        /// Положение ограждения справа
-        /// </summary>
-        public decimal AbsolutePositionRight { get; set; }
-
-        /// <summary>
-        /// Есть ли ограждение на мосту посередине
-        /// </summary>
-        public bool HasBarrierInTheMiddle { get; set; }
-
-        /// <summary>
         /// лямбда - используется для расчета коеффициентов напряжения
         /// </summary>
         public decimal Lambda { get; set; }
@@ -66,5 +51,7 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         public List<AnalysisDefault>? Default { get; set; }
 
         public List<AnalysisSteelConcrete>? SteelConcrete { get; set; }
+
+        public required BarrierInfo BarrierInfo { get; set; }
     }
 }

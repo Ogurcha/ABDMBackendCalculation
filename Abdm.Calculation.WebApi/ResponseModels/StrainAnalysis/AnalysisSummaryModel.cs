@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 
@@ -25,14 +26,14 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// <summary>
         /// Положение ограждения слева
         /// </summary>
-        [JsonPropertyName("absolutePositionLeft")]
-        public decimal AbsolutePositionLeft { get; set; }
+        [JsonPropertyName("absolutePositionFarLeft")]
+        public decimal AbsolutePositionFarLeft { get; set; }
 
         /// <summary>
         /// Положение ограждения справа
         /// </summary>
-        [JsonPropertyName("absolutePositionRight")]
-        public decimal AbsolutePositionRight { get; set; }
+        [JsonPropertyName("absolutePositionFarRight")]
+        public decimal AbsolutePositionFarRight { get; set; }
 
         /// <summary>
         /// лямбда - используется для расчета коеффициентов напряжения
@@ -76,10 +77,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         [JsonPropertyName("otherLoad")]
         public decimal OtherLoad { get; set; }
 
-        /// <summary>
-        /// Другая нагрузка
-        /// </summary>
-        [JsonPropertyName("hasBarrierInTheMiddle")]
-        public decimal HasBarrierInTheMiddle { get; set; }
+        [JsonPropertyName("barrierInfo")]
+        public BarrierInfoModel BarrierInfo { get; set; }
     }
 }

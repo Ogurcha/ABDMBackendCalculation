@@ -146,9 +146,7 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
             .NewConfig()
             .Map(dst => dst.StrainCalculationGroupType, src => (int)src.StrainCalculationGroupType)
             .Map(dst => dst.StrainCalculationType, src => (int)src.StrainCalculationType)
-            .Map(dst => dst.AbsolutePositionLeft, src => src.AbsolutePositionLeft)
-            .Map(dst => dst.AbsolutePositionRight, src => src.AbsolutePositionRight)
-            .Map(dst => dst.HasBarrierInTheMiddle, src => src.HasBarrierInTheMiddle)
+            .Map(dst => dst.BarrierInfo, src => src.BarrierInfo)
             .Map(dst => dst.Lambda, src => src.Lambda)
             .Map(dst => dst.Default, src => src.Default)
             .Map(dst => dst.SteelConcrete, src => src.SteelConcrete)
@@ -161,9 +159,19 @@ namespace Abdm.Calculation.WebApi.Infrastructure.MapsterConfig
            .NewConfig()
            .Map(dst => dst.HasSafetyLine, src => src.HasSafetyLine)
            .Map(dst => dst.IsForward, src => src.IsForward)
-           .Map(dst => dst.Columns, src => src.Columns)
-           .Map(dst => dst.BarrierPositionLeft, src => src.BarrierPositionLeft)
-           .Map(dst => dst.BarrierPositionRight, src => src.BarrierPositionRight);
+           .Map(dst => dst.Columns, src => src.Columns);
+
+            TypeAdapterConfig<BarrierInfo, BarrierInfoModel>
+           .NewConfig()
+           .Map(dst => dst.AbsolutePositionFarLeft, src => src.AbsolutePositionFarLeft)
+           .Map(dst => dst.AbsolutePositionMiddleLeft, src => src.AbsolutePositionMiddleLeft)
+           .Map(dst => dst.AbsolutePositionMiddleRight, src => src.AbsolutePositionMiddleRight)
+           .Map(dst => dst.AbsolutePositionFarRight, src => src.AbsolutePositionFarRight)
+           .Map(dst => dst.PositionFarLeft, src => src.PositionFarLeft)
+           .Map(dst => dst.PositionMiddleLeft, src => src.PositionMiddleLeft)
+           .Map(dst => dst.PositionMiddleRight, src => src.PositionMiddleRight)
+           .Map(dst => dst.PositionFarRight, src => src.PositionFarRight)
+           .Map(dst => dst.HasBarrierInTheMiddle, src => src.HasBarrierInTheMiddle);
 
             TypeAdapterConfig<AnalysisColumn, AnalysisColumnModel>
             .NewConfig()
