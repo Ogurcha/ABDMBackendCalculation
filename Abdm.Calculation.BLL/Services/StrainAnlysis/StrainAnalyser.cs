@@ -1,6 +1,8 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
+using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.Maths.Extensions;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis
@@ -43,16 +45,43 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             var summary = new AnalysisSummary
             {
                 StrainCalculationGroupType = dataModel.Data.Surface.StrainCalculationGroupType,
-                AbsolutePositionLeft = MathExtensions.ToDecimal(dataModel.Intervals.First().AbsolutePositionLeft),
-                AbsolutePositionRight = MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionRight),
+                BarrierInfo = GetBarrierInfo(dataModel),
                 StrainCalculationType = dataModel.Data.Surface.StrainCalculationType,
-                HasBarrierInTheMiddle = dataModel.Intervals.Any(x => x.Type != Enums.PassageIntervalTypeEnum.WholeInterval)
             };
             
             var analyser = analyserFactory.GetStrainAnalyser(summary.StrainCalculationGroupType);
             analyser.Analyse(summary, maxStrainResult, doNegativeNumbers);
 
             return summary;
+        }
+
+        private BarrierInfo GetBarrierInfo(VehicleRollingBigModel dataModel)
+        {
+            bool hasBarrierInTheMiddle = dataModel.Intervals.Any(x => x.Type != Enums.PassageIntervalTypeEnum.WholeInterval);
+
+            var absolutePositionFarLeft = MathExtensions.ToDecimal(dataModel.Intervals.First().AbsolutePositionLeft);
+            decimal? absolutePositionMiddleLeft = hasBarrierInTheMiddle 
+                ? MathExtensions.ToDecimal(dataModel.Intervals.First().AbsolutePositionRight)
+                : null;
+            decimal? absolutePositionMiddleRight = hasBarrierInTheMiddle
+                ? MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionLeft)
+                : null;
+            var absolutePositionFarRight = MathExtensions.ToDecimal(dataModel.Intervals.Last().AbsolutePositionRight);
+
+            var shift = absolutePositionFarLeft;
+
+            return new BarrierInfo
+            {
+                HasBarrierInTheMiddle = hasBarrierInTheMiddle,
+                AbsolutePositionFarLeft = absolutePositionFarLeft,
+                AbsolutePositionMiddleLeft = absolutePositionMiddleLeft,
+                AbsolutePositionMiddleRight = absolutePositionMiddleRight,
+                AbsolutePositionFarRight = absolutePositionFarRight,
+                PositionFarLeft = 0,
+                PositionMiddleLeft = absolutePositionMiddleLeft - shift,
+                PositionMiddleRight = absolutePositionMiddleRight - shift,
+                PositionFarRight = absolutePositionFarRight - shift,
+            };
         }
     }
 }

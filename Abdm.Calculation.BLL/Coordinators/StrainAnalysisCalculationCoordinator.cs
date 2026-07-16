@@ -66,7 +66,8 @@ namespace Abdm.Calculation.BLL.Coordinators
                 SnipId = (int)param.Snip,
                 Data = new AnalysisSummary()
                 {
-                    StrainCalculationGroupType = Enums.StrainCalculationGroupTypeEnum.Unknown
+                    StrainCalculationGroupType = Enums.StrainCalculationGroupTypeEnum.Unknown,
+                    BarrierInfo = new Models.StrainAnalysis.Default.BarrierInfo()
                 },
                 ReportId = param.ReportId,
             };

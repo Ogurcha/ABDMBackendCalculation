@@ -13,10 +13,18 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         [JsonPropertyName("columns")]
         public required AnalysisColumnModel[] Columns { get; set; }
 
-        [JsonPropertyName("barrierPositionLeft")]
-        public decimal BarrierPositionLeft { get; set; }
+        [JsonPropertyName("barrierPositionFarLeft")]
+        public decimal BarrierPositionFarLeft { get; set; }
 
-        [JsonPropertyName("barrierPositionRight")]
-        public decimal BarrierPositionRight { get; set; }
+        [JsonPropertyName("barrierPositionMiddleLeft")]
+        public decimal? BarrierPositionMiddleLeft { get; set; }
+
+        [JsonPropertyName("barrierPositionMiddleRight")]
+        public decimal? BarrierPositionMiddleRight { get; set; }
+
+        [JsonPropertyName("barrierPositionFarRight")]
+        public decimal BarrierPositionFarRight { get; set; }
+
+
     }
 }

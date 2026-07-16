@@ -28,42 +28,29 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
             foreach (var strainResults in vehicleRollingResult.StrainResults)
             {
-                foreach (var intervalInfo in vehicleRollingResult.DataModel.Intervals)
+                var strains = strainResults.Strain;
+
+                if (strains.Length == 0)
                 {
-                    var intervalType = intervalInfo.Type;
-                    var barrierPositionLeft = ToDecimal(intervalInfo.AbsolutePositionLeft);
-                    var barrierPositionRight = ToDecimal(intervalInfo.AbsolutePositionRight);
+                    continue;
+                }
 
-                    var strains = strainResults.Strain.Where(x => intervalInfo.AbsolutePositionLeft < x.VehicleTrajectoryRef.X && x.VehicleTrajectoryRef.X < intervalInfo.AbsolutePositionRight).ToArray();
+                var isDirectionForward = strains.First().VehicleStrains.First().IsDirectionForward;
 
-                    if (strains.Length == 0)
-                    {
-                        continue;
-                    }
-
-                    var isDirectionForward = strains.First().VehicleStrains.First().IsDirectionForward;
-
+                defaults.Add(new AnalysisDefault
+                {
+                    HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
+                    Columns = GetAnalysisColumns(strains, dataModel, x => x).ToArray(),
+                    IsForward = isDirectionForward
+                });
+                if (strains.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
+                {
                     defaults.Add(new AnalysisDefault
                     {
                         HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
-                        Columns = GetAnalysisColumns(strains, dataModel, x => x).ToArray(),
-                        IsForward = isDirectionForward,
-                        IntervalType = intervalType,
-                        BarrierPositionLeft = barrierPositionLeft,
-                        BarrierPositionRight = barrierPositionRight,
+                        Columns = GetAnalysisColumns(strains, dataModel, x => x.InvertedDirectionStrain).ToArray(),
+                        IsForward = !isDirectionForward
                     });
-                    if (strains.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
-                    {
-                        defaults.Add(new AnalysisDefault
-                        {
-                            HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
-                            Columns = GetAnalysisColumns(strains, dataModel, x => x.InvertedDirectionStrain).ToArray(),
-                            IsForward = !isDirectionForward,
-                            IntervalType = intervalType,
-                            BarrierPositionLeft = barrierPositionLeft,
-                            BarrierPositionRight = barrierPositionRight,
-                        });
-                    }
                 }
             }
             FilterDefaultsForPillar(vehicleRollingResult, defaults);
@@ -73,7 +60,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             analysis.ConstLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.ConstLoad);
             analysis.PedestrianLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.PedestrianLoad);
             analysis.OtherLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.OtherLoad);
-            analysis.Default = defaults.OrderByDescending(x => (x.HasSafetyLine == true ? 100 : 0) - x.IntervalType).OrderByDescending(x => x.IsForward).ToList();
+            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).OrderByDescending(x => x.IsForward).ToList();
 
             if (doNegativeNumbers)
             {
