@@ -84,6 +84,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             foreach (var column in analysis.Default.SelectMany(x => x.Columns))
             {
                 column.Coefficients.Dynamic = MathExtensions.ToDecimal(dynamicCoefficient);
+                column.TotalStrain = decimal.Round(column.SumStrain * column.Coefficients.Dynamic, 2);
                 if (column.Intervals != null)
                 {
                     column.Coefficients.DynamicInterval = column.Coefficients.Dynamic;
@@ -246,12 +247,12 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             var coefficients = new Coefficients
             {
                 Stripe = MathExtensions.ToDecimal(columnStrain.StripeCoefficient),
-                Reliability = MathExtensions.ToDecimal(vehicleStrain.BasicCoefficient),
+                Reliability = MathExtensions.ToDecimal(vehicleStrain.ReliabilityCoefficient),
             };
             if (columnStrain.TrafficJamStrain != null)
             {
                 coefficients.StripeInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStripeCoefficient!.Value);
-                coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.BasicCoefficient);
+                coefficients.ReliabilityInterval = MathExtensions.ToDecimal(columnStrain.TrafficJamStrain.ReliabilityCoefficient);
             }
 
             return new AnalysisColumn
@@ -264,7 +265,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 PositionY = MathExtensions.ToDecimal(vehicleStrain.Y),
                 PositionYForImage = MathExtensions.ToDecimal(vehicleStrain.Y + yShift),
                 SumStrain = wheels.Sum(w => w.Strain),
-                TotalStrain = MathExtensions.ToDecimal(vehicleStrain.SumStrain * vehicleStrain.BasicCoefficient),
                 IntervalProfileVectors = intervalProfileVectors,
                 LambdaSmall = MathExtensions.ToDecimal(vehicleStrain.LambdaSmall),
                 Coefficients = coefficients,

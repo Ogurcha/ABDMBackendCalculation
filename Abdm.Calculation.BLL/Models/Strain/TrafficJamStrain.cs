@@ -13,7 +13,7 @@
         /// <summary>
         /// Повышающий коэффициент напряжения
         /// </summary>
-        public double BasicCoefficient { get; set; } = 1d;
+        public double ReliabilityCoefficient { get; set; } = 1d;
 
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента
