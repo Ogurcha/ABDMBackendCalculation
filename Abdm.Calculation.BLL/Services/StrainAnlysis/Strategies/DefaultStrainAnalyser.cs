@@ -94,7 +94,6 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             return analysis;
         }
 
-
         private void InvertSummary(AnalysisSummary summary)
         {
             foreach (var analysis in summary.Default!)
