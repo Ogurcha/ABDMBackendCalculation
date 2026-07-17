@@ -9,19 +9,18 @@ using Abdm.Calculation.Maths.Models;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class DefaultStrainAnalyser() : ISAStrategy
+    public class DefaultAnalysisWriter() : IAnalysisWriter
     {
         private const int ProfileVectorsLimitCount = 50;
         private const int DecimalPrecision = 2;
 
-        public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
+        public virtual StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
             StrainCalculationGroupTypeEnum.Slab,
             StrainCalculationGroupTypeEnum.Pillar,
-            StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
 
-        public AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers)
+        public virtual AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers)
         {
             var defaults = new List<AnalysisDefault>();
             var dataModel = vehicleRollingResult.DataModel;

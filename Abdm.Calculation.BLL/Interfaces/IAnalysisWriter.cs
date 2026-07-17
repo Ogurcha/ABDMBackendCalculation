@@ -4,7 +4,7 @@ using Abdm.Calculation.BLL.Models.StrainAnalysis;
 
 namespace Abdm.Calculation.BLL.Interfaces
 {
-    public interface ISAStrategy
+    public interface IAnalysisWriter
     {
         public StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get; }
 
