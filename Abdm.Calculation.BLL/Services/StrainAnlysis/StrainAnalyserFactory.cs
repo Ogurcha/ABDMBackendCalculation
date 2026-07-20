@@ -7,9 +7,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
     /// фэктори, возвращающий анализатор напряжения в зависимости от типа группы расчета напряжения.
     /// </summary>
     public class StrainAnalyserFactory
-        (List<ISAStrategy> strategies) : IStrainAnalyserFactory
+        (List<IAnalysisWriter> strategies) : IStrainAnalyserFactory
     {
-        public ISAStrategy GetStrainAnalyser(StrainCalculationGroupTypeEnum strainCalculationGroupType)
+        public IAnalysisWriter GetStrainAnalyser(StrainCalculationGroupTypeEnum strainCalculationGroupType)
             => strategies.First(s => s.StrainCalculationGroupTypes.Contains(strainCalculationGroupType));
     }
 }

@@ -4,6 +4,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 {
     public interface IStrainAnalyserFactory
     {
-        ISAStrategy GetStrainAnalyser(StrainCalculationGroupTypeEnum strainCalculationGroupType);
+        IAnalysisWriter GetStrainAnalyser(StrainCalculationGroupTypeEnum strainCalculationGroupType);
     }
 }

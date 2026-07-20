@@ -88,10 +88,10 @@ namespace Abdm.Calculation.Infrastructure
                 new PassTypeResolver(),
                 new SteelConcretePassTypeResolver(new SteelConcretePassChecker())
             }));
-            services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<ISAStrategy>
+            services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<IAnalysisWriter>
             {
-                new DefaultStrainAnalyser(),
-                new SteelConcreteAnalyser(),
+                new DefaultAnalysisWriter(),
+                new SteelConcreteAnalysisWriter(),
             }));
 
 
