@@ -1,6 +1,7 @@
 using System.Globalization;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
+using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.SteelConcrete.Enums;
 using Abdm.Calculation.SteelConcrete.Models;
 using Abdm.Calculation.SteelConcrete.SteelConcrete;
@@ -370,7 +371,7 @@ namespace Abdm.Calculation.BLL.Services
         private static bool IsThinPlateMethodApplicable(ais7CheckPoint_StGb checkPoint, double concreteSlabInertia) =>
             checkPoint.Eb * concreteSlabInertia < 0.2 * checkPoint.Est * checkPoint.CS.Is;
 
-        private static decimal D(double value) => (decimal)value;
+        private static decimal D(double value) => MathExtensions.ToDecimal(value);
 
         private static decimal MmToM(double mm) => (decimal)(mm / 1000.0);
 

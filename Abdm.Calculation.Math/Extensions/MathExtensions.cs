@@ -82,10 +82,7 @@ namespace Abdm.Calculation.Maths.Extensions
         /// <summary>
         /// перевод в decimal с 2мя знаками после запятой
         /// </summary>
-        public static decimal ToDecimal(double value)
-        {
-            return decimal.Round((decimal)value, 2);
-        }
+        public static decimal ToDecimal(double value) => decimal.Round((decimal)value, 2);
 
         /// <summary>
         /// Находит все строгие локальные экстремумы функции, заданной отсортированным списком точек.
