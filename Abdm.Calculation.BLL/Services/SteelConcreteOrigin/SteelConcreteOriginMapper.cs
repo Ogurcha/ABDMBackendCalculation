@@ -4,14 +4,12 @@ using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.SteelConcrete.Enums;
 using Abdm.Calculation.SteelConcrete.Models;
-using Abdm.Calculation.SteelConcrete.SteelConcrete;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 using AisPcCore.CheckPoint;
 using AisPcCore.CheckPoint.StGbCrossSection;
-using AisPcCore.SfData;
 using IssoSteelConcreteParameters = Abdm.Calculation.SteelConcrete.Models.IssoSteelConcreteParameters;
 
-namespace Abdm.Calculation.BLL.Services
+namespace Abdm.Calculation.BLL.Services.SteelConcreteOrigin
 {
     internal static class SteelConcreteOriginMapper
     {

@@ -5,7 +5,7 @@ using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
 using AisPcCore.CheckPoint;
 using AisPcCore.SfData;
 
-namespace Abdm.Calculation.BLL.Services
+namespace Abdm.Calculation.BLL.Services.SteelConcreteOrigin
 {
     public class SteelConcreteOriginFacade : ISteelConcreteOriginFacade
     {
