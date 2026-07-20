@@ -51,7 +51,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis
         /// Дополнительные результаты при расчете для ЖБ конструкций
         /// </summary>
         [JsonPropertyName("steelConcrete")]
-        public List<AnalysisSteelConcreteModel>? SteelConcrete { get; set; }
+        public AnalysisSteelConcreteModel? SteelConcrete { get; set; }
 
         /// <summary>
         /// Проектная устойчивость структуры. Без учёта собственного веса

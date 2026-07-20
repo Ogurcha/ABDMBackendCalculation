@@ -3,7 +3,7 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 
-namespace Abdm.Calculation.BLL.Services
+namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
     /// <summary>
     /// Класс для прокатки ТС по траектории 

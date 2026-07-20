@@ -123,10 +123,7 @@ namespace AisPcCore.CheckPoint
 
         #endregion
 
-
-
-        public ais7CheckPoint_StGb() { }
-        public ais7CheckPoint_StGb(CpSubType cpSubType)
+        public ais7CheckPoint_StGb()
         {
             CS = new ais7StGbCrossSection(this);
             Es = 206000;

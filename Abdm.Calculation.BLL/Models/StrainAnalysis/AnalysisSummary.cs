@@ -50,7 +50,7 @@ namespace Abdm.Calculation.BLL.Models.StrainAnalysis
         /// </summary>
         public List<AnalysisDefault>? Default { get; set; }
 
-        public List<AnalysisSteelConcrete>? SteelConcrete { get; set; }
+        public AnalysisSteelConcrete? SteelConcrete { get; set; }
 
         public required BarrierInfo BarrierInfo { get; set; }
     }

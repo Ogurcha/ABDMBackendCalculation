@@ -2,7 +2,7 @@
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 
-namespace Abdm.Calculation.BLL.Services
+namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
     /// <summary>
     /// Сервис, располагающий ТС каждой своей тележкой в точку экстремума

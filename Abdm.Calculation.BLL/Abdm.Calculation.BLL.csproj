@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Abdm.Calculation.Graphics\Abdm.Calculation.Graphics.csproj" />
     <ProjectReference Include="..\Abdm.Calculation.Math\Abdm.Calculation.Maths.csproj" />
     <ProjectReference Include="..\Abdm.Calculation.SteelConcrete\Abdm.Calculation.SteelConcrete.csproj" />
+    <ProjectReference Include="..\SteelConcreteOrigin\Abdm.Calculation.SteelConcreteOrigin.csproj" />
   </ItemGroup>
 
   <ItemGroup>
