@@ -1,12 +1,14 @@
 ﻿using Abdm.Calculation.BLL.Enums;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.SteelConcrete;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
-    public class SteelConcreteAnalysisWriter : DefaultAnalysisWriter, IAnalysisWriter
+    public class SteelConcreteAnalysisWriter(ISteelConcreteOriginFacade steelConcreteOriginFacade) : DefaultAnalysisWriter, IAnalysisWriter
     {
         public override StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.SteelConcrete,
@@ -18,10 +20,16 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             result.SteelConcrete = GetSteelConcrete(result, vehicleRollingResult);
             return result;
         }
-
-        private List<AnalysisSteelConcrete>? GetSteelConcrete(AnalysisSummary result, VehicleRollingResult vehicleRollingResult)
+            
+        private AnalysisSteelConcrete? GetSteelConcrete(AnalysisSummary result, VehicleRollingResult vehicleRollingResult)
         {
-            throw new NotImplementedException();
+            if (vehicleRollingResult.DataModel.Data.Surface.StrainTypeSpecificData is not SteelConcreteData steelConcreteData
+                || vehicleRollingResult.StrainResults.MaxBy(x => x.TotalStrain) is not StrainResult strainResult)
+            {
+                return null;
+            }
+
+            return steelConcreteOriginFacade.Analyse(strainResult, steelConcreteData);
         }
     }
 }

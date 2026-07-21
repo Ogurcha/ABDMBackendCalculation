@@ -9,6 +9,7 @@ using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
+using Abdm.Calculation.BLL.Services.SteelConcreteOrigin;
 using Abdm.Calculation.BLL.Services.StrainAnlysis;
 using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
 using Abdm.Calculation.BLL.Services.StrainCoefficients;
@@ -66,6 +67,7 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IVehicleTrajectoryManager, VehicleTrajectoryManagerVolumetric>();
 
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
+            services.AddScoped<ISteelConcreteOriginFacade, SteelConcreteOriginFacade>();
             services.AddScoped<IStrainAnalyser, StrainAnalyser>();
 
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
@@ -88,10 +90,10 @@ namespace Abdm.Calculation.Infrastructure
                 new PassTypeResolver(),
                 new SteelConcretePassTypeResolver(new SteelConcretePassChecker())
             }));
-            services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(x => new StrainAnalyserFactory(new List<IAnalysisWriter>
+            services.AddSingleton<IStrainAnalyserFactory, StrainAnalyserFactory>(sp => new StrainAnalyserFactory(new List<IAnalysisWriter>
             {
                 new DefaultAnalysisWriter(),
-                new SteelConcreteAnalysisWriter(),
+                new SteelConcreteAnalysisWriter(sp.GetRequiredService<ISteelConcreteOriginFacade>()),
             }));
 
 

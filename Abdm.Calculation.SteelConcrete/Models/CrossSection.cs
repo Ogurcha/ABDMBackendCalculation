@@ -11,6 +11,4 @@ namespace Abdm.Calculation.SteelConcrete.Models
 
         public required Corner[] Corners { get; set; }
     }
-
-    
 }
