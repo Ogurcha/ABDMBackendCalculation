@@ -29,13 +29,7 @@ namespace Abdm.Calculation.BLL.Services.SteelConcreteOrigin
             checkPoint.GetStGbControlValue(values, ais7PassTypeEnum.NoLimit);
 
             var repVal = checkPoint.FirstCaseValues?.ReportValues
-                ?? new aisReportValues_StGb
-                {
-                    Tb02 =
-                    {
-                        Применимость_метода_тонкой_плиты = false,
-                    },
-                };
+                ?? new aisReportValues_StGb();
 
             return SteelConcreteOriginMapper.MapToAnalysisSteelConcrete(
                 checkPoint,
