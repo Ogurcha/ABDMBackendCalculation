@@ -67,9 +67,9 @@ namespace Abdm.Calculation.Infrastructure
             services.AddScoped<IVehicleTrajectoryManager, VehicleTrajectoryManagerVolumetric>();
 
             services.AddScoped<ISteelConcretePassChecker, SteelConcretePassChecker>();
-            services.AddScoped<ISteelConcreteOriginFacade, SteelConcreteOriginFacade>();
             services.AddScoped<IStrainAnalyser, StrainAnalyser>();
 
+            services.AddSingleton<ISteelConcreteOriginFacade, SteelConcreteOriginFacade>();
             services.AddSingleton<IRoadRulesFactory, RoadRulesFactory>(x => new RoadRulesFactory(new System.Collections.Generic.List<BaseRRStrategy>
             {
                 new AbStrategy(),
