@@ -184,18 +184,18 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 var profileLeft = trajectory.Left.Last().Value;
                 var profileRight = trajectory.Right.Last().Value;
                 var profileCenter = trajectory.Center;
-                var leftPieces = profileLeft.PositivePieces;
-                var rightPieces = profileRight.PositivePieces;
-                var centerPieces = profileCenter.PositivePieces;
+                var leftPieces = profileLeft.PositivePieces.Where(x => x.Length > Math.Pow(10, -DecimalPrecision)).ToArray();
+                var rightPieces = profileRight.PositivePieces.Where(x => x.Length > Math.Pow(10, -DecimalPrecision)).ToArray();
+                var centerPieces = profileCenter.PositivePieces.Where(x => x.Length > Math.Pow(10, -DecimalPrecision)).ToArray();
 
                 for (var i = 0;
-                    i < Math.Min(leftPieces.Length, Math.Min(rightPieces.Length, centerPieces.Length));
+                    i < Math.Max(leftPieces.Length, Math.Max(rightPieces.Length, centerPieces.Length));
                     i++)
                 {
 
-                    var left = leftPieces[i];
-                    var right = rightPieces[i];
-                    var center = centerPieces[i];
+                    var left = leftPieces.ElementAtOrDefault(i) ?? new();
+                    var right = rightPieces.ElementAtOrDefault(i) ?? new();
+                    var center = centerPieces.ElementAtOrDefault(i) ?? new();
 
                     var minusKiller = 0d;
                     if (left.Start < 0 || right.Start < 0)
