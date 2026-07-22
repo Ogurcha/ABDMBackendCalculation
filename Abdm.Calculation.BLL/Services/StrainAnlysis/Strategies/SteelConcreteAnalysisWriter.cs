@@ -14,10 +14,16 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.SteelConcrete,
         ];}
 
-        public override AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers)
+        public override AnalysisSummary Analyse(AnalysisSummary analysis, 
+            VehicleRollingResult vehicleRollingResult,
+            VehicleRollingResult? rollingResultBackWards,
+            bool doNegativeNumbers)
         {
-            var result = base.Analyse(analysis, vehicleRollingResult, doNegativeNumbers);
-            result.SteelConcrete = GetSteelConcrete(result, vehicleRollingResult);
+            var result = base.Analyse(analysis, vehicleRollingResult, rollingResultBackWards, doNegativeNumbers);
+            result.SteelConcrete = GetSteelConcrete(result,
+                !(vehicleRollingResult.StrainResults.Max(x => x.TotalStrain) < rollingResultBackWards?.StrainResults.Max(x => x.TotalStrain))
+                ? vehicleRollingResult
+                : rollingResultBackWards);
             return result;
         }
             

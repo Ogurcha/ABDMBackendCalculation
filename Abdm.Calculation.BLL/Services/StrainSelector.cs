@@ -84,7 +84,7 @@ namespace Abdm.Calculation.BLL.Services
                 }
             }
 
-            var finalScore = scores.MaxBy(x => x.TotalScore);
+            var finalScore = scores.MaxBy(x => x.Score);
 
             return finalScore!.StrainsPicked.ToArray();
         }
@@ -145,9 +145,9 @@ namespace Abdm.Calculation.BLL.Services
                     }
                 }
 
-                var strainScoreFromChild = childStrains.MaxBy(score => score.TotalScore);
+                var strainScoreFromChild = childStrains.MaxBy(score => score.Score);
 
-                if (strainScoreFromChild != null && !(strainScore?.TotalScore > strainScoreFromChild.TotalScore))
+                if (strainScoreFromChild != null && !(strainScore?.Score > strainScoreFromChild.Score))
                 {
                     strainScore = strainScoreFromChild;
                 }
@@ -161,8 +161,8 @@ namespace Abdm.Calculation.BLL.Services
             var coefficients = stripeCoefficientProvider.GetStripeCoefficient(strainPicked.Strains.First().LambdaSmall);
             var coefficientToPick = Math.Min(4, strainScore.StrainsPicked.Count);
 
-            strainScore.Score += strainPicked.TotalStrain;
-            strainScore.TotalScore = strainPicked.TotalStrain * coefficients[coefficientToPick];
+            strainScore.Score += strainPicked.TotalStrain * coefficients[coefficientToPick];
+            //strainScore.TotalScore = strainPicked.TotalStrain * coefficients[coefficientToPick];
             strainScore.StrainsPicked.Add(strainPicked);
 
             return strainScore;

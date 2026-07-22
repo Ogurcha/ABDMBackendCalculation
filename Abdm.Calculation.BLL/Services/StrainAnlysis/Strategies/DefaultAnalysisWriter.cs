@@ -20,35 +20,46 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             StrainCalculationGroupTypeEnum.Pillar,
         ];}
 
-        public virtual AnalysisSummary Analyse(AnalysisSummary analysis, VehicleRollingResult vehicleRollingResult, bool doNegativeNumbers)
+        public virtual AnalysisSummary Analyse(AnalysisSummary analysis, 
+            VehicleRollingResult vehicleRollingResult,
+            VehicleRollingResult? rollingResultBackWardsNullable,
+            bool doNegativeNumbers)
         {
             var defaults = new List<AnalysisDefault>();
             var dataModel = vehicleRollingResult.DataModel;
 
             foreach (var strainResults in vehicleRollingResult.StrainResults)
             {
-                var strains = strainResults.Strain;
+                var strains = strainResults.VehicleColumnStrains;
 
                 if (strains.Length == 0)
                 {
                     continue;
                 }
 
-                var isDirectionForward = strains.First().VehicleStrains.First().IsDirectionForward;
-
                 defaults.Add(new AnalysisDefault
                 {
                     HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
-                    Columns = GetAnalysisColumns(strains, dataModel, x => x).ToArray(),
-                    IsForward = isDirectionForward
+                    Columns = GetAnalysisColumns(strains, dataModel).ToArray(),
+                    IsForward = true
                 });
-                if (strains.First().VehicleStrains.Any(x => x.InvertedDirectionStrain != null))
+            }
+            if (rollingResultBackWardsNullable is VehicleRollingResult VehicleRollingResult)
+            {
+                foreach (var strainResults in rollingResultBackWardsNullable.StrainResults)
                 {
+                    var strains = strainResults.VehicleColumnStrains;
+
+                    if (strains.Length == 0)
+                    {
+                        continue;
+                    }
+
                     defaults.Add(new AnalysisDefault
                     {
                         HasSafetyLine = strainResults.RoadRuleRef.HasSafetyLine,
-                        Columns = GetAnalysisColumns(strains, dataModel, x => x.InvertedDirectionStrain).ToArray(),
-                        IsForward = !isDirectionForward
+                        Columns = GetAnalysisColumns(strains, dataModel).ToArray(),
+                        IsForward = false
                     });
                 }
             }
@@ -114,14 +125,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
         }
 
         private List<AnalysisColumn> GetAnalysisColumns(IEnumerable<VehicleColumnStrain> strainResults, 
-            VehicleRollingBigModel data,
-            Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
+            VehicleRollingBigModel data)
         {
             var vehicles = new List<AnalysisColumn>();
             var columnCounter = 1;
             foreach (var columnStrains in strainResults.Where(x => x.TotalStrain > Math.Pow(10, -DecimalPrecision)).OrderBy(x => x.VehicleTrajectoryRef.X))
             {
-                vehicles.AddRange(GetAnalysisColumn(columnStrains, data, columnCounter, vehicleStrainRetrieveFunc));
+                vehicles.AddRange(GetAnalysisColumn(columnStrains, data, columnCounter));
                 columnCounter++;
             }
 
@@ -130,8 +140,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 
         private List<AnalysisColumn> GetAnalysisColumn(VehicleColumnStrain columnStrain, 
             VehicleRollingBigModel data, 
-            int oneBaseColumNumber,
-            Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
+            int oneBaseColumNumber)
         {
             var vehicles = new List<AnalysisColumn>();
             for (int vehicleCounter = 0; vehicleCounter < columnStrain.VehicleStrains.Length; vehicleCounter++)
@@ -139,8 +148,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 var vehicle = GetAnalysisVehicle(columnStrain,
                     data.Intervals.First().AbsolutePositionLeft,
                     oneBaseColumNumber,
-                    vehicleCounter,
-                    vehicleStrainRetrieveFunc);
+                    vehicleCounter);
                 if (vehicle != null)
                 {
                     vehicles.Add(vehicle);
@@ -153,12 +161,11 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
         private AnalysisColumn? GetAnalysisVehicle(VehicleColumnStrain columnStrain,
             double leftIntervalStart,
             int oneBaseColumNumber,
-            int zeroBaseVehicleNumber,
-            Func<VehicleStrain, VehicleStrain?> vehicleStrainRetrieveFunc)
+            int zeroBaseVehicleNumber)
         {
             var wheelCounter = 1;
             var wheels = new List<WheelAnalysis>();
-            var vehicleStrain = vehicleStrainRetrieveFunc(columnStrain.VehicleStrains[zeroBaseVehicleNumber]);
+            var vehicleStrain = columnStrain.VehicleStrains[zeroBaseVehicleNumber];
             var trajectory = columnStrain.VehicleTrajectoryRef;
             if (vehicleStrain == null)
             {

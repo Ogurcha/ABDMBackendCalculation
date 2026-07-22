@@ -6,10 +6,10 @@ namespace Abdm.Calculation.BLL.Models
     {
         public double Score { get; set; }
 
-        /// <summary>
-        /// Скор при применения коэеффициентов полосности
-        /// </summary>
-        public double TotalScore { get; set; }
+        ///// <summary>
+        ///// Скор при применения коэеффициентов полосности
+        ///// </summary>
+        //public double TotalScore { get; set; }
 
         public required List<StrainsInMaximums> StrainsPicked { get; set; }
     }

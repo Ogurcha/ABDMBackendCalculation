@@ -37,14 +37,14 @@ namespace Abdm.Calculation.BLL.Services
                 return new StrainResult
                 {
                     RoadRuleRef = unpopulated.RoadRuleRef,
-                    Strain = unpopulated.Strain.Select(GetVehicleColumnStrain).ToArray()
+                    VehicleColumnStrains = unpopulated.Strain.Select(GetVehicleColumnStrain).ToArray()
                 };
             }
 
             return new StrainResult
             {
                 RoadRuleRef = unpopulated.RoadRuleRef,
-                Strain = unpopulated.Strain.Select(x => PopulateIndividualColumnFromMap(x, data, maxVehicle, resultsMap)).ToArray()
+                VehicleColumnStrains = unpopulated.Strain.Select(x => PopulateIndividualColumnFromMap(x, data, maxVehicle, resultsMap)).ToArray()
             };
 
             VehicleColumnStrain PopulateIndividualColumnFromMap(StrainsInMaximums traj,

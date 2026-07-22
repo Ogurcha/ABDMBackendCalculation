@@ -29,10 +29,10 @@ namespace Abdm.Calculation.BLL.Services
 
             foreach (var strainResult in strainResults)
             {
-                strainResult.Strain = strainResult.Strain.OrderDescending().ToArray();
-                for (int i = 0; i < strainResult.Strain.Length; i++)
+                strainResult.VehicleColumnStrains = strainResult.VehicleColumnStrains.OrderDescending().ToArray();
+                for (int i = 0; i < strainResult.VehicleColumnStrains.Length; i++)
                 {
-                    var column = strainResult.Strain[i];
+                    var column = strainResult.VehicleColumnStrains[i];
                     var lambda = column.VehicleStrains.First().LambdaSmall;
                     var coefficients = data.CoefficientProvider.GetStripeCoefficient(lambda);
                     var coefficientToPick = Math.Min(4, i);

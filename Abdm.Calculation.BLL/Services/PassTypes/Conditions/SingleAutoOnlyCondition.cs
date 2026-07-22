@@ -9,7 +9,7 @@ namespace Abdm.Calculation.BLL.Services.PassTypes.Conditions
         {
             return strainResults.Select(x =>
             {
-                var load = x.Strain.First().TotalStrain;
+                var load = x.VehicleColumnStrains.First().TotalStrain;
                 return surface.MyStrength > surface.ConstLoad + surface.OtherLoad + load;
             }).All(succeded => succeded);
         }

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Abdm.Calculation.BLL.Interfaces;
+using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Mapster;
 
@@ -22,22 +24,64 @@ namespace Abdm.Calculation.BLL.Coordinators
             }
             var data = bigDataResult.Result!;
 
-            var defaultRollResult = baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
+            var defaultRollResult = GetRollingResult(data, cancellationToken, out VehicleRollingResult? backwardRollingResult);
             if (!defaultRollResult.IsSuccess)
             {
                 return new ResultMonad<StrainAnalysisResult>(defaultRollResult.Exception!);
+
             }
             var defaultRoll = defaultRollResult.Result!;
-            data.FlipMeshes();
-            var mirroredRollResult = baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
 
-            var strainAnalysis = strainAnalyser.GetAnalysis(defaultRoll, mirroredRollResult.Result);
+            data.FlipMeshes();
+            var mirroredRollResult = GetRollingResult(data, cancellationToken, out VehicleRollingResult? mirroredBackwardRollingResult);
+            if (!mirroredRollResult.IsSuccess)
+            {
+                return new ResultMonad<StrainAnalysisResult>(mirroredRollResult.Exception!);
+            }
+            var mirroredRoll = mirroredRollResult.Result!;
+
+            var strainAnalysis = strainAnalyser.GetAnalysis(defaultRoll, mirroredRoll, backwardRollingResult, mirroredBackwardRollingResult);
             if (strainAnalysis == null)
             {
                 return new ResultMonad<StrainAnalysisResult>(GetFailedResult(parameters));
             }
 
             return new ResultMonad<StrainAnalysisResult>(ComposeMessage(parameters, strainAnalysis, data.TrianglesToCache));
+        }
+
+        /// <summary>
+        /// HACK: Двунаправленное движение в отчётах должно работать нелогично
+        /// При двунаправленном, сначала ВСЕ ТС должны смотреть прямо, потом ВСЕ назад
+        /// Вразнобой нельзя ибо так написано в нормах, несмотря на то, что вразнобой можно найти более невыгодное положение тележек
+        /// </summary>
+        private ResultMonad<VehicleRollingResult> GetRollingResult(
+            VehicleRollingBigModel data, 
+            CancellationToken cancellationToken, 
+            out VehicleRollingResult? backwardRollingResult)
+        {
+            backwardRollingResult = null;
+            if (data.Data.Load.ActualDirection.Length > 1)
+            {
+                data.Data.Load.ActualDirection = [true];
+                var directionForwardResult = baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
+                if (!directionForwardResult.IsSuccess)
+                {
+                    return directionForwardResult;
+                }
+                data.Data.Load.ActualDirection = [false];
+                var directionBackwardResult = baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
+                if (!directionBackwardResult.IsSuccess)
+                {
+                    return directionBackwardResult;
+                }
+                data.Data.Load.ActualDirection = [true, false];
+                backwardRollingResult = directionBackwardResult.Result;
+                return directionForwardResult;
+            }
+            else
+            {
+                return baseCoordinator.RollAndGetStrainResult(data, cancellationToken);
+            }
         }
 
         public string InfoMsg(StrainAnalysisParameters param)

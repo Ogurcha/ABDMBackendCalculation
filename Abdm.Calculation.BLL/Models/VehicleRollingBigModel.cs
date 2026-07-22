@@ -20,10 +20,7 @@ namespace Abdm.Calculation.BLL.Models
 
         public void FlipMeshes()
         {
-            if (SecondaryMesh != null)
-            {
-                (SecondaryMesh, Mesh) = (Mesh, SecondaryMesh);
-            }
+            (SecondaryMesh, Mesh) = (Mesh, SecondaryMesh);
         }
     }
 }
