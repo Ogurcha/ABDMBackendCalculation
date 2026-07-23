@@ -52,5 +52,10 @@ namespace Abdm.Calculation.BLL.Models
         /// Дополнительная опциональная информация для конкретного типа деформации
         /// </summary>
         public IStrainTypeSpecificData? StrainTypeSpecificData { get; set; }
+
+        /// <summary>
+        /// Номер структуры (пролетного строения) сооружения, к которому отностится чекпоинт
+        /// </summary>
+        public int SubstructureId { get; internal set; }
     }
 }

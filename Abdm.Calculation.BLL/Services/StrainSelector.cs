@@ -162,7 +162,6 @@ namespace Abdm.Calculation.BLL.Services
             var coefficientToPick = Math.Min(4, strainScore.StrainsPicked.Count);
 
             strainScore.Score += strainPicked.TotalStrain * coefficients[coefficientToPick];
-            //strainScore.TotalScore = strainPicked.TotalStrain * coefficients[coefficientToPick];
             strainScore.StrainsPicked.Add(strainPicked);
 
             return strainScore;

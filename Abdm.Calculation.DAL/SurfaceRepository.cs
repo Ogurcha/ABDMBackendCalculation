@@ -25,7 +25,7 @@ namespace Abdm.Calculation.DAL
                 parameters.Add("@cpNumber", checkpointNumber, DbType.Int32);
 
                 const string sqlQuery = @"
-                SELECT c_typnk, c_cptype, lambda, data 
+                SELECT c_typnk, c_cptype, lambda, data, CASE WHEN c_typnk = 10 THEN n_ps ELSE n_constr END as substructureId
                 FROM i_checkpoint 
                 WHERE c_isso = @issoId 
                 AND n = @cpNumber";

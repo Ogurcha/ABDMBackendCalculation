@@ -27,5 +27,11 @@ namespace Abdm.Calculation.DAL.DataTransferObjects
         /// </summary>
         [JsonPropertyName("data")]
         public byte[]? data { get; set; }
+
+        /// <summary>
+        /// Номер структуры (пролетного строения) сооружения, к которому отностится чекпоинт
+        /// </summary>
+        [JsonPropertyName("substructureId")]
+        public int substructureId { get; set; }
     }
 }
