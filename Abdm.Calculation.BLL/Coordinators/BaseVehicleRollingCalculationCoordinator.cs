@@ -77,7 +77,11 @@ namespace Abdm.Calculation.BLL.Coordinators
             {
                 steelConcreteData.SteelConcreteParameters = data.Surface.Adapt<IssoSteelConcreteParameters>();
             }
-            dataModel.Surface.Material = await materialService.GetMaterial(data, surfaceDataContainer.Result.CheckPointType, cancellationToken);
+            dataModel.Surface.Material = await materialService.GetMaterial(
+                (int)data.IssoId,
+                surfaceDataContainer.Result.SubstructureId,
+                surfaceDataContainer.Result.CheckPointType, 
+                cancellationToken);
 
             var mesh = meshManager.GetMeshFromPoints(
                 surfaceDataContainer.Result.Points,

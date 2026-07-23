@@ -14,11 +14,11 @@
         /// <summary>
         /// Максимальное напряжение по каждой траектории движения в заданном интервале
         /// </summary>
-        public required VehicleColumnStrain[] Strain { get; set; }
+        public required VehicleColumnStrain[] VehicleColumnStrains { get; set; }
 
         /// <summary>
         /// Итоговое напряжение с учётом коэффициента
         /// </summary>
-        public double TotalStrain => Strain.Sum(x => x.TotalStrain);
+        public double TotalStrain => VehicleColumnStrains.Sum(x => x.TotalStrain);
     }
 }

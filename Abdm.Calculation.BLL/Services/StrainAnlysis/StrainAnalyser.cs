@@ -11,7 +11,9 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
     {
         public AnalysisSummary? GetAnalysis(
             VehicleRollingResult defaultRoll,
-            VehicleRollingResult? mirroredRoll)
+            VehicleRollingResult? mirroredRoll, 
+            VehicleRollingResult? backwardRollingResult,
+            VehicleRollingResult? mirroredBackwardRollingResult)
         {
             var hasDefault = defaultRoll.StrainResults.Length > 0;
             var hasMirrored = mirroredRoll?.StrainResults?.Length > 0;
@@ -50,7 +52,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis
             };
             
             var analyser = analyserFactory.GetStrainAnalyser(summary.StrainCalculationGroupType);
-            analyser.Analyse(summary, maxStrainResult, doNegativeNumbers);
+            analyser.Analyse(summary, maxStrainResult, doNegativeNumbers ? mirroredBackwardRollingResult : backwardRollingResult, doNegativeNumbers);
 
             return summary;
         }

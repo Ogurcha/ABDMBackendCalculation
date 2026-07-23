@@ -16,17 +16,18 @@ namespace Abdm.Calculation.BLL.Services
         /// <summary>
         /// Возвращает абсолютные значения  интервалов для данного иссо
         /// </summary>
-        public async Task<IMaterial?> GetMaterial(PassTypeCalculationParameters data,
+        public async Task<IMaterial?> GetMaterial(int issoId,
+            int substructureId,
             CheckPointTypeEnum checkPointType,
             CancellationToken cancellationToken)
         {
             if (checkPointType == CheckPointTypeEnum.Pillar || checkPointType == CheckPointTypeEnum.PillarParts)
             {
-                var pillarMaterial = await pillarMaterialRepository.GetPillarMaterial(data.IssoId, data.CheckPointNumber, cancellationToken);
+                var pillarMaterial = await pillarMaterialRepository.GetPillarMaterial(issoId, substructureId, cancellationToken);
                 return pillarMaterial.Adapt<PillarMaterial?>();
             }
 
-            var surfaceMaterial = await surfaceMaterialRepository.GetSurfaceMaterial(data.IssoId, data.CheckPointNumber, cancellationToken);
+            var surfaceMaterial = await surfaceMaterialRepository.GetSurfaceMaterial(issoId, substructureId, cancellationToken);
             return surfaceMaterial.Adapt<SurfaceMaterial?>();
         }
     }
