@@ -1,7 +1,6 @@
 ﻿using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
-using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
 namespace Abdm.Calculation.BLL.Services
 {
