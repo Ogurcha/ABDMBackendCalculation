@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
-using Abdm.Calculation.WebApi.Infrastructure.Messaging;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
+using Kafka.Integration.MessageBroker.Consumer;
+using Kafka.Integration.MessageBroker.Producer;
 using Mapster;
 using Microsoft.Extensions.Logging;
 
@@ -29,15 +29,14 @@ namespace Abdm.Calculation.WebApi.Handlers
 
         public async Task Handle(
             StrainAnalysisCalculationRequest dto, 
-            MessageContext<string, StrainAnalysisCalculationRequest> context,
-            CancellationToken cancellationToken)
+            MessageContext<string, StrainAnalysisCalculationRequest> context)
         {
             var data = dto.Adapt<StrainAnalysisParameters>();
             var key = context.ConsumeResults.Any(x => x.Message.Key.Equals(strainCompareStr)) ? strainCompareStr : brokerClassNameStr;
             try
             {
-                var responseContent = await strainAnalyser.Run(data, cancellationToken);
-                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>(), cancellationToken);
+                var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
+                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>());
             }
             catch (Exception ex)
             {

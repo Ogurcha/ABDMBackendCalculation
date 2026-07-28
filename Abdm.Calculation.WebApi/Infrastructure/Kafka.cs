@@ -1,7 +1,9 @@
 ﻿using Abdm.Calculation.WebApi.Handlers;
-using Abdm.Calculation.WebApi.Infrastructure.Messaging;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
+using Kafka.Integration.MessageBroker.Consumer.Extensions;
+using Kafka.Integration.MessageBroker.Producer.Extensions;
+using Kafka.Integration.MessageBroker.Serialization.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,24 +15,28 @@ namespace Abdm.Calculation.Infrastructure
         {
             services.AddKafkaConsumer<string, PassTypeCalculationRequest, PassTypeCalculationMessageHandler>(consumer =>
             {
-                configuration.GetSection("InternalCalculationMessageConsumer").Bind(consumer);
+                consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
+                consumer.UseJsonMessageDeserializer();
                 consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
             });
 
             services.AddKafkaProducer<string, PassTypeCalculationResponse>(producer =>
             {
-                configuration.GetSection("InternalCalculationMessageProducer").Bind(producer);
+                producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
+                producer.UseJsonMessageSerializer();
             });
 
             services.AddKafkaConsumer<string, StrainAnalysisCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
             {
-                configuration.GetSection("StrainAnalysisMessageConsumer").Bind(consumer);
+                consumer.Configuration.LoadFromConfiguration("StrainAnalysisMessageConsumer");
+                consumer.UseJsonMessageDeserializer();
                 consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
             });
 
             services.AddKafkaProducer<string, AnalyseStrainCalculationResponse>(producer =>
             {
-                configuration.GetSection("StrainAnalysisMessageProducer").Bind(producer);
+                producer.Configuration.LoadFromConfiguration("StrainAnalysisMessageProducer");
+                producer.UseJsonMessageSerializer();
             });
         }
     }
