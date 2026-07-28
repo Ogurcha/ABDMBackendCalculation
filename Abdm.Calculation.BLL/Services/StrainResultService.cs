@@ -25,7 +25,7 @@ namespace Abdm.Calculation.BLL.Services
 
         private StrainResult[] ApplyStripedCoefficient(List<StrainResult> populated, VehicleRollingSmallModel data)
         {
-            var strainResults = populated.Where(s => s.TotalStrain >= 0).ToArray();
+            var strainResults = populated.ToArray();
 
             foreach (var strainResult in strainResults)
             {

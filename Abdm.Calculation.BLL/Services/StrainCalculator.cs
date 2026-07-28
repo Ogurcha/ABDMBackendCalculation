@@ -48,13 +48,17 @@ namespace Abdm.Calculation.BLL.Services
                     var trafficJamStrain = roadRule.DoTrafficJamLoadCalculation
                         ? trafficJamStrainMap[strains.Key]
                         : null;
-                    strainList.Add(new StrainsInMaximums 
+                    var totalStrain = strains.Value.strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d);
+                    if (totalStrain > NormConstants.MinimalTrajectoryStrain)
                     {
-                        VehicleTrajectoryRef = strains.Value.traj, 
-                        Strains = strains.Value.strains, 
-                        TrafficJamStrain = trafficJamStrain,
-                        TotalStrain = strains.Value.strains.First().TotalStrain + (trafficJamStrain?.TotalStrain ?? 0d)
-                    });
+                        strainList.Add(new StrainsInMaximums
+                        {
+                            VehicleTrajectoryRef = strains.Value.traj,
+                            Strains = strains.Value.strains,
+                            TrafficJamStrain = trafficJamStrain,
+                            TotalStrain = totalStrain
+                        });
+                    }
                 }
                 result.Add(new StrainMap() {
                     RoadRuleRef = roadRule,
