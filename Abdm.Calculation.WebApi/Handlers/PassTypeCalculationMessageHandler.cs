@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
+using Abdm.Calculation.WebApi.Infrastructure.Messaging;
 using Abdm.Calculation.WebApi.RequestModels;
 using Abdm.Calculation.WebApi.ResponseModels;
-using Kafka.Integration.MessageBroker.Consumer;
-using Kafka.Integration.MessageBroker.Producer;
 using Mapster;
 using Microsoft.Extensions.Logging;
 
@@ -27,13 +27,14 @@ namespace Abdm.Calculation.WebApi.Handlers
 
         public async Task Handle(
             PassTypeCalculationRequest dto, 
-            MessageContext<string, PassTypeCalculationRequest> context)
+            MessageContext<string, PassTypeCalculationRequest> context,
+            CancellationToken cancellationToken)
         {
             var data = dto.Adapt<PassTypeCalculationParameters>();
             try
             {
-                var responseContent = await passTypeService.Run(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<PassTypeCalculationResponse>());
+                var responseContent = await passTypeService.Run(data, cancellationToken);
+                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<PassTypeCalculationResponse>(), cancellationToken);
             }
             catch (Exception ex)
             {

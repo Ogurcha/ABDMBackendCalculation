@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default;
 using Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.SteelConcrete;
 
