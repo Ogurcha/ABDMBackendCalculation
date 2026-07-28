@@ -14,9 +14,8 @@ namespace Abdm.Calculation.WebApi.Infrastructure.Messaging
         public string ConsumerGroup { get; set; } = string.Empty;
 
         /// <summary>
-        /// Максимальное число сообщений, обрабатываемых одновременно (степень параллелизма расчётов).
-        /// Не равно числу IConsumer: клиент Confluent.Kafka не потокобезопасен, поэтому на топик
-        /// поднимается один консьюмер, а Handle/Run выполняются параллельно до этого лимита.
+        /// Количество независимых экземпляров консьюмера (каждый в своём потоке),
+        /// которые будут запущены в рамках одной consumer group для параллельной обработки партиций.
         /// </summary>
         public int ConsumersCount { get; set; } = 1;
 
