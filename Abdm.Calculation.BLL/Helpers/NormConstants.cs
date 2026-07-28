@@ -46,6 +46,11 @@
         public const double MinimalDistanceBetweenTrajectories = 0d;
 
         /// <summary>
+        /// Минимальное значение кооеффициента нагрузки
+        /// </summary>
+        public const double MinStrainCoefficient = 1d;
+
+        /// <summary>
         /// Минимальное напряжение на траектории, которое принимаем в итоговый результат
         /// Срезание незначительных траекторий улучшает перфоманс
         /// </summary>
