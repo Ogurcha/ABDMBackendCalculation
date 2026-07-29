@@ -51,8 +51,9 @@
         public const double MinStrainCoefficient = 1d;
 
         /// <summary>
-        /// Максимальное значение кооеффициента нагрузки
+        /// Минимальное напряжение на траектории, которое принимаем в итоговый результат
+        /// Срезание незначительных траекторий улучшает перфоманс
         /// </summary>
-        public const double MaxStrainCoefficient = 1.5d;
+        public const double MinimalTrajectoryStrain = 1e-3;
     }
 }
