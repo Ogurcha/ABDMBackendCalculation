@@ -6,6 +6,7 @@ using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.BLL.Models.StrainAnalysis;
 using Abdm.Calculation.BLL.Models.StrainAnalysis.Default;
 using Abdm.Calculation.Maths.Models;
+using static AisPcCore.CheckPoint.ais7CheckPoint_StGb;
 
 namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
 {
@@ -216,13 +217,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         LeftIntervalStart = ToDecimal(left.Start - minusKiller),
                         LeftIntervalEnd = ToDecimal(left.End - minusKiller),
                         LeftIntervalLength = ToDecimal(left.Length),
-                        LeftIntervalVolume = ToDecimal(columnStrain.TrafficJamStrain.LeftStrain / 1.1),
+                        LeftIntervalVolume = decimal.Round((decimal)(columnStrain.TrafficJamStrain.LeftStrain / 1.1), 4),
                         LeftIntervalIntensity = 1.1m,
                         LeftIntervalStrain = ToDecimal(columnStrain.TrafficJamStrain.LeftStrain),
                         RightIntervalStart = ToDecimal(right.Start - minusKiller),
                         RightIntervalEnd = ToDecimal(right.End - minusKiller),
                         RightIntervalLength = ToDecimal(right.Length),
-                        RightIntervalVolume = ToDecimal(columnStrain.TrafficJamStrain.RightStrain / 1.1),
+                        RightIntervalVolume = decimal.Round((decimal)(columnStrain.TrafficJamStrain.RightStrain / 1.1), 4),
                         RightIntervalIntensity = 1.1m,
                         RightIntervalStrain = ToDecimal(columnStrain.TrafficJamStrain.RightStrain),
                         SumStrain = ToDecimal(columnStrain.TrafficJamStrain.SumStrain),
@@ -276,7 +277,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 PositionX = ToDecimal(wheelStrain.Position.X - leftIntervalStart),
                 PositionY = ToDecimal(wheelStrain.Position.Y),
                 Z = ToDecimal(wheelStrain.ZValue),
-                ZVolume = ToDecimal(wheelStrain.ZValue * wheelStrain.FootprintLength * wheelStrain.FootprintWidth ?? 0),
+                ZVolume = decimal.Round((decimal)(wheelStrain.ZValue * wheelStrain.FootprintLength * wheelStrain.FootprintWidth ?? 0), 4),
                 Weight = ToDecimal(wheelStrain.AxleRef.WheelWeight),
                 Pressure = ToDecimal(wheelStrain.AxleRef.WheelWeight / wheelStrain.FootprintLength / wheelStrain.FootprintWidth ?? 0),
                 FootPrintSizeFirst = ToDecimal(wheelStrain.FootprintLength ?? 0d),
