@@ -13,7 +13,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
         {
             if (profilebase is not ProfileYZExtended profile)
             {
-                return GetWheelStrain(profilebase, positivePiecesMap, axle, Y);
+                return base.GetWheelStrain(profilebase, positivePiecesMap, axle, Y);
             }
             if (profilebase.MaximumIndexes.Length == 0 || profilebase.PositivePieceMap.Count() == 0)
             {

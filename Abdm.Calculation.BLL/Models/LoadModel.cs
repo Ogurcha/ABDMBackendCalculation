@@ -60,5 +60,10 @@ namespace Abdm.Calculation.BLL.Models
         /// Второе значение тапла - это вес колёс на таком расстоянии
         /// </summary>
         public Dictionary<double, (int, double)>? WheelOffsetsMap { get; set; }
+
+        /// <summary>
+        /// Позиция центра масс
+        /// </summary>
+        public double MassCenterPosition { get; set; }
     }
 }

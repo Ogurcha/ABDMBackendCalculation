@@ -24,8 +24,6 @@ namespace Abdm.Calculation.BLL.Services.SurfaceData
                 triangles.Add((i, i + 1, i + 2));
             }
             surface.Triangles = triangles.ToArray();
-            passageIntervals = [passageIntervals.First()];
-            passageIntervals.First().LaneCount = 1;
         }
     }
 }

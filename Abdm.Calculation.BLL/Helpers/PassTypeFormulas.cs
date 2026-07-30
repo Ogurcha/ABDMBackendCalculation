@@ -1,4 +1,5 @@
 ﻿using Abdm.Calculation.BLL.Models;
+using Abdm.Calculation.BLL.Models.Strain;
 
 namespace Abdm.Calculation.Maths.Helpers
 {
@@ -23,5 +24,26 @@ namespace Abdm.Calculation.Maths.Helpers
             return axles.SelectMany(a => a.WheelsDistance.Select(wheelsDistance => (wheelsDistance, a.WheelWeight)))
                 .GroupBy(w => w.wheelsDistance).ToDictionary(w => w.Key / 2, w => (w.Count(), w.Sum(w => w.WheelWeight)));
         }
+
+        /// <summary>
+        /// Поиск максимального напряжения для одного тс в определенной позиции на выбранной траектории
+        /// </summary>
+        public static VehicleStrain GetStrainFromVehicleInPosition(VehicleTrajectory trajectory,
+            double position,
+            VehicleRollingSmallModel data) => data.Load.ActualDirection
+                .Select(b => data.Load.Axles
+                    .Select(a => a.Position)
+                    .Append(data.Load.MassCenterPosition)
+                    .Max(relativePosition => data.VehicleStrainProvider!.GetStrainOnTrajectory(
+                        trajectory,
+                        position - relativePosition,
+                        data.Load,
+                        !b))
+                ).Max()!;
+
+        /// <summary>
+        /// Найти центр массы нагрузки
+        /// </summary>
+        public static double MassCenterPosition(Axle[] axles) => axles.Sum(a => a.Position * a.Weight) / axles.Sum(a => a.Weight);
     }
 }

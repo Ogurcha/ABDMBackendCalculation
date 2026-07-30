@@ -55,23 +55,27 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 
             void AddPositions(double x)
             {
-                AddPosition(x);
-                for (var i = 1; i < actualVehicleCount; i++)
+                if (AddPosition(x))
                 {
-                    foreach (var delta in radiuses.Select(r => i * r))
+                    for (var i = 1; i < actualVehicleCount; i++)
                     {
-                        AddPosition(x + delta);
-                        AddPosition(x - delta);
+                        foreach (var delta in radiuses.Select(r => i * r))
+                        {
+                            AddPosition(x + delta);
+                            AddPosition(x - delta);
+                        }
                     }
                 }
             }
 
-            void AddPosition(double x)
+            bool AddPosition(double x)
             {
                 if (trajectoryFilters.Any(filter => filter.Filter(x)))
                 {
                     result.Add(GetXPosition(x, loadModel.WheelOffsetsMap!.Keys));
+                    return true;
                 }
+                return false;
             }
         }
 

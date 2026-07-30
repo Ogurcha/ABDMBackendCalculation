@@ -2,10 +2,11 @@
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
+using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class StrainResultPopulator(IVehiclePositioner vehiclePositioner, IEqualityComparer<double> equalityComparer) : IStrainResultPopulator
+    public class StrainResultPopulator(IEqualityComparer<double> equalityComparer) : IStrainResultPopulator
     {
         public List<StrainResult> PopulateStrainResults(IList<StrainResultUnpopulated> list, VehicleRollingSmallModel data)
         {
@@ -137,8 +138,8 @@ namespace Abdm.Calculation.BLL.Services
 
         private VehicleStrain? CloneVehicleStrain(StrainsInMaximums traj, VehicleRollingSmallModel data, VehicleStrain vehicleStrain, double distanceFromExtremum)
         {
-            var strain = vehiclePositioner.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Y + distanceFromExtremum, data);
-            if (strain != null && strain.SumStrain > 0d)
+            var strain = PassTypeFormulas.GetStrainFromVehicleInPosition(traj.VehicleTrajectoryRef, vehicleStrain.Y + distanceFromExtremum, data);
+            if (strain != null && strain.SumStrain > NormConstants.MinimalTrajectoryStrain)
             {
                 strain.ReliabilityCoefficient = vehicleStrain.ReliabilityCoefficient;
                 strain.LambdaSmall = vehicleStrain.LambdaSmall;

@@ -44,14 +44,6 @@
         public required bool IsDirectionForward { get; set; }
 
         /// <summary>
-        /// Итоговое напряжение от ТС, если бы оно было расположено в противоположном направлении.
-        /// Не влияет на алгоритмы сравнения, суммирования и т.д., 
-        /// т.к. в <see cref="InvertedDirectionStrain"/> содержит напряжение заведомо меньшее, а, значит, не актуальное. 
-        /// Используется только для аналитики и отображения в отчётах.
-        /// </summary>
-        public VehicleStrain? InvertedDirectionStrain { get; set; }
-
-        /// <summary>
         /// Промежутки положительных кусков профиля, на которых было обнаружено данное напряжение
         /// </summary>
         public required Dictionary<ProfileYZ, HashSet<Interval>> PositivePiecesMap { get; set; }
