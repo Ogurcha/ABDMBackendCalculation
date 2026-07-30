@@ -12,6 +12,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             IProfileYZService profileYZService)
         {
             var result = new IntervalModel() { PassageIntervalRef = interval };
+
             var distinctXs = profileYZService.CalculateRequiredTrajectoryPositions(
                 dataModel,
                 interval,

@@ -96,17 +96,6 @@ namespace Abdm.Calculation.Infrastructure
                 new SteelConcreteAnalysisWriter(sp.GetRequiredService<ISteelConcreteOriginFacade>()),
             }));
 
-
-            if (configuration.GetSection("BLLSettings").GetSection("UseLegacyLogic").Value == true.ToString())
-            {
-                services.AddScoped<IVehiclePositioner, AxleVehiclePositioner>();
-            }
-            else
-            {
-                services.AddScoped<IVehiclePositioner, IterationVehiclePositioner>();
-            }
-
-
             services.AddScoped<IStrainCalculator, StrainCalculator>();
             services.AddScoped<IStrainSelector, StrainSelector>();
             services.AddScoped<IStrainResultPopulator, StrainResultPopulator>();

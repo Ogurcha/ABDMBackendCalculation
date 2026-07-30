@@ -3,10 +3,11 @@ using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
 {
-    public class StrainCalculator(IVehiclePositioner vehiclePositioner,
+    public class StrainCalculator(
         IEqualityComparer<double> equalityComparer,
         ITrajectoryFilterProvider trajectoryFilterProvider) : IStrainCalculator
     {
@@ -110,7 +111,10 @@ namespace Abdm.Calculation.BLL.Services
             {
                 VehicleStrain strain = GetVehicleStrain(trajectory, data, measuringProfile, measuringProfile.Extremums[maximumIndex].X);
 
-                yield return strain;
+                if (strain.TotalStrain > NormConstants.MinimalTrajectoryStrain)
+                {
+                    yield return strain;
+                }
             }
         }
 
@@ -202,7 +206,7 @@ namespace Abdm.Calculation.BLL.Services
 
         private VehicleStrain GetVehicleStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data, ProfileYZ measuringProfile, double position)
         {
-            var strain = vehiclePositioner.GetStrainFromVehicleInPosition(trajectory,
+            var strain = PassTypeFormulas.GetStrainFromVehicleInPosition(trajectory,
                                 position,
                                 data);
 
@@ -210,12 +214,6 @@ namespace Abdm.Calculation.BLL.Services
 
             strain.ReliabilityCoefficient = data.CoefficientProvider.GetBasicCoefficent(strain.LambdaSmall);
             strain.TotalStrain = strain.SumStrain * strain.ReliabilityCoefficient;
-            if (strain.InvertedDirectionStrain != null)
-            {
-                strain.InvertedDirectionStrain.LambdaSmall = strain.LambdaSmall;
-                strain.InvertedDirectionStrain.ReliabilityCoefficient = strain.ReliabilityCoefficient;
-                strain.InvertedDirectionStrain.TotalStrain = strain.InvertedDirectionStrain.SumStrain * strain.InvertedDirectionStrain.ReliabilityCoefficient;
-            }
 
             return strain;
         }

@@ -69,6 +69,7 @@ namespace Abdm.Calculation.BLL.Coordinators
             dataModel.Load.IsSymmetric = symmetryService.IsLoadSymmetric(dataModel.Load);
             dataModel.Load.ActualDirection = symmetryService.CalculateDirection(dataModel.Load.IsSymmetric, data.Direction);
             dataModel.Load.WheelOffsetsMap = PassTypeFormulas.DistanceBetweenTrajectoryCenterAndAxles(dataModel.Load.Axles);
+            dataModel.Load.MassCenterPosition = PassTypeFormulas.MassCenterPosition(dataModel.Load.Axles);
             dataModel.Surface.StrainCalculationGroupType = surfaceDataContainer.Result.StrainCalculationType.Map();
             dataModel.Surface.StrainCalculationType = surfaceDataContainer.Result.StrainCalculationType;
             dataModel.Surface.StrainTypeSpecificData = surfaceDataContainer.Result.StrainTypeSpecificData;
