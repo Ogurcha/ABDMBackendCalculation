@@ -13,6 +13,7 @@ namespace Abdm.Calculation.Infrastructure
     {
         public static void AddKafka(this IServiceCollection services, IConfiguration configuration)
         {
+#if !DEBUG
             services.AddKafkaConsumer<string, PassTypeCalculationRequest, PassTypeCalculationMessageHandler>(consumer =>
             {
                 consumer.Configuration.LoadFromConfiguration("InternalCalculationMessageConsumer");
@@ -25,10 +26,15 @@ namespace Abdm.Calculation.Infrastructure
                 producer.Configuration.LoadFromConfiguration("InternalCalculationMessageProducer");
                 producer.UseJsonMessageSerializer();
             });
+#endif
 
             services.AddKafkaConsumer<string, StrainAnalysisCalculationRequest, StrainAnalysisMessageHandler>(consumer =>
             {
+#if DEBUG
+                consumer.Configuration.LoadFromConfiguration("StrainAnalysisMessageConsumerForDebuggin");
+#else
                 consumer.Configuration.LoadFromConfiguration("StrainAnalysisMessageConsumer");
+#endif
                 consumer.UseJsonMessageDeserializer();
                 consumer.ConsumersCount = configuration.GetValue<int>("ConsumersCount", 1);
             });
