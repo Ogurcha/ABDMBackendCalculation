@@ -15,14 +15,17 @@ namespace Abdm.Calculation.Maths.Helpers
 
         /// <summary>
         /// Расстояние от центральной оси ТС до всех возможных его колес С ОДНОЙ СТОРОНЫ
-        /// Например, если в параметры передаётся легковушка с двумя <see cref="Axle"/> и четырмя колёсами, 
-        /// то вернётся словарь <расстояниеОтКолесаДоЦентра, 2>. Вернётся только одно значение, так как переднее и заднее колесо на одинаковом расстоянии. Число два означает, что на таком расстоянии оба значения. 
+        /// Например, если в параметры передаётся легковушка с двумя <see cref="Axle"/> и суммарно четырмя колёсами, 
+        /// то вернётся словарь <расстояниеОтКолесаДоЦентра, [осьКолесаПереднего, осьКолесаЗаднего]>. 
+        /// Вернётся только одно значение, так как переднее и заднее колесо на одинаковом расстоянии.
         /// </summary>
-        /// <returns>возвращает уникальные значения от оси ТС до колеса, количество колёс, проходящих на таком расстоянии и их суммарный вес проходящий на таком расстоянии</returns>
-        public static Dictionary<double, (int, double)> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
+        /// <returns>возвращает уникальные значения от оси ТС до колеса, и оси на таком расстоянии</returns>
+        public static Dictionary<double, IGrouping<(double WheelWidth, double WheelWeight), Axle>[]> DistanceBetweenTrajectoryCenterAndAxles(Axle[] axles)
         {
-            return axles.SelectMany(a => a.WheelsDistance.Select(wheelsDistance => (wheelsDistance, a.WheelWeight)))
-                .GroupBy(w => w.wheelsDistance).ToDictionary(w => w.Key / 2, w => (w.Count(), w.Sum(w => w.WheelWeight)));
+            return axles
+                .SelectMany(axle => axle.WheelsDistance.Select(wheelsDistance => (wheelsDistance, axle)))
+                .GroupBy(w => w.wheelsDistance)
+                .ToDictionary(w => w.Key / 2, w => w.Select(x => x.axle).GroupBy(x => (x.WheelWidth, x.WheelWeight)).ToArray());
         }
 
         /// <summary>

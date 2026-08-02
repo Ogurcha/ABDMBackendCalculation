@@ -4,6 +4,7 @@ using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
 using Abdm.Calculation.Maths.Helpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Abdm.Calculation.BLL.Services
 {
@@ -122,31 +123,23 @@ namespace Abdm.Calculation.BLL.Services
         {
             var trafficJamStrain = new TrafficJamStrain()
             {
-                LeftStrain = 0d,
-                RightStrain = 0d,
                 SumStrain = 0d,
                 TotalStrain = 0d,
+                StrainPieces = []
             };
-            if (trajectory.Left.First().Value is not ProfileYZExtended profileLeft || trajectory.Right.First().Value is not ProfileYZExtended profileRight)
+            var measuringPorifle = GetMeasuringProfile(trajectory);
+            if (trajectory.Left.First().Value is not ProfileYZExtended 
+                || trajectory.Right.First().Value is not ProfileYZExtended
+                || measuringPorifle == null)
             {
                 return trafficJamStrain;
             }
 
-            foreach (var wheelOffset in data.Load.WheelOffsetsMap!)
+            foreach (var positivePiece in measuringPorifle.PositivePieces)
             {
-                var axle = data.Load.Axles.Where(a => a.WheelsDistance.Contains(wheelOffset.Key * 2)).OrderByDescending(x => x.WheelWidth).First();
-                var profileWeight = wheelOffset.Value.Item2 * NormConstants.TrafficJamApproximationParam;
-
-                var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft, axle);
-                var volumeRight = GetTraffciJamVolumeForOneSide(profileRight, axle);
-
-                
-                trafficJamStrain.LeftVolume += volumeLeft;
-                trafficJamStrain.LeftStrain += volumeLeft * profileWeight / profileLeft.FootprintWidth[axle];
-                trafficJamStrain.RightVolume += volumeRight;
-                trafficJamStrain.RightStrain += volumeRight * profileWeight / profileRight.FootprintWidth[axle];
-                trafficJamStrain.SumStrain += trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
+                trafficJamStrain.StrainPieces.Add(GetTrafficJamStrainPiece(trajectory, data, positivePiece)); 
             }
+            trafficJamStrain.SumStrain = trafficJamStrain.StrainPieces.Sum(p => p.LeftStrain + p.RightStrain);
 
             if (data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
             {
@@ -155,6 +148,30 @@ namespace Abdm.Calculation.BLL.Services
             trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.ReliabilityCoefficient;
 
             return trafficJamStrain;
+        }
+
+        private TrafficJamStrainPiece GetTrafficJamStrainPiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, Interval interval)
+        {
+            foreach (var wheelOffset in data.Load.WheelOffsetsMap!)
+            {
+                wheelOffset.Value
+
+                var axle = data.Load.Axles.Where(a => a.WheelsDistance.Contains(wheelOffset.Key * 2))
+                    .MaxBy(a => a.WheelWidth);
+                var profileWeight = wheelOffset.Value.Item2 * NormConstants.TrafficJamApproximationParam;
+
+
+
+                var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft, axle);
+                var volumeRight = GetTraffciJamVolumeForOneSide(profileRight, axle);
+
+
+                trafficJamStrain.LeftVolume += volumeLeft;
+                trafficJamStrain.LeftStrain += volumeLeft * profileWeight / profileLeft.FootprintWidth[axle];
+                trafficJamStrain.RightVolume += volumeRight;
+                trafficJamStrain.RightStrain += volumeRight * profileWeight / profileRight.FootprintWidth[axle];
+                trafficJamStrain.SumStrain += trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
+            }
         }
 
         private ProfileYZ? GetMeasuringProfile(VehicleTrajectory trajectory)
