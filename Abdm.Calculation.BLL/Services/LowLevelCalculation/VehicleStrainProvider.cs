@@ -1,8 +1,10 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Helpers;
 using Abdm.Calculation.Maths.Models;
+using g4;
 
 namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
@@ -33,6 +35,18 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             foreach (var profile in trajectory.Right)
             {
                 positivePiecesMap.Add(profile.Value, new HashSet<Interval>());
+            }
+
+            var a = load.Axles.First();
+            if (axleFunc(a) - NormConstants.YYY < 0.00001
+                && trajectory.Left[a.WheelsDistance.First()].X == NormConstants.XXX)
+            {
+                //Слева
+            }
+            if (axleFunc(a) - NormConstants.YYY < 0.00001
+                && trajectory.Right[a.WheelsDistance.First()].X == NormConstants.XXX)
+            {
+                //Справа
             }
 
             WheelStrain[] wheelStrains;

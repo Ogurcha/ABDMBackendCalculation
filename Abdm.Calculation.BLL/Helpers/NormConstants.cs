@@ -55,5 +55,9 @@
         /// Срезание незначительных траекторий улучшает перфоманс
         /// </summary>
         public const double MinimalTrajectoryStrain = 1e-3;
+
+        public const double XXX = 5.44;
+
+        public const double YYY = 0.22;
     }
 }

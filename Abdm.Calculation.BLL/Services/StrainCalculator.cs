@@ -117,6 +117,7 @@ namespace Abdm.Calculation.BLL.Services
                     yield return strain;
                 }
             }
+            yield return GetVehicleStrain(trajectory, data, measuringProfile, NormConstants.YYY);
         }
 
         public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
