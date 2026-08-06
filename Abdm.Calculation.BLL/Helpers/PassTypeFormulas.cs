@@ -35,7 +35,7 @@ namespace Abdm.Calculation.Maths.Helpers
             double position,
             VehicleRollingSmallModel data) => data.Load.ActualDirection
                 .Select(b => data.Load.Axles
-                    .Select(a => a.Position)
+                     .Select(a => a.Position)
                     .Append(data.Load.MassCenterPosition)
                     .Max(relativePosition => data.VehicleStrainProvider!.GetStrainOnTrajectory(
                         trajectory,
@@ -48,5 +48,29 @@ namespace Abdm.Calculation.Maths.Helpers
         /// Найти центр массы нагрузки
         /// </summary>
         public static double MassCenterPosition(Axle[] axles) => axles.Sum(a => a.Position * a.Weight) / axles.Sum(a => a.Weight);
+
+        public static ProfileYZ? GetMeasuringProfile(VehicleTrajectory trajectory)
+        {
+            var profileLeft = trajectory.Left.Last().Value;
+            var profileRight = trajectory.Right.Last().Value;
+
+            if (profileLeft.MaximumIndexes.Length == 0 && profileRight.MaximumIndexes.Length == 0)
+            {
+                return null;
+            }
+
+            if (profileLeft.PositivePieces.Sum(interval => interval.Length)
+                * profileLeft.Extremums.DefaultIfEmpty().Max(v => v.Y)
+                >
+                profileRight.PositivePieces.Sum(interval => interval.Length)
+                * profileRight.Extremums.DefaultIfEmpty().Max(v => v.Y))
+            {
+                return profileLeft;
+            }
+            else
+            {
+                return profileRight;
+            }
+        }
     }
 }

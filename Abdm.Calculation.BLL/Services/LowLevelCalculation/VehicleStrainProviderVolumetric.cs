@@ -1,4 +1,5 @@
-﻿using Abdm.Calculation.BLL.Interfaces;
+﻿using Abdm.Calculation.BLL.Helpers;
+using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
 using Abdm.Calculation.Maths.Extensions;
@@ -101,6 +102,8 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             return totalVolume / profile.FootprintWidth[axle] / profile.FootprintLength[axle];
         }
 
+        
+
         /// <summary>
         /// Предполагая, что на поверхность давит не единичный вектор - а полоска с определённой протяжённостью и центром. 
         /// Считает площадь под поверхностью, возникающую в результате давления
@@ -144,6 +147,44 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             indexes = (edgeLeft.Left ?? 0, edgeRight.Right ?? vectors.Length - 1);
 
             return MathExtensions.CalculateAreaUnderCurve(trapezoidVectors.ToArray());
+        }
+
+        /// <summary>
+        /// Рассчёт распределённого напряжения для одного профиля конкретной нагрузки на опредеделённом интервале.
+        /// Из профиля берётся только часть на расстоянии <paramref name="wheelOffset"/>
+        /// </summary>
+        public virtual (double volume, double strain) GetTrafficJamStrainForOneProfile(ProfileYZExtended profile, LoadModel load, Interval interval, double wheelOffset)
+        {
+            double totalVolume = 0;
+            double strain = 0;
+            var radius = interval.Length / 2;
+            var Y = (interval.Start + interval.End) / 2;
+            foreach (IGrouping<(double WheelWidth, double WheelWeight), Axle> wheelGroup in load.WheelOffsetsMap![wheelOffset])
+            {
+                var wheelWidth = wheelGroup.Key.WheelWidth;
+                var axle = wheelGroup.First(a => a.WheelWidth == wheelWidth);
+                var wheelCount = wheelGroup.Count();
+                var profileWeight = wheelGroup.Key.WheelWeight * wheelCount * NormConstants.TrafficJamApproximationParam;
+
+                double volume = 0;
+                double? previousArea = null; double? previousPosition = null;
+                double currentArea; double curentPosition;
+                for (int i = 0; i < profile.VolumetricProfiles[axle].Length; i++)
+                {
+                    currentArea = CalculateZAreaAroundY(profile.VolumetricProfiles[axle][i].SortedVectors, Y, radius, out _);
+                    curentPosition = profile.VolumetricProfiles[axle][i].X;
+                    if (previousArea != null)
+                    {
+                        volume += MathExtensions.FrustrumVolume(curentPosition - previousPosition!.Value, previousArea.Value, currentArea);
+                    }
+                    previousArea = currentArea;
+                    previousPosition = curentPosition;
+                }
+                totalVolume += volume;
+                strain += volume * profileWeight / wheelWidth;
+            }
+            return (totalVolume, strain);
+
         }
     }
 }

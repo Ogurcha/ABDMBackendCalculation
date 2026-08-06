@@ -59,7 +59,7 @@ namespace Abdm.Calculation.BLL.Models
         /// то вернётся словарь <расстояниеОтКолесаДоЦентра, [осьКолесаПереднего, осьКолесаЗаднего]>. 
         /// Вернётся только одно значение, так как переднее и заднее колесо на одинаковом расстоянии.
         /// </summary>
-        public Dictionary<double, Axle[]>? WheelOffsetsMap { get; set; }
+        public Dictionary<double, IGrouping<(double WheelWidth, double WheelWeight), Axle>[]>? WheelOffsetsMap { get; set; }
 
         /// <summary>
         /// Позиция центра масс
