@@ -2,7 +2,7 @@
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models;
 using Abdm.Calculation.BLL.Models.Strain;
-using Abdm.Calculation.Maths.Extensions;
+using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 using Abdm.Calculation.Maths.Helpers;
 
 namespace Abdm.Calculation.BLL.Services
@@ -25,6 +25,7 @@ namespace Abdm.Calculation.BLL.Services
             var strainMap = new Dictionary<double, (VehicleTrajectory traj, VehicleStrain[] strains)>(equalityComparer);
             var trafficJamStrainMap = new Dictionary<double, TrafficJamStrain?>(equalityComparer);
             var doTrafficJamStrainCalculation = roadRules.Any(r => r.DoTrafficJamLoadCalculation);
+
 
             foreach (var trajectory in intervalModel.Trajectories)
             {
@@ -101,7 +102,7 @@ namespace Abdm.Calculation.BLL.Services
         public IEnumerable<VehicleStrain?> GetStrainForEachPositivePiece(VehicleTrajectory trajectory, 
             VehicleRollingSmallModel data)
         {
-            var measuringProfile = GetMeasuringProfile(trajectory);
+            var measuringProfile = PassTypeFormulas.GetMeasuringProfile(trajectory);
             if (measuringProfile == null)
             {
                 yield break;
@@ -118,35 +119,26 @@ namespace Abdm.Calculation.BLL.Services
             }
         }
 
-        public TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
+        private TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
             var trafficJamStrain = new TrafficJamStrain()
             {
-                LeftStrain = 0d,
-                RightStrain = 0d,
                 SumStrain = 0d,
                 TotalStrain = 0d,
-            };
-            if (trajectory.Left.First().Value is not ProfileYZExtended profileLeft || trajectory.Right.First().Value is not ProfileYZExtended profileRight)
+                StrainPieces = []
+            }; 
+            var trafficJamStrainProvider = data.VehicleStrainProvider as VehicleStrainProviderVolumetric;
+            var measuringPorifle = PassTypeFormulas.GetMeasuringProfile(trajectory);
+            if (measuringPorifle == null || trafficJamStrainProvider == null)
             {
                 return trafficJamStrain;
             }
 
-            foreach (var wheelOffset in data.Load.WheelOffsetsMap!)
+            foreach (var positivePiece in measuringPorifle.PositivePieces)
             {
-                var axle = data.Load.Axles.Where(a => a.WheelsDistance.Contains(wheelOffset.Key * 2)).OrderByDescending(x => x.WheelWidth).First();
-                var profileWeight = wheelOffset.Value.Item2 * NormConstants.TrafficJamApproximationParam;
-
-                var volumeLeft = GetTraffciJamVolumeForOneSide(profileLeft, axle);
-                var volumeRight = GetTraffciJamVolumeForOneSide(profileRight, axle);
-
-                
-                trafficJamStrain.LeftVolume += volumeLeft;
-                trafficJamStrain.LeftStrain += volumeLeft * profileWeight / profileLeft.FootprintWidth[axle];
-                trafficJamStrain.RightVolume += volumeRight;
-                trafficJamStrain.RightStrain += volumeRight * profileWeight / profileRight.FootprintWidth[axle];
-                trafficJamStrain.SumStrain += trafficJamStrain.LeftStrain + trafficJamStrain.RightStrain;
+                trafficJamStrain.StrainPieces.Add(GetTrafficJamStrainPiece(trajectory, data, positivePiece));
             }
+            trafficJamStrain.SumStrain = trafficJamStrain.StrainPieces.Sum(p => p.LeftStrain + p.RightStrain);
 
             if (data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
             {
@@ -155,54 +147,68 @@ namespace Abdm.Calculation.BLL.Services
             trafficJamStrain.TotalStrain = trafficJamStrain.SumStrain * trafficJamStrain.ReliabilityCoefficient;
 
             return trafficJamStrain;
-        }
 
-        private ProfileYZ? GetMeasuringProfile(VehicleTrajectory trajectory)
-        {
-            var profileLeft = trajectory.Left.Last().Value;
-            var profileRight = trajectory.Right.Last().Value;
+            TrafficJamStrainPiece GetTrafficJamStrainPiece(VehicleTrajectory trajectory, VehicleRollingSmallModel data, Interval interval)
+            {
+                var leftVolume = 0d;
+                var rightVolume = 0d;
+                var leftStrain = 0d;
+                var rightStrain = 0d;
+                
 
-            if (profileLeft.MaximumIndexes.Length == 0 && profileRight.MaximumIndexes.Length == 0)
-            {
-                return null;
-            }
-
-            if (profileLeft.PositivePieces.Sum(interval => interval.Length) 
-                * profileLeft.Extremums.DefaultIfEmpty().Max(v => v.Y) 
-                > 
-                profileRight.PositivePieces.Sum(interval => interval.Length) 
-                * profileRight.Extremums.DefaultIfEmpty().Max(v => v.Y))
-            {
-                return profileLeft;
-            }
-            else
-            {
-                return profileRight;
-            }
-        }
-
-        /// <summary>
-        /// Расчёт равномерного напряжения для одной стороны ТС (левой или правой) для одной оси/тележки
-        /// </summary>
-        private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile, Axle axle)
-        {
-            double totalVolume = 0d;
-            double? previousArea = null; double? previousPosition = null;
-            double currentArea; double currentPosition;
-            for (int i = 0; i < profile.VolumetricProfiles[axle].Length; i++)
-            {
-                currentArea = MathExtensions.CalculateAreaUnderCurve(profile.VolumetricProfiles[axle][i].SortedVectors);
-                currentPosition = profile.VolumetricProfiles[axle][i].X;
-                if (previousArea != null)
+                foreach (var wheelOffset in data.Load.WheelOffsetsMap!.Keys)
                 {
-                    totalVolume += MathExtensions.FrustrumVolume(currentPosition - previousPosition!.Value, previousArea.Value, currentArea);
+                    (double volume, double strain) = 
+                        trafficJamStrainProvider.GetTrafficJamStrainForOneProfile(
+                            (ProfileYZExtended)trajectory.Left[wheelOffset * 2], 
+                            data.Load, 
+                            interval,
+                            wheelOffset);
+                    leftVolume += volume;
+                    leftStrain += strain;
+                    (volume, strain) = 
+                        trafficJamStrainProvider.GetTrafficJamStrainForOneProfile(
+                            (ProfileYZExtended)trajectory.Right[wheelOffset * 2], 
+                            data.Load,
+                            interval,
+                            wheelOffset);
+                    rightVolume += volume;
+                    rightStrain += strain;
                 }
-                previousArea = currentArea;
-                previousPosition = currentPosition;
-            }
 
-            return totalVolume;
+                return new TrafficJamStrainPiece
+                {
+                    Interval = interval,
+                    LeftStrain = leftStrain,
+                    RightStrain = rightStrain,
+                    LeftVolume = leftVolume,
+                    RightVolume = rightVolume,
+                };
+            }
         }
+
+        ///// <summary>
+        ///// Расчёт равномерного напряжения для одной стороны ТС (левой или правой) для одной оси/тележки
+        ///// </summary>
+        //private double GetTraffciJamVolumeForOneSide(ProfileYZExtended profile, Axle axle)
+        //{
+        //    double totalVolume = 0d;
+        //    double? previousArea = null; double? previousPosition = null;
+        //    double currentArea; double currentPosition;
+        //    for (int i = 0; i < profile.VolumetricProfiles[axle].Length; i++)
+        //    {
+        //        currentArea = MathExtensions.CalculateAreaUnderCurve(profile.VolumetricProfiles[axle][i].SortedVectors);
+        //        currentPosition = profile.VolumetricProfiles[axle][i].X;
+        //        if (previousArea != null)
+        //        {
+        //            totalVolume += MathExtensions.FrustrumVolume(currentPosition - previousPosition!.Value, previousArea.Value, currentArea);
+        //        }
+        //        previousArea = currentArea;
+        //        previousPosition = currentPosition;
+        //    }
+
+        //    return totalVolume;
+        //}
 
         private VehicleStrain GetVehicleStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data, ProfileYZ measuringProfile, double position)
         {
