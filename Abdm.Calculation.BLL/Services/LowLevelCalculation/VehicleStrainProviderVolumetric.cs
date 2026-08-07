@@ -33,6 +33,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             ;
             var zValue = GetVolumetricZValueByY(profile, axle, Y, out (Interval? i1, Interval? i2) positivePieces);
             var strain = zValue * axle.WheelWeight;
+            var volume = zValue * profile.FootprintWidth[axle] * profile.FootprintLength[axle];
             var wheel = new WheelStrain
             {
                 Position = new Vector2D
