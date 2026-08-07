@@ -38,12 +38,12 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             }
 
             var a = load.Axles.First();
-            if (axleFunc(a) - NormConstants.YYY < 0.00001
+            if (Math.Abs(axleFunc(a) - NormConstants.YYY) < 0.00001
                 && trajectory.Left[a.WheelsDistance.First()].X == NormConstants.XXX)
             {
                 //Слева
             }
-            if (axleFunc(a) - NormConstants.YYY < 0.00001
+            if (Math.Abs(axleFunc(a) - NormConstants.YYY) < 0.00001
                 && trajectory.Right[a.WheelsDistance.First()].X == NormConstants.XXX)
             {
                 //Справа

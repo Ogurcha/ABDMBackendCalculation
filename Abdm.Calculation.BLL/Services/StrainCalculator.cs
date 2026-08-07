@@ -122,6 +122,11 @@ namespace Abdm.Calculation.BLL.Services
 
         private TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data)
         {
+            if (trajectory.X == NormConstants.XXX)
+            {
+
+            }
+
             var trafficJamStrain = new TrafficJamStrain()
             {
                 SumStrain = 0d,
