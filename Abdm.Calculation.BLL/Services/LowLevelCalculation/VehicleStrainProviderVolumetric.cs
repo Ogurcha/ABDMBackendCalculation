@@ -181,7 +181,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
                     previousPosition = curentPosition;
                 }
                 totalVolume += volume;
-                strain += volume * profileWeight / wheelWidth;
+                strain += volume * profileWeight / profile.FootprintWidth[axle];
             }
             return (totalVolume, strain);
 
