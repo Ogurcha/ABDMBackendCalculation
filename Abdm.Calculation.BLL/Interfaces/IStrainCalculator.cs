@@ -9,8 +9,6 @@ namespace Abdm.Calculation.BLL.Interfaces
 
         List<StrainMap> GenerateStrainsMap(IntervalModel intervalModel, VehicleRollingBigModel data);
 
-        TrafficJamStrain GetTrafficJamStrain(VehicleTrajectory trajectory, VehicleRollingSmallModel data);
-
         bool TryGetStrainForEachPositivePiece(
             VehicleTrajectory trajectory,
             VehicleRollingSmallModel data,
