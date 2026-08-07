@@ -152,12 +152,5 @@ namespace Abdm.Calculation.Maths.Helpers
 
             return (leftIndex, rightIndex);
         }
-
-        //public static (int? Left, int? Right) FindBetweenIndexesWithRadius<TKey, T>(this IList<T> sorted, TKey targetKey, TKey radius, Func<T, TKey> keyFunc) where TKey : struct, IComparisonOperators<TKey, TKey, bool>, ISubtractionOperators<TKey, TKey, TKey>, IAdditionOperators<TKey, TKey, TKey>
-        //{
-        //    var leftEdge = sorted.FindBetweenIndexes(targetKey - radius, keyFunc);
-        //    var rightEdge = sorted.FindBetweenIndexes(targetKey + radius, keyFunc);
-        //    return (leftEdge.Left, rightEdge.Right);
-        //}
     }
 }
