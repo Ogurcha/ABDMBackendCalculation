@@ -14,6 +14,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
     {
         private const int ProfileVectorsLimitCount = 50;
         private const int DecimalPrecision = 2;
+        private readonly double DecimalPrecosiomValue = Math.Pow(10, -DecimalPrecision);
 
         public virtual StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
@@ -130,7 +131,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
         {
             var vehicles = new List<AnalysisColumn>();
             var columnCounter = 1;
-            foreach (var columnStrains in strainResults.Where(x => x.TotalStrain > Math.Pow(10, -DecimalPrecision)).OrderBy(x => x.VehicleTrajectoryRef.X))
+            foreach (var columnStrains in strainResults.Where(x => x.TotalStrain > DecimalPrecosiomValue).OrderBy(x => x.VehicleTrajectoryRef.X))
             {
                 vehicles.AddRange(GetAnalysisColumn(columnStrains, data, columnCounter));
                 columnCounter++;
@@ -188,18 +189,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             if (columnStrain.TrafficJamStrain != null)
             {
                 intervals = new List<TrafficJamStrainAnalysis>();
-
-                var profileLeft = trajectory.Left.Last().Value;
-                var profileRight = trajectory.Right.Last().Value;
-                var profileCenter = trajectory.Center;
-                var leftPieces = profileLeft.PositivePieces.Where(x => x.Length > Math.Pow(10, -DecimalPrecision)).ToArray();
-                var rightPieces = profileRight.PositivePieces.Where(x => x.Length > Math.Pow(10, -DecimalPrecision)).ToArray();
-                var centerPieces = profileCenter.PositivePieces.Where(x => x.Length > Math.Pow(10, -DecimalPrecision)).ToArray();
-
-                for (var i = 0;
-                    i < Math.Max(leftPieces.Length, Math.Max(rightPieces.Length, centerPieces.Length));
-                    i++)
+                
+                foreach (var strainPiece in columnStrain.TrafficJamStrain.StrainPieces.Where(sp => sp.Interval.Length > DecimalPrecosiomValue))
                 {
+                    var leftIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[1].X, strainPiece.Interval.Start);
+                    var leftIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[^2].X, strainPiece.Interval.End);
+                    var rightIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[1].X, strainPiece.Interval.Start);
+                    var rightIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[^2].X, strainPiece.Interval.End);
 
                     var left = leftPieces.ElementAtOrDefault(i) ?? new();
                     var right = rightPieces.ElementAtOrDefault(i) ?? new();
