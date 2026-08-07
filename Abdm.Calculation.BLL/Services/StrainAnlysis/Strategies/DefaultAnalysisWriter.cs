@@ -13,6 +13,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
     {
         private const int ProfileVectorsLimitCount = 50;
         private const int DecimalPrecision = 2;
+        private readonly double DecimalPrecisionValue = Math.Pow(10, -DecimalPrecision);
 
         public virtual StrainCalculationGroupTypeEnum[] StrainCalculationGroupTypes { get => [
             StrainCalculationGroupTypeEnum.Default,
@@ -129,7 +130,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
         {
             var vehicles = new List<AnalysisColumn>();
             var columnCounter = 1;
-            foreach (var columnStrains in strainResults.Where(x => x.TotalStrain > Math.Pow(10, -DecimalPrecision)).OrderBy(x => x.VehicleTrajectoryRef.X))
+            foreach (var columnStrains in strainResults.Where(x => x.TotalStrain > DecimalPrecisionValue).OrderBy(x => x.VehicleTrajectoryRef.X))
             {
                 vehicles.AddRange(GetAnalysisColumn(columnStrains, data, columnCounter));
                 columnCounter++;
@@ -188,7 +189,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             {
                 intervals = new List<TrafficJamStrainAnalysis>();
                 
-                foreach (var strainPiece in columnStrain.TrafficJamStrain.StrainPieces)
+                foreach (var strainPiece in columnStrain.TrafficJamStrain.StrainPieces.Where(x => x.LeftStrain + x.RightStrain > DecimalPrecisionValue))
                 {
                     var leftIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[1].Y, strainPiece.Interval.Start);
                     var leftIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[^2].Y, strainPiece.Interval.End);
@@ -202,13 +203,13 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                         LeftIntervalEnd = ToDecimal(leftIntervalEnd),
                         LeftIntervalLength = ToDecimal(leftIntervalEnd - leftIntervalStart),
                         LeftIntervalVolume = decimal.Round((decimal)strainPiece.LeftVolume, 4),
-                        LeftIntervalIntensity = ToDecimal(strainPiece.LeftStrain / strainPiece.LeftVolume),
+                        LeftIntervalIntensity = strainPiece.LeftVolume == 0 ? 0 : ToDecimal(strainPiece.LeftStrain / strainPiece.LeftVolume),
                         LeftIntervalStrain = ToDecimal(strainPiece.LeftStrain),
                         RightIntervalStart = ToDecimal(rightIntervalStart),
                         RightIntervalEnd = ToDecimal(rightIntervalEnd),
                         RightIntervalLength = ToDecimal(rightIntervalEnd - rightIntervalStart),
                         RightIntervalVolume = decimal.Round((decimal)strainPiece.RightVolume, 4),
-                        RightIntervalIntensity = ToDecimal(strainPiece.RightStrain / strainPiece.RightVolume),
+                        RightIntervalIntensity = strainPiece.RightVolume == 0 ? 0 : ToDecimal(strainPiece.RightStrain / strainPiece.RightVolume),
                         RightIntervalStrain = ToDecimal(strainPiece.RightStrain),
                         SumStrain = ToDecimal(strainPiece.LeftStrain + strainPiece.RightStrain),
                         CenterIntervalStart = ToDecimal(strainPiece.Interval.Start),
