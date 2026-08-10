@@ -122,15 +122,22 @@ namespace Abdm.Calculation.BLL.Coordinators
             var doSlabCalculation = dataModel.Data.Surface.StrainCalculationGroupType == Enums.StrainCalculationGroupTypeEnum.Slab;
             var requiredTrafficJamStrainCalculaton = dataModel.RoadRules.Any(r => r.DoTrafficJamLoadCalculation);
 
-            var profileYZService = doSlabCalculation || requiredTrafficJamStrainCalculaton
-                ? profileYZServices.Where(x => x is ProfileYZServiceVolumetric).First() 
-                : profileYZServices.Where(x => x is ProfileYZService).First();
-            var vehicleTrajectoryManager = doSlabCalculation || requiredTrafficJamStrainCalculaton
-                ? vehicleTrajectoryManagers.Where(x => x is VehicleTrajectoryManagerVolumetric).First()
-                : vehicleTrajectoryManagers.Where(x => x is VehicleTrajectoryManager).First();
-            var vehicleStrainProvider = doSlabCalculation
-                ? vehicleStrainProviders.Where(x => x is VehicleStrainProviderVolumetric).First()
-                : vehicleStrainProviders.Where(x => x is VehicleStrainProvider).First();
+            IProfileYZService profileYZService;
+            IVehicleTrajectoryManager vehicleTrajectoryManager;
+            IVehicleStrainProvider vehicleStrainProvider;
+            if (doSlabCalculation || requiredTrafficJamStrainCalculaton)
+            {
+                profileYZService = profileYZServices.Where(x => x is ProfileYZServiceVolumetric).First();
+                vehicleTrajectoryManager = vehicleTrajectoryManagers.Where(x => x is VehicleTrajectoryManagerVolumetric).First();
+                vehicleStrainProvider = vehicleStrainProviders.Where(x => x is VehicleStrainProviderVolumetric).First();
+                ((VehicleStrainProviderVolumetric)vehicleStrainProvider).DoWheelStrainCalcVolumetric = doSlabCalculation;
+            }
+            else
+            {
+                profileYZService = profileYZServices.Where(x => x is ProfileYZService).First();
+                vehicleTrajectoryManager = vehicleTrajectoryManagers.Where(x => x is VehicleTrajectoryManager).First();
+                vehicleStrainProvider = vehicleStrainProviders.Where(x => x is VehicleStrainProvider).First();
+            }
             dataModel.Data.VehicleStrainProvider = vehicleStrainProvider;
             if (!doSlabCalculation)
             {
