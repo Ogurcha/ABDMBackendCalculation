@@ -240,7 +240,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 Wheels = wheels,
                 Intervals = intervals,
                 PositionX = ToDecimal(vehicleStrain.X - xPositionShift),
-                PositionY = ToDecimal(vehicleStrain.Y),
+                PositionY = ToDecimal(vehicleStrain.Y + yShift),
                 PositionYForImage = ToDecimal(vehicleStrain.Y + yShift),
                 SumStrain = wheels.Sum(w => w.Strain),
                 IntervalProfileVectors = intervalProfileVectors,
