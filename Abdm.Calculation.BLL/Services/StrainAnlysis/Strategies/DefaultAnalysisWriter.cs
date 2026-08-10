@@ -191,10 +191,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                 
                 foreach (var strainPiece in columnStrain.TrafficJamStrain.StrainPieces.Where(x => x.LeftStrain + x.RightStrain > DecimalPrecisionValue))
                 {
-                    var leftIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[1].Y, strainPiece.Interval.Start);
-                    var leftIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[^2].Y, strainPiece.Interval.End);
-                    var rightIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[1].Y, strainPiece.Interval.Start);
-                    var rightIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[^2].Y, strainPiece.Interval.End);
+                    var leftIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[1].X, strainPiece.Interval.Start);
+                    var leftIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Left.Last().Value.SortedVectors[^2].X, strainPiece.Interval.End);
+                    var rightIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[1].X, strainPiece.Interval.Start);
+                    var rightIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[^2].X, strainPiece.Interval.End);
 
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
