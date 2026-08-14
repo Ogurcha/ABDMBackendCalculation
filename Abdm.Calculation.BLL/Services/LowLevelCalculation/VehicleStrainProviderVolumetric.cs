@@ -10,9 +10,14 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
 {
     public class VehicleStrainProviderVolumetric(IEqualityComparer<double> equalityComparer) : VehicleStrainProvider(), IVehicleStrainProvider
     {
+        /// <summary>
+        /// TODO: remove param
+        /// </summary>
+        public bool DoWheelStrainCalcVolumetric { get; set; }
+
         protected override WheelStrain GetWheelStrain(ProfileYZ profilebase, Dictionary<ProfileYZ, HashSet<Interval>> positivePiecesMap, Axle axle, double Y)
         {
-            if (profilebase is not ProfileYZExtended profile)
+            if (profilebase is not ProfileYZExtended profile || !DoWheelStrainCalcVolumetric)
             {
                 return base.GetWheelStrain(profilebase, positivePiecesMap, axle, Y);
             }
@@ -182,7 +187,7 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
                     previousPosition = curentPosition;
                 }
                 totalVolume += volume;
-                strain += volume * profileWeight / wheelWidth;
+                strain += volume * profileWeight / profile.FootprintWidth[axle];
             }
             return (totalVolume, strain);
 
