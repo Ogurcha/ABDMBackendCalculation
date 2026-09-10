@@ -43,6 +43,11 @@ namespace Abdm.Calculation.BLL.Helpers
             dataModel.Load.SecondaryLoadModel = rawData.SecondaryLoadSchema.Adapt<LoadModel>();
             dataModel.Surface.RoadCoatSize = rawData.Roadway.RoadHeight;
 
+            if (surfaceDataDto.CheckPointType == DAL.Enums.CheckPointTypeEnum.PillarParts || surfaceDataDto.CheckPointType == DAL.Enums.CheckPointTypeEnum.Pillar)
+            {
+                surfaceDataDto.StrainCalculationType = DAL.Enums.StrainCalculationTypeEnum.st70;
+            }
+
             return dataModel;
         }
     }
