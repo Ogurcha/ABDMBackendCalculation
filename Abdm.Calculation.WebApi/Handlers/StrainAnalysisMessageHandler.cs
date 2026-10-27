@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Interfaces;
 using Abdm.Calculation.BLL.Models.DataTransfer;
@@ -36,7 +37,7 @@ namespace Abdm.Calculation.WebApi.Handlers
             try
             {
                 var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>());
+                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>(), context.ConsumeResults.First().Message.Headers?.ToDictionary(h => h.Key, h => Encoding.UTF8.GetString(h.GetValueBytes() ?? Array.Empty<byte>())) ?? new System.Collections.Generic.Dictionary<string, string>());
             }
             catch (Exception ex)
             {
