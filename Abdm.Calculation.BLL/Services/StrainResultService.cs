@@ -34,7 +34,7 @@ namespace Abdm.Calculation.BLL.Services
                     var column = strainResult.VehicleColumnStrains[i];
                     var lambda = column.VehicleStrains.First().LambdaSmall;
                     var coefficients = data.CoefficientProvider.GetStripeCoefficient(lambda);
-                    var coefficientToPick = Math.Min(4, i);
+                    var coefficientToPick = Math.Min(coefficients.Length - 1, i);
                     column.StripeCoefficient = coefficients[coefficientToPick];
                     if (column.TrafficJamStrain != null && data.CoefficientProvider.TrafficJamStrainCoefficientProvider != null)
                     {
