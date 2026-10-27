@@ -159,7 +159,7 @@ namespace Abdm.Calculation.BLL.Services
             }
 
             var coefficients = stripeCoefficientProvider.GetStripeCoefficient(strainPicked.Strains.First().LambdaSmall);
-            var coefficientToPick = Math.Min(4, strainScore.StrainsPicked.Count);
+            var coefficientToPick = Math.Min(coefficients.Length - 1, strainScore.StrainsPicked.Count);
 
             strainScore.Score += strainPicked.TotalStrain * coefficients[coefficientToPick];
             strainScore.StrainsPicked.Add(strainPicked);
