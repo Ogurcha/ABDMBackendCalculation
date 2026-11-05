@@ -88,17 +88,26 @@ namespace Abdm.Calculation.BLL.Coordinators
 
         public string InfoMsg(PassTypeCalculationParameters param)
         {
-            return string.Format("PassType calculation for (IssoId = {0}, Check point number = {1}) started", param.IssoId, param.CheckPointNumber);
+            return string.Format("PassType calculation for (IssoId = {0}, Check point number = {1}) started. Thread {2}", 
+                param.IssoId, 
+                param.CheckPointNumber, 
+                Environment.CurrentManagedThreadId);
         }
 
         public string ErrorMsg(PassTypeCalculationParameters param)
         {
-            return string.Format("Error while calculating PassType for {0}, n = {1}", param.IssoId, param.CheckPointNumber);
+            return string.Format("Error while calculating PassType for {0}, n = {1}.Thread Thread {2}", 
+                param.IssoId, 
+                param.CheckPointNumber, 
+                Environment.CurrentManagedThreadId);
         }
 
         public string ExceptionMsg(PassTypeCalculationParameters param)
         {
-            return string.Format("Failed PassType calculation for (IssoId = {0}, Check point number = {1})", param.IssoId, param.CheckPointNumber);
+            return string.Format("Failed PassType calculation for (IssoId = {0}, Check point number = {1}). Thread {2}", 
+                param.IssoId, 
+                param.CheckPointNumber, 
+                Environment.CurrentManagedThreadId);
         }
 
         private PassTypeCalculationResult ComposeMessage(PassTypeEnum resultPassType, 
