@@ -28,7 +28,7 @@
         public decimal PositionFarLeft { get; set; }
 
         /// <summary>
-        /// Относительное положение правого края ограждения по центру
+        /// Относительное положение левого края ограждения по центру
         /// </summary>
         public decimal? PositionMiddleLeft { get; set; }
 
@@ -38,7 +38,7 @@
         public decimal? PositionMiddleRight { get; set; }
 
         /// <summary>
-        /// Относительное положение ограждения слева
+        /// Относительное положение ограждения справа
         /// </summary>
         public decimal PositionFarRight { get; set; }
 
