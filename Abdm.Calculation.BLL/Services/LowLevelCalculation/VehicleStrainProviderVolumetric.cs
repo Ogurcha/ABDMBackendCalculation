@@ -127,9 +127,18 @@ namespace Abdm.Calculation.BLL.Services.LowLevelCalculation
             var indexStart = (edgeLeft.Left ?? -1) + 1;
             var indexFinish = edgeRight.Right ?? vectors.Length;
 
+            if (edgeLeft.Left != null && edgeLeft.Left == edgeLeft.Right)
+            {
+                indexStart = edgeLeft.Left.Value;
+            }
+            if (edgeRight.Left != null && edgeRight.Left == edgeRight.Right)
+            {
+                indexFinish = edgeRight.Right.Value + 1;
+            }
+
             var trapezoidVectors = vectors
                 .Skip(indexStart)
-                .Take(indexFinish - indexStart);
+                .Take(Math.Max(0, indexFinish - indexStart));
 
             if (edgeLeft.Left != edgeLeft.Right && edgeLeft.Left != null && edgeLeft.Right != null)
             {
