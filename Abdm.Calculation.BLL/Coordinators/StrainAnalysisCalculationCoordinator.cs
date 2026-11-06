@@ -86,17 +86,26 @@ namespace Abdm.Calculation.BLL.Coordinators
 
         public string InfoMsg(StrainAnalysisParameters param)
         {
-            return string.Format("Strain analysis for (IssoId = {0}, Check point number = {1}) started", param.IssoId, param.CheckPointNumber);
+            return string.Format("Strain analysis for (IssoId = {0}, Check point number = {1}) started. Thread {2}", 
+                param.IssoId, 
+                param.CheckPointNumber, 
+                Environment.CurrentManagedThreadId);
         }
 
         public string ErrorMsg(StrainAnalysisParameters param)
         {
-            return string.Format("Error while making strain analysis for {0}, n = {1}", param.IssoId, param.CheckPointNumber);
+            return string.Format("Error while making strain analysis for {0}, n = {1}. Thread {2}", 
+                param.IssoId, 
+                param.CheckPointNumber, 
+                Environment.CurrentManagedThreadId);
         }
 
         public string ExceptionMsg(StrainAnalysisParameters param)
         {
-            return string.Format("Failed strain analysis for (IssoId = {0}, Check point number = {1})", param.IssoId, param.CheckPointNumber);
+            return string.Format("Failed strain analysis for (IssoId = {0}, Check point number = {1}). Thread {2}", 
+                param.IssoId, 
+                param.CheckPointNumber,
+                Environment.CurrentManagedThreadId);
         }
 
         public StrainAnalysisResult GetFailedResult(StrainAnalysisParameters param)

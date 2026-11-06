@@ -17,7 +17,7 @@
         public required ProfileYZ Center { get; set; }
 
         /// <summary>
-        /// Траектория колёс слева. 
+        /// Траектория колёс справа. 
         /// Ключ - <see cref="Axle.WheelsDistance"/>
         /// </summary>
         public required SortedList<double, ProfileYZ> Right { get; set; }

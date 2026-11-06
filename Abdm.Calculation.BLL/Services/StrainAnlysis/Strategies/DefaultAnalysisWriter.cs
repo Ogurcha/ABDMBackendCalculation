@@ -71,7 +71,7 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
             analysis.ConstLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.ConstLoad);
             analysis.PedestrianLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.PedestrianLoad);
             analysis.OtherLoad = ToDecimal(vehicleRollingResult.DataModel.Data.Surface.OtherLoad);
-            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).OrderByDescending(x => x.IsForward).ToList();
+            analysis.Default = defaults.OrderByDescending(x => x.HasSafetyLine).ThenByDescending(x => x.IsForward).ToList();
 
             if (doNegativeNumbers)
             {

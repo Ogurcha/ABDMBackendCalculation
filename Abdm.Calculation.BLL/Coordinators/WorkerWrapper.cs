@@ -24,7 +24,9 @@ namespace Abdm.Calculation.BLL.Coordinators
                     if (result.Exception != null)
                     {
                         logger.LogError(
-                            result.Exception,
+                            result.Exception is AggregateException aggregateException 
+                            ? aggregateException.Flatten().InnerException 
+                            : result.Exception,
                             coordinator.ErrorMsg(param));
                     }
                     return coordinator.GetFailedResult(param);

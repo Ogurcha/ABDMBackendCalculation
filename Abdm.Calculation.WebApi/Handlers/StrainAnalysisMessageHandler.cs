@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Abdm.Calculation.BLL.Interfaces;
@@ -41,7 +42,7 @@ namespace Abdm.Calculation.WebApi.Handlers
 #if DEBUG
                 SerializeToJsonFile(responseContent.Adapt<AnalyseStrainCalculationResponse>(), $"Isso{data.IssoId}N{data.CheckPointNumber}Load{data.LoadSchema.NameShort}.json");
 #endif
-                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>());
+                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>(), context.ConsumeResults.First().Message.Headers?.ToDictionary(h => h.Key, h => Encoding.UTF8.GetString(h.GetValueBytes() ?? Array.Empty<byte>())) ?? new System.Collections.Generic.Dictionary<string, string>());
             }
             catch (Exception ex)
             {
