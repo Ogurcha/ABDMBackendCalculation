@@ -6,8 +6,6 @@ namespace Abdm.Calculation.Graphics
 {
     public class MeshManager (IEqualityComparer<double> doubleEqualityComparer) : IMeshManager
     {
-        private const int ExtraOne = 1;
-
         /// <summary>
         /// возврает меш по массиву точек
         /// </summary>
@@ -47,26 +45,34 @@ namespace Abdm.Calculation.Graphics
         }
 
         /// <summary>
-        /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ
+        /// Возвращает результат пересечения поверхности с плоскостью, параллельной плоскости YZ.
+        /// Использует AABB-дерево меша, чтобы проверять только треугольники, пересекающие X.
         /// </summary>
         public IEnumerable<Vector3d>? GetIntersectionVectors(Mesh mesh, double X)
         {
-            var planeYZMesh = GetPlane(mesh, X);
-            var planeYZ = new DMeshAABBTree3(planeYZMesh, true);
+            var tree = mesh.Tree;
+            var dmesh = tree.Mesh;
+            var points = new List<Vector3d>();
 
-            var intersection = mesh.Tree.FindAllIntersections(planeYZ);
+            Vector3d v0 = Vector3d.Zero, v1 = Vector3d.Zero, v2 = Vector3d.Zero;
+            tree.DoTraversal(new DMeshAABBTree3.TreeTraversal
+            {
+                NextBoxF = (box, _) => BoxMayIntersectPlaneX(box, X),
+                NextTriangleF = tid =>
+                {
+                    dmesh.GetTriVertices(tid, ref v0, ref v1, ref v2);
+                    AddEdgePlaneIntersection(v0, v1, X, points);
+                    AddEdgePlaneIntersection(v1, v2, X, points);
+                    AddEdgePlaneIntersection(v2, v0, X, points);
+                }
+            });
 
-            if (intersection.Segments.Count == 0)
+            if (points.Count == 0)
             {
                 return null;
             }
 
-            var pointToPointIntersections = intersection.Points.Select(p => p.point);
-            var segmentIntersections = intersection.Segments.Select(s => s.point0).Concat(intersection.Segments.Select(s => s.point1));
-            var allPoints = segmentIntersections.Concat(pointToPointIntersections);
-            var result = allPoints.DistinctBy(p => p.y, doubleEqualityComparer);
-
-            return result;
+            return points.DistinctBy(p => p.y, doubleEqualityComparer);
         }
 
         /// <summary>
@@ -85,29 +91,52 @@ namespace Abdm.Calculation.Graphics
         }
 
         /// <summary>
-        /// В библиотеке нет понятия бесконечной плоскости. 
-        /// Пробовал создавать <see cref="double.MaxValue"/> размера треугольник, но это по непонятной причине сводило библиотеку с ума. 
-        /// Пришлось имитировать плоскость двумя полигонами размером на <see cref="ExtraOne"/> больше, тем целевая поверхность
+        /// AABB в дереве хранится в float — чуть расширяем допуск, чтобы не отбрасывать кандидатов.
+        /// Точная проверка всё равно делается по double на рёбрах.
         /// </summary>
-        private DMesh3 GetPlane(Mesh mesh, double X)
+        private bool BoxMayIntersectPlaneX(AxisAlignedBox3f box, double X)
         {
-            return DMesh3Builder.Build<Vector3d, Index3i, Vector3d>(
-                    [
-                        new Vector3d(X, mesh.Tree.Bounds.Min.y - ExtraOne, mesh.Tree.Bounds.Min.z - ExtraOne),
-                        new Vector3d(X, mesh.Tree.Bounds.Max.y + ExtraOne, mesh.Tree.Bounds.Min.z - ExtraOne),
-                        new Vector3d(X, mesh.Tree.Bounds.Min.y - ExtraOne, mesh.Tree.Bounds.Max.z + ExtraOne),
-                        new Vector3d(X, mesh.Tree.Bounds.Max.y + ExtraOne, mesh.Tree.Bounds.Max.z + ExtraOne),
-                    ],
-                    [
-                        Index3i,
-                        Index3i + 1
-                    ]
-                );
+            float minX = box.Min.x;
+            float maxX = box.Max.x;
+            if (doubleEqualityComparer.Equals(minX, X) || doubleEqualityComparer.Equals(maxX, X))
+            {
+                return true;
+            }
+
+            return minX <= X && X <= maxX;
         }
 
-        /// <summary>
-        /// Дефолтные три точки
-        /// </summary>
-        private static Index3i Index3i => new Index3i(0, 1, 2);
+        private void AddEdgePlaneIntersection(Vector3d a, Vector3d b, double X, List<Vector3d> points)
+        {
+            bool aOnPlane = doubleEqualityComparer.Equals(a.x, X);
+            bool bOnPlane = doubleEqualityComparer.Equals(b.x, X);
+
+            if (aOnPlane && bOnPlane)
+            {
+                points.Add(new Vector3d(X, a.y, a.z));
+                points.Add(new Vector3d(X, b.y, b.z));
+                return;
+            }
+
+            if (aOnPlane)
+            {
+                points.Add(new Vector3d(X, a.y, a.z));
+                return;
+            }
+
+            if (bOnPlane)
+            {
+                points.Add(new Vector3d(X, b.y, b.z));
+                return;
+            }
+
+            if ((a.x - X) * (b.x - X) > 0)
+            {
+                return;
+            }
+
+            double t = (X - a.x) / (b.x - a.x);
+            points.Add(new Vector3d(X, a.y + t * (b.y - a.y), a.z + t * (b.z - a.z)));
+        }
     }
 }
