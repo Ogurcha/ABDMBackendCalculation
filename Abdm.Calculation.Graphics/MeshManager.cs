@@ -72,7 +72,45 @@ namespace Abdm.Calculation.Graphics
                 return null;
             }
 
-            return points.DistinctBy(p => p.y, doubleEqualityComparer);
+            // Triangulation diagonals also cross x=X and inject midpoints whose Y depends on X.
+            // For an extruded pillar those midpoints are collinear with the true profile and must be
+            // removed, otherwise left/right strips see different Y samples for the same surface.
+            return RemoveCollinearInteriorPoints(
+                points.DistinctBy(p => p.y, doubleEqualityComparer).OrderBy(p => p.y));
+        }
+
+        /// <summary>
+        /// Drops interior samples that lie on the YZ segment between their neighbours.
+        /// Keeps real corners of the profile polyline.
+        /// </summary>
+        private static List<Vector3d> RemoveCollinearInteriorPoints(IEnumerable<Vector3d> sortedByY)
+        {
+            var sorted = sortedByY as IList<Vector3d> ?? sortedByY.ToList();
+            if (sorted.Count < 3)
+            {
+                return sorted.ToList();
+            }
+
+            var result = new List<Vector3d>(sorted.Count) { sorted[0] };
+            for (int i = 1; i < sorted.Count - 1; i++)
+            {
+                var prev = result[^1];
+                var curr = sorted[i];
+                var next = sorted[i + 1];
+                if (!AreCollinearInYz(prev, curr, next))
+                {
+                    result.Add(curr);
+                }
+            }
+            result.Add(sorted[^1]);
+            return result;
+        }
+
+        private static bool AreCollinearInYz(Vector3d a, Vector3d b, Vector3d c)
+        {
+            // 2D cross product (b-a) x (c-a) in YZ
+            double cross = (b.y - a.y) * (c.z - a.z) - (b.z - a.z) * (c.y - a.y);
+            return Math.Abs(cross) <= 1e-12 * (1.0 + Math.Abs(a.y) + Math.Abs(c.y) + Math.Abs(a.z) + Math.Abs(c.z));
         }
 
         /// <summary>
