@@ -6,7 +6,7 @@
     public class ProfileYZExtended : ProfileYZ
     {
         /// <summary>
-        /// Профили между точками под центром колеса и под кромкой колеса слева
+        /// Профили под отпечатком колеса — от левой кромки до правой, включая центр
         /// </summary>
         public required Dictionary<Axle, ProfileYZBase[]> VolumetricProfiles { get; set; }
 

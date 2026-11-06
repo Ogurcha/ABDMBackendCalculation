@@ -35,7 +35,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         public decimal PositionFarLeft { get; set; }
 
         /// <summary>
-        /// Относительное положение правого края ограждения по центру
+        /// Относительное положение левого края ограждения по центру
         /// </summary>
         [JsonPropertyName("positionMiddleLeft")]
         public decimal? PositionMiddleLeft { get; set; }
@@ -47,7 +47,7 @@ namespace Abdm.Calculation.WebApi.ResponseModels.StrainAnalysis.Default
         public decimal? PositionMiddleRight { get; set; }
 
         /// <summary>
-        /// Относительное положение ограждения слева
+        /// Относительное положение ограждения справа
         /// </summary>
         [JsonPropertyName("positionFarRight")]
         public decimal PositionFarRight { get; set; }
