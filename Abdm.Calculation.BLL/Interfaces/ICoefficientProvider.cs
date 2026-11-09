@@ -11,6 +11,11 @@ namespace Abdm.Calculation.BLL.Interfaces
         ITrafficJamStrainCoefficientProvider? TrafficJamStrainCoefficientProvider { get; set; }
 
         double GetDynamicCoefficient(double lambda, IMaterial material, StrainCalculationGroupTypeEnum calculationType);
+
+        /// <summary>
+        /// Коэффициент при более чем одном ТС в траектории (колонне).
+        /// </summary>
+        double GetMultiVehicleCoefficient();
     }
 
     public interface ITrafficJamStrainCoefficientProvider

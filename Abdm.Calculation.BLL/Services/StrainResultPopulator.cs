@@ -75,7 +75,8 @@ namespace Abdm.Calculation.BLL.Services
             List<VehicleStrain> resultStrains = ChooseVehicleStrains(
                 vehicleStrainList,
                 maxVehicleInTrajectory,
-                effectiveLoadDistance);
+                effectiveLoadDistance,
+                data.CoefficientProvider.GetMultiVehicleCoefficient());
 
             return new VehicleColumnStrain
             {
@@ -150,11 +151,42 @@ namespace Abdm.Calculation.BLL.Services
         }
 
         /// <summary>
-        /// Выбираем напряжения по убыванию, но таким образом, чтобы расстояние между позициями выбранных напряжений было не меньше <paramref name="effectiveLoadDistance"/>, а количество напряжений было не больше максимального количества ТС в колонне <paramref name="maxVehiclesInColumn"/>
+        /// Выбираем напряжения по убыванию, но таким образом, чтобы расстояние между позициями выбранных напряжений было не меньше <paramref name="effectiveLoadDistance"/>, а количество напряжений было не больше максимального количества ТС в колонне <paramref name="maxVehiclesInColumn"/>.
+        /// При <paramref name="multiVehicleCoefficient"/> &lt; 1 сравниваем одно ТС без коэффициента и несколько ТС с коэффициентом — берём большее напряжение.
         /// </summary>
         private List<VehicleStrain> ChooseVehicleStrains(
             List<VehicleStrain> allVehicleStrains, 
             int maxVehiclesInColumn, 
+            double effectiveLoadDistance,
+            double multiVehicleCoefficient)
+        {
+            var multiVehicleStrains = SelectVehicleStrains(allVehicleStrains, maxVehiclesInColumn, effectiveLoadDistance);
+
+            if (multiVehicleStrains.Count <= 1 || multiVehicleCoefficient >= 1d)
+            {
+                return multiVehicleStrains;
+            }
+
+            var singleVehicleStrains = SelectVehicleStrains(allVehicleStrains, 1, effectiveLoadDistance);
+            var singleTotal = singleVehicleStrains.Sum(x => x.TotalStrain);
+            var multiTotal = multiVehicleStrains.Sum(x => x.TotalStrain) * multiVehicleCoefficient;
+
+            if (singleTotal >= multiTotal)
+            {
+                return singleVehicleStrains;
+            }
+
+            foreach (var strain in multiVehicleStrains)
+            {
+                strain.TotalStrain *= multiVehicleCoefficient;
+            }
+
+            return multiVehicleStrains;
+        }
+
+        private List<VehicleStrain> SelectVehicleStrains(
+            List<VehicleStrain> allVehicleStrains,
+            int maxVehiclesInColumn,
             double effectiveLoadDistance)
         {
             var orderedByPosition = new LinkedList<VehicleStrain>();

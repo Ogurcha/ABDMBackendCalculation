@@ -8,5 +8,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies
         public abstract RoadRule[] GetRoadRules(LoadEnum loadId);
 
         public abstract List<LoadGroupTypeEnum> LoadGroupTypes { get; }
+
+        public virtual SnipEnum[] WorksInSnips { get; set; } = [SnipEnum.odm16];
     }
 }
