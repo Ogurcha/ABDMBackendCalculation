@@ -46,6 +46,14 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
             PillarTypeEnum.SuspendedCableStayedStructurePylon
         ]).Contains(material.PillarType);
 
+        /// <summary>
+        /// Массивные опоры (бетон/камень), деревянные опоры — динамический коэффициент 1,0 по табл. А.7 ОДМ.
+        /// </summary>
+        public static bool IsMassiveOrTimberSupport(this PillarMaterial material) =>
+            material.IsWood()
+            || material.IsStone()
+            || material.MaterialType is MaterialTypeEnum.Concrete or MaterialTypeEnum.RubbleConcrete;
+
         public static bool IsWood(this IMaterial material) => ((MaterialTypeEnum[])
         [ 
             MaterialTypeEnum.Timber,
