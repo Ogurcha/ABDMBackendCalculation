@@ -15,7 +15,7 @@ namespace Abdm.Calculation.BLL.Interfaces
         /// <summary>
         /// Коэффициент при более чем одном ТС в траектории (колонне).
         /// </summary>
-        double GetMultiVehicleCoefficient();
+        double GetPopulatorCoefficient();
     }
 
     public interface ITrafficJamStrainCoefficientProvider

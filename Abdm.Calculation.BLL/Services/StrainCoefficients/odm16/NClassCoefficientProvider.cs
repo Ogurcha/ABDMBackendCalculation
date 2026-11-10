@@ -26,6 +26,6 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.odm16
         /// ГОСТ 32960-2014 п. 4.4.4 — понижающий коэффициент для сдвоенной НК.
         /// Для odm16 MaxVehicleInTrajectory = 1, поэтому коэффициент не применяется.
         /// </summary>
-        public override double GetMultiVehicleCoefficient() => 0.75d;
+        public override double GetPopulatorCoefficient() => 0.75d;
     }
 }

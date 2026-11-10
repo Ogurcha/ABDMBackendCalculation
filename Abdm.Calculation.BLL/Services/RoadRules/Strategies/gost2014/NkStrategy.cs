@@ -7,7 +7,6 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies.gost2014
     /// <summary>
     /// ГОСТ 32960-2014, п. 4.4.1 / 4.4.4 — вариант 2: нагрузка НК вне полос безопасности.
     /// MaxVehicleInTrajectory = 2 позволяет сравнить одиночную и сдвоенную НК
-    /// с учётом GetMultiVehicleCoefficient (0,75).
     /// </summary>
     public class NkStrategy : BaseRRStrategy
     {
@@ -24,7 +23,7 @@ namespace Abdm.Calculation.BLL.Services.RoadRules.Strategies.gost2014
 
         public override RoadRule[] GetRoadRules(LoadEnum loadId) => [RRNk];
 
-        [Description("I. \"НК\" вне полос безопасности (одиночная / сдвоенная через multi-vehicle coeff)")]
+        [Description("I. \"НК\" вне полос безопасности (одиночная / сдвоенная)")]
         public static RoadRule RRNk => new RoadRule()
         {
             IsPedestrianAllowed = false,

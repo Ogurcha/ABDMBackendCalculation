@@ -20,6 +20,6 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
         /// <summary>
         /// Коэффициент при более чем одном ТС в траектории. По умолчанию 1.
         /// </summary>
-        public virtual double GetMultiVehicleCoefficient() => 1d;
+        public virtual double GetPopulatorCoefficient() => 1d;
     }
 }
