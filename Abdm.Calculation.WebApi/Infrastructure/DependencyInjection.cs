@@ -9,7 +9,9 @@ using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
-using Abdm.Calculation.BLL.Services.RoadRules.Strategies.gost2014;
+using rrGost2014 = Abdm.Calculation.BLL.Services.RoadRules.Strategies.gost2014;
+using rrSn1984 = Abdm.Calculation.BLL.Services.RoadRules.Strategies.sn1984;
+using rrOlder = Abdm.Calculation.BLL.Services.RoadRules.Strategies.older;
 using Abdm.Calculation.BLL.Services.SteelConcreteOrigin;
 using Abdm.Calculation.BLL.Services.StrainAnlysis;
 using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
@@ -77,8 +79,14 @@ namespace Abdm.Calculation.Infrastructure
                 new CommonStrategy(),
                 new HeavyStrategy(),
                 new VehicleColumnStrategy(),
-                new AkStrategy(),
-                new NkStrategy(),
+                new rrGost2014.AkStrategy(),
+                new rrGost2014.NkStrategy(),
+                new rrSn1984.AkStrategy(),
+                new rrSn1984.HeavyStrategy(),
+                new rrSn1984.AbStrategy(),
+                new rrOlder.ColumnStrategy(),
+                new rrOlder.HeavyStrategy(),
+                new rrOlder.Sn38HeavyStrategy(),
             }));
             services.AddSingleton<ISurfaceBinaryParserFactory, SurfaceBinaryParserFactory>(x => new SurfaceBinaryParserFactory(new List<ISurfaceBinaryParser>
             {

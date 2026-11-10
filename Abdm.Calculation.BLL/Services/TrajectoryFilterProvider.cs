@@ -19,8 +19,9 @@ namespace Abdm.Calculation.BLL.Services
             IEnumerable<RoadRule> roadRules)
         {
             var groupedBySafetyLine = roadRules.GroupBy(r => (
-            actualSafetyLineLeft: r.HasSafetyLine ? passageInterval.SafetyLineLeft : (double)default,
-            actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight : (double)default));
+            actualSafetyLineLeft: r.HasSafetyLine ? passageInterval.SafetyLineLeft + r.ExtraBarrierDistance : r.ExtraBarrierDistance,
+            actualSafetyLineRight: r.HasSafetyLine ? passageInterval.SafetyLineRight + r.ExtraBarrierDistance : r.ExtraBarrierDistance
+            ));
 
             var distance = PassTypeFormulas.DistanceBetweenIntervalEdgeAndTrajectoryCenter(load, roadRules);
 
