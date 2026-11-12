@@ -84,24 +84,24 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.snip1962
         {
             if (material.IsMetal())
             {
-                // Элементы металлических опор кроме пилонов висячих и вантовых мостов
-                if (!material.IsPylon())
-                {
-                    return 1 + 15 / (37.5 + lambda);
-                }
                 // Элементы металлических пилонов висячих и вантовых мостов
                 if (material.IsPylon())
                 {
-                    return 1 + 15 / (37.5 + lambda);
+                    return 1 + 50 / (75 + lambda);
                 }
-            }
-            else
-            {
-                // Железобетонные сквозные, тонкостенные и стоечные опоры
-                return Math.Max(1, Math.Min(1.3, 1 + 0.0075 * (45 - lambda)));
+
+                // Элементы металлических опор кроме пилонов висячих и вантовых мостов
+                return 1 + 15 / (37.5 + lambda);
             }
 
-            return NormConstants.MinStrainCoefficient;
+            // Массивные опоры (бетонные, каменные), деревянные опоры, фундаменты и основания
+            if (material.IsMassiveOrTimberSupport())
+            {
+                return 1d;
+            }
+
+            // Железобетонные сквозные, тонкостенные и стоечные опоры
+            return Math.Max(1, Math.Min(1.3, 1.1 + 0.0075 * (45 - lambda)));
         }
 
         public override double[] GetStripeCoefficient(double lambda) =>
