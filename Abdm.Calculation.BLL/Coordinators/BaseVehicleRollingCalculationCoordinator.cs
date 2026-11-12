@@ -58,7 +58,7 @@ namespace Abdm.Calculation.BLL.Coordinators
                 return surfaceDataException;
             }
 
-            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id);
+            var roadRulesNullable = roadRulesFactory.CreateRoadRuleStrategy(data.LoadSchema.Type, data.LoadSchema.Id, data.Snip);
             if (roadRulesNullable is not RoadRule[] roadRules)
             {
                 return new ResultMonad<VehicleRollingBigModel>(new Exception(roadRulesNotFoundErrorMessage));

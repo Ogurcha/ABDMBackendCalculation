@@ -19,7 +19,10 @@ namespace Abdm.Calculation.BLL.Services
                 var a2 = load.Axles[^(i+1)];
 
                 if (!equalityComparer.Equals(a1.Position, load.Length - a2.Position)
-                    || !a1.WheelsDistance.SequenceEqual(a2.WheelsDistance))
+                    || !a1.WheelsDistance.SequenceEqual(a2.WheelsDistance)
+                    || !equalityComparer.Equals(a1.Weight, a2.Weight)
+                    || !equalityComparer.Equals(a1.WheelWidth, a2.WheelWidth)
+                    || !equalityComparer.Equals(a1.WheelLength, a2.WheelLength))
                 {
                     return false;
                 }

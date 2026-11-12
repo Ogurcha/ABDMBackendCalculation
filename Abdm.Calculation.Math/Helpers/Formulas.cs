@@ -121,16 +121,22 @@ namespace Abdm.Calculation.Maths.Helpers
             Func<T, TKey> keyFunc, 
             IEqualityComparer<TKey> equalityComparer) where TKey : struct, IComparisonOperators<TKey, TKey, bool>
         {
-            const int MinIndex = 0;
+            int MinIndex = 0;
             int MaxIndex = sorted.Count - 1;
 
             var first = sorted[MinIndex];
             var last = sorted[MaxIndex];
 
-            if (targetKey <= keyFunc(first) || equalityComparer.Equals(targetKey, keyFunc(first)))
+            if (equalityComparer.Equals(targetKey, keyFunc(first)))
+                return (MinIndex, MinIndex);
+
+            if (targetKey <= keyFunc(first))
                 return (null, MinIndex);
 
-            if (targetKey >= keyFunc(last) || equalityComparer.Equals(targetKey, keyFunc(last)))
+            if (equalityComparer.Equals(targetKey, keyFunc(last)))
+                return (MaxIndex, MaxIndex);
+
+            if (targetKey >= keyFunc(last))
                 return (MaxIndex, null);
 
             int leftIndex = MinIndex;
