@@ -16,5 +16,10 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients
         public virtual double GetDynamicCoefficient(double lambda, IMaterial material, StrainCalculationGroupTypeEnum calculationType) => 1d;
 
         public virtual double[] GetStripeCoefficient(double lambda) => [1d, 1d, 1d, 1d, 1d];
+
+        /// <summary>
+        /// Коэффициент при более чем одном ТС в траектории. По умолчанию 1.
+        /// </summary>
+        public virtual double GetPopulatorCoefficient() => 1d;
     }
 }

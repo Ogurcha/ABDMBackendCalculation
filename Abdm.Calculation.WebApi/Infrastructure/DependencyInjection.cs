@@ -9,6 +9,9 @@ using Abdm.Calculation.BLL.Services.LowLevelCalculation;
 using Abdm.Calculation.BLL.Services.PassTypes;
 using Abdm.Calculation.BLL.Services.RoadRules;
 using Abdm.Calculation.BLL.Services.RoadRules.Strategies;
+using rrGost2014 = Abdm.Calculation.BLL.Services.RoadRules.Strategies.gost2014;
+using rrSn1984 = Abdm.Calculation.BLL.Services.RoadRules.Strategies.sn1984;
+using rrOlder = Abdm.Calculation.BLL.Services.RoadRules.Strategies.older;
 using Abdm.Calculation.BLL.Services.SteelConcreteOrigin;
 using Abdm.Calculation.BLL.Services.StrainAnlysis;
 using Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies;
@@ -24,6 +27,7 @@ using Abdm.Calculation.SteelConcrete;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using gost2014 = Abdm.Calculation.BLL.Services.StrainCoefficients.gost2014;
 using odm16 = Abdm.Calculation.BLL.Services.StrainCoefficients.odm16;
 using snip1938 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1938;
 using snip1943 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1943;
@@ -76,6 +80,14 @@ namespace Abdm.Calculation.Infrastructure
                 new CommonStrategy(),
                 new HeavyStrategy(),
                 new VehicleColumnStrategy(),
+                new rrGost2014.AkStrategy(),
+                new rrGost2014.NkStrategy(),
+                new rrSn1984.AkStrategy(),
+                new rrSn1984.HeavyStrategy(),
+                new rrSn1984.AbStrategy(),
+                new rrOlder.ColumnStrategy(),
+                new rrOlder.HeavyStrategy(),
+                new rrOlder.Sn38HeavyStrategy(),
             }));
             services.AddSingleton<ISurfaceBinaryParserFactory, SurfaceBinaryParserFactory>(x => new SurfaceBinaryParserFactory(new List<ISurfaceBinaryParser>
             {
@@ -120,6 +132,8 @@ namespace Abdm.Calculation.Infrastructure
             new odm16.AutoColumnCoefficientProvider(),
             new odm16.NClassCoefficientProvider(),
             new odm16.SingleCoefficientProvider(),
+            new gost2014.AkCoefficientProvider(),
+            new gost2014.NkCoefficientProvider(),
             new snip1938.SimpleCoefficientProvider(),
             new snip1938.TankCoefficientProvider(),
             new snip1943.SimpleCoefficientProvider(),

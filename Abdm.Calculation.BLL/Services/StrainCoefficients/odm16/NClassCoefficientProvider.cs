@@ -8,8 +8,7 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.odm16
         public NClassCoefficientProvider()
         {
             WorksInSnips = [
-                SnipEnum.odm16,
-                SnipEnum.gost2014
+                SnipEnum.odm16
             ];
             WorksForLoads = [
                 LoadGroupTypeEnum.NClass,

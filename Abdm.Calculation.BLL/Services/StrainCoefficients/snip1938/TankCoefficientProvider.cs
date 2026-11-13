@@ -19,7 +19,7 @@ namespace Abdm.Calculation.BLL.Services.StrainCoefficients.snip1938
         }
 
         public override double GetBasicCoefficent(double lambda) =>
-            1.1d;
+            1d;
 
         public override double GetDynamicCoefficient(double lambda, IMaterial material, StrainCalculationGroupTypeEnum calculationType) => 1d;
     }
