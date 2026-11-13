@@ -196,19 +196,26 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     var rightIntervalStart = Math.Max(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[1].X, strainPiece.Interval.Start);
                     var rightIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[^2].X, strainPiece.Interval.End);
 
+                    //Берём макс значение, так как в данном отчёте не рассматривают нагрузки с вариативным отпечатком
+                    var widthArea =  (columnStrain.VehicleTrajectoryRef.Center as ProfileYZExtended)?.FootprintWidth.Values.Max() ?? 0;
+
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
                         Number = oneBaseColumNumber,
                         LeftIntervalStart = ToDecimal(leftIntervalStart),
                         LeftIntervalEnd = ToDecimal(leftIntervalEnd),
                         LeftIntervalLength = ToDecimal(leftIntervalEnd - leftIntervalStart),
-                        LeftIntervalVolume = decimal.Round((decimal)strainPiece.LeftVolume, 4),
+                        LeftIntervalVolume = widthArea == 0 
+                        ? decimal.Round((decimal)strainPiece.LeftVolume, 4) 
+                        : decimal.Round((decimal)(strainPiece.LeftVolume / widthArea), 4),
                         LeftIntervalIntensity = strainPiece.LeftVolume == 0 ? 0 : ToDecimal(strainPiece.LeftStrain / strainPiece.LeftVolume),
                         LeftIntervalStrain = ToDecimal(strainPiece.LeftStrain),
                         RightIntervalStart = ToDecimal(rightIntervalStart),
                         RightIntervalEnd = ToDecimal(rightIntervalEnd),
                         RightIntervalLength = ToDecimal(rightIntervalEnd - rightIntervalStart),
-                        RightIntervalVolume = decimal.Round((decimal)strainPiece.RightVolume, 4),
+                        RightIntervalVolume = widthArea == 0 
+                        ? decimal.Round((decimal)strainPiece.RightVolume, 4)
+                        : decimal.Round((decimal)(strainPiece.RightVolume / widthArea), 4),
                         RightIntervalIntensity = strainPiece.RightVolume == 0 ? 0 : ToDecimal(strainPiece.RightStrain / strainPiece.RightVolume),
                         RightIntervalStrain = ToDecimal(strainPiece.RightStrain),
                         SumStrain = ToDecimal(strainPiece.LeftStrain + strainPiece.RightStrain),

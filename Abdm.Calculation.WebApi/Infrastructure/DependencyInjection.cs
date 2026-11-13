@@ -27,6 +27,7 @@ using Abdm.Calculation.SteelConcrete;
 using Abdm.Calculation.WebApi.Infrastructure.MapsterConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using gost2014 = Abdm.Calculation.BLL.Services.StrainCoefficients.gost2014;
 using odm16 = Abdm.Calculation.BLL.Services.StrainCoefficients.odm16;
 using snip1938 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1938;
 using snip1943 = Abdm.Calculation.BLL.Services.StrainCoefficients.snip1943;
@@ -131,6 +132,8 @@ namespace Abdm.Calculation.Infrastructure
             new odm16.AutoColumnCoefficientProvider(),
             new odm16.NClassCoefficientProvider(),
             new odm16.SingleCoefficientProvider(),
+            new gost2014.AkCoefficientProvider(),
+            new gost2014.NkCoefficientProvider(),
             new snip1938.SimpleCoefficientProvider(),
             new snip1938.TankCoefficientProvider(),
             new snip1943.SimpleCoefficientProvider(),
