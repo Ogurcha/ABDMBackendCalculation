@@ -25,18 +25,17 @@ namespace Abdm.Calculation.WebApi.Handlers
     {
         private const string producerErrorMsg = "Message producer failed to send message";
         private const string brokerClassNameStr = "strain-analysis";
-        private const string strainCompareStr = "strain-compare";
 
         public async Task Handle(
             StrainAnalysisCalculationRequest dto, 
             MessageContext<string, StrainAnalysisCalculationRequest> context)
         {
             var data = dto.Adapt<StrainAnalysisParameters>();
-            var key = context.ConsumeResults.Any(x => x.Message.Key.Equals(strainCompareStr)) ? strainCompareStr : brokerClassNameStr;
+
             try
             {
                 var responseContent = await strainAnalyser.Run(data, new System.Threading.CancellationToken());
-                await messageProducer.Produce(key, responseContent.Adapt<AnalyseStrainCalculationResponse>());
+                await messageProducer.Produce(brokerClassNameStr, responseContent.Adapt<AnalyseStrainCalculationResponse>());
             }
             catch (Exception ex)
             {
