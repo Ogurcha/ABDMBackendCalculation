@@ -197,7 +197,10 @@ namespace Abdm.Calculation.BLL.Services.StrainAnlysis.Strategies
                     var rightIntervalEnd = Math.Min(columnStrain.VehicleTrajectoryRef.Right.Last().Value.SortedVectors[^2].X, strainPiece.Interval.End);
 
                     //Берём макс значение, так как в данном отчёте не рассматривают нагрузки с вариативным отпечатком
-                    var widthArea =  (columnStrain.VehicleTrajectoryRef.Center as ProfileYZExtended)?.FootprintWidth.Values.Max() ?? 0;
+                    var widthArea = 
+                        (columnStrain.VehicleTrajectoryRef.Left.Values.FirstOrDefault() as ProfileYZExtended)?.FootprintWidth.Values.Max() ?? 0
+                        +
+                        (columnStrain.VehicleTrajectoryRef.Right.Values.FirstOrDefault() as ProfileYZExtended)?.FootprintWidth.Values.Max() ?? 0;
 
                     intervals.Add(new TrafficJamStrainAnalysis
                     {
